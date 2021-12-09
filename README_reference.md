@@ -55,4 +55,5 @@ Alternatively, you may implement your own Cache class (common/cache.py).
 ## Unit Tests
 
 You may notice a lack of unit tests in this codebase.  Though tests exist, I omitted them because they rely on extensive
-use of real world wallet data.  For the sake of all users' privacy, I do not include these tests.
+use of real world wallet data.  For the sake of all users' privacy, I do not include these tests.  I'm open to 
+ideas for alternatives, since obviously this is non-optimal.
