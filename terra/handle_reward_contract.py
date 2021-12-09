@@ -91,12 +91,13 @@ def _extract_amount(elem, index, currency):
         from_contract = util_terra._event_with_action(elem, "from_contract", "claim")
         amounts = from_contract["amount"]
         actions = from_contract["action"]
+        contract_addresses = from_contract["contract_address"]
         for i in range(len(amounts)):
             action = actions[i]
             amount = amounts[i]
 
             if action == "claim":
-                return util_terra._float_amount(amount, None)
+                return util_terra._float_amount(amount, currency)
     except Exception as e:
         pass
 
