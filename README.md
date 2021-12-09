@@ -34,7 +34,7 @@ A python repo to create CSVs for Terra (LUNA), Solana (SOL), and Cosmos (ATOM).
 
 # Reference
 
-  * See [README_reference](README_reference.md) for more notes.
+  * See [README_reference.md](README_reference.md) for more notes:
     * [Ideal Configuration](README_reference.md#ideal-configuration)
       * [RPC Node Settings](README_reference.md#rpc-node-settings)
       * [DB Cache](README_reference.md#db-cache)
