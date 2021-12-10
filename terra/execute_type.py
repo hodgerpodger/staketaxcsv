@@ -58,7 +58,6 @@ EXECUTE_TYPE_ACCEPT_DEPOSIT = "accept_deposit"
 EXECUTE_TYPE_SEND_NFT = "send_nft"
 
 
-# Seen types: swap, deposit_collateral
 def _execute_type(elem, txinfo, index=0):
     txid = txinfo.txid
     execute_msg = util_terra._execute_msg(elem, index)
