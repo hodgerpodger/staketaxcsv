@@ -5,7 +5,8 @@ from datetime import datetime
 
 from terra.constants import CONTRACTS_LOTA, EXCHANGE_TERRA_BLOCKCHAIN, CONTRACT_RANDOMEARTH
 from terra import util_terra
-from terra.handle_governance import handle_governance_stake, handle_governance_unstake
+from terra.handle_governance import (
+    handle_governance_stake, handle_governance_unstake, handle_governance_reward)
 from terra.handle_lp import (
     handle_lp_deposit, handle_lp_withdraw, handle_lp_stake, handle_lp_unstake, handle_lp_long_farm,
     handle_lp_deposit_idx, handle_lp_withdraw_idx, handle_lp_stake_deposit_strategy,
@@ -136,6 +137,8 @@ def process_tx(wallet_address, elem, exporter):
                 return handle_governance_stake(exporter, elem, txinfo)
             elif execute_type == ex.EXECUTE_TYPE_WITHDRAW_VOTING_TOKENS:
                 return handle_governance_unstake(exporter, elem, txinfo)
+            elif execute_type == ex.EXECUTE_TYPE_WITHDRAW_VOTING_REWARDS:
+                return handle_governance_reward(exporter, elem, txinfo)
 
             # Anchor Borrow Transactions
             elif execute_type == ex.EXECUTE_TYPE_BORROW_STABLE:

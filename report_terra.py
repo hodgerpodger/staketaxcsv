@@ -64,12 +64,13 @@ def wallet_exists(wallet_address):
 
 def txone(wallet_address, txid):
     data = FcdAPI.get_tx(txid)
-    print("debug data:")
+    print("\ndebug data:")
     pprint.pprint(data)
     print("")
 
     exporter = Exporter(wallet_address)
     terra.processor.process_tx(wallet_address, data, exporter)
+    print("")
     return exporter
 
 
