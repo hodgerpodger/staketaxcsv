@@ -33,7 +33,6 @@ class TxInfoSol(TxInfo):
         self.transfers = None
         self.transfers_net = None
 
-
     def print(self):
         print("txid: {}".format(self.txid))
         print("timestamp: {}".format(self.timestamp))

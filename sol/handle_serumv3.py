@@ -35,7 +35,7 @@ def handle_serumv3(exporter, txinfo):
         if received_amount == 0:
             continue
 
-        row = make_serum_dex_transfer_in(txinfo, received_amount, received_currency, empty_fee=(count>0))
+        row = make_serum_dex_transfer_in(txinfo, received_amount, received_currency, empty_fee=(count > 0))
         exporter.ingest_row(row)
         count += 1
 
@@ -45,7 +45,7 @@ def handle_serumv3(exporter, txinfo):
         if sent_amount == 0:
             continue
 
-        row = make_serum_dex_transfer_out(txinfo, sent_amount, sent_currency, empty_fee=(count>0))
+        row = make_serum_dex_transfer_out(txinfo, sent_amount, sent_currency, empty_fee=(count > 0))
         exporter.ingest_row(row)
         count += 1
 
@@ -53,4 +53,3 @@ def handle_serumv3(exporter, txinfo):
     if count == 0:
         row = make_serum_dex_no_transfer(txinfo)
         exporter.ingest_row(row)
-

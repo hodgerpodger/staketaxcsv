@@ -11,7 +11,7 @@ import pandas as pd
 # Note: TX_TYPE=_* means transaction is not included in non-default CSVs
 # (i.e. _STAKING_DELEGATE is not included in koinly, cointracking, ... )
 
-### COMMON ##########################################################################################
+# ### COMMON ##########################################################################################
 
 # Common exportable transactions
 TX_TYPE_STAKING = "STAKING"  # Staking transaction with income
@@ -23,7 +23,7 @@ TX_TYPE_INCOME = "INCOME"
 TX_TYPE_BORROW = "BORROW"
 TX_TYPE_REPAY = "REPAY"
 
-# Common nonexportable transactions
+# Common non-exportable transactions
 TX_TYPE_UNKNOWN = "_UNKNOWN"
 TX_TYPE_UNKNOWN_ERROR = "_UNKNOWN_ERROR"
 TX_TYPE_STAKING_DELEGATE = "_STAKING_DELEGATE"
@@ -31,7 +31,7 @@ TX_TYPE_STAKING_UNDELEGATE = "_STAKING_UNDELEGATE"
 TX_TYPE_STAKING_REDELEGATE = "_STAKING_REDELEGATE"
 TX_TYPE_STAKING_WITHDRAW_REWARD = "_STAKING_WITHDRAW_REWARD"
 
-### LUNA ##########################################################################################
+# ### LUNA ##########################################################################################
 
 TX_TYPE_VOTE = "_VOTE"
 TX_TYPE_GOV = "_GOV"
@@ -69,7 +69,7 @@ TX_TYPE_NFT_OFFER_SELL = "_NFT_OFFER_SELL"
 TX_TYPE_NFT_WITHDRAW = "_NFT_WITHDRAW"
 TX_TYPE_NFT_DEPOSIT = "_NFT_DEPOSIT"
 
-### SOL ##########################################################################################
+# ### SOL ##########################################################################################
 
 TX_TYPE_SOL_STAKING_SPLIT = "_STAKING_SPLIT"
 TX_TYPE_SOL_STAKING_WITHDRAW = "_STAKING_WITHDRAW"

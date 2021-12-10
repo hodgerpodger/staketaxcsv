@@ -220,7 +220,6 @@ def handle_send_nft(exporter, elem, txinfo):
         handle_unknown(exporter, txinfo)
 
 
-
 def handle_approve(exporter, elem, txinfo):
     """ nft post order (not sale) on randomearth.io """
     txid = txinfo.txid

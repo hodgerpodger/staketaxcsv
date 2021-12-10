@@ -1,21 +1,33 @@
 
-# Reference
+# Reference Notes
 
   * Random notes, hopefully helpful on occasion.  Probably not helpful on first look.
+
+# Python Linter
+```
+# run linter (configuration found in setup.cfg)
+pycodestyle
+```
+
+# Unit Tests
+
+You may notice a lack of unit tests in this codebase.  Though tests exist, I omitted them because they rely on extensive
+use of real world wallet data.  For the sake of all users' privacy, I do not include these tests.  I'm open to 
+ideas for alternatives, since obviously this is non-optimal.
   
-## Ideal Configuration
+# Ideal Configuration
 
 Default code was made to work out of the box.  These are changes that require manual
 actions.  They improve reliability (RPC Node settings) or speed (DB Cache) when compared to
 default version.
 
-### RPC Node settings
+## RPC Node settings
 
   * Default `sample.env` points to public RPC nodes.  This generally works, up to a point.
   * Edit/uncomment `sample.env` to change to point to more reliable private RPC node(s).
     * Examples for private RPC nodes (Figment, Quicknode) are included.
 
-### DB Cache
+## DB Cache
 
 Use of a database for caching is ideal to speed up certain RPC queries (especially SOL).  Here is
 the script usage to use caching:
@@ -32,7 +44,7 @@ To enable --cache, you must configure an aws connection for the boto3 code found
     
 Alternatively, you may implement your own Cache class (common/cache.py).
 
-## Installing python 3.9 on MacOS
+# Installing python 3.9 on MacOS
 
   * Personal method--google is probably better 
 
@@ -51,9 +63,3 @@ Alternatively, you may implement your own Cache class (common/cache.py).
     # install pip packages (same as README.md)
     pip3 install -r requirements.txt
     ```
-
-## Unit Tests
-
-You may notice a lack of unit tests in this codebase.  Though tests exist, I omitted them because they rely on extensive
-use of real world wallet data.  For the sake of all users' privacy, I do not include these tests.  I'm open to 
-ideas for alternatives, since obviously this is non-optimal.

@@ -97,7 +97,7 @@ def _received(from_contract, txid):
     receive_currency = _asset_to_currency(last_asset, txid)
 
     # Determine amount
-    receive_amount = (_float_amount(last_return_amount, receive_currency) -
-                      _float_amount(last_tax_amount, receive_currency))
+    receive_amount = (_float_amount(last_return_amount, receive_currency)
+                      - _float_amount(last_tax_amount, receive_currency))
 
     return receive_amount, receive_currency

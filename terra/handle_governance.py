@@ -2,6 +2,7 @@
 from terra.make_tx import make_gov_stake_tx, make_gov_unstake_tx
 from terra import util_terra
 
+
 def handle_governance_stake(exporter, elem, txinfo):
     txid = txinfo.txid
 

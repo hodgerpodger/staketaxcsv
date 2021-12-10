@@ -3,6 +3,7 @@ from sol.handle_simple import handle_unknown_detect_transfers
 from sol.constants import BILLION, CURRENCY_SOL
 from common.make_tx import make_transfer_in_tx
 
+
 def handle_vote(exporter, txinfo):
     instruction_types = txinfo.instruction_types
     instructions = txinfo.instructions

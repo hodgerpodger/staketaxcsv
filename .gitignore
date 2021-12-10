@@ -4,3 +4,4 @@ __pycache__/*
 */*/__pycache__/*
 .idea/*
 sol/data_staking_rewards/*.csv
+env/*

@@ -78,6 +78,7 @@ def _has_empty_token_balances(data, mints):
     else:
         return False
 
+
 def _transfers(balance_changes):
     transfers_in = []
     transfers_out = []
@@ -98,7 +99,7 @@ def _balance_changes(data, wallet_accounts, mints):
     balance_changes = dict(balance_changes_sol)
     balance_changes.update(dict(balance_changes_tokens))
 
-    balance_changes_wallet = { k:v for (k,v) in balance_changes.items() if k in wallet_accounts}
+    balance_changes_wallet = {k: v for (k, v) in balance_changes.items() if k in wallet_accounts}
     return balance_changes, balance_changes_wallet
 
 
@@ -155,7 +156,7 @@ def _balance_changes_sol(data):
 
     balance_changes = {}
     for i, account_address in enumerate(account_keys):
-        amount = (float(post_balances_sol[i]) - float(pre_balances_sol[i]) ) / BILLION
+        amount = (float(post_balances_sol[i]) - float(pre_balances_sol[i])) / BILLION
         amount = round(amount, 9)
         if amount != 0:
             balance_changes[account_address] = (CURRENCY_SOL, amount)
@@ -305,8 +306,6 @@ def _instruction_accounts(txid, wallet_address, instructions, inner):
 
                     if destination == wallet_address:
                         accounts.add(account)
-
-
 
     return accounts
 
@@ -469,4 +468,3 @@ def _log_messages(txid, data):
 
     log_string = "\n".join(log)
     return log_instructions, log, log_string
-
