@@ -3,6 +3,7 @@ import logging
 import pprint
 from datetime import datetime
 
+import terra.execute_type as ex
 from terra.constants import CONTRACTS_LOTA, EXCHANGE_TERRA_BLOCKCHAIN, CONTRACT_RANDOMEARTH
 from terra import util_terra
 from terra.handle_governance import (
@@ -26,7 +27,6 @@ from common.Exporter import TX_TYPE_GOV, TX_TYPE_VOTE, TX_TYPE_LOTA_UNKNOWN
 from common.ErrorCounter import ErrorCounter
 from common.TxInfo import TxInfo
 from common.make_tx import make_just_fee_tx
-import terra.execute_type as ex
 from terra.handle_nft import (
     handle_add_whitelist, handle_reserve_nft, handle_mint_nft, handle_purchase_nft, handle_execute_order,
     handle_transfer_nft, handle_approve, handle_withdraw, handle_add_to_deposit, handle_accept_deposit,
@@ -80,7 +80,7 @@ def process_tx(wallet_address, elem, exporter):
             if execute_type in EXECUTE_TYPES_SIMPLE:
                 tx_type = EXECUTE_TYPES_SIMPLE[execute_type]
                 return handle_simple(exporter, txinfo, tx_type)
-            elif execute_type == ex.EXECUTE_TYPE_AIRDROP:
+            elif execute_type == ex.EXECUTE_TYPE_CLAIM:
                 return handle_airdrop(exporter, elem, txinfo)
             elif execute_type == ex.EXECUTE_TYPE_TRANSFER:
                 # Currently handles transfer to/from shuttle bridge

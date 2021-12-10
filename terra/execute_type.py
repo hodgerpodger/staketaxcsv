@@ -15,7 +15,7 @@ EXECUTE_TYPE_DEPOSIT_STRATEGY_ID_IN_MSG = "deposit_strategy_id_in_msg"  # deposi
 EXECUTE_TYPE_DEPOSIT_STABLE = "anchor_deposit"
 EXECUTE_TYPE_DEPOSIT = "deposit"
 EXECUTE_TYPE_REDEEM_STABLE = "anchor_withdraw"
-EXECUTE_TYPE_AIRDROP = "airdrop"
+EXECUTE_TYPE_CLAIM = "claim"
 EXECUTE_TYPE_STAKE_VOTING_TOKENS = "stake_voting_tokens"
 EXECUTE_TYPE_WITHDRAW_VOTING_TOKENS = "withdraw_toking_tokens"
 EXECUTE_TYPE_WITHDRAW_VOTING_REWARDS = "withdraw_voting_rewards"
@@ -63,20 +63,7 @@ def _execute_type(elem, txinfo, index=0):
     txid = txinfo.txid
     execute_msg = util_terra._execute_msg(elem, index)
 
-    if "claim" in execute_msg:
-        return EXECUTE_TYPE_AIRDROP
-    elif "claim_rewards" in execute_msg:
-        return EXECUTE_TYPE_CLAIM_REWARDS
-    elif "swap" in execute_msg:
-        return EXECUTE_TYPE_SWAP
-    elif "deposit_stable" in execute_msg:
-        return EXECUTE_TYPE_DEPOSIT_STABLE
-    elif "deposit" in execute_msg:
-        if "position_idx" in execute_msg["deposit"]:
-            return EXECUTE_TYPE_DEPOSIT_IDX
-        else:
-            return EXECUTE_TYPE_DEPOSIT
-    elif "send" in execute_msg:
+    if "send" in execute_msg:
         send = execute_msg["send"]
         msg = send.get("msg", None)
         if type(msg) == str:
@@ -108,6 +95,19 @@ def _execute_type(elem, txinfo, index=0):
             if "deposit" in msg and "strategy_id" in msg["deposit"]:
                 return EXECUTE_TYPE_DEPOSIT_STRATEGY_ID_IN_MSG
 
+    elif "claim" in execute_msg:
+        return EXECUTE_TYPE_CLAIM
+    elif "claim_rewards" in execute_msg:
+        return EXECUTE_TYPE_CLAIM_REWARDS
+    elif "swap" in execute_msg:
+        return EXECUTE_TYPE_SWAP
+    elif "deposit_stable" in execute_msg:
+        return EXECUTE_TYPE_DEPOSIT_STABLE
+    elif "deposit" in execute_msg:
+        if "position_idx" in execute_msg["deposit"]:
+            return EXECUTE_TYPE_DEPOSIT_IDX
+        else:
+            return EXECUTE_TYPE_DEPOSIT
     elif "withdraw_voting_tokens" in execute_msg:
         return EXECUTE_TYPE_WITHDRAW_VOTING_TOKENS
     elif "withdraw_voting_rewards" in execute_msg:
@@ -149,7 +149,6 @@ def _execute_type(elem, txinfo, index=0):
         return EXECUTE_TYPE_ASSERT_LIMIT_ORDER
     elif "withdraw_from_strategy" in execute_msg:
         return EXECUTE_TYPE_WITHDRAW_FROM_STRATEGY
-
     elif "add_whitelist" in execute_msg:
         return EXECUTE_TYPE_ADD_WHITELIST
     elif "add_to_whitelist" in execute_msg:
