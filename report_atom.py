@@ -8,17 +8,13 @@ Prints transactions and writes CSV(s) to _reports/ATOM*.csv
 Notes:
 
 gaiad query txs --home /tmp/.gaia --events message.sender=cosmos1p4ks5aktxq48yqmpzh8e90z6suan8zwy463ypu \
-      --node https://<RPCURL>:443 --limit 100  | python -m json.tool
+      --node https://<RPCURL>:443 --limit 100
 
 gaiad query txs --home /tmp/.gaia --events transfer.recipient=cosmos1p4ks5aktxq48yqmpzh8e90z6suan8zwy463ypu \
-      --node https://<RPCURL>:443 --limit 100  | python -m json.tool  > test.json
+      --node https://<RPCURL>:443 --limit 100
 
  * The "--home /tmp/.gaia" is required for aws lambda
 
-gaiad query txs --events "message.sender=cosmos19kd6f0yn50qh80xw54jtr7aeesch0kshj3yq7n" \
-      --home /tmp/.gaia --node https://cosmoshub-4--rpc--full.datahub.figment.io:443/apikey/<key> \
-      --limit 50 --page 1 --chain-id cosmoshub-4 \
-      | python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)'
 """
 
 from json.decoder import JSONDecodeError
