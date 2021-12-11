@@ -41,7 +41,7 @@
   * Providing a sample transaction txid (directly, support@stake.tax, DM @staketax, etc.)
     is the fastest way for changes to be included:
     ```
-    # Your PR (most commonly) should print different output for before/after for a given txid.
+    # Your PR (most commonly) should print different output before/after for a given txid.
     python3 report_terra.py <wallet_address> --txid <txid>
     ```
 
