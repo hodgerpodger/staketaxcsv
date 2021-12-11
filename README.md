@@ -25,6 +25,8 @@
 
   * Same arguments apply for report_terra.py (LUNA), report_sol.py (SOL), report_atom.py (ATOM):
     ```
+    cd src
+    
     # Create default CSV
     python3 report_terra.py <wallet_address>
     
@@ -37,11 +39,11 @@
 
 # Contributing Code
 
-  * Code style follows `pep8` and can be tested with `pycodestyle`.
-  * Providing a sample transaction txid (directly, support@stake.tax, DM @staketax, etc.)
+  * Code style follows `pep8`.  This can be tested with `pycodestyle`.
+  * Providing a sample transaction txid (email support@stake.tax, DM @staketax, etc.)
     is the fastest way for changes to be included:
     ```
-    # Your PR (most commonly) should print different output before/after for a given txid.
+    # For a given txid, your PR (most commonly) should print different output before/after.
     python3 report_terra.py <wallet_address> --txid <txid>
     ```
 
