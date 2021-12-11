@@ -7,10 +7,10 @@ Prints transactions and writes CSV(s) to _reports/ATOM*.csv
 
 Notes:
 
-gaiad query txs --home /tmp/.gaia --events message.sender=cosmos1p4ks5aktxq48yqmpzh8e90z6suan8zwy463ypu \
+gaiad query txs --home /tmp/.gaia --events message.sender=<wallet_address> \
       --node https://<RPCURL>:443 --limit 100
 
-gaiad query txs --home /tmp/.gaia --events transfer.recipient=cosmos1p4ks5aktxq48yqmpzh8e90z6suan8zwy463ypu \
+gaiad query txs --home /tmp/.gaia --events transfer.recipient=<wallet_address> \
       --node https://<RPCURL>:443 --limit 100
 
  * The "--home /tmp/.gaia" is required for aws lambda
