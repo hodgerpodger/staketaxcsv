@@ -49,9 +49,12 @@
 
 # Reference
 
-  * See [README_reference.md](README_reference.md) for more notes:
-    * [Ideal Configuration](README_reference.md#ideal-configuration)
-      * [RPC Node Settings](README_reference.md#rpc-node-settings)
-      * [DB Cache](README_reference.md#db-cache)
-    * [Installing python 3.9.9 on MacOS](README_reference.md#installing-python-39-on-macos)
-    * [Unit Tests](README_reference.md#unit-tests)
+See [README_reference.md](README_reference.md):
+
+  * [Code Style](README_reference.md#code-style)
+  * [Unit Tests](README_reference.md#unit-tests)
+  * [Ideal Configuration](README_reference.md#ideal-configuration)
+    * [RPC Node Settings](README_reference.md#rpc-node-settings)
+    * [DB Cache](README_reference.md#db-cache)
+  * [Installing python 3.9.9 on MacOS](README_reference.md#installing-python-39-on-macos)
+  

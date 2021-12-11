@@ -3,11 +3,13 @@
 
   * Random notes, hopefully helpful on occasion.  Probably not helpful on first look.
 
-# Python Linter
-```
-# run linter (configuration found in setup.cfg)
-pycodestyle
-```
+# Code Style
+  * pep8
+  * To run python code style check:
+    ```
+    # (some configuration in setup.cfg)
+    pycodestyle
+    ```
 
 # Unit Tests
 
