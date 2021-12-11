@@ -1,7 +1,11 @@
 
 # staketaxcsv
 
-A python repo to create CSVs for Terra (LUNA), Solana (SOL), and Cosmos (ATOM).
+  * Python repo to create blockchain CSVs for Terra (LUNA), Solana (SOL), and Cosmos (ATOM).
+  * CSV codebase for stake.tax
+  * Community contribution and PRs are most welcome, especially to fix/support new types of 
+    protocols/transactions.
+
 
 # Install
 
@@ -31,6 +35,15 @@ A python repo to create CSVs for Terra (LUNA), Solana (SOL), and Cosmos (ATOM).
     python3 report_terra.py <wallet_address> --txid <txid>
     ```
 
+# Contributing Code
+
+  * Code style follows `pep8` and can be tested with `pycodestyle`.
+  * Providing a sample transaction txid (directly, support@stake.tax, DM @staketax, etc.)
+    is the fastest way for changes to be included:
+    ```
+    # Your PR (most commonly) should print different output for before/after for a given txid.
+    python3 report_terra.py <wallet_address> --txid <txid>
+    ```
 
 # Reference
 
