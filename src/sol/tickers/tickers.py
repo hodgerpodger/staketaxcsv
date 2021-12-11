@@ -32,18 +32,6 @@ class Tickers:
             cls.loaded = True
 
     @classmethod
-    def _is_nft(cls, address):
-        data = RpcAPI.fetch_account(address)
-        try:
-            supply = data["result"]["value"]["data"]["parsed"]["info"]["supply"]
-            if supply == "1":
-                return True
-            else:
-                return False
-        except Exception as e:
-            return False
-
-    @classmethod
     def get(cls, address):
         cls._load()
 
