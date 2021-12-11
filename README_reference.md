@@ -30,16 +30,16 @@ default version.
 ## DB Cache
 
 Use of a database for caching is ideal to speed up certain RPC queries (especially SOL).  Here is
-the script usage to use caching:
+the script usage to enable caching:
 
   ```
   cd src
   
-  # --cache flag requires implementation of Cache class (common/cache.py)
+  # --cache flag requires working implementation of Cache class (common/cache.py)
   python3 report_terra.py <wallet_address> --cache
   ```
 
-To enable --cache, you must configure an aws connection for the boto3 code found in src/common/Cache.py.
+To enable --cache, you must configure an aws connection for the boto3 code found in src/common/Cache.py:
   * One method: `aws configure`
     * See here to install AWS CLI: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
     * See here to use `aws configure`: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html
