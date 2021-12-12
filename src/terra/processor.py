@@ -32,6 +32,7 @@ from terra.handle_nft import (
     handle_transfer_nft, handle_approve, handle_withdraw, handle_add_to_deposit, handle_accept_deposit,
     handle_send_nft
 )
+from terra.handle_reward_pylon import handle_airdrop_pylon
 
 # execute_type -> tx_type mapping for generic transactions with no tax details
 EXECUTE_TYPES_SIMPLE = {
@@ -193,6 +194,8 @@ def process_tx(wallet_address, elem, exporter):
             # Contract reward transactions
             elif execute_type in (ex.EXECUTE_TYPE_CLAIM_REWARDS, ex.EXECUTE_TYPE_WITHDRAW):
                 return handle_reward_contract(exporter, elem, txinfo)
+            elif execute_type == ex.EXECUTE_TYPE_AIRDROP:
+                return handle_airdrop_pylon(exporter, elem, txinfo)
 
             else:
                 logging.error("Unknown execute_type for txid=%s", txid)

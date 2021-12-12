@@ -56,6 +56,7 @@ EXECUTE_TYPE_ADD_TO_WHITELIST = "add_to_whitelist"
 EXECUTE_TYPE_ADD_TO_DEPOSIT = "add_to_deposit"
 EXECUTE_TYPE_ACCEPT_DEPOSIT = "accept_deposit"
 EXECUTE_TYPE_SEND_NFT = "send_nft"
+EXECUTE_TYPE_AIRDROP = "airdrop"
 
 
 def _execute_type(elem, txinfo, index=0):
@@ -172,6 +173,8 @@ def _execute_type(elem, txinfo, index=0):
         return EXECUTE_TYPE_SEND_NFT
     elif "approve" in execute_msg:
         return EXECUTE_TYPE_APPROVE
+    elif "airdrop" in execute_msg:
+        return EXECUTE_TYPE_AIRDROP
 
     logging.error("Unable to determine execute type for txid=%s", txid, extra={
         "txid": txid,
