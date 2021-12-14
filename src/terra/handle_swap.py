@@ -21,27 +21,46 @@ def handle_swap_msgswap(exporter, elem, txinfo):
 
 
 def handle_swap(exporter, elem, txinfo):
+    txid = txinfo.txid
     logs = elem["logs"]
 
     if "coin_received" in logs[0]["events_by_type"]:
         for log in logs:
-            _handle_log(exporter, txinfo, log)
+            _parse_log(exporter, txinfo, log)
     else:
         # older version of data
-       _handle_swap(exporter, elem, txinfo)
+        from_contract = util_terra._event_with_action(elem, "from_contract", "swap")
+        _parse_from_contract(exporter, txinfo, from_contract)
+
 
 def handle_execute_swap_operations(exporter, elem, txinfo):
     logs = elem["logs"]
 
     if "coin_received" in logs[0]["events_by_type"]:
         for log in logs:
-            _handle_log(exporter, txinfo, log)
+            _parse_log(exporter, txinfo, log)
     else:
         # older version of data
-        _handle_execute_swap_operations(exporter, elem, txinfo)
+        _parse_swap_operations(exporter, elem, txinfo)
 
 
-def _handle_log(exporter, txinfo, log):
+def _parse_log(exporter, txinfo, log):
+    wallet_address = txinfo.wallet_address
+
+    # Parse using from_contract field if exists
+    result = _parse_from_contract_if_exists(exporter, txinfo, log)
+    if result:
+        return
+
+    # Parse using coin_received, coin_spent fields if right info available
+    result = _parse_coins(exporter, txinfo, log)
+    if result:
+        return
+
+    raise Exception("Bad condition in _parse_log()")
+
+
+def _parse_coins(exporter, txinfo, log):
     wallet_address = txinfo.wallet_address
 
     coin_received = log["events_by_type"]["coin_received"]
@@ -64,53 +83,51 @@ def _handle_log(exporter, txinfo, log):
 
         row = make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
         exporter.ingest_row(row)
-
+        return True
     else:
-        raise Exception("Bad condition in _handle_log()")
+        return False
 
 
-def _handle_swap(exporter, elem, txinfo):
+def _parse_swap_operations(exporter, elem, txinfo):
     txid = txinfo.txid
-    from_contract = util_terra._event_with_action(elem, "from_contract", "swap")
+    wallet_address = txinfo.wallet_address
+
+    transfers_in, transfers_out = util_terra._transfers(elem, wallet_address, txid)
+    from_contract = elem["logs"][0]["events_by_type"]["from_contract"]
 
     # Determine send amount, currency
-    sent_amount, sent_currency = _sent(from_contract, txid)
+    if transfers_out:
+        sent_amount, sent_currency = transfers_out[0]
+    else:
+        sent_amount, sent_currency = _sent(from_contract, txid)
 
     # Determine receive amount, currency
-    receive_amount, receive_currency = _received(from_contract, txid)
+    if transfers_in:
+        receive_amount, receive_currency = transfers_in[0]
+    else:
+        receive_amount, receive_currency = _received(from_contract, txid)
 
     row = make_swap_tx(txinfo, sent_amount, sent_currency, receive_amount, receive_currency)
     exporter.ingest_row(row)
 
 
-def _handle_execute_swap_operations(exporter, elem, txinfo):
+def _parse_from_contract_if_exists(exporter, txinfo, log):
+    from_contract = log["events_by_type"].get("from_contract", None)
+    if from_contract:
+        _parse_from_contract(exporter, txinfo, from_contract)
+        return True
+    else:
+        return False
+
+
+def _parse_from_contract(exporter, txinfo, from_contract):
     txid = txinfo.txid
-    wallet_address = txinfo.wallet_address
 
-    transfers_in, transfers_out = util_terra._transfers(elem, wallet_address, txid)
+    sent_amount, sent_currency = _sent(from_contract, txid)
+    receive_amount, receive_currency = _received(from_contract, txid)
 
-    try:
-        from_contract = elem["logs"][0]["events_by_type"]["from_contract"]
-
-        # Determine send amount, currency
-        if transfers_out:
-            sent_amount, sent_currency = transfers_out[0]
-        else:
-            sent_amount, sent_currency = _sent(from_contract, txid)
-
-        # Determine receive amount, currency
-        if transfers_in:
-            receive_amount, receive_currency = transfers_in[0]
-        else:
-            receive_amount, receive_currency = _received(from_contract, txid)
-
-        row = make_swap_tx(txinfo, sent_amount, sent_currency, receive_amount, receive_currency)
-        exporter.ingest_row(row)
-
-        return
-    except Exception as e:
-        logging.error("error in handle_execute_swap_operations()")
-        raise e
+    row = make_swap_tx(txinfo, sent_amount, sent_currency, receive_amount, receive_currency)
+    exporter.ingest_row(row)
 
 
 def _sent(from_contract, txid):
