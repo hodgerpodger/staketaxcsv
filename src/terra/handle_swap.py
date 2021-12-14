@@ -21,38 +21,76 @@ def handle_swap_msgswap(exporter, elem, txinfo):
 
 
 def handle_swap(exporter, elem, txinfo):
-    txid = txinfo.txid
+    logs = elem["logs"]
 
-    # Try to parse using terra sdk api
-    try:
-        data = elem
-        from_contract = util_terra._event_with_action(data, "from_contract", "swap")
-
-        # Determine send amount, currency
-        sent_amount, sent_currency = _sent(from_contract, txid)
-
-        # Determine receive amount, currency
-        receive_amount, receive_currency = _received(from_contract, txid)
-
-        row = make_swap_tx(txinfo, sent_amount, sent_currency, receive_amount, receive_currency)
-        exporter.ingest_row(row)
-
-        return
-    except Exception as e:
-        logging.error("error in handle_swap()")
-        raise e
-
+    if "coin_received" in logs[0]["events_by_type"]:
+        for log in logs:
+            _handle_log(exporter, txinfo, log)
+    else:
+        # older version of data
+       _handle_swap(exporter, elem, txinfo)
 
 def handle_execute_swap_operations(exporter, elem, txinfo):
+    logs = elem["logs"]
+
+    if "coin_received" in logs[0]["events_by_type"]:
+        for log in logs:
+            _handle_log(exporter, txinfo, log)
+    else:
+        # older version of data
+        _handle_execute_swap_operations(exporter, elem, txinfo)
+
+
+def _handle_log(exporter, txinfo, log):
+    wallet_address = txinfo.wallet_address
+
+    coin_received = log["events_by_type"]["coin_received"]
+    coin_spent = log["events_by_type"]["coin_spent"]
+
+    amounts = coin_received["amount"]
+    receivers = coin_received["receiver"]
+    received = [amounts[i] for i in range(len(amounts)) if receivers[i] == wallet_address]
+
+    amounts = coin_spent["amount"]
+    spenders = coin_spent["spender"]
+    sent = [amounts[i] for i in range(len(amounts)) if spenders[i] == wallet_address]
+
+    if len(received) == 1 and len(sent) == 1:
+        amount_string_received = received[0]
+        amount_string_sent = sent[0]
+
+        received_amount, received_currency = util_terra._amount(amount_string_received)
+        sent_amount, sent_currency = util_terra._amount(amount_string_sent)
+
+        row = make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
+        exporter.ingest_row(row)
+
+    else:
+        raise Exception("Bad condition in _handle_log()")
+
+
+def _handle_swap(exporter, elem, txinfo):
+    txid = txinfo.txid
+    from_contract = util_terra._event_with_action(elem, "from_contract", "swap")
+
+    # Determine send amount, currency
+    sent_amount, sent_currency = _sent(from_contract, txid)
+
+    # Determine receive amount, currency
+    receive_amount, receive_currency = _received(from_contract, txid)
+
+    row = make_swap_tx(txinfo, sent_amount, sent_currency, receive_amount, receive_currency)
+    exporter.ingest_row(row)
+
+
+def _handle_execute_swap_operations(exporter, elem, txinfo):
     txid = txinfo.txid
     wallet_address = txinfo.wallet_address
 
     transfers_in, transfers_out = util_terra._transfers(elem, wallet_address, txid)
 
-    # Try to parse using terra sdk api
     try:
-        data = elem
-        from_contract = data["logs"][0]["events_by_type"]["from_contract"]
+        from_contract = elem["logs"][0]["events_by_type"]["from_contract"]
 
         # Determine send amount, currency
         if transfers_out:
