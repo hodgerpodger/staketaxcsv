@@ -33,6 +33,7 @@ from terra.handle_nft import (
     handle_send_nft
 )
 from terra.handle_reward_pylon import handle_airdrop_pylon
+from terra.handle_failed_tx import handle_failed_tx
 
 # execute_type -> tx_type mapping for generic transactions with no tax details
 EXECUTE_TYPES_SIMPLE = {
@@ -50,12 +51,12 @@ def process_txs(wallet_address, elems, exporter, progress):
 
 
 def process_tx(wallet_address, elem, exporter):
-    if "code" in elem:
-        # Failed transaction
-        return
-
     txid = elem["txhash"]
     msgtype, txinfo = _txinfo(exporter, elem, wallet_address)
+
+    if "code" in elem:
+        # Failed transaction
+        return handle_failed_tx(exporter, elem, txinfo)
 
     try:
         if msgtype == "bank/MsgSend":
@@ -247,7 +248,7 @@ def _get_fee(elem):
     fee = util_terra._float_amount(amount_string, currency)
 
     # Parse for tax info, add to fee if exists
-    log = elem["logs"][0].get("log") if elem["logs"] else None
+    log = elem["logs"][0].get("log") if elem.get("logs") else None
     if log:
         tax_amount_string = log.get("tax", None)
         if tax_amount_string:
