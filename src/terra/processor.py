@@ -240,10 +240,20 @@ def _get_fee(elem):
     if len(amounts) == 0:
         return 0, "", None
 
+    # Parse fee element
     denom = amounts[0]["denom"]
     amount_string = amounts[0]["amount"]
     currency = util_terra._denom_to_currency(denom)
     fee = util_terra._float_amount(amount_string, currency)
+
+    # Parse for tax info, add to fee if exists
+    log = elem["logs"][0].get("log") if elem["logs"] else None
+    if log:
+        tax_amount_string = log.get("tax", None)
+        if tax_amount_string:
+            tax_amount, tax_currency = util_terra._amount(tax_amount_string)
+            if tax_currency == currency:
+                fee += tax_amount
 
     if len(amounts) == 1:
         # "normal" single fee
