@@ -2,7 +2,7 @@
 # staketaxcsv
 
   * Python repo to create blockchain CSVs for Terra (LUNA), Solana (SOL), and Cosmos (ATOM).
-  * CSV codebase for stake.tax
+  * CSV codebase for https://stake.tax
   * Community contribution and PRs are most welcome, especially to fix/support new types of 
     protocols/transactions.
 
