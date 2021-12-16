@@ -406,7 +406,7 @@ def _transfers_net(txinfo, transfers, fee, mint_to=False):
 
     transfers_in, transfers_out, fee = util_sol.detect_fees(_transfers_in, _transfers_out, fee)
 
-    # Add up net transfer by currency, into a dict
+    # Sum up net transfer by currency, into a dict
     net_amounts = {}
     for amount, currency, source, destination in transfers_in:
         if currency not in net_amounts:

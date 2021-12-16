@@ -32,17 +32,7 @@ def detect_fees(_transfers_in, _transfers_out, fee):
         else:
             transfers_out.append(transfer_out)
 
-    # Detect SOL small transfers in and assume fee paid by opposing party: simply throw out
-    transfers_in = []
-    for transfer_in in _transfers_in:
-        amount, currency, source, destination = transfer_in
-
-        if currency == CURRENCY_SOL and amount < 0.03:
-            pass
-        else:
-            transfers_in.append(transfer_in)
-
     # Calculate fee of transaction
     tx_fee = fee_total if fee_total else fee
 
-    return transfers_in, transfers_out, tx_fee
+    return _transfers_in, transfers_out, tx_fee
