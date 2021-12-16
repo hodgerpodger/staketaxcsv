@@ -27,8 +27,11 @@ def parse_args():
     parser.add_argument('--debug', action='store_true', default=False)
     parser.add_argument('--cache', action='store_true', default=False,
                         help="use Cache class (only work if implemented)")
-    parser.add_argument('--minor_rewards', action="store_true", default=False,
+    parser.add_argument('--minor_rewards', action='store_true', default=False,
                         help="(LUNA only) include minor currency rewards")
+    parser.add_argument("--lp", action="store_true", default=False,
+                        help="(LUNA only) if set, treat LP deposits/withdrawals as trades "
+                             "(default is treat as _LP_DEPOSIT/_LP_WITHDRAW transactions)")
 
     args = parser.parse_args()
 
@@ -40,6 +43,8 @@ def parse_args():
         options["cache"] = True
     if args.minor_rewards:
         options["minor_rewards"] = True
+    if args.lp:
+        options["lp"] = True
 
     return args.wallet_address, args.format, args.txid, options
 

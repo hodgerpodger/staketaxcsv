@@ -53,6 +53,8 @@ def readOptions(options):
             localconfig.cache = True
         if options.get("minor_rewards") is True:
             localconfig.minor_rewards = True
+        if options.get("lp") is True:
+            localconfig.lp = True
 
 
 def wallet_exists(wallet_address):
