@@ -61,7 +61,7 @@ Alternatively, you may implement your own Cache class (common/cache.py).
     
     # use virtualenv
     brew install virtualenv
-    virtualenv -p .pyenv/versions/3.9.9/bin/python3.9 env
+    virtualenv -p ~/.pyenv/versions/3.9.9/bin/python3.9 env
     source env/bin/activate
     
     # install pip packages (same as README.md)
