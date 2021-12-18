@@ -10,9 +10,12 @@
 # Install
 
   1. Install python 3.9 ([one way](README_reference.md#installing-python-39-on-macos))
-  2. Install pip packages ```pip3 install -r requirements.txt```
-  3. Load environment variables ```source sample.env```
-  4. Edit (~/.bashrc, ~/.zshrc, shell equivalent) so future shell sessions load `sample.env`:
+  2. Install pip packages and load environment variables
+     ```
+     pip3 install -r requirements.txt
+     source sample.env
+     ```
+  3. Edit (~/.bashrc, ~/.zshrc, shell equivalent) so future shell sessions load `sample.env`:
   ```
   set -o allexport
   source <PATH_TO_SAMPLE_ENV_HERE>/sample.env
