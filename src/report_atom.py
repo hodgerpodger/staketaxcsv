@@ -34,7 +34,7 @@ from atom.ProgressAtom import ProgressAtom
 
 LIMIT = 50   # Cannot go more than 100 per query
 MAX_TRANSACTIONS = 1000
-MAX_PAGES = int(MAX_TRANSACTIONS / LIMIT)
+# MAX_PAGES = int(MAX_TRANSACTIONS / LIMIT)
 CHAIN_IDS = ["cosmoshub-4"]
 
 # Required for aws lambda
@@ -62,6 +62,8 @@ def readOptions(options):
     if options:
         if options.get("debug") is True:
             localconfig.debug = True
+        if options.get("limit"):
+            localconfig.limit = options.get("limit")
 
 
 def wallet_exists(wallet_address):
@@ -157,10 +159,17 @@ def _count_txs(wallet_address):
     return pages
 
 
+def _max_pages():
+    max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
+    max_pages = int(max_txs / LIMIT) + 1
+    logging.info("max_txs: %s, max_pages: %s", max_txs, max_pages)
+    return max_pages
+
+
 def _pages(data):
     count = int(data["total_count"])
     page_total = int((count - 1) / LIMIT) + 1
-    page_min = max(page_total - MAX_PAGES + 1, 1)
+    page_min = max(page_total - _max_pages() + 1, 1)
     pages = list(range(page_min, page_total + 1))
     return pages
 

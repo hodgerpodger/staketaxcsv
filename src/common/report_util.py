@@ -32,6 +32,8 @@ def parse_args():
     parser.add_argument("--lp", action="store_true", default=False,
                         help="(LUNA only) if set, treat LP deposits/withdrawals as trades "
                              "(default is treat as _LP_DEPOSIT/_LP_WITHDRAW transactions)")
+    parser.add_argument("--limit", type=int,
+                        help="change to non-default max transactions limit")
 
     args = parser.parse_args()
 
@@ -45,6 +47,8 @@ def parse_args():
         options["minor_rewards"] = True
     if args.lp:
         options["lp"] = True
+    if args.limit:
+        options["limit"] = args.limit
 
     return args.wallet_address, args.format, args.txid, options
 

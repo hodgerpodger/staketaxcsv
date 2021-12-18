@@ -24,7 +24,7 @@ from common.ErrorCounter import ErrorCounter
 
 LIMIT = 1000
 MAX_TRANSACTIONS = 5000
-MAX_QUERIES = int(MAX_TRANSACTIONS / LIMIT)
+# MAX_QUERIES = int(MAX_TRANSACTIONS / LIMIT)
 RPC_TIMEOUT = 600  # seconds
 
 
@@ -46,6 +46,8 @@ def readOptions(options):
             localconfig.debug = True
         if options.get("cache") is True:
             localconfig.cache = True
+        if options.get("limit"):
+            localconfig.limit = options.get("limit")
 
 
 def wallet_exists(wallet_address):
@@ -147,8 +149,17 @@ def txhistory(wallet_address, job=None):
     return exporter
 
 
+def _max_queries():
+    max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
+    max_queries = int(max_txs / LIMIT) + 1
+    logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
+    return max_queries
+
+
 def _query_txids(addresses, progress):
     """ Returns transactions txid's across all token account addresses """
+    max_queries = _max_queries()
+
     out = []
     before = None
     for i, address in enumerate(addresses):
@@ -157,7 +168,7 @@ def _query_txids(addresses, progress):
             progress.report_message(message)
 
         # Get transaction txids for this token account
-        for j in range(MAX_QUERIES):
+        for j in range(max_queries):
             logging.info("query %s for address=%s", j, address)
 
             txids, before = RpcAPI.get_txids(address, limit=LIMIT, before=before)

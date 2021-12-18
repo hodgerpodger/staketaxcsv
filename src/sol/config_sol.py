@@ -5,3 +5,4 @@ class localconfig:
     debug = False
     cache = False
     blocks = {}
+    limit = None

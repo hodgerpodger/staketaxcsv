@@ -29,7 +29,7 @@ from common.ErrorCounter import ErrorCounter
 from settings_csv import TERRA_FIGMENT_KEY
 
 MAX_TRANSACTIONS = 5000
-MAX_QUERIES = int(MAX_TRANSACTIONS / LIMIT_FCD)
+# MAX_QUERIES = int(MAX_TRANSACTIONS / LIMIT_FCD)
 
 
 def main():
@@ -55,6 +55,8 @@ def readOptions(options):
             localconfig.minor_rewards = True
         if options.get("lp") is True:
             localconfig.lp = True
+        if options.get("limit"):
+            localconfig.limit = options.get("limit")
 
 
 def wallet_exists(wallet_address):
@@ -80,9 +82,16 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_TX * _num_txs(wallet_address)
 
 
+def _max_queries():
+    max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
+    max_queries = int(max_txs / LIMIT_FCD) + 1
+    logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
+    return max_queries
+
+
 def _num_txs(wallet_address):
     num_txs = 0
-    for i in range(MAX_QUERIES):
+    for i in range(_max_queries()):
         logging.info("estimate_duration() loop num_txs=%s", num_txs)
 
         data = SearchAPIFigment.get_txs(wallet_address, offset=num_txs)
@@ -137,7 +146,7 @@ def _get_txs(wallet_address, progress):
 
     offset = 0
     out = []
-    for i in range(MAX_QUERIES):
+    for i in range(_max_queries()):
         num_tx = len(out)
         progress.report(num_tx, "Retrieving transaction {} of {} ...".format(num_tx + 1, progress.num_txs))
 
