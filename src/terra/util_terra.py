@@ -269,8 +269,16 @@ def _lookup_lp_address(addr, txid):
     init_msg = _query_wasm(addr)
     logging.info("init_msg: %s", init_msg)
 
-    address_pair = init_msg["init_hook"]["contract_addr"]
-    currency1, currency2 = _lookup_address(address_pair, txid)
+    if "init_hook" in init_msg:
+        address_pair = init_msg["init_hook"]["contract_addr"]
+        currency1, currency2 = _lookup_address(address_pair, txid)
+    elif "staking_token" in init_msg:
+        staking_token = init_msg["staking_token"]
+        init_msg = _query_wasm(staking_token)
+        address_pair = init_msg["init_hook"]["contract_addr"]
+        currency1, currency2 = _lookup_address(address_pair, txid)
+    else:
+        raise Exception("Unable to determine lp currency for addr={}, txid={}".format(addr, txid))
 
     if currency1 == "UST":
         lp_currency = "LP_{}_UST".format(currency2)
@@ -286,7 +294,7 @@ def _lookup_lp_address(addr, txid):
         return [lp_currency, None]
     else:
         localconfig.currency_addresses[addr] = ""
-        raise Exception("Unable to determine lp currency for addr=%s, txid=%s", addr, txid)
+        raise Exception("Unable to determine lp currency for addr={}, txid={}".format(addr, txid))
 
 
 def _query_wasm(addr):
