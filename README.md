@@ -11,13 +11,13 @@
 
   1. Install python 3.9 ([one way](README_reference.md#installing-python-39-on-macos))
   2. Install pip packages ```pip3 install -r requirements.txt```
-  3. Edit (~/.bashrc, ~/.zshrc, shell equivalent) so that it loads `sample.env` in shell:
-  ```
-  set -o allexport
-  source <PATH_TO_SAMPLE_ENV_HERE>/sample.env
-  set +o allexport
-   ```
-    
+  3. Load environment variables ```source sample.env```
+    * (optional) Edit (~/.bashrc, ~/.zshrc, shell equivalent) so that it loads `sample.env` in future shell sessions:
+      ```
+      set -o allexport
+      source <PATH_TO_SAMPLE_ENV_HERE>/sample.env
+      set +o allexport
+      ```
   4. For ATOM only, install `gaiad` 
   - https://hub.cosmos.network/main/gaia-tutorials/installation.html
 
