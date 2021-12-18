@@ -15,6 +15,7 @@ from sol.handle_metaplex import handle_metaplex, is_nft_mint, handle_nft_mint
 from sol.handle_nft_market import handle_nft_exchange, get_nft_program
 from sol.handle_marinade import handle_marinade
 from sol.handle_vote import handle_vote
+from sol.handle_orca import handle_orca_swap_v2
 from sol.parser import parse_tx
 from common.ErrorCounter import ErrorCounter
 from sol import constants as co
@@ -60,6 +61,10 @@ def process_tx(wallet_address, exporter, txid, data):
             handle_raydium_stake_v4(exporter, txinfo)
         elif co.PROGRAMID_RAYDIUM_STAKE_V5 in program_ids:
             handle_raydium_stake_v5(exporter, txinfo)
+
+        # Orca programs
+        elif co.PROGRAMID_ORCA_SWAP_V2 in program_ids:
+            handle_orca_swap_v2(exporter, txinfo)
 
         # Saber programs
         elif co.PROGRAMID_SABER in program_ids:
