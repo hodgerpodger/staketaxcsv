@@ -4,11 +4,16 @@ from common.make_tx import (
 from osmo import constants as co
 from osmo.make_tx import make_delegate_tx
 from common.Exporter import (TX_TYPE_OSMO_VOTE)
+from osmo import util_osmo
 
 
 TX_TYPES_SIMPLE = {
     co.MSG_TYPE_VOTE: TX_TYPE_OSMO_VOTE
 }
+
+
+def handle_failed_tx(exporter, txinfo):
+    pass
 
 
 def handle_simple(exporter, txinfo, message, transfers):
@@ -20,9 +25,12 @@ def handle_simple(exporter, txinfo, message, transfers):
 
 
 def handle_delegate(exporter, txinfo, message, transfers):
-    transfers_in, transfers_out = transfers
+    denom = message["amount"]["denom"]
+    uamount = message["amount"]["amount"]
 
-    amount, currency = transfers_out[0]
+    currency = util_osmo._denom_to_currency(denom)
+    amount = util_osmo._amount(uamount, currency)
+
     row = make_delegate_tx(txinfo, amount, currency)
     exporter.ingest_row(row)
 

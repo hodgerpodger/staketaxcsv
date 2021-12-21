@@ -19,5 +19,11 @@ class TxInfoOsmo(TxInfo):
         print("timestamp: {}".format(self.timestamp))
         print("fee: {}".format(self.fee))
 
-        print("msgs:")
-        pprint.pprint(self.msgs)
+        i = 0
+        for msg, transfers in self.msgs:
+            print("\nmsg{}:".format(i))
+            print("\tmessage: {}".format(msg))
+            print("\ttransfers_in: {}".format(transfers[0]))
+            print("\ttransfers_out: {}".format(transfers[1]))
+            i += 1
+        print("\n")

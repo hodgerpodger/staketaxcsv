@@ -56,13 +56,13 @@ def wallet_exists(wallet_address):
 
 def txone(wallet_address, txid):
     data = OsmoTxAPI.get_tx(txid)
-
     print("\ndebug data:")
     pprint.pprint(data)
+    print("\n")
 
     exporter = Exporter(wallet_address)
-    osmo.processor.process_tx(wallet_address, data, exporter)
-    print("")
+    txinfo = osmo.processor.process_tx(wallet_address, data, exporter)
+    txinfo.print()
 
     return exporter
 

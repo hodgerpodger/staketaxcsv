@@ -5,7 +5,9 @@ from datetime import datetime
 from osmo.TxInfoOsmo import TxInfoOsmo
 from osmo.handle_unknown import handle_unknown_detect_transfers
 from osmo.handle_general import (
-    handle_delegate, handle_withdraw_reward, handle_simple, handle_transfer_ibc)
+    handle_delegate, handle_withdraw_reward, handle_simple, handle_transfer_ibc,
+    handle_failed_tx
+)
 from osmo.handle_swap import handle_swap
 from osmo import util_osmo
 from osmo import constants as co
@@ -19,6 +21,11 @@ def process_txs(wallet_address, elems, exporter):
 def process_tx(wallet_address, elem, exporter):
     txinfo = _parse_tx(elem, wallet_address)
     msgs = txinfo.msgs
+
+    # Detect failed transaction
+    if "code" in elem:
+        handle_failed_tx(exporter, txinfo)
+        return txinfo
 
     for message, transfers in msgs:
         # Process message
@@ -46,8 +53,7 @@ def process_tx(wallet_address, elem, exporter):
                 "Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
             handle_unknown_detect_transfers(exporter, txinfo, transfers)
 
-            # roger
-            raise(e)
+    return txinfo
 
 
 def _parse_tx(elem, wallet_address):
@@ -64,7 +70,7 @@ def _parse_tx(elem, wallet_address):
 def _msgs(elem, wallet_address):
     out = []
 
-    num_messages = len(elem["tx"]["body"]["messages"])
+    num_messages = len(elem["logs"])
     for i in range(num_messages):
         message = elem["tx"]["body"]["messages"][i]
         log = elem["logs"][i]
@@ -75,8 +81,14 @@ def _msgs(elem, wallet_address):
 
 
 def _fee(elem):
-    fee = elem["tx"]["auth_info"]["fee"]["amount"][0]
-    fee_amount = float(fee["amount"]) / co.MILLION
+    fees = elem["tx"]["auth_info"]["fee"]["amount"]
+    if len(fees) == 0:
+        return "", ""
+
+    first_fee = fees[0]
+    fee_amount = float(first_fee["amount"]) / co.MILLION
     fee_currency = co.CUR_OSMO
 
+    if not fee_amount:
+        return "", ""
     return fee_amount, fee_currency
