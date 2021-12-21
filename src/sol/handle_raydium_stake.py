@@ -2,7 +2,8 @@
 import re
 
 from sol.handle_simple import handle_unknown
-from sol.make_tx import make_stake_tx, make_reward_tx, make_unstake_tx, make_reward_zero_tx
+from common.make_tx import make_reward_tx
+from sol.make_tx import make_stake_tx, make_unstake_tx, make_reward_zero_tx
 from sol.constants import MILLION, CURRENCY_SOL
 
 

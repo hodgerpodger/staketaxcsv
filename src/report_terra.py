@@ -29,7 +29,6 @@ from common.ErrorCounter import ErrorCounter
 from settings_csv import TERRA_FIGMENT_KEY
 
 MAX_TRANSACTIONS = 5000
-# MAX_QUERIES = int(MAX_TRANSACTIONS / LIMIT_FCD)
 
 
 def main():

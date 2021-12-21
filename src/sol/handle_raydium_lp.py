@@ -1,6 +1,6 @@
 
-from sol.make_tx import make_lp_deposit_tx, make_lp_withdraw_tx, make_swap_tx
-from sol.tickers.tickers import Tickers
+from sol.make_tx import make_lp_deposit_tx, make_lp_withdraw_tx
+from common.make_tx import make_swap_tx
 from sol.handle_simple import handle_unknown
 from sol import util_sol
 

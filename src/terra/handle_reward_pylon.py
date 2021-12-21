@@ -1,7 +1,6 @@
 
 from terra import util_terra
-from terra.make_tx import make_airdrop_tx
-from common.make_tx import make_unknown_tx
+from common.make_tx import make_unknown_tx, make_airdrop_tx
 
 
 def handle_airdrop_pylon(exporter, elem, txinfo):
@@ -18,7 +17,7 @@ def handle_airdrop_pylon(exporter, elem, txinfo):
     for i in range(len(actions)):
         action = actions[i]
         contract_address = contract_addresses[i]
-        amount_string = amounts[i-1] if i > 0 else ""
+        amount_string = amounts[i - 1] if i > 0 else ""
 
         if action == "transfer":
             # Extract amount/currency for transfer action

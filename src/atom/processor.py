@@ -8,8 +8,7 @@ from settings_csv import TICKER_ATOM
 from datetime import datetime
 from common.Exporter import (
     TX_TYPE_VOTE, TX_TYPE_UNKNOWN, TX_TYPE_STAKING_DELEGATE, TX_TYPE_STAKING_UNDELEGATE, TX_TYPE_STAKING_REDELEGATE)
-from atom.make_tx import (
-    make_reward_tx, make_transfer_receive_tx)
+from atom.make_tx import make_transfer_receive_tx, make_atom_reward_tx
 from common.make_tx import make_simple_tx, make_transfer_out_tx
 from atom.constants import MILLION, CURRENCIES, CUR_ATOM, EXCHANGE_COSMOS_BLOCKCHAIN
 
@@ -90,7 +89,7 @@ def handle_del_reward(exporter, txinfo, elem, msg_index, msg_type):
     events = elem["logs"][msg_index]["events"]
     reward = _extract_withdraw_rewards(events, txid)
     if reward:
-        row = make_reward_tx(txinfo, reward)
+        row = make_atom_reward_tx(txinfo, reward)
         exporter.ingest_row(row)
         return
 
@@ -98,7 +97,7 @@ def handle_del_reward(exporter, txinfo, elem, msg_index, msg_type):
     transfers_in, _ = _extract_transfers(events, wallet_address, txid)
     if transfers_in:
         for amount, currency, _, _ in transfers_in:
-            row = make_reward_tx(txinfo, amount)
+            row = make_atom_reward_tx(txinfo, amount)
             exporter.ingest_row(row)
         return
 
@@ -156,7 +155,7 @@ def handle_withdraw_reward(exporter, txinfo, elem, msg_index):
     events = elem["logs"][msg_index]["events"]
     reward = _extract_withdraw_rewards(events, txid)
 
-    row = make_reward_tx(txinfo, reward)
+    row = make_atom_reward_tx(txinfo, reward)
     exporter.ingest_row(row)
 
 

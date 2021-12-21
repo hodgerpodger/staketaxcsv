@@ -2,8 +2,9 @@
 
 import logging
 
+from common.make_tx import make_swap_tx
 from sol.make_tx import (
-    make_swap_tx, make_serum_dex_transfer_in, make_serum_dex_transfer_out, make_serum_dex_no_transfer)
+    make_serum_dex_transfer_in, make_serum_dex_transfer_out, make_serum_dex_no_transfer)
 from sol.config_sol import localconfig
 
 

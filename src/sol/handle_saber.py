@@ -1,5 +1,6 @@
 
-from sol.make_tx import make_swap_tx, make_lp_deposit_tx, make_lp_farm_tx, make_simple_tx
+from sol.make_tx import make_lp_deposit_tx, make_lp_farm_tx, make_simple_tx
+from common.make_tx import make_swap_tx
 from sol.handle_simple import handle_unknown_detect_transfers
 from common.Exporter import TX_TYPE_SOL_INIT_ACCOUNT
 

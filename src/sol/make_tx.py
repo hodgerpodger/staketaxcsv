@@ -26,11 +26,6 @@ def make_sol_reward_tx(timestamp, reward, wallet_address, txid):
     return row
 
 
-def make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency):
-    return _make_tx_exchange(
-        txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_TRADE)
-
-
 def make_lp_deposit_tx(txinfo, sent_amount, sent_currency, lp_amount, lp_currency, txid=None, empty_fee=False,
                        z_index=0):
     return _make_tx_exchange(txinfo, sent_amount, sent_currency, lp_amount, lp_currency, TX_TYPE_SOL_LP_DEPOSIT,
@@ -55,10 +50,6 @@ def make_stake_tx(txinfo, lp_amount, lp_currency, empty_fee=False, z_index=0):
 
 def make_unstake_tx(txinfo, lp_amount, lp_currency, empty_fee=False, z_index=0):
     return _make_tx_received(txinfo, lp_amount, lp_currency, TX_TYPE_SOL_UNSTAKE, empty_fee=empty_fee, z_index=z_index)
-
-
-def make_reward_tx(txinfo, amount, currency, z_index=0):
-    return _make_tx_received(txinfo, amount, currency, TX_TYPE_STAKING, z_index=z_index)
 
 
 def make_reward_zero_tx(txinfo):

@@ -34,7 +34,6 @@ from atom.ProgressAtom import ProgressAtom
 
 LIMIT = 50   # Cannot go more than 100 per query
 MAX_TRANSACTIONS = 1000
-# MAX_PAGES = int(MAX_TRANSACTIONS / LIMIT)
 CHAIN_IDS = ["cosmoshub-4"]
 
 # Required for aws lambda

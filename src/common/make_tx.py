@@ -1,6 +1,24 @@
 
-from common.Exporter import (Row, TX_TYPE_UNKNOWN, TX_TYPE_TRANSFER, TX_TYPE_SPEND, TX_TYPE_INCOME)
+from common.Exporter import (
+    Row, TX_TYPE_UNKNOWN, TX_TYPE_TRANSFER, TX_TYPE_SPEND, TX_TYPE_INCOME, TX_TYPE_TRADE,
+    TX_TYPE_STAKING, TX_TYPE_AIRDROP, TX_TYPE_BORROW, TX_TYPE_REPAY
+)
 from settings_csv import DONATION_WALLETS
+
+
+def make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
+                 txid=None, empty_fee=False):
+    return _make_tx_exchange(txinfo, sent_amount, sent_currency, received_amount, received_currency,
+                             TX_TYPE_TRADE, txid, empty_fee)
+
+
+def make_airdrop_tx(txinfo, reward_amount, reward_currency, txid=None, empty_fee=False):
+    return _make_tx_received(txinfo, reward_amount, reward_currency, TX_TYPE_AIRDROP, txid, empty_fee=empty_fee)
+
+
+def make_reward_tx(txinfo, reward_amount, reward_currency, txid=None, empty_fee=False, z_index=0):
+    """ Staking reward transaction """
+    return _make_tx_received(txinfo, reward_amount, reward_currency, TX_TYPE_STAKING, txid, empty_fee, z_index=z_index)
 
 
 def make_spend_tx(txinfo, sent_amount, sent_currency):
@@ -27,6 +45,17 @@ def make_transfer_in_tx(txinfo, received_amount, received_currency):
         return _make_tx_received(txinfo, received_amount, received_currency, TX_TYPE_INCOME)
     else:
         return _make_tx_received(txinfo, received_amount, received_currency, TX_TYPE_TRANSFER)
+
+
+def make_borrow_tx(txinfo, received_amount, received_currency, empty_fee=False, z_index=0):
+    txinfo.comment = "borrow " + txinfo.comment
+    return _make_tx_received(
+        txinfo, received_amount, received_currency, TX_TYPE_BORROW, empty_fee=empty_fee, z_index=z_index)
+
+
+def make_repay_tx(txinfo, sent_amount, sent_currency, z_index=0):
+    txinfo.comment = "repay " + txinfo.comment
+    return _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_REPAY, z_index=z_index)
 
 
 def make_simple_tx(txinfo, tx_type, z_index=0):

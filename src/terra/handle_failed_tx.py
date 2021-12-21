@@ -2,6 +2,7 @@
 from common.make_tx import make_spend_tx
 from terra import util_terra
 
+
 def handle_failed_tx(exporter, elem, txinfo):
     wallet_address = txinfo.wallet_address
 

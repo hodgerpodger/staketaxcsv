@@ -1,8 +1,7 @@
 
 from terra import util_terra
 from terra.constants import (CUR_MIR, CUR_ANC, CUR_MINE)
-from terra.make_tx import make_airdrop_tx, make_staking_tx
-from common.make_tx import make_unknown_tx
+from common.make_tx import make_unknown_tx, make_reward_tx, make_airdrop_tx
 from common.ErrorCounter import ErrorCounter
 from terra.handle_reward import REWARD_CURRENCIES
 from terra.config_terra import localconfig
@@ -37,7 +36,7 @@ def _handle_withdraw_rewards(exporter, elem, txinfo, index):
             continue
 
         row_txid = "{}-{}".format(txid, index) if index else txid
-        row = make_staking_tx(txinfo, amount, currency, txid=row_txid, empty_fee=(index > 0))
+        row = make_reward_tx(txinfo, amount, currency, txid=row_txid, empty_fee=(index > 0))
         exporter.ingest_row(row)
 
 
@@ -125,7 +124,7 @@ def handle_reward_contract(exporter, elem, txinfo):
     transfers_in, transfers_out = util_terra._transfers(elem, wallet_address, txid)
     if transfers_in:
         amount, currency = transfers_in[0]
-        row = make_staking_tx(txinfo, amount, currency)
+        row = make_reward_tx(txinfo, amount, currency)
         exporter.ingest_row(row)
         return
 
@@ -141,7 +140,7 @@ def handle_reward_contract(exporter, elem, txinfo):
         try:
             currency = _get_currency(from_contract, txid)
             amount = util_terra._float_amount(from_contract["claim_amount"][0], currency)
-            row = make_staking_tx(txinfo, amount, currency, txid=txid_row, empty_fee=i > 0)
+            row = make_reward_tx(txinfo, amount, currency, txid=txid_row, empty_fee=i > 0)
             exporter.ingest_row(row)
             continue
         except Exception as e:
@@ -154,7 +153,7 @@ def handle_reward_contract(exporter, elem, txinfo):
             if amount <= 0:
                 continue
 
-            row = make_staking_tx(txinfo, amount, currency, txid=txid_row)
+            row = make_reward_tx(txinfo, amount, currency, txid=txid_row)
             exporter.ingest_row(row)
             continue
         except Exception as e:

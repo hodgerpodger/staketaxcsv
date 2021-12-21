@@ -1,6 +1,6 @@
 
 from sol.handle_simple import handle_unknown
-from sol.make_tx import make_swap_tx
+from common.make_tx import make_swap_tx
 
 
 # programid: 2kDgtgsifNEuYJkKW5LSe6jfNaa98UsgHCVwVsYA9wod

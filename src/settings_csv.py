@@ -6,6 +6,8 @@ import os
 SOL_NODE = os.environ.get("SOL_NODE", "")
 ATOM_NODE = os.environ.get("ATOM_NODE", "")
 TERRA_LCD_NODE = os.environ.get("TERRA_LCD_NODE", "")
+OSMO_DATA_NODE = os.environ.get("OSMO_DATA_NODE", "")
+OSMO_TX_NODE = os.environ.get("OSMO_TX_NODE", "")
 
 # Optional environment variables
 TERRA_FIGMENT_KEY = os.environ.get("TERRA_FIGMENT_KEY", "")
@@ -15,11 +17,13 @@ TERRA_FIGMENT_KEY = os.environ.get("TERRA_FIGMENT_KEY", "")
 TICKER_ATOM = "ATOM"
 TICKER_LUNA = "LUNA"
 TICKER_SOL = "SOL"
+TICKER_OSMO = "OSMO"
 
 DONATION_WALLETS = set([
     os.environ.get("DONATION_WALLET_ATOM", ""),
     os.environ.get("DONATION_WALLET_LUNA", ""),
     os.environ.get("DONATION_WALLET_SOL", ""),
+    os.environ.get("DONATION_WALLET_OSMO", ""),
 ])
 
 MESSAGE_ADDRESS_NOT_FOUND = "Wallet address not found"

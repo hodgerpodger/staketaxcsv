@@ -2,7 +2,7 @@
 # Unknown program DjVE6JNiYqPL2QXyCUUh8rNjHrbz9hXHNYt99MQ59qw1
 
 from sol.handle_simple import handle_unknown
-from sol.make_tx import make_swap_tx
+from common.make_tx import make_swap_tx
 
 
 def handle_2kd(exporter, txinfo):

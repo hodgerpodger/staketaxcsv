@@ -24,7 +24,6 @@ from common.ErrorCounter import ErrorCounter
 
 LIMIT = 1000
 MAX_TRANSACTIONS = 5000
-# MAX_QUERIES = int(MAX_TRANSACTIONS / LIMIT)
 RPC_TIMEOUT = 600  # seconds
 
 

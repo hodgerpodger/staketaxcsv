@@ -2,7 +2,7 @@
 # Swap V2 Program: SwaPpA9LAaLfeLi3a68M4DjnLqgtticKg6CnyNwgAC8
 
 from sol.constants import LOG_INSTRUCTION_SWAP
-from sol.make_tx import make_swap_tx
+from common.make_tx import make_swap_tx
 from sol.handle_simple import handle_unknown
 
 

@@ -88,6 +88,10 @@ TX_TYPE_SOL_UNSTAKE = "_UNSTAKE"           # Ray unstake
 TX_TYPE_SOL_REWARD_ZERO = "_REWARD_ZERO"   # Ray staking reward 0
 TX_TYPE_SOL_SERUM_DEX = "_SERUM_DEX"
 
+# ### OSMO ##########################################################################################
+
+TX_TYPE_OSMO_VOTE = "_VOTE"
+
 ################################################################################################
 
 # Types included for all non-default CSVs (i.e. koinly, cointracking, etc).

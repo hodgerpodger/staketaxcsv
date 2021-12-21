@@ -3,7 +3,7 @@ import logging
 
 from terra import util_terra
 from terra.constants import CUR_LUNA, CUR_UST, CUR_KRT
-from terra.make_tx import make_staking_tx
+from common.make_tx import make_reward_tx
 from terra.config_terra import localconfig
 from common.Exporter import (
     TX_TYPE_STAKING_DELEGATE, TX_TYPE_STAKING_UNDELEGATE, TX_TYPE_STAKING_REDELEGATE, TX_TYPE_STAKING_WITHDRAW_REWARD)
@@ -51,6 +51,6 @@ def handle_reward(exporter, elem, txinfo, msgtype):
             logging.info("Skipping reward=0 for currency=%s", currency)
             continue
 
-        row = make_staking_tx(txinfo, amount, currency, txid, empty_fee=True)
+        row = make_reward_tx(txinfo, amount, currency, txid, empty_fee=True)
         exporter.ingest_row(row)
         i += 1
