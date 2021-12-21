@@ -23,7 +23,7 @@ def process_tx(wallet_address, elem, exporter):
     msgs = txinfo.msgs
 
     # Detect failed transaction
-    if "code" in elem:
+    if elem["code"] > 0:
         handle_failed_tx(exporter, txinfo)
         return txinfo
 
