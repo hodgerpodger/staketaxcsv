@@ -11,8 +11,8 @@ from common.make_tx import _make_tx_received, _make_tx_sent, _make_tx_exchange, 
 from terra.config_terra import localconfig
 
 
-def make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
-                 txid=None, empty_fee=False):
+def make_swap_tx_terra(txinfo, sent_amount, sent_currency, received_amount, received_currency,
+                       txid=None, empty_fee=False):
     # Special case: treat swap into bLUNA as bond transaction
     if received_currency.upper() == "BLUNA" and sent_currency == CUR_LUNA:
         return make_bond_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)

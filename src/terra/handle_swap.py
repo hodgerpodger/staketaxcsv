@@ -1,6 +1,6 @@
 
 import logging
-from terra.make_tx import make_swap_tx
+from terra.make_tx import make_swap_tx_terra
 from terra.util_terra import _asset_to_currency, _float_amount
 from terra import util_terra
 
@@ -15,8 +15,8 @@ def handle_swap_msgswap(exporter, elem, txinfo):
         received_amount, received_currency = transfers_in[i]
         sent_amount, sent_currency = transfers_out[i]
 
-        row = make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
-                           txid=txid, empty_fee=(i > 0))
+        row = make_swap_tx_terra(txinfo, sent_amount, sent_currency, received_amount, received_currency,
+                                 txid=txid, empty_fee=(i > 0))
         exporter.ingest_row(row)
 
 
@@ -81,7 +81,7 @@ def _parse_coins(exporter, txinfo, log):
         received_amount, received_currency = util_terra._amount(amount_string_received)
         sent_amount, sent_currency = util_terra._amount(amount_string_sent)
 
-        row = make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
+        row = make_swap_tx_terra(txinfo, sent_amount, sent_currency, received_amount, received_currency)
         exporter.ingest_row(row)
         return True
     else:
@@ -107,7 +107,7 @@ def _parse_swap_operations(exporter, elem, txinfo):
     else:
         receive_amount, receive_currency = _received(from_contract, txid)
 
-    row = make_swap_tx(txinfo, sent_amount, sent_currency, receive_amount, receive_currency)
+    row = make_swap_tx_terra(txinfo, sent_amount, sent_currency, receive_amount, receive_currency)
     exporter.ingest_row(row)
 
 
@@ -126,7 +126,7 @@ def _parse_from_contract(exporter, txinfo, from_contract):
     sent_amount, sent_currency = _sent(from_contract, txid)
     receive_amount, receive_currency = _received(from_contract, txid)
 
-    row = make_swap_tx(txinfo, sent_amount, sent_currency, receive_amount, receive_currency)
+    row = make_swap_tx_terra(txinfo, sent_amount, sent_currency, receive_amount, receive_currency)
     exporter.ingest_row(row)
 
 
