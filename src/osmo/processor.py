@@ -7,7 +7,6 @@ from osmo.handle_unknown import handle_unknown_detect_transfers
 from osmo.handle_general import (
     handle_delegate, handle_withdraw_reward, handle_simple, handle_transfer_ibc)
 from osmo.handle_swap import handle_swap
-from osmo.handle
 from osmo import util_osmo
 from osmo import constants as co
 

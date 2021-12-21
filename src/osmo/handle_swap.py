@@ -1,5 +1,5 @@
 
-from handle_unknown import handle_unknown_detect_transfers
+from osmo.handle_unknown import handle_unknown_detect_transfers
 from common.make_tx import make_swap_tx
 
 
@@ -13,4 +13,4 @@ def handle_swap(exporter, txinfo, message, transfers):
         make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
         return
 
-    handle_unknown_detect_transfers(exporter, txinfo, message, transfers)
+    handle_unknown_detect_transfers(exporter, txinfo, transfers)
