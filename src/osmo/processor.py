@@ -36,7 +36,7 @@ def process_tx(wallet_address, elem, exporter):
                 handle_simple(exporter, txinfo, message, transfers)
             elif msg_type == co.MSG_TYPE_DELEGATE:
                 handle_delegate(exporter, txinfo, message, transfers)
-            elif msg_type == co.MSG_TYPE_WITHDRAW_REWARD:
+            elif msg_type in [co.MSG_TYPE_WITHDRAW_REWARD, co.MSG_TYPE_WITHDRAW_COMMISSION]:
                 handle_withdraw_reward(exporter, txinfo, message, transfers)
             elif msg_type == co.MSG_TYPE_IBC_TRANSFER:
                 handle_transfer_ibc(exporter, txinfo, message, transfers)
