@@ -1,11 +1,12 @@
 
 from osmo.make_tx import (
     make_osmo_simple_tx, make_osmo_transfer_in_tx, make_osmo_transfer_out_tx,
-    make_osmo_submit_proposal
+    make_osmo_tx
 )
 from osmo import constants as co
 from common.Exporter import TX_TYPE_OSMO_VOTE, TX_TYPE_OSMO_SET_WITHDRAW_ADDRESS
 from osmo.handle_unknown import handle_unknown_detect_transfers
+from common.Exporter import TX_TYPE_OSMO_SUBMIT_PROPOSAL, TX_TYPE_OSMO_DEPOSIT
 
 
 TX_TYPES_SIMPLE = {
@@ -54,11 +55,19 @@ def _handle_transfer(exporter, txinfo, msginfo):
 
 
 def handle_submit_proposal(exporter, txinfo, msginfo):
+    _handle_tx_transfer_out(exporter, txinfo, msginfo, TX_TYPE_OSMO_SUBMIT_PROPOSAL)
+
+
+def handle_deposit(exporter, txinfo, msginfo):
+    _handle_tx_transfer_out(exporter, txinfo, msginfo, TX_TYPE_OSMO_DEPOSIT)
+
+
+def _handle_tx_transfer_out(exporter, txinfo, msginfo, tx_type):
     transfers_in, transfers_out = msginfo.transfers
 
     if len(transfers_in) == 0 and len(transfers_out) == 1:
         amount, currency = transfers_out[0]
-        row = make_osmo_submit_proposal(txinfo, msginfo, amount, currency)
+        row = make_osmo_tx(txinfo, msginfo, tx_type, amount, currency, "", "")
         exporter.ingest_row(row)
         return
 

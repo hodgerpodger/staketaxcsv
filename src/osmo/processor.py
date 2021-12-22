@@ -5,7 +5,8 @@ from datetime import datetime
 from osmo.TxInfoOsmo import TxInfoOsmo, MsgInfo
 from osmo.handle_unknown import handle_unknown_detect_transfers
 from osmo.handle_general import (
-    handle_simple, handle_transfer_ibc,handle_failed_tx, handle_transfer, handle_submit_proposal
+    handle_simple, handle_transfer_ibc,handle_failed_tx, handle_transfer, handle_submit_proposal,
+    handle_deposit
 )
 from osmo.handle_staking import handle_staking
 from osmo.handle_swap import handle_swap
@@ -58,6 +59,8 @@ def _handle_message(exporter, txinfo, msginfo):
             handle_transfer(exporter, txinfo, msginfo)
         elif msg_type == co.MSG_TYPE_SUBMIT_PROPOSAL:
             handle_submit_proposal(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_DEPOSIT:
+            handle_deposit(exporter, txinfo, msginfo)
         else:
             handle_unknown_detect_transfers(exporter, txinfo, msginfo)
     except Exception as e:
