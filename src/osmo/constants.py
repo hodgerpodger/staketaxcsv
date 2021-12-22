@@ -19,4 +19,4 @@ MSG_TYPE_EXIT_POOL = "/osmosis.gamm.v1beta1.MsgExitPool"
 MSG_TYPE_LOCK_TOKENS = "/osmosis.lockup.MsgLockTokens"
 MSG_TYPE_SEND = "/cosmos.bank.v1beta1.MsgSend"
 MSG_TYPE_SET_WITHDRAW_ADDRESS = "/cosmos.distribution.v1beta1.MsgSetWithdrawAddress"
-
+MSG_TYPE_SUBMIT_PROPOSAL = "/cosmos.gov.v1beta1.MsgSubmitProposal"

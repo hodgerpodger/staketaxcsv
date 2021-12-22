@@ -1,6 +1,7 @@
 
 from common.Exporter import (
-    TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW, TX_TYPE_LP_STAKE, TX_TYPE_LP_UNSTAKE
+    TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW, TX_TYPE_LP_STAKE, TX_TYPE_LP_UNSTAKE,
+    TX_TYPE_OSMO_SUBMIT_PROPOSAL
 )
 from common.make_tx import (
     make_simple_tx, make_swap_tx, make_reward_tx, make_transfer_in_tx, make_transfer_out_tx,
@@ -83,5 +84,11 @@ def make_osmo_lp_stake_tx(txinfo, msginfo, lp_amount, lp_currency):
 
 def make_osmo_lp_unstake_tx(txinfo, msginfo, lp_amount, lp_currency):
     row = _make_tx_received(txinfo, lp_amount, lp_currency, TX_TYPE_LP_UNSTAKE)
+    _edit_row(row, txinfo, msginfo)
+    return row
+
+
+def make_osmo_submit_proposal(txinfo, msginfo, sent_amount, sent_currency):
+    row = _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_OSMO_SUBMIT_PROPOSAL)
     _edit_row(row, txinfo, msginfo)
     return row
