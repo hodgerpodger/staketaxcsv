@@ -18,6 +18,7 @@ TX_TYPES_DELEGATION = {
 def handle_staking(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
     message = msginfo.message
+    wallet_address = txinfo.wallet_address
 
     # TODO: add missing reward-address rewards
 

@@ -1,6 +1,7 @@
 
 from osmo.constants import MILLION
 from osmo.tickers.tickers import TickersIBC
+from osmo.MyWallets import MyWallets
 
 
 def _transfers(log, wallet_address):
@@ -8,17 +9,19 @@ def _transfers(log, wallet_address):
     Parses log element and returns (list of inbound transfers, list of outbound transfers),
     relative to wallet_address.
     """
-    transfers_in = _transfers_coin_received(log, wallet_address)
-    transfers_out = _transfers_coin_spent(log, wallet_address)
+    wallet_addresses = MyWallets.get(wallet_address)
+
+    transfers_in = _transfers_coin_received(log, wallet_addresses)
+    transfers_out = _transfers_coin_spent(log, wallet_addresses)
 
     if len(transfers_in) == 0 and len(transfers_out) == 0:
         # Only add "transfer" event if "coin_received"/"coin_spent" events do not exist
-        transfers_in, transfers_out = _transfers_event(log, wallet_address)
+        transfers_in, transfers_out = _transfers_event(log, wallet_addresses)
 
     return transfers_in, transfers_out
 
 
-def _transfers_coin_received(log, wallet_address):
+def _transfers_coin_received(log, wallet_addresses):
     transfers_in = []
 
     events = log["events"]
@@ -29,14 +32,14 @@ def _transfers_coin_received(log, wallet_address):
             for i in range(0, len(attributes), 2):
                 receiver = attributes[i]["value"]
                 amount_string = attributes[i + 1]["value"]
-                if receiver == wallet_address:
+                if receiver in wallet_addresses:
                     amount, currency = _amount_currency(amount_string)
                     transfers_in.append((amount, currency))
 
     return transfers_in
 
 
-def _transfers_coin_spent(log, wallet_address):
+def _transfers_coin_spent(log, wallet_addresses):
     transfers_out = []
 
     events = log["events"]
@@ -47,14 +50,14 @@ def _transfers_coin_spent(log, wallet_address):
             for i in range(0, len(attributes), 2):
                 spender = attributes[i]["value"]
                 amount_string = attributes[i + 1]["value"]
-                if spender == wallet_address:
+                if spender in wallet_addresses:
                     amount, currency = _amount_currency(amount_string)
                     transfers_out.append((amount, currency))
 
     return transfers_out
 
 
-def _transfers_event(log, wallet_address):
+def _transfers_event(log, wallet_addresses):
     transfers_in, transfers_out = [], []
 
     events = log["events"]
@@ -67,10 +70,10 @@ def _transfers_event(log, wallet_address):
                 sender = attributes[i + 1]["value"]
                 amount_string = attributes[i + 2]["value"]
 
-                if recipient == wallet_address:
+                if recipient in wallet_addresses:
                     amount, currency = _amount_currency(amount_string)
                     transfers_in.append((amount, currency))
-                elif sender == wallet_address:
+                elif sender in wallet_addresses:
                     amount, currency = _amount_currency(amount_string)
                     transfers_out.append((amount, currency))
     return transfers_in, transfers_out
