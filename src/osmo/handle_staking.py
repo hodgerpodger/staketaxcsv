@@ -5,6 +5,9 @@ from common.Exporter import (
 TX_TYPE_STAKING_REDELEGATE, TX_TYPE_STAKING_DELEGATE, TX_TYPE_STAKING_UNDELEGATE,
     TX_TYPE_OSMO_WITHDRAW_DELEGATOR_REWARD, TX_TYPE_OSMO_WITHDRAW_COMMISSION
 )
+from osmo.RewardWallet import RewardWallet
+from osmo import util_osmo
+
 
 TX_TYPES_DELEGATION = {
     co.MSG_TYPE_REDELEGATE: TX_TYPE_STAKING_REDELEGATE,
@@ -20,7 +23,11 @@ def handle_staking(exporter, txinfo, msginfo):
     message = msginfo.message
     wallet_address = txinfo.wallet_address
 
-    # TODO: add missing reward-address rewards
+    # Include reward wallet inbound transfers in addition to wallet inbound transfers
+    reward_wallet = RewardWallet.get(wallet_address)
+    if reward_wallet and reward_wallet != wallet_address:
+        reward_transfers_in, _ = util_osmo._transfers(msginfo.log, reward_wallet)
+        transfers_in.extend(reward_transfers_in)
 
     total = 0
     for amount, currency in transfers_in:

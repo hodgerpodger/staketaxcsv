@@ -2,11 +2,13 @@
 from osmo.make_tx import (
     make_osmo_simple_tx, make_osmo_transfer_in_tx, make_osmo_transfer_out_tx)
 from osmo import constants as co
-from common.Exporter import TX_TYPE_OSMO_VOTE
+from common.Exporter import TX_TYPE_OSMO_VOTE, TX_TYPE_OSMO_SET_WITHDRAW_ADDRESS
+from osmo.handle_unknown import handle_unknown_detect_transfers
 
 
 TX_TYPES_SIMPLE = {
-    co.MSG_TYPE_VOTE: TX_TYPE_OSMO_VOTE
+    co.MSG_TYPE_VOTE: TX_TYPE_OSMO_VOTE,
+    co.MSG_TYPE_SET_WITHDRAW_ADDRESS: TX_TYPE_OSMO_SET_WITHDRAW_ADDRESS,
 }
 
 
@@ -25,6 +27,14 @@ def handle_simple(exporter, txinfo, msginfo):
 
 
 def handle_transfer_ibc(exporter, txinfo, msginfo):
+    _handle_transfer(exporter, txinfo, msginfo)
+
+
+def handle_transfer(exporter, txinfo, msginfo):
+    _handle_transfer(exporter, txinfo, msginfo)
+
+
+def _handle_transfer(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
 
     if len(transfers_in) == 1 and len(transfers_out) == 0:
@@ -38,4 +48,4 @@ def handle_transfer_ibc(exporter, txinfo, msginfo):
         exporter.ingest_row(row)
         return
 
-    raise Exception("Unexpected condition in handle_transfer_ibc()")
+    handle_unknown_detect_transfers(exporter, txinfo, msginfo)

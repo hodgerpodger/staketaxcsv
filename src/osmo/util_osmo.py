@@ -1,7 +1,7 @@
 
-from osmo.constants import MILLION
-from osmo.tickers.tickers import TickersIBC
-from osmo.MyWallets import MyWallets
+from osmo.constants import MILLION, EXP18
+from osmo.tickers.tickers_ibc import TickersIBC
+from osmo.tickers.tickers_gamm import TickersGAMM
 
 
 def _transfers(log, wallet_address):
@@ -9,19 +9,17 @@ def _transfers(log, wallet_address):
     Parses log element and returns (list of inbound transfers, list of outbound transfers),
     relative to wallet_address.
     """
-    wallet_addresses = MyWallets.get(wallet_address)
-
-    transfers_in = _transfers_coin_received(log, wallet_addresses)
-    transfers_out = _transfers_coin_spent(log, wallet_addresses)
+    transfers_in = _transfers_coin_received(log, wallet_address)
+    transfers_out = _transfers_coin_spent(log, wallet_address)
 
     if len(transfers_in) == 0 and len(transfers_out) == 0:
         # Only add "transfer" event if "coin_received"/"coin_spent" events do not exist
-        transfers_in, transfers_out = _transfers_event(log, wallet_addresses)
+        transfers_in, transfers_out = _transfers_event(log, wallet_address)
 
     return transfers_in, transfers_out
 
 
-def _transfers_coin_received(log, wallet_addresses):
+def _transfers_coin_received(log, wallet_address):
     transfers_in = []
 
     events = log["events"]
@@ -32,14 +30,14 @@ def _transfers_coin_received(log, wallet_addresses):
             for i in range(0, len(attributes), 2):
                 receiver = attributes[i]["value"]
                 amount_string = attributes[i + 1]["value"]
-                if receiver in wallet_addresses:
-                    amount, currency = _amount_currency(amount_string)
-                    transfers_in.append((amount, currency))
+                if receiver == wallet_address:
+                    for amount, currency in _amount_currency(amount_string):
+                        transfers_in.append((amount, currency))
 
     return transfers_in
 
 
-def _transfers_coin_spent(log, wallet_addresses):
+def _transfers_coin_spent(log, wallet_address):
     transfers_out = []
 
     events = log["events"]
@@ -50,14 +48,14 @@ def _transfers_coin_spent(log, wallet_addresses):
             for i in range(0, len(attributes), 2):
                 spender = attributes[i]["value"]
                 amount_string = attributes[i + 1]["value"]
-                if spender in wallet_addresses:
-                    amount, currency = _amount_currency(amount_string)
-                    transfers_out.append((amount, currency))
+                if spender == wallet_address:
+                    for amount, currency in _amount_currency(amount_string):
+                        transfers_out.append((amount, currency))
 
     return transfers_out
 
 
-def _transfers_event(log, wallet_addresses):
+def _transfers_event(log, wallet_address):
     transfers_in, transfers_out = [], []
 
     events = log["events"]
@@ -70,32 +68,44 @@ def _transfers_event(log, wallet_addresses):
                 sender = attributes[i + 1]["value"]
                 amount_string = attributes[i + 2]["value"]
 
-                if recipient in wallet_addresses:
-                    amount, currency = _amount_currency(amount_string)
-                    transfers_in.append((amount, currency))
-                elif sender in wallet_addresses:
-                    amount, currency = _amount_currency(amount_string)
-                    transfers_out.append((amount, currency))
+                if recipient == wallet_address:
+                    for amount, currency in _amount_currency(amount_string):
+                        transfers_in.append((amount, currency))
+                elif sender == wallet_address:
+                    for amount, currency in _amount_currency(amount_string):
+                        transfers_out.append((amount, currency))
     return transfers_in, transfers_out
 
 
 def _amount_currency(amount_string):
     # i.e. "5000000uosmo",
-    # "16939122ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4",
-    if "ibc" in amount_string:
-        uamount, ibc_address = amount_string.split("ibc")
+    # i.e. "16939122ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4",
+    # i.e "899999999ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2,1252125015450ibc/9712DBB13B9631EDFA9BF61B55F1B2D290B2ADB67E3A4EB3A875F3B6081B3B84"
+    out = []
+    for amt_string in amount_string.split(","):
+        if "ibc" in amt_string:
+            uamount, ibc_address = amt_string.split("ibc")
 
-        ibc_address = "ibc" + ibc_address
-        currency = _ibc_currency(ibc_address)
-        amount = _amount(uamount, currency)
+            ibc_address = "ibc" + ibc_address
+            currency = _ibc_currency(ibc_address)
+            amount = _amount(uamount, currency)
+        elif "gamm" in amt_string:
+            uamount, gamm_address = amt_string.split("gamm")
 
-        return amount, currency
-    elif "u" in amount_string:
-        uamount, ucurrency = amount_string.split("u", 1)
-        currency = ucurrency.upper()
-        amount = _amount(uamount, currency)
+            gamm_address = "gamm" + gamm_address
+            currency = _gamm_currency(gamm_address)
+            amount = float(uamount) / EXP18
+        elif "u" in amt_string:
+            uamount, ucurrency = amt_string.split("u", 1)
 
-        return amount, currency
+            currency = ucurrency.upper()
+            amount = _amount(uamount, currency)
+        else:
+            raise Exception("Unexpected amount_string: {}".format(amount_string))
+
+        out.append((amount, currency))
+
+    return out
 
 
 def _amount(uamount, currency):
@@ -114,5 +124,13 @@ def _ibc_currency(ibc_address):
         return result
     else:
         return ibc_address
+
+def _gamm_currency(gamm_address):
+    # i.e. "gamm/pool/6"
+    result = TickersGAMM.lookup(gamm_address)
+    if result:
+        return result
+    else:
+        return gamm_address
 
 

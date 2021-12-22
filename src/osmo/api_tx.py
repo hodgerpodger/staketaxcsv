@@ -21,5 +21,5 @@ class OsmoTxAPI:
         logging.info("Querying url=%s...", url)
         response = requests.get(url)
         data = response.json()
-        time.sleep(2)
+        time.sleep(1)
         return data

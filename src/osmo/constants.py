@@ -1,5 +1,6 @@
 
 MILLION = 1000000.0
+EXP18 = 10 ** 18
 EXCHANGE_OSMOSIS = "osmosis_blockchain"
 CUR_OSMO = "OSMO"
 
@@ -13,4 +14,9 @@ MSG_TYPE_MSGRECVPACKET = "/ibc.core.channel.v1.MsgRecvPacket"
 MSG_TYPE_UPDATE_CLIENT = "/ibc.core.client.v1.MsgUpdateClient"
 MSG_TYPE_SWAP_IN = "/osmosis.gamm.v1beta1.MsgSwapExactAmountIn"
 MSG_TYPE_WITHDRAW_COMMISSION = "/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission"
+MSG_TYPE_JOIN_POOL = "/osmosis.gamm.v1beta1.MsgJoinPool"
+MSG_TYPE_EXIT_POOL = "/osmosis.gamm.v1beta1.MsgExitPool"
+MSG_TYPE_LOCK_TOKENS = "/osmosis.lockup.MsgLockTokens"
+MSG_TYPE_SEND = "/cosmos.bank.v1beta1.MsgSend"
+MSG_TYPE_SET_WITHDRAW_ADDRESS = "/cosmos.distribution.v1beta1.MsgSetWithdrawAddress"
 

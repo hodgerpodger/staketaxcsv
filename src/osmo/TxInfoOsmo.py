@@ -30,7 +30,8 @@ class TxInfoOsmo(TxInfo):
 class MsgInfo:
     """ Single message info for index <i> """
 
-    def __init__(self, message, transfers, row_txid):
+    def __init__(self, message, transfers, msg_index, log):
         self.message = message
         self.transfers = transfers
-        self.row_txid = row_txid
+        self.msg_index = msg_index
+        self.log = log
