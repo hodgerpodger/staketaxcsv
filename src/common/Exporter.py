@@ -91,6 +91,8 @@ TX_TYPE_SOL_SERUM_DEX = "_SERUM_DEX"
 # ### OSMO ##########################################################################################
 
 TX_TYPE_OSMO_VOTE = "_VOTE"
+TX_TYPE_OSMO_WITHDRAW_DELEGATOR_REWARD = "_WITHDRAW_DELEGATOR_REWARD"
+TX_TYPE_OSMO_WITHDRAW_COMMISSION = "_WITHDRAW_COMMISSION"
 
 ################################################################################################
 

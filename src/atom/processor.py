@@ -44,7 +44,6 @@ def process_tx(wallet_address, elem, exporter):
 
 
 def _handle_tx(msg_type, exporter, txinfo, elem, txid, i):
-
     if msg_type == "MsgSend":
         handle_transfer(exporter, txinfo, elem, i)
     elif msg_type == "MsgWithdrawDelegatorReward":

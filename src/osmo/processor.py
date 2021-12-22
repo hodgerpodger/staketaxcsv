@@ -2,12 +2,12 @@
 import logging
 import pprint
 from datetime import datetime
-from osmo.TxInfoOsmo import TxInfoOsmo
+from osmo.TxInfoOsmo import TxInfoOsmo, MsgInfo
 from osmo.handle_unknown import handle_unknown_detect_transfers
 from osmo.handle_general import (
-    handle_delegate, handle_withdraw_reward, handle_simple, handle_transfer_ibc,
-    handle_failed_tx
+    handle_simple, handle_transfer_ibc,handle_failed_tx
 )
+from osmo.handle_staking import handle_staking
 from osmo.handle_swap import handle_swap
 from osmo import util_osmo
 from osmo import constants as co
@@ -20,38 +20,42 @@ def process_txs(wallet_address, elems, exporter):
 
 def process_tx(wallet_address, elem, exporter):
     txinfo = _parse_tx(elem, wallet_address)
-    msgs = txinfo.msgs
 
     # Detect failed transaction
     if elem["code"] > 0:
         handle_failed_tx(exporter, txinfo)
         return txinfo
 
-    for message, transfers in msgs:
-        # Process message
-        try:
-            msg_type = message["@type"]
+    for msginfo in txinfo.msgs:
+        _handle_message(exporter, txinfo, msginfo)
 
-            if msg_type in [co.MSG_TYPE_VOTE]:
-                handle_simple(exporter, txinfo, message, transfers)
-            elif msg_type == co.MSG_TYPE_DELEGATE:
-                handle_delegate(exporter, txinfo, message, transfers)
-            elif msg_type in [co.MSG_TYPE_WITHDRAW_REWARD, co.MSG_TYPE_WITHDRAW_COMMISSION]:
-                handle_withdraw_reward(exporter, txinfo, message, transfers)
-            elif msg_type == co.MSG_TYPE_IBC_TRANSFER:
-                handle_transfer_ibc(exporter, txinfo, message, transfers)
-            elif msg_type == co.MSG_TYPE_MSGRECVPACKET:
-                handle_transfer_ibc(exporter, txinfo, message, transfers)
-            elif msg_type == co.MSG_TYPE_UPDATE_CLIENT:
-                continue
-            elif msg_type == co.MSG_TYPE_SWAP_IN:
-                handle_swap(exporter, txinfo, message, transfers)
-            else:
-                handle_unknown_detect_transfers(exporter, txinfo, transfers)
-        except Exception as e:
-            logging.error(
-                "Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
-            handle_unknown_detect_transfers(exporter, txinfo, transfers)
+    return txinfo
+
+
+def _handle_message(exporter, txinfo, msginfo):
+    try:
+        msg_type = msginfo.message["@type"]
+
+        if msg_type in [co.MSG_TYPE_VOTE]:
+            handle_simple(exporter, txinfo, msginfo)
+        elif msg_type in [co.MSG_TYPE_DELEGATE, co.MSG_TYPE_REDELEGATE, co.MSG_TYPE_WITHDRAW_REWARD,
+                          co.MSG_TYPE_WITHDRAW_COMMISSION, co.MSG_TYPE_UNDELEGATE]:
+            handle_staking(exporter, txinfo, msginfo)
+        elif msg_type in [co.MSG_TYPE_IBC_TRANSFER, co.MSG_TYPE_MSGRECVPACKET]:
+            handle_transfer_ibc(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_UPDATE_CLIENT:
+            pass
+        elif msg_type == co.MSG_TYPE_SWAP_IN:
+            handle_swap(exporter, txinfo, msginfo)
+        else:
+            handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+    except Exception as e:
+        logging.error(
+            "Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
+        handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+
+        # roger
+        raise(e)
 
     return txinfo
 
@@ -62,22 +66,18 @@ def _parse_tx(elem, wallet_address):
         elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
     fee, fee_currency = _fee(elem)
 
-    txinfo = TxInfoOsmo(txid, timestamp, fee, wallet_address)
-    txinfo.msgs = _msgs(elem, wallet_address)
-    return txinfo
-
-
-def _msgs(elem, wallet_address):
-    out = []
-
-    num_messages = len(elem["logs"])
-    for i in range(num_messages):
+    # Construct list of MsgInfo's
+    msgs = []
+    for i in range(len(elem["logs"])):
         message = elem["tx"]["body"]["messages"][i]
-        log = elem["logs"][i]
-        transfers = util_osmo._transfers(log, wallet_address)
+        transfers = util_osmo._transfers(elem["logs"][i], wallet_address)
+        row_txid = "{}-{}".format(txid, i)
 
-        out.append((message, transfers))
-    return out
+        msginfo = MsgInfo(message, transfers, row_txid)
+        msgs.append(msginfo)
+
+    txinfo = TxInfoOsmo(txid, timestamp, fee, wallet_address, msgs)
+    return txinfo
 
 
 def _fee(elem):

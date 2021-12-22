@@ -1,5 +1,6 @@
 
 from osmo.constants import MILLION
+from osmo.tickers.tickers import TickersIBC
 
 
 def _transfers(log, wallet_address):
@@ -104,5 +105,11 @@ def _denom_to_currency(denom):
 
 
 def _ibc_currency(ibc_address):
-    # i.e. "16939122ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4"
-    return ibc_address
+    # i.e. "ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4" -> "IKT"
+    result = TickersIBC.lookup(ibc_address)
+    if result:
+        return result
+    else:
+        return ibc_address
+
+
