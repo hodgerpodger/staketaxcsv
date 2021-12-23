@@ -5,8 +5,6 @@ from common.Exporter import (
 TX_TYPE_STAKING_REDELEGATE, TX_TYPE_STAKING_DELEGATE, TX_TYPE_STAKING_UNDELEGATE,
     TX_TYPE_OSMO_WITHDRAW_DELEGATOR_REWARD, TX_TYPE_OSMO_WITHDRAW_COMMISSION
 )
-from osmo.RewardWallet import RewardWallet
-from osmo import util_osmo
 
 
 TX_TYPES_DELEGATION = {

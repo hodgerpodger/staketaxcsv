@@ -4,7 +4,6 @@ from osmo.make_tx import (
     make_osmo_tx
 )
 from osmo.handle_unknown import handle_unknown_detect_transfers
-from osmo import util_osmo
 
 
 def handle_failed_tx(exporter, txinfo):
