@@ -9,12 +9,6 @@ from osmo.handle_unknown import handle_unknown_detect_transfers
 from common.Exporter import TX_TYPE_OSMO_SUBMIT_PROPOSAL, TX_TYPE_OSMO_DEPOSIT
 
 
-TX_TYPES_SIMPLE = {
-    co.MSG_TYPE_VOTE: TX_TYPE_OSMO_VOTE,
-    co.MSG_TYPE_SET_WITHDRAW_ADDRESS: TX_TYPE_OSMO_SET_WITHDRAW_ADDRESS,
-}
-
-
 def handle_failed_tx(exporter, txinfo):
     pass
 
@@ -22,8 +16,10 @@ def handle_failed_tx(exporter, txinfo):
 def handle_simple(exporter, txinfo, msginfo):
     message = msginfo.message
 
+    # i.e. /osmosis.lockup.MsgBeginUnlocking -> _MsgBeginUnlocking
     msg_type = message["@type"]
-    tx_type = TX_TYPES_SIMPLE[msg_type]
+    last_field = msg_type.split(".")[-1]
+    tx_type = "_" + last_field
 
     row = make_osmo_simple_tx(txinfo, msginfo, tx_type)
     exporter.ingest_row(row)

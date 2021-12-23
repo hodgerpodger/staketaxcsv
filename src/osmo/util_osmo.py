@@ -125,6 +125,7 @@ def _ibc_currency(ibc_address):
     else:
         return ibc_address
 
+
 def _gamm_currency(gamm_address):
     # i.e. "gamm/pool/6"
     result = TickersGAMM.lookup(gamm_address)
@@ -134,3 +135,6 @@ def _gamm_currency(gamm_address):
         return gamm_address
 
 
+def _msg_type(msginfo):
+    last_field = msginfo.message["@type"].split(".")[-1]
+    return last_field

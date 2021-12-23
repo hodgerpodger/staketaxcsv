@@ -36,9 +36,9 @@ def process_tx(wallet_address, elem, exporter):
 
 def _handle_message(exporter, txinfo, msginfo):
     try:
-        msg_type = msginfo.message["@type"]
+        msg_type = util_osmo._msg_type(msginfo)
 
-        if msg_type in [co.MSG_TYPE_VOTE, co.MSG_TYPE_SET_WITHDRAW_ADDRESS]:
+        if msg_type in [co.MSG_TYPE_VOTE, co.MSG_TYPE_SET_WITHDRAW_ADDRESS, co.MSG_TYPE_BEGIN_UNLOCKING]:
             handle_simple(exporter, txinfo, msginfo)
         elif msg_type in [co.MSG_TYPE_DELEGATE, co.MSG_TYPE_REDELEGATE, co.MSG_TYPE_WITHDRAW_REWARD,
                           co.MSG_TYPE_WITHDRAW_COMMISSION, co.MSG_TYPE_UNDELEGATE]:

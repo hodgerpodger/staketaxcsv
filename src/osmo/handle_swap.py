@@ -6,6 +6,12 @@ from osmo.make_tx import make_osmo_swap_tx
 def handle_swap(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
 
+    # Remove intermediate swap tokens (A -> B -> C; remove B)
+    transfers_common = set(transfers_in).intersection(set(transfers_out))
+    for t in transfers_common:
+        transfers_in.remove(t)
+        transfers_out.remove(t)
+
     if len(transfers_in) == 1 and len(transfers_out) == 1:
         sent_amount, sent_currency = transfers_out[0]
         received_amount, received_currency = transfers_in[0]
