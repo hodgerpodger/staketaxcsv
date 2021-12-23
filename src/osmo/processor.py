@@ -48,7 +48,7 @@ def _handle_message(exporter, txinfo, msginfo):
             handle_simple_outbound(exporter, txinfo, msginfo)
         elif msg_type in [co.MSG_TYPE_UPDATE_CLIENT, co.MSG_TYPE_ACKNOWLEDGMENT]:
             pass
-        
+
         # staking rewards
         elif msg_type in [co.MSG_TYPE_DELEGATE, co.MSG_TYPE_REDELEGATE, co.MSG_TYPE_WITHDRAW_REWARD,
                           co.MSG_TYPE_WITHDRAW_COMMISSION, co.MSG_TYPE_UNDELEGATE]:

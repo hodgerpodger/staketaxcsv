@@ -3,10 +3,7 @@ from osmo.make_tx import (
     make_osmo_simple_tx, make_osmo_transfer_in_tx, make_osmo_transfer_out_tx,
     make_osmo_tx
 )
-from osmo import constants as co
-from common.Exporter import TX_TYPE_OSMO_VOTE, TX_TYPE_OSMO_SET_WITHDRAW_ADDRESS
 from osmo.handle_unknown import handle_unknown_detect_transfers
-from common.Exporter import TX_TYPE_OSMO_SUBMIT_PROPOSAL, TX_TYPE_OSMO_DEPOSIT
 from osmo import util_osmo
 
 
