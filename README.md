@@ -13,7 +13,10 @@
   2. Install pip packages and load environment variables
      ```
      pip3 install -r requirements.txt
+     
+     set -o allexport
      source sample.env
+     set +o allexport
      ```
   3. Edit (~/.bashrc, ~/.zshrc, shell equivalent) so future shell sessions load `sample.env`:
   ```
