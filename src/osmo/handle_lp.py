@@ -20,6 +20,21 @@ def handle_lp_deposit(exporter, txinfo, msginfo):
 
     handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
+def handle_lp_deposit_partial(exporter, txinfo, msginfo):
+    # Only one currency deposited, not two.
+    transfers_in, transfers_out = msginfo.transfers
+
+    if len(transfers_in) == 1 and len(transfers_out) == 1:
+        lp_amount, lp_currency = transfers_in[0]
+        sent_amount, sent_currency = transfers_out[0]
+        row = make_osmo_lp_deposit_tx(
+            txinfo, msginfo, sent_amount, sent_currency, lp_amount, lp_currency
+        )
+        exporter.ingest_row(row)
+        return
+
+    handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+
 def handle_lp_withdraw(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
 

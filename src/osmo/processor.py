@@ -12,7 +12,9 @@ from osmo.handle_staking import handle_staking
 from osmo.handle_swap import handle_swap
 from osmo import util_osmo
 from osmo import constants as co
-from osmo.handle_lp import handle_lp_deposit, handle_lp_stake, handle_lp_unstake, handle_lp_withdraw
+from osmo.handle_lp import (
+    handle_lp_deposit, handle_lp_stake, handle_lp_unstake, handle_lp_withdraw,
+    handle_lp_deposit_partial)
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -51,6 +53,8 @@ def _handle_message(exporter, txinfo, msginfo):
             handle_swap(exporter, txinfo, msginfo)
         elif msg_type == co.MSG_TYPE_JOIN_POOL:
             handle_lp_deposit(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_JOIN_SWAP_EXTERN_AMOUNT_IN:
+            handle_lp_deposit_partial(exporter, txinfo, msginfo)
         elif msg_type == co.MSG_TYPE_EXIT_POOL:
             handle_lp_withdraw(exporter, txinfo, msginfo)
         elif msg_type == co.MSG_TYPE_LOCK_TOKENS:
