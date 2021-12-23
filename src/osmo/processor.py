@@ -45,7 +45,7 @@ def _handle_message(exporter, txinfo, msginfo):
             handle_staking(exporter, txinfo, msginfo)
         elif msg_type in [co.MSG_TYPE_IBC_TRANSFER, co.MSG_TYPE_MSGRECVPACKET]:
             handle_transfer_ibc(exporter, txinfo, msginfo)
-        elif msg_type == co.MSG_TYPE_UPDATE_CLIENT:
+        elif msg_type in [co.MSG_TYPE_UPDATE_CLIENT, co.MSG_TYPE_ACKNOWLEDGMENT]:
             pass
         elif msg_type == co.MSG_TYPE_SWAP_IN:
             handle_swap(exporter, txinfo, msginfo)

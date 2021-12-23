@@ -50,6 +50,9 @@ def _handle_transfer(exporter, txinfo, msginfo):
         row = make_osmo_transfer_out_tx(txinfo, msginfo, amount, currency)
         exporter.ingest_row(row)
         return
+    elif len(transfers_in) == 0 and len(transfers_out) == 0:
+        # ibc transfers can come in batches with unrelated transfers
+        return
 
     handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
