@@ -136,5 +136,6 @@ def _gamm_currency(gamm_address):
 
 
 def _msg_type(msginfo):
+    # i.e. /osmosis.lockup.MsgBeginUnlocking -> _MsgBeginUnlocking
     last_field = msginfo.message["@type"].split(".")[-1]
     return last_field

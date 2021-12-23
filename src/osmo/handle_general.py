@@ -7,6 +7,7 @@ from osmo import constants as co
 from common.Exporter import TX_TYPE_OSMO_VOTE, TX_TYPE_OSMO_SET_WITHDRAW_ADDRESS
 from osmo.handle_unknown import handle_unknown_detect_transfers
 from common.Exporter import TX_TYPE_OSMO_SUBMIT_PROPOSAL, TX_TYPE_OSMO_DEPOSIT
+from osmo import util_osmo
 
 
 def handle_failed_tx(exporter, txinfo):
@@ -14,15 +15,24 @@ def handle_failed_tx(exporter, txinfo):
 
 
 def handle_simple(exporter, txinfo, msginfo):
-    message = msginfo.message
-
-    # i.e. /osmosis.lockup.MsgBeginUnlocking -> _MsgBeginUnlocking
-    msg_type = message["@type"]
-    last_field = msg_type.split(".")[-1]
-    tx_type = "_" + last_field
-
+    """ Handles tx with 0 transfers """
+    tx_type = "_" + util_osmo._msg_type(msginfo)
     row = make_osmo_simple_tx(txinfo, msginfo, tx_type)
     exporter.ingest_row(row)
+
+
+def handle_simple_outbound(exporter, txinfo, msginfo):
+    """ Handles tx with 1 outbound transfer """
+    transfers_in, transfers_out = msginfo.transfers
+    tx_type = "_" + util_osmo._msg_type(msginfo)
+
+    if len(transfers_in) == 0 and len(transfers_out) == 1:
+        amount, currency = transfers_out[0]
+        row = make_osmo_tx(txinfo, msginfo, tx_type, amount, currency, "", "")
+        exporter.ingest_row(row)
+        return
+
+    handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
 
 def handle_transfer_ibc(exporter, txinfo, msginfo):
@@ -48,26 +58,6 @@ def _handle_transfer(exporter, txinfo, msginfo):
         return
     elif len(transfers_in) == 0 and len(transfers_out) == 0:
         # ibc transfers can come in batches with unrelated transfers
-        return
-
-    handle_unknown_detect_transfers(exporter, txinfo, msginfo)
-
-
-def handle_submit_proposal(exporter, txinfo, msginfo):
-    _handle_tx_transfer_out(exporter, txinfo, msginfo, TX_TYPE_OSMO_SUBMIT_PROPOSAL)
-
-
-def handle_deposit(exporter, txinfo, msginfo):
-    _handle_tx_transfer_out(exporter, txinfo, msginfo, TX_TYPE_OSMO_DEPOSIT)
-
-
-def _handle_tx_transfer_out(exporter, txinfo, msginfo, tx_type):
-    transfers_in, transfers_out = msginfo.transfers
-
-    if len(transfers_in) == 0 and len(transfers_out) == 1:
-        amount, currency = transfers_out[0]
-        row = make_osmo_tx(txinfo, msginfo, tx_type, amount, currency, "", "")
-        exporter.ingest_row(row)
         return
 
     handle_unknown_detect_transfers(exporter, txinfo, msginfo)

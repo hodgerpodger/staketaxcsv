@@ -5,8 +5,7 @@ from datetime import datetime
 from osmo.TxInfoOsmo import TxInfoOsmo, MsgInfo
 from osmo.handle_unknown import handle_unknown_detect_transfers
 from osmo.handle_general import (
-    handle_simple, handle_transfer_ibc,handle_failed_tx, handle_transfer, handle_submit_proposal,
-    handle_deposit
+    handle_simple, handle_simple_outbound, handle_transfer_ibc, handle_failed_tx, handle_transfer
 )
 from osmo.handle_staking import handle_staking
 from osmo.handle_swap import handle_swap
@@ -40,17 +39,32 @@ def _handle_message(exporter, txinfo, msginfo):
     try:
         msg_type = util_osmo._msg_type(msginfo)
 
+        # simple transactions, that are typically ignored
         if msg_type in [co.MSG_TYPE_VOTE, co.MSG_TYPE_SET_WITHDRAW_ADDRESS, co.MSG_TYPE_BEGIN_UNLOCKING]:
+            # 0 transfers
             handle_simple(exporter, txinfo, msginfo)
+        elif msg_type in [co.MSG_TYPE_SUBMIT_PROPOSAL, co.MSG_TYPE_DEPOSIT]:
+            # 1 outbound transfer
+            handle_simple_outbound(exporter, txinfo, msginfo)
+        elif msg_type in [co.MSG_TYPE_UPDATE_CLIENT, co.MSG_TYPE_ACKNOWLEDGMENT]:
+            pass
+        
+        # staking rewards
         elif msg_type in [co.MSG_TYPE_DELEGATE, co.MSG_TYPE_REDELEGATE, co.MSG_TYPE_WITHDRAW_REWARD,
                           co.MSG_TYPE_WITHDRAW_COMMISSION, co.MSG_TYPE_UNDELEGATE]:
             handle_staking(exporter, txinfo, msginfo)
+
+        # transfers
         elif msg_type in [co.MSG_TYPE_IBC_TRANSFER, co.MSG_TYPE_MSGRECVPACKET]:
             handle_transfer_ibc(exporter, txinfo, msginfo)
-        elif msg_type in [co.MSG_TYPE_UPDATE_CLIENT, co.MSG_TYPE_ACKNOWLEDGMENT]:
-            pass
+        elif msg_type == co.MSG_TYPE_SEND:
+            handle_transfer(exporter, txinfo, msginfo)
+
+        # swaps
         elif msg_type == co.MSG_TYPE_SWAP_IN:
             handle_swap(exporter, txinfo, msginfo)
+
+        # lp transactions
         elif msg_type == co.MSG_TYPE_JOIN_POOL:
             handle_lp_deposit(exporter, txinfo, msginfo)
         elif msg_type == co.MSG_TYPE_JOIN_SWAP_EXTERN_AMOUNT_IN:
@@ -59,12 +73,7 @@ def _handle_message(exporter, txinfo, msginfo):
             handle_lp_withdraw(exporter, txinfo, msginfo)
         elif msg_type == co.MSG_TYPE_LOCK_TOKENS:
             handle_lp_stake(exporter, txinfo, msginfo)
-        elif msg_type == co.MSG_TYPE_SEND:
-            handle_transfer(exporter, txinfo, msginfo)
-        elif msg_type == co.MSG_TYPE_SUBMIT_PROPOSAL:
-            handle_submit_proposal(exporter, txinfo, msginfo)
-        elif msg_type == co.MSG_TYPE_DEPOSIT:
-            handle_deposit(exporter, txinfo, msginfo)
+
         else:
             handle_unknown_detect_transfers(exporter, txinfo, msginfo)
     except Exception as e:
