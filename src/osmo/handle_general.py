@@ -13,19 +13,17 @@ def handle_failed_tx(exporter, txinfo):
 
 def handle_simple(exporter, txinfo, msginfo):
     """ Handles tx with 0 transfers """
-    tx_type = "_" + util_osmo._msg_type(msginfo)
-    row = make_osmo_simple_tx(txinfo, msginfo, tx_type)
+    row = make_osmo_simple_tx(txinfo, msginfo)
     exporter.ingest_row(row)
 
 
 def handle_simple_outbound(exporter, txinfo, msginfo):
     """ Handles tx with 1 outbound transfer """
     transfers_in, transfers_out = msginfo.transfers
-    tx_type = "_" + util_osmo._msg_type(msginfo)
 
     if len(transfers_in) == 0 and len(transfers_out) == 1:
         amount, currency = transfers_out[0]
-        row = make_osmo_tx(txinfo, msginfo, tx_type, amount, currency, "", "")
+        row = make_osmo_tx(txinfo, msginfo, amount, currency, "", "")
         exporter.ingest_row(row)
         return
 

@@ -20,14 +20,6 @@ TX_TYPES_DELEGATION = {
 
 def handle_staking(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
-    message = msginfo.message
-    wallet_address = txinfo.wallet_address
-
-    # Include reward wallet inbound transfers in addition to wallet inbound transfers
-    #reward_wallet = RewardWallet.get(wallet_address)
-    #if reward_wallet and reward_wallet != wallet_address:
-    #    reward_transfers_in, _ = util_osmo._transfers(msginfo.log, reward_wallet)
-    #    transfers_in.extend(reward_transfers_in)
 
     total = 0
     for amount, currency in transfers_in:
@@ -38,6 +30,5 @@ def handle_staking(exporter, txinfo, msginfo):
         exporter.ingest_row(row)
     else:
         # No reward: add non-income delegation transaction just so transaction doesn't appear "missing"
-        tx_type = "_" + util_osmo._msg_type(msginfo)
-        row = make_osmo_simple_tx(txinfo, msginfo, tx_type)
+        row = make_osmo_simple_tx(txinfo, msginfo)
         exporter.ingest_row(row)

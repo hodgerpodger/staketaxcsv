@@ -139,3 +139,8 @@ def _msg_type(msginfo):
     # i.e. /osmosis.lockup.MsgBeginUnlocking -> _MsgBeginUnlocking
     last_field = msginfo.message["@type"].split(".")[-1]
     return last_field
+
+
+def _make_tx_type(msginfo):
+    msg_type = _msg_type(msginfo)
+    return "_" + msg_type

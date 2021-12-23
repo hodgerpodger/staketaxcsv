@@ -20,6 +20,7 @@ def handle_lp_deposit(exporter, txinfo, msginfo):
 
     handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
+
 def handle_lp_deposit_partial(exporter, txinfo, msginfo):
     # Only one currency deposited, not two.
     transfers_in, transfers_out = msginfo.transfers
@@ -34,6 +35,7 @@ def handle_lp_deposit_partial(exporter, txinfo, msginfo):
         return
 
     handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+
 
 def handle_lp_withdraw(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
