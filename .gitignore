@@ -6,3 +6,4 @@ src/*/*/__pycache__/*
 src/_reports/*
 src/sol/data_staking_rewards/*.csv
 src/*/*.pyc
+sample.env
