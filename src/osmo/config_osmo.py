@@ -5,3 +5,5 @@ class localconfig:
     debug = False
     limit = None
     lp = False
+    cache = False
+    ibc_addresses = {}

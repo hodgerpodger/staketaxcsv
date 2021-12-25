@@ -15,6 +15,7 @@ import math
 from settings_csv import TICKER_OSMO
 from common.Exporter import Exporter
 from common.ErrorCounter import ErrorCounter
+from common.Cache import Cache
 from common import report_util
 from osmo.config_osmo import localconfig
 from osmo.api_data import OsmoDataAPI, LIMIT
@@ -47,6 +48,8 @@ def readOptions(options):
             localconfig.limit = options.get("limit")
         if options.get("lp") is True:
             localconfig.lp = True
+        if options.get("cache") is True:
+            localconfig.cache = True
 
 
 def wallet_exists(wallet_address):
@@ -86,6 +89,9 @@ def txhistory(wallet_address, job=None, options=None):
     if job:
         localconfig.job = job
         localconfig.cache = True
+    if localconfig.cache:
+        localconfig.ibc_addresses = Cache().get_osmo_ibc_addresses()
+        logging.info("Loaded ibc_addresses from cache ...")
 
     # Estimate total time to create CSV
     progress = ProgressOsmo()
@@ -106,6 +112,10 @@ def txhistory(wallet_address, job=None, options=None):
     # Log error stats if exists
     ErrorCounter.log(TICKER_OSMO, wallet_address)
 
+    if localconfig.cache:
+        # Remove entries where no symbol was found
+        localconfig.ibc_addresses = {k: v for k, v in localconfig.ibc_addresses.items() if not v.startswith("ibc/")}
+        Cache().set_osmo_ibc_addresses(localconfig.ibc_addresses)
     return exporter
 
 

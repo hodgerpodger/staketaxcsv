@@ -1,7 +1,7 @@
 
 from osmo.constants import MILLION, EXP18
-from osmo.tickers.tickers_ibc import TickersIBC
-from osmo.tickers.tickers_gamm import TickersGAMM
+from osmo.config_osmo import localconfig
+from osmo.api_historical import OsmoHistoricalAPI
 
 
 def _transfers(log, wallet_address):
@@ -117,22 +117,27 @@ def _denom_to_currency(denom):
     return denom[1:].upper()
 
 
+class NoSymbol:
+
+    ibc_addresses = set()
+
+
 def _ibc_currency(ibc_address):
     # i.e. "ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4" -> "IKT"
-    result = TickersIBC.lookup(ibc_address)
-    if result:
-        return result
-    else:
-        return ibc_address
+    if ibc_address in localconfig.ibc_addresses:
+        return localconfig.ibc_addresses[ibc_address]
+
+    result = OsmoHistoricalAPI.get_symbol(ibc_address)
+    val = result if result else ibc_address
+
+    localconfig.ibc_addresses[ibc_address] = val
+    return val
 
 
 def _gamm_currency(gamm_address):
     # i.e. "gamm/pool/6"
-    result = TickersGAMM.lookup(gamm_address)
-    if result:
-        return result
-    else:
-        return gamm_address
+    _, _, num = gamm_address.split("/")
+    return "GAMM-{}".format(num)
 
 
 def _msg_type(msginfo):
