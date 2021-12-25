@@ -30,7 +30,7 @@ def handle_lp_deposit(exporter, elem, txinfo):
         currency2, amount2 = deposits[1]
 
         row = make_transfer_out_tx(txinfo, amount1, currency1)
-        row.comment, row.fee, row.fee_currency = COMMENT, txinfo.fee, txinfo.fee_currency
+        row.comment = COMMENT
         exporter.ingest_row(row)
 
         row = make_transfer_out_tx(txinfo, amount2, currency2)
@@ -106,8 +106,8 @@ def _handle_withdraw_collaterals(exporter, txinfo, lp_amount, lp_currency, data,
 
             row = make_transfer_in_tx(txinfo, amount, currency)
             row.comment = COMMENT
-            row.fee = txinfo.fee if i == 0 else ""
-            row.fee_currency = txinfo.fee_currency if i == 0 else ""
+            row.fee = row.fee if i == 0 else ""
+            row.fee_currency = row.fee_currency if i == 0 else ""
             exporter.ingest_row(row)
             i += 1
 

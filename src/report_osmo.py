@@ -45,6 +45,8 @@ def readOptions(options):
             localconfig.debug = True
         if options.get("limit"):
             localconfig.limit = options.get("limit")
+        if options.get("lp") is True:
+            localconfig.lp = True
 
 
 def wallet_exists(wallet_address):
