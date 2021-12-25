@@ -3,12 +3,15 @@ from terra import util_terra
 from terra.make_tx import (
     make_lp_deposit_tx, make_lp_withdraw_tx, make_lp_stake_tx, make_lp_unstake_tx,
     make_withdraw_collateral_tx, make_deposit_collateral_tx)
+from common.make_tx import make_transfer_out_tx, make_transfer_in_tx
 from terra.constants import CUR_UST
+from terra.config_terra import localconfig
 
 
 def handle_lp_deposit(exporter, elem, txinfo):
     txid = txinfo.txid
     from_contract = util_terra._event_with_action(elem, "from_contract", "provide_liquidity")
+    COMMENT = "liquidity pool deposit"
 
     # Determine LP currency
     lp_currency_address = _extract_contract_address(txid, from_contract, "mint")
@@ -21,13 +24,30 @@ def handle_lp_deposit(exporter, elem, txinfo):
     # Determine sent collateral
     deposits = _extract_collateral_amounts(txid, from_contract, "assets")
 
-    # Create two LP_DEPOSIT rows
-    i = 0
-    for currency, amount in deposits:
-        row = make_lp_deposit_tx(
-            txinfo, amount, currency, lp_amount / len(deposits), lp_currency, txid, empty_fee=(i > 0))
+    if localconfig.lp:
+        # Optional setting: treat LP deposit as 2 outbound transfers and 1 lp token receive
+        currency1, amount1 = deposits[0]
+        currency2, amount2 = deposits[1]
+
+        row = make_transfer_out_tx(txinfo, amount1, currency1)
+        row.comment, row.fee, row.fee_currency = COMMENT, txinfo.fee, txinfo.fee_currency
         exporter.ingest_row(row)
-        i += 1
+
+        row = make_transfer_out_tx(txinfo, amount2, currency2)
+        row.comment, row.fee, row.fee_currency = COMMENT, "", ""
+        exporter.ingest_row(row)
+
+        row = make_lp_deposit_tx(txinfo, "", "", lp_amount, lp_currency, txid)
+        row.comment, row.fee, row.fee_currency = COMMENT, "", ""
+        exporter.ingest_row(row)
+    else:
+        # Default: create two LP_DEPOSIT rows
+        i = 0
+        for currency, amount in deposits:
+            row = make_lp_deposit_tx(
+                txinfo, amount, currency, lp_amount / len(deposits), lp_currency, txid, empty_fee=(i > 0))
+            exporter.ingest_row(row)
+            i += 1
 
 
 def handle_lp_withdraw(exporter, elem, txinfo):
@@ -71,33 +91,55 @@ def handle_lp_deposit_idx(exporter, elem, txinfo):
 
 def _handle_withdraw_collaterals(exporter, txinfo, lp_amount, lp_currency, data, from_contract, wallet_address):
     txid = txinfo.txid
+    COMMENT = "liquidity pool withdraw"
 
     # Determine received collateral
     withdraws = _extract_collateral_amounts(txid, from_contract, "refund_assets")
 
-    # Create two LP_WITHDRAW rows
-    i = 0
-    for currency, amount in withdraws:
-        # Adjust UST withdrawal amount to account for small fee
-        if currency == CUR_UST:
-            result = _check_ust_adjustment(data, wallet_address, txid)
-            if result:
-                amount = result
+    if localconfig.lp:
+        # Optional setting: treat lp withdraw as 2 inbound transfers and 1 lp token send
 
-        row = make_lp_withdraw_tx(
-            txinfo, lp_amount / len(withdraws), lp_currency, amount, currency, txid, empty_fee=(i > 0))
+        # 2 inbound transfers
+        i = 0
+        for currency, amount in withdraws:
+            amount, currency = _check_ust_adjustment(amount, currency, data, wallet_address, txid)
+
+            row = make_transfer_in_tx(txinfo, amount, currency)
+            row.comment = COMMENT
+            row.fee = txinfo.fee if i == 0 else ""
+            row.fee_currency = txinfo.fee_currency if i == 0 else ""
+            exporter.ingest_row(row)
+            i += 1
+
+        # 1 lp token send
+        row = make_lp_withdraw_tx(txinfo, lp_amount, lp_currency, "", "", txid)
+        row.comment, row.fee, row.fee_currency = COMMENT, "", ""
         exporter.ingest_row(row)
-        i += 1
+    else:
+        # Default: create two LP_WITHDRAW rows
 
+        i = 0
+        for currency, amount in withdraws:
+            # Adjust UST withdrawal amount to account for small fee
+            amount, currency = _check_ust_adjustment(amount, currency, data, wallet_address, txid)
 
-def _check_ust_adjustment(data, wallet_address, txid):
+            row = make_lp_withdraw_tx(
+                txinfo, lp_amount / len(withdraws), lp_currency, amount, currency, txid, empty_fee=(i > 0))
+            exporter.ingest_row(row)
+            i += 1
+
+def _check_ust_adjustment(amount, currency, data, wallet_address, txid):
+    """ Adjusts UST inbound transfer amount if UST fee """
+    if currency != CUR_UST:
+        return amount, currency
+
     transfers_in, transfers_out = util_terra._transfers(data, wallet_address, txid)
-
     if transfers_in:
-        for amount, currency in transfers_in:
-            if currency == CUR_UST:
-                return amount
-    return None
+        for amt, cur in transfers_in:
+            if cur == CUR_UST:
+                return amt, cur
+
+    return amount, currency
 
 
 def _extract_contract_address(txid, from_contract, action):
