@@ -3,7 +3,7 @@ import logging
 import requests
 import time
 import urllib.parse
-from settings_csv import OSMO_HISTORICAL_NODE
+OSMO_HISTORICAL_NODE = "https://api-osmosis.imperator.co"
 
 
 class OsmoHistoricalAPI:

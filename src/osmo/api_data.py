@@ -2,8 +2,7 @@
 import logging
 import requests
 import time
-
-from settings_csv import OSMO_DATA_NODE
+OSMO_DATA_NODE = "https://api-osmosis-chain.imperator.co"
 LIMIT = 50
 
 

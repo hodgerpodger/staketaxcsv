@@ -6,8 +6,6 @@ import os
 SOL_NODE = os.environ.get("SOL_NODE", "")
 ATOM_NODE = os.environ.get("ATOM_NODE", "")
 TERRA_LCD_NODE = os.environ.get("TERRA_LCD_NODE", "")
-OSMO_DATA_NODE = os.environ.get("OSMO_DATA_NODE", "")
-OSMO_HISTORICAL_NODE = os.environ.get("OSMO_HISTORICAL_NODE")
 OSMO_TX_NODE = os.environ.get("OSMO_TX_NODE", "")
 
 # Optional environment variables
