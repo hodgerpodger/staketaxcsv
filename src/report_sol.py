@@ -21,6 +21,7 @@ from sol.constants import PROGRAMID_STAKE
 from sol.api_rpc import RpcAPI
 from sol import staking_rewards
 from common.ErrorCounter import ErrorCounter
+from sol.TxInfoSol import WalletInfo
 
 LIMIT = 1000
 MAX_TRANSACTIONS = 5000
@@ -92,7 +93,7 @@ def txone(wallet_address, txid):
     print("\n")
 
     exporter = Exporter(wallet_address)
-    txinfo = sol.processor.process_tx(wallet_address, exporter, txid, data)
+    txinfo = sol.processor.process_tx(WalletInfo(wallet_address), exporter, txid, data)
     txinfo.print()
     return exporter
 
@@ -112,6 +113,8 @@ def _num_txids(wallet_address):
 
 def txhistory(wallet_address, job=None):
     progress = ProgressSol()
+    wallet_info = WalletInfo(wallet_address)
+    exporter = Exporter(wallet_address)
 
     logging.info("Using SOLANA_URL=%s...", SOL_NODE)
     if job:
@@ -121,23 +124,24 @@ def txhistory(wallet_address, job=None):
         localconfig.blocks = Cache().get_sol_blocks()
         logging.info("Loaded sol blocks info into cache...")
 
-    # Fetch transaction ids for wallet, staking addresses, and estimate job duration.
+    # Fetch transaction ids for wallet
     txids = _txids(wallet_address, progress)
+
+    # Fetch current staking addresses for wallet
     progress.report_message("Fetching staking addresses...")
-    staking_addresses_wallet = RpcAPI.fetch_staking_addresses(wallet_address)
-    progress.set_estimate(len(staking_addresses_wallet), len(txids))
+    for addr in RpcAPI.fetch_staking_addresses(wallet_address):
+        wallet_info.add_staking_address(addr)
+
+    # Estimate duration of job
+    progress.set_estimate(len(wallet_info.get_staking_addresses()), len(txids))
 
     # Fetch transaction data and create rows for CSV
-    exporter = Exporter(wallet_address)
-    staking_addresses_from_txs = _process_txs(txids, wallet_address, exporter, progress)
+    _process_txs(txids, wallet_info, exporter, progress)
 
     # Fetch staking rewards data
-    staking_addresses = list(set(staking_addresses_wallet).union(staking_addresses_from_txs))
-    logging.info("staking_addresses: %s", staking_addresses)
-    staking_rewards.reward_txs(staking_addresses, wallet_address, exporter, progress)
+    staking_rewards.reward_txs(wallet_info, exporter, progress)
 
     ErrorCounter.log(TICKER_SOL, wallet_address)
-
     if localconfig.cache:
         # Flush cache to db
         Cache().set_sol_blocks(localconfig.blocks)
@@ -215,16 +219,10 @@ def _txids(wallet_address, progress):
     return out
 
 
-def _process_txs(txids, wallet_address, exporter, progress):
-    staking_addresses_found = set()
-
+def _process_txs(txids, wallet_info, exporter, progress):
     for i, txid in enumerate(txids):
         data = RpcAPI.fetch_tx(txid)
-        txinfo = sol.processor.process_tx(wallet_address, exporter, txid, data)
-
-        # Update set of staking addresses created/found
-        if txinfo.staking_addresses_found:
-            staking_addresses_found = staking_addresses_found.union(set(txinfo.staking_addresses_found))
+        sol.processor.process_tx(wallet_info, exporter, txid, data)
 
         if i % 10 == 0:
             # Update progress to db every so often for user
@@ -232,7 +230,7 @@ def _process_txs(txids, wallet_address, exporter, progress):
             progress.report("_process_txs", i, message)
 
     progress.report("_process_txs", len(txids), "Finished processing {} transactions".format(len(txids)))
-    return staking_addresses_found
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

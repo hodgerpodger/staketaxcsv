@@ -14,8 +14,9 @@ from sol.constants import BILLION, MINT_SOL, CURRENCY_SOL, INSTRUCTION_TYPE_DELE
 from sol import util_sol
 
 
-def parse_tx(txid, data, wallet_address):
+def parse_tx(txid, data, wallet_info):
     """ Parses data returned by RcpAPI.fetch_tx().  Returns TxInfoSol object """
+    wallet_address = wallet_info.wallet_address
     result = data.get("result", None)
 
     # Handle old transaction where api fails.  Return transaction with just txid, nothing else.
@@ -66,12 +67,15 @@ def parse_tx(txid, data, wallet_address):
         txinfo.transfers = _transfers_instruction(txinfo)
         txinfo.transfers_net, _ = _transfers_net(txinfo, txinfo.transfers, fee, mint_to=True)
 
-    txinfo.staking_addresses_found = _staking_addresses_found(txinfo.instructions)
+    # Update wallet_info with any staking addresses found
+    addresses = _staking_addresses_found(wallet_address, txinfo.instructions)
+    for address in addresses:
+        wallet_info.add_staking_address(address)
 
     return txinfo
 
 
-def _staking_addresses_found(instructions):
+def _staking_addresses_found(wallet_address, instructions):
     out = []
     for instruction in instructions:
         parsed = instruction.get("parsed", None)
@@ -81,7 +85,9 @@ def _staking_addresses_found(instructions):
         if (program == PROGRAM_STAKE
             and instruction_type == INSTRUCTION_TYPE_DELEGATE):
             stake_account = parsed["info"]["stakeAccount"]
-            out.append(stake_account)
+            stake_authority = parsed["info"]["stakeAuthority"]
+            if stake_authority == wallet_address:
+                out.append(stake_account)
 
     return out
 

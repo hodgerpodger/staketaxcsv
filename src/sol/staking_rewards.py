@@ -10,8 +10,11 @@ from sol.config_sol import localconfig
 DATADIR = os.path.dirname(os.path.realpath(__file__)) + "/data_staking_rewards"
 
 
-def reward_txs(staking_addresses, wallet_address, exporter, progress):
+def reward_txs(wallet_info, exporter, progress):
     """ Get reward transactions across all staking addresses for this wallet """
+    staking_addresses = wallet_info.get_staking_addresses()
+    wallet_address = wallet_info.wallet_address
+
     for i, addr in enumerate(staking_addresses):
         progress.report("_staking_txs", i, "Fetching rewards for {}...".format(addr))
         _reward_txs(wallet_address, exporter, addr)

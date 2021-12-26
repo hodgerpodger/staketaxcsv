@@ -33,8 +33,6 @@ class TxInfoSol(TxInfo):
         self.transfers = None
         self.transfers_net = None
 
-        self.staking_addresses_found = None
-
     def print(self):
         print("txid: {}".format(self.txid))
         print("timestamp: {}".format(self.timestamp))
@@ -68,9 +66,6 @@ class TxInfoSol(TxInfo):
         print("\nlog_string:")
         pprint.pprint(self.log_string)
 
-        print("\nstaking_addresses_found:")
-        pprint.pprint(self.staking_addresses_found)
-
         print("\nbalance_changes_all:")
         pprint.pprint(self.balance_changes_all)
         print("\nbalance_changes:")
@@ -89,3 +84,16 @@ class TxInfoSol(TxInfo):
         pprint.pprint(self.transfers_net[1])
         print("\ntransfers_net_unknown")
         pprint.pprint(self.transfers_net[2])
+
+
+class WalletInfo:
+
+    def __init__(self, wallet_address):
+        self.wallet_address = wallet_address
+        self.staking_addrs = set()
+
+    def add_staking_address(self, address):
+        self.staking_addrs.add(address)
+
+    def get_staking_addresses(self):
+        return self.staking_addrs

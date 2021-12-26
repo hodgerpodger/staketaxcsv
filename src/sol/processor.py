@@ -21,8 +21,8 @@ from common.ErrorCounter import ErrorCounter
 from sol import constants as co
 
 
-def process_tx(wallet_address, exporter, txid, data):
-    txinfo = parse_tx(txid, data, wallet_address)
+def process_tx(wallet_info, exporter, txid, data):
+    txinfo = parse_tx(txid, data, wallet_info)
 
     try:
         if not txinfo:
