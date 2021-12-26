@@ -28,10 +28,10 @@ def parse_args():
     parser.add_argument('--cache', action='store_true', default=False,
                         help="use Cache class (only work if implemented)")
     parser.add_argument('--minor_rewards', action='store_true', default=False,
-                        help="(LUNA only) include minor currency rewards")
+                        help="(LUNA) include minor currency rewards")
     parser.add_argument("--lp", action="store_true", default=False,
-                        help="(LUNA only) if set, treat LP deposits/withdrawals as trades "
-                             "(default is treat as _LP_DEPOSIT/_LP_WITHDRAW transactions)")
+                        help="(LUNA/OSMO) treat LP deposits/withdrawals as transfers "
+                             "(default: treat as _LP_DEPOSIT/_LP_WITHDRAW)")
     parser.add_argument("--limit", type=int,
                         help="change to non-default max transactions limit")
 
