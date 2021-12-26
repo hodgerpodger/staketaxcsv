@@ -28,21 +28,16 @@ class ProgressSol():
             logging.info(message)
 
     def report(self, stage, num, message):
-        if stage == "_staking_txs":
-            cur_index = num
-            token_addrs_left = 0
-            staking_addrs_left = self.num_staking_addresses - cur_index
-            txs_left = self.txs_total
-        elif stage == "_process_txs":
-            cur_tx = num
-            token_addrs_left = 0
-            staking_addrs_left = 0
-            txs_left = self.txs_total - cur_tx
+        if stage == "_process_txs":
+            staking_addrs_left = self.num_staking_addresses
+            txs_left = self.txs_total - num
+        elif stage == "_staking_txs":
+            staking_addrs_left = self.num_staking_addresses - num
+            txs_left = 0
         else:
             raise Exception("Bad condition: no stage={} found".format(stage))
 
         seconds_left = sum([
-            token_addrs_left * SECONDS_PER_TOKEN_ADDRESS,
             staking_addrs_left * SECONDS_PER_STAKING_ADDRESS,
             txs_left * SECONDS_PER_TX
         ])
@@ -54,4 +49,4 @@ class ProgressSol():
         if localconfig.job:
             localconfig.job.set_in_progress(message, time_complete)
         else:
-            logging.info(message)
+            logging.info("message: %s, seconds_left: %s", message, seconds_left)

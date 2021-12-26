@@ -29,4 +29,5 @@ class ProgressTerra():
         # Write to db
         if localconfig.job:
             localconfig.job.set_in_progress(message, time_complete)
-        logging.info({"message": message, "seconds_left": seconds_left, "time_complete": time_complete})
+        else:
+            logging.info("message: %s, seconds_left: %s", message, seconds_left)
