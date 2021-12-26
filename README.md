@@ -1,7 +1,8 @@
 
 # staketaxcsv
 
-  * Python repo to create blockchain CSVs for Terra (LUNA), Solana (SOL), and Cosmos (ATOM).
+  * Python repo to create blockchain CSVs for Terra (LUNA), Solana (SOL), Cosmos (ATOM),
+    and Osmosis (OSMO) blockchains.
   * CSV codebase for https://stake.tax
   * Community contribution and PRs are most welcome, especially to fix/support new types of 
     protocols/transactions.
