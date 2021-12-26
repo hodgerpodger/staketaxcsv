@@ -121,23 +121,20 @@ def txhistory(wallet_address, job=None):
         localconfig.blocks = Cache().get_sol_blocks()
         logging.info("Loaded sol blocks info into cache...")
 
-    # Fetch staking addresses of this wallet
-    progress.report_message("Fetching staking addresses...")
-    staking_addresses = RpcAPI.fetch_staking_addresses(wallet_address)
-    logging.info("staking_addresses: %s", staking_addresses)
-
-    # Fetch transaction ids for wallet
+    # Fetch transaction ids for wallet, staking addresses, and estimate job duration.
     txids = _txids(wallet_address, progress)
-
-    # Update parameters to calculate progress more accurately later
-    progress.set_estimate(len(staking_addresses), len(txids))
-
-    # Fetch staking rewards data
-    exporter = Exporter(wallet_address)
-    staking_rewards.reward_txs(staking_addresses, wallet_address, exporter, progress)
+    progress.report_message("Fetching staking addresses...")
+    staking_addresses_wallet = RpcAPI.fetch_staking_addresses(wallet_address)
+    progress.set_estimate(len(staking_addresses_wallet), len(txids))
 
     # Fetch transaction data and create rows for CSV
-    _process_txs(txids, wallet_address, exporter, progress)
+    exporter = Exporter(wallet_address)
+    staking_addresses_from_txs = _process_txs(txids, wallet_address, exporter, progress)
+
+    # Fetch staking rewards data
+    staking_addresses = list(set(staking_addresses_wallet).union(staking_addresses_from_txs))
+    logging.info("staking_addresses: %s", staking_addresses)
+    staking_rewards.reward_txs(staking_addresses, wallet_address, exporter, progress)
 
     ErrorCounter.log(TICKER_SOL, wallet_address)
 
@@ -219,9 +216,15 @@ def _txids(wallet_address, progress):
 
 
 def _process_txs(txids, wallet_address, exporter, progress):
+    staking_addresses_found = set()
+
     for i, txid in enumerate(txids):
         data = RpcAPI.fetch_tx(txid)
-        sol.processor.process_tx(wallet_address, exporter, txid, data)
+        txinfo = sol.processor.process_tx(wallet_address, exporter, txid, data)
+
+        # Update set of staking addresses created/found
+        if txinfo.staking_addresses_found:
+            staking_addresses_found = staking_addresses_found.union(set(txinfo.staking_addresses_found))
 
         if i % 10 == 0:
             # Update progress to db every so often for user
@@ -229,7 +232,7 @@ def _process_txs(txids, wallet_address, exporter, progress):
             progress.report("_process_txs", i, message)
 
     progress.report("_process_txs", len(txids), "Finished processing {} transactions".format(len(txids)))
-
+    return staking_addresses_found
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

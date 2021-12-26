@@ -33,6 +33,8 @@ class TxInfoSol(TxInfo):
         self.transfers = None
         self.transfers_net = None
 
+        self.staking_addresses_found = None
+
     def print(self):
         print("txid: {}".format(self.txid))
         print("timestamp: {}".format(self.timestamp))
@@ -65,6 +67,9 @@ class TxInfoSol(TxInfo):
         pprint.pprint(self.log)
         print("\nlog_string:")
         pprint.pprint(self.log_string)
+
+        print("\nstaking_addresses_found:")
+        pprint.pprint(self.staking_addresses_found)
 
         print("\nbalance_changes_all:")
         pprint.pprint(self.balance_changes_all)

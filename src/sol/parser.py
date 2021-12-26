@@ -10,7 +10,7 @@ import pprint
 from sol.TxInfoSol import TxInfoSol
 from sol.tickers.tickers import Tickers
 from sol.api_rpc import RpcAPI
-from sol.constants import BILLION, MINT_SOL, CURRENCY_SOL
+from sol.constants import BILLION, MINT_SOL, CURRENCY_SOL, INSTRUCTION_TYPE_DELEGATE, PROGRAM_STAKE
 from sol import util_sol
 
 
@@ -66,8 +66,24 @@ def parse_tx(txid, data, wallet_address):
         txinfo.transfers = _transfers_instruction(txinfo)
         txinfo.transfers_net, _ = _transfers_net(txinfo, txinfo.transfers, fee, mint_to=True)
 
+    txinfo.staking_addresses_found = _staking_addresses_found(txinfo.instructions)
+
     return txinfo
 
+
+def _staking_addresses_found(instructions):
+    out = []
+    for instruction in instructions:
+        parsed = instruction.get("parsed", None)
+        instruction_type = parsed.get("type", None) if (parsed and type(parsed) is dict) else None
+        program = instruction.get("program")
+
+        if (program == PROGRAM_STAKE
+            and instruction_type == INSTRUCTION_TYPE_DELEGATE):
+            stake_account = parsed["info"]["stakeAccount"]
+            out.append(stake_account)
+
+    return out
 
 def _has_empty_token_balances(data, mints):
     post_token_balances = data["result"]["meta"]["postTokenBalances"]
