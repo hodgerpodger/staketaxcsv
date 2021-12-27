@@ -24,9 +24,8 @@ from terra.api_search_figment import SearchAPIFigment, LIMIT_FIGMENT
 from terra.api_fcd import FcdAPI, LIMIT_FCD
 import terra.processor
 from terra.ProgressTerra import ProgressTerra, SECONDS_PER_TX
-from settings_csv import TICKER_LUNA
 from common.ErrorCounter import ErrorCounter
-from settings_csv import TERRA_FIGMENT_KEY
+from settings_csv import TERRA_FIGMENT_KEY, TICKER_LUNA
 
 MAX_TRANSACTIONS = 5000
 

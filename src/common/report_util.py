@@ -12,8 +12,9 @@ FORMAT_CALCULATOR = "calculator"
 FORMAT_ACCOINTING = "accointing"
 FORMAT_TOKENTAX = "tokentax"
 FORMAT_ZENLEDGER = "zenledger"
+FORMAT_TAXBIT = "taxbit"
 FORMATS = [FORMAT_DEFAULT, FORMAT_COINTRACKING, FORMAT_COINTRACKER, FORMAT_KOINLY, FORMAT_CALCULATOR,
-           FORMAT_ACCOINTING, FORMAT_TOKENTAX, FORMAT_ZENLEDGER]
+           FORMAT_ACCOINTING, FORMAT_TOKENTAX, FORMAT_ZENLEDGER, FORMAT_TAXBIT]
 ALL = "all"
 
 
@@ -88,3 +89,5 @@ def run_exports(ticker, wallet_address, exporter, format):
             exporter.export_tokentax_csv(csvpath)
         elif cur_format == FORMAT_ZENLEDGER:
             exporter.export_zenledger_csv(csvpath)
+        elif cur_format == FORMAT_TAXBIT:
+            exporter.export_taxbit_csv(csvpath)

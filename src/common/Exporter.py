@@ -298,6 +298,34 @@ ZEN_FIELDS = [
     ZEN_FIELD_US_BASED
 ]
 
+# taxbit fields
+TAXBIT_FIELD_DATE_AND_TIME = "Date and Time"
+TAXBIT_FIELD_TRANSACTION_TYPE = "Transaction Type"
+TAXBIT_FIELD_SENT_QUANTITY = "Sent Quantity"
+TAXBIT_FIELD_SENT_CURRENCY = "Sent Currency"
+TAXBIT_FIELD_SENDING_SOURCE = "Sending Source"
+TAXBIT_FIELD_RECEIVED_QUANTITY = "Received Quantity"
+TAXBIT_FIELD_RECEIVED_CURRENCY = "Received Currency"
+TAXBIT_FIELD_RECEIVING_DESTINATION = "Receiving Destination"
+TAXBIT_FIELD_FEE = "Fee"
+TAXBIT_FIELD_FEE_CURRENCY = "Fee Currency"
+TAXBIT_FIELD_EXCHANGE_TRANSACTION_ID = "Exchange Transaction ID"
+TAXBIT_FIELD_BLOCKCHAIN_TRANSACTION_HASH = "Blockchain Transaction Hash"
+TAXBIT_FIELDS = [
+    TAXBIT_FIELD_DATE_AND_TIME,
+    TAXBIT_FIELD_TRANSACTION_TYPE,
+    TAXBIT_FIELD_SENT_QUANTITY,
+    TAXBIT_FIELD_SENT_CURRENCY,
+    TAXBIT_FIELD_SENDING_SOURCE,
+    TAXBIT_FIELD_RECEIVED_QUANTITY,
+    TAXBIT_FIELD_RECEIVED_CURRENCY,
+    TAXBIT_FIELD_RECEIVING_DESTINATION,
+    TAXBIT_FIELD_FEE,
+    TAXBIT_FIELD_FEE_CURRENCY,
+    TAXBIT_FIELD_EXCHANGE_TRANSACTION_ID,
+    TAXBIT_FIELD_BLOCKCHAIN_TRANSACTION_HASH
+]
+
 
 class Row:
 
@@ -720,17 +748,18 @@ class Exporter:
         return dt.strftime("%d/%m/%Y %H:%M:%S")
 
     def export_accointing_csv(self, csvpath):
-        """ Writes CSV, suitable for import into Accointing """
+        """ Writes CSV, whose xlsx translation is suitable for import into Accointing """
         self.sort_rows(reverse=True)
 
         rows = self._rows_export()
         with open(csvpath, 'w') as f:
             mywriter = csv.writer(f)
+
+            # header row
             mywriter.writerow(ACCOINT_FIELDS)
 
+            # data rows
             for row in rows:
-                # Write one line to CSV
-
                 # Determine transaction_type, classification
                 if row.tx_type == TX_TYPE_STAKING:
                     transaction_type = "deposit"
@@ -839,6 +868,103 @@ class Exporter:
                 ]
                 mywriter.writerow(line)
         logging.info("Wrote to %s", csvpath)
+
+    def export_taxbit_csv(self, csvpath):
+        """
+        This is experimental non-working version of TaxBit CSV
+
+        I tried integration to TaxBit website, but there were some unresolved errors.  Some transactions
+        succeeded, but others did not.  CSV imports fail silently, and support did not provide any feedback.
+        So this is only a draft implementation according to the website spec.
+        """
+        self.sort_rows(reverse=True)
+        rows = self._rows_export()
+
+        TAXBIT_TYPES = {
+            TX_TYPE_STAKING: "Income",
+            TX_TYPE_AIRDROP: "Income",
+            TX_TYPE_TRADE: "Trade",
+            TX_TYPE_SPEND: "Expense",
+            TX_TYPE_INCOME: "Income",
+            TX_TYPE_TRANSFER: "Transfer Unknown",
+            TX_TYPE_BORROW: "Transfer Unknown",
+            TX_TYPE_REPAY: "Transfer Unknown"
+        }
+
+        with open(csvpath, 'w') as f:
+            mywriter = csv.writer(f)
+
+            # header row
+            mywriter.writerow(TAXBIT_FIELDS)
+
+            # data rows
+            if self.wallet_address.startswith("cosmo"):
+                tx_source = "ATOM WALLET"
+            elif self.wallet_address.startswith("terra"):
+                tx_source = "LUNA WALLET"
+            elif self.wallet_address.startswith("osmo"):
+                tx_source = "OSMO WALLET"
+            elif len(self.wallet_address) == 44:
+                tx_source = "SOL WALLET"
+            else:
+                logging.critical("Bad condition: unable to identify tx_source in export_taxbit_csv()")
+
+            for row in rows:
+                # Determine Transaction Type
+                tb_type = TAXBIT_TYPES[row.tx_type]
+                if tb_type in ["Transfer Unknown"]:
+                    if row.received_amount:
+                        tb_type = "Transfer In"
+                    else:
+                        tb_type = "Transfer Out"
+
+                # Determine Sending Source and Receiving Destination
+                if tb_type == "Income":
+                    sending_source = ""
+                    receiving_destination = tx_source
+                elif tb_type == "Trade":
+                    sending_source = tx_source
+                    receiving_destination = tx_source
+                elif tb_type == "Expense":
+                    sending_source = tx_source
+                    receiving_destination = ""
+                elif tb_type == "Income":
+                    sending_source = ""
+                    receiving_destination = tx_source
+                elif tb_type == "Transfer In":
+                    sending_source = ""
+                    receiving_destination = tx_source
+                elif tb_type == "Transfer Out":
+                    sending_source = tx_source
+                    receiving_destination = ""
+                else:
+                    raise Exception("Bad condition: unable to determined tb_type for txid {}".format(row.txid))
+
+                # Create an ID that determines duplicates
+                exchange_transaction_id = "{}_{}_{}".format(row.txid, row.sent_currency, row.received_currency)
+
+                line = [
+                    self._taxbit_timestamp(row.timestamp),       # Date and Time
+                    tb_type,                                     # Transaction Type
+                    row.sent_amount,                             # Sent Quantity
+                    row.sent_currency,                           # Sent Currency
+                    sending_source,                              # Sending Source
+                    row.received_amount,                         # Received Quantity
+                    row.received_currency,                       # Received Currency
+                    receiving_destination,                       # Receiving Destination
+                    row.fee,                                     # Fee
+                    row.fee_currency,                            # Fee Currency
+                    exchange_transaction_id,                     # Exchange Transaction ID (determines duplicates)
+                    row.txid                                     # Blockchain Transaction Hash
+                ]
+                mywriter.writerow(line)
+
+        logging.info("Wrote to %s", csvpath)
+
+    def _taxbit_timestamp(self, ts):
+        # Convert "2021-08-04 15:25:43" to "2021-08-04T15:25:43Z"
+        d, t = ts.split(" ")
+        return "{}T{}Z".format(d, t)
 
     def _accointing_timestamp(self, ts):
         # Convert "2021-08-04 15:25:43" to "08/14/2021 15:25:43"
