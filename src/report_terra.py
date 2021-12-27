@@ -32,7 +32,7 @@ MAX_TRANSACTIONS = 5000
 
 def main():
     wallet_address, format, txid, options = report_util.parse_args()
-    readOptions(options)
+    read_options(options)
 
     if txid:
         exporter = txone(wallet_address, txid)
@@ -42,7 +42,7 @@ def main():
         report_util.run_exports(TICKER_LUNA, wallet_address, exporter, format)
 
 
-def readOptions(options):
+def read_options(options):
     if options:
         # Check for options with non-default values
         if options.get("debug") is True:
@@ -105,7 +105,7 @@ def txhistory(wallet_address, job=None, options=None):
     progress = ProgressTerra()
 
     if options:
-        readOptions(options)
+        read_options(options)
     if job:
         localconfig.job = job
         localconfig.cache = True
