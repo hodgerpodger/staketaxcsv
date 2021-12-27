@@ -6,8 +6,23 @@
   * CSV codebase for https://stake.tax
   * Community contribution and PRs are most welcome, especially to fix/support new types of 
     protocols/transactions.
+  
+# Usage
 
-
+  * Same arguments apply for report_terra.py (LUNA), report_sol.py (SOL), report_atom.py (ATOM):
+    ```
+    cd src
+    
+    # Create default CSV
+    python3 report_terra.py <wallet_address>
+    
+    # Create all CSV formats (i.e. koinly, cointracking, etc.)
+    python3 report_terra.py <wallet_address> --format all
+    
+    # Show CSV result for single transaction (great for development/debugging)
+    python3 report_terra.py <wallet_address> --txid <txid>
+    ```
+    
 # Install
 
   1. Install python 3.9 ([one way](README_reference.md#installing-python-39-on-macos))
@@ -28,21 +43,6 @@
   4. For ATOM only, install `gaiad` 
   - https://hub.cosmos.network/main/gaia-tutorials/installation.html
 
-# Usage
-
-  * Same arguments apply for report_terra.py (LUNA), report_sol.py (SOL), report_atom.py (ATOM):
-    ```
-    cd src
-    
-    # Create default CSV
-    python3 report_terra.py <wallet_address>
-    
-    # Create all CSV formats (i.e. koinly, cointracking, etc.)
-    python3 report_terra.py <wallet_address> --format all
-    
-    # Show CSV result for single transaction (great for development/debugging)
-    python3 report_terra.py <wallet_address> --txid <txid>
-    ```
 
 # Contributing Code
 
