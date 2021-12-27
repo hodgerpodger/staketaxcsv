@@ -146,7 +146,7 @@ def _sent(from_contract, txid):
 def _received(from_contract, txid):
     last_return_amount = from_contract["return_amount"][-1]
     last_asset = from_contract["ask_asset"][-1]
-    last_tax_amount = from_contract["tax_amount"][-1]
+    last_tax_amount = from_contract["tax_amount"][-1] if "tax_amount" in from_contract else 0
 
     # Determine currency
     receive_currency = _asset_to_currency(last_asset, txid)

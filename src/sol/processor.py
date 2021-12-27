@@ -19,6 +19,7 @@ from sol.handle_orca import handle_orca_swap_v2
 from sol.parser import parse_tx
 from common.ErrorCounter import ErrorCounter
 from sol import constants as co
+from sol.config_sol import localconfig
 
 
 def process_tx(wallet_info, exporter, txid, data):
@@ -106,5 +107,8 @@ def process_tx(wallet_info, exporter, txid, data):
         logging.error("Exception when handling txid=%s, exception=%s", txid, str(e))
         ErrorCounter.increment("exception", txid)
         handle_unknown(exporter, txinfo)
+
+        if localconfig.debug:
+            raise(e)
 
     return txinfo

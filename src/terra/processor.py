@@ -34,6 +34,7 @@ from terra.handle_nft import (
 )
 from terra.handle_reward_pylon import handle_airdrop_pylon
 from terra.handle_failed_tx import handle_failed_tx
+from terra.config_terra import localconfig
 
 # execute_type -> tx_type mapping for generic transactions with no tax details
 EXECUTE_TYPES_SIMPLE = {
@@ -211,6 +212,10 @@ def process_tx(wallet_address, elem, exporter):
         logging.error("Exception when handling txid=%s, exception=%s", txid, str(e))
         ErrorCounter.increment("exception", txid)
         handle_unknown(exporter, txinfo)
+
+        # roger
+        if localconfig.debug:
+            raise(e)
 
 
 def _txinfo(exporter, elem, wallet_address):
