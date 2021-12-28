@@ -154,6 +154,7 @@ def txhistory(wallet_address, job=None):
 
 
 def _max_queries():
+    """ Calculated max number of queries based off of config limits """
     max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
     max_queries = math.ceil(max_txs / LIMIT)
     logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
@@ -165,6 +166,7 @@ def _query_txids(addresses, progress):
     max_queries = _max_queries()
 
     out = []
+    txids_seen = set()
     for i, address in enumerate(addresses):
         if progress and i % 10 == 0:
             message = "Fetched txids for {} of {} addresses...".format(i, len(addresses))
@@ -176,24 +178,16 @@ def _query_txids(addresses, progress):
             logging.info("query %s for address=%s", j, address)
 
             txids, before = RpcAPI.get_txids(address, limit=LIMIT, before=before)
-            out.extend(txids)
+            for txid in txids:
+                # Remove duplicate txids
+                if txid not in txids_seen:
+                    out.append(txid)
+                    txids_seen.add(txid)
 
             if before is None:
                 break
 
-    # Remove duplicates
-    out2 = []
-    txids_seen = set()
-    for txid in out:
-        if txid in txids_seen:
-            continue
-        txids_seen.add(txid)
-
-        out2.append(txid)
-
-    # Process oldest first
-    out2.reverse()
-    return out2
+    return reversed(out)
 
 
 def _txids(wallet_address, progress):
