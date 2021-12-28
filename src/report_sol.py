@@ -164,12 +164,12 @@ def _query_txids(addresses, progress):
     max_queries = _max_queries()
 
     out = []
-    before = None
     for i, address in enumerate(addresses):
         if progress and i % 10 == 0:
             message = "Fetched txids for {} of {} addresses...".format(i, len(addresses))
             progress.report_message(message)
 
+        before = None
         # Get transaction txids for this token account
         for j in range(max_queries):
             logging.info("query %s for address=%s", j, address)
