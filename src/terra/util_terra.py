@@ -326,3 +326,11 @@ def _event_with_action(elem, event_type, action):
             if action in event["action"]:
                 return event
     return None
+
+
+def _ingest_rows(exporter, rows, comment):
+    for i, row in enumerate(rows):
+        row.comment = comment
+        if i > 0:
+            row.fee, row.fee_currency = "", ""
+        exporter.ingest_row(row)

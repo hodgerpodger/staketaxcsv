@@ -9,6 +9,7 @@ import logging
 import json
 from json.decoder import JSONDecodeError
 import os
+import math
 
 from common.Cache import Cache
 from common.Exporter import Exporter
@@ -154,7 +155,7 @@ def txhistory(wallet_address, job=None):
 
 def _max_queries():
     max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
-    max_queries = int(max_txs / LIMIT) + 1
+    max_queries = math.ceil(max_txs / LIMIT)
     logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
     return max_queries
 
@@ -169,8 +170,8 @@ def _query_txids(addresses, progress):
             message = "Fetched txids for {} of {} addresses...".format(i, len(addresses))
             progress.report_message(message)
 
-        before = None
         # Get transaction txids for this token account
+        before = None
         for j in range(max_queries):
             logging.info("query %s for address=%s", j, address)
 

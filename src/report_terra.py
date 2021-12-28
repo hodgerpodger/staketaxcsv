@@ -15,6 +15,7 @@ import logging
 import json
 import os
 import pprint
+import math
 
 from common.Cache import Cache
 from common.Exporter import Exporter
@@ -82,7 +83,7 @@ def estimate_duration(wallet_address):
 
 def _max_queries():
     max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
-    max_queries = int(max_txs / LIMIT_FCD) + 1
+    max_queries = math.ceil(max_txs / LIMIT_FCD)
     logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
     return max_queries
 

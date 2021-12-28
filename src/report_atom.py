@@ -24,6 +24,7 @@ import json
 import os
 import pprint
 import time
+import math
 
 from common import report_util
 from common.Exporter import Exporter
@@ -160,7 +161,7 @@ def _count_txs(wallet_address):
 
 def _max_pages():
     max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
-    max_pages = int(max_txs / LIMIT) + 1
+    max_pages = math.ceil(max_txs / LIMIT)
     logging.info("max_txs: %s, max_pages: %s", max_txs, max_pages)
     return max_pages
 

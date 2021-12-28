@@ -9,7 +9,8 @@
   
 # Usage
 
-  * Same arguments apply for report_terra.py (LUNA), report_sol.py (SOL), report_atom.py (ATOM):
+  * Same arguments apply for report_terra.py (LUNA), report_sol.py (SOL), report_atom.py (ATOM),
+    report_osmo.py (OSMO):
     ```
     cd src
     

@@ -17,7 +17,7 @@ from terra.handle_mirror_borrow import handle_deposit_borrow, handle_repay_withd
 from terra.handle_reward import handle_reward
 from terra.handle_reward_contract import handle_airdrop, handle_reward_contract
 from terra.handle_transfer import handle_transfer, handle_transfer_contract
-from terra.handle_simple import handle_unknown, handle_simple
+from terra.handle_simple import handle_unknown, handle_simple, handle_unknown_detect_transfers
 from terra.handle_swap import handle_swap, handle_swap_msgswap, handle_execute_swap_operations
 from terra.handle_anchor_earn import handle_anchor_earn_deposit, handle_anchor_earn_withdraw
 from terra.handle_anchor_borrow import (
@@ -35,6 +35,7 @@ from terra.handle_nft import (
 from terra.handle_reward_pylon import handle_airdrop_pylon
 from terra.handle_failed_tx import handle_failed_tx
 from terra.config_terra import localconfig
+from terra.handle_zap import handle_zap_into_strategy, handle_zap_out_of_strategy
 
 # execute_type -> tx_type mapping for generic transactions with no tax details
 EXECUTE_TYPES_SIMPLE = {
@@ -199,14 +200,20 @@ def process_tx(wallet_address, elem, exporter):
             elif execute_type == ex.EXECUTE_TYPE_AIRDROP:
                 return handle_airdrop_pylon(exporter, elem, txinfo)
 
+            # Apollo
+            elif execute_type == ex.EXECUTE_TYPE_ZAP_INTO_STRATEGY:
+                return handle_zap_into_strategy(exporter, elem, txinfo)
+            elif execute_type == ex.EXECUTE_TYPE_ZAP_OUT_OF_STRATEGY:
+                return handle_zap_out_of_strategy(exporter, elem, txinfo)
+
             else:
                 logging.error("Unknown execute_type for txid=%s", txid)
                 ErrorCounter.increment("unknown_execute_type", txid)
-                handle_unknown(exporter, txinfo)
+                handle_unknown_detect_transfers(exporter, txinfo, elem)
         else:
             logging.error("Unknown msgtype for txid=%s", txid)
             ErrorCounter.increment("unknown_msgtype", txid)
-            handle_unknown(exporter, txinfo)
+            handle_unknown_detect_transfers(exporter, txinfo, elem)
 
     except Exception as e:
         logging.error("Exception when handling txid=%s, exception=%s", txid, str(e))

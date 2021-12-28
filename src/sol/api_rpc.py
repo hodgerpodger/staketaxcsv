@@ -222,11 +222,11 @@ class RpcAPI(object):
             txid = info["signature"]
             out.append(txid)
 
-        # Extract next "before" arg for subsequent query
+        # Extract last txid to use as "before" argument in subsequent query
         result_length = len(data["result"])
         if result_length == 1000 or (limit and result_length == limit):
-            before_next = data["result"][-1]["signature"]
+            last_txid = data["result"][-1]["signature"]
         else:
-            before_next = None
+            last_txid = None
 
-        return out, before_next
+        return out, last_txid
