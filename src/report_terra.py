@@ -28,7 +28,7 @@ from terra.ProgressTerra import ProgressTerra, SECONDS_PER_TX
 from common.ErrorCounter import ErrorCounter
 from settings_csv import TERRA_FIGMENT_KEY, TICKER_LUNA
 
-MAX_TRANSACTIONS = 5000
+MAX_TRANSACTIONS = 10000
 
 
 def main():
