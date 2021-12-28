@@ -144,17 +144,15 @@ def _get_txs(wallet_address, progress):
             return out
 
     # Retrieve all transactions data
-    offset = 0
     out = []
     for i in range(_max_pages()):
         progress.report(len(out))
 
-        data = OsmoDataAPI.get_txs(wallet_address, offset)
+        data = OsmoDataAPI.get_txs(wallet_address, i * LIMIT)
         out.extend(data)
-
-        if len(data) == LIMIT:
-            offset += LIMIT
-        else:
+        
+        # Exit early if length of data indicates no more txs.
+        if len(data) != LIMIT:
             break
 
     # Report final progress
