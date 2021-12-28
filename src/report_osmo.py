@@ -29,7 +29,7 @@ MAX_TRANSACTIONS = 5000
 
 def main():
     wallet_address, format, txid, options = report_util.parse_args()
-    read_options(options)
+    _read_options(options)
 
     if txid:
         exporter = txone(wallet_address, txid)
@@ -39,7 +39,7 @@ def main():
         report_util.run_exports(TICKER_OSMO, wallet_address, exporter, format)
 
 
-def read_options(options):
+def _read_options(options):
     if options:
         # Check for options with non-default values
         if options.get("debug") is True:
@@ -85,7 +85,7 @@ def _max_pages():
 
 def txhistory(wallet_address, job=None, options=None):
     if options:
-        read_options(options)
+        _read_options(options)
     if job:
         localconfig.job = job
         localconfig.cache = True
