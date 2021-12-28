@@ -7,8 +7,12 @@ def handle_airdrop_pylon(exporter, elem, txinfo):
     """ Handles airdrops from pylon governance contract """
     wallet_address = txinfo.wallet_address
     txid = txinfo.txid
-
     from_contract = elem["logs"][0]["events_by_type"]["from_contract"]
+
+    if "action" in from_contract and from_contract["action"][0] == "airdrop_update":
+        # non financial tx: just ignore
+        return
+
     actions = from_contract["action"]
     contract_addresses = from_contract["contract_address"]
     amounts = from_contract["amount"]

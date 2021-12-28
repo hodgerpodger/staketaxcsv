@@ -2,6 +2,7 @@
 from terra import util_terra
 from terra.make_tx import make_swap_tx_terra
 from terra.constants import CUR_UST, CUR_AUST
+from terra.handle_simple import handle_unknown
 
 
 def _exchange_rate(ust, aust):
@@ -11,6 +12,11 @@ def _exchange_rate(ust, aust):
 def handle_anchor_earn_deposit(exporter, elem, txinfo):
     txid = txinfo.txid
     from_contract = util_terra._event_with_action(elem, "from_contract", "deposit_stable")
+
+    if from_contract is None:
+        # some older transactions for some reason missing from LCD and this key in FCD
+        handle_unknown(exporter, txinfo)
+        return
 
     deposit_amount = from_contract["deposit_amount"][0]
     mint_amount = from_contract["mint_amount"][0]
@@ -25,6 +31,11 @@ def handle_anchor_earn_deposit(exporter, elem, txinfo):
 def handle_anchor_earn_withdraw(exporter, elem, txinfo):
     txid = txinfo.txid
     from_contract = util_terra._event_with_action(elem, "from_contract", "redeem_stable")
+
+    if from_contract is None:
+        # some older transactions for some reason missing from LCD and this key in FCD
+        handle_unknown(exporter, txinfo)
+        return
 
     redeem_amount = from_contract["redeem_amount"][0]
     burn_amount = from_contract["burn_amount"][0]
