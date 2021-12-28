@@ -149,3 +149,11 @@ def _msg_type(msginfo):
 def _make_tx_type(msginfo):
     msg_type = _msg_type(msginfo)
     return "_" + msg_type
+
+
+def _ingest_rows(exporter, rows, comment):
+    for i, row in enumerate(rows):
+        row.comment = comment
+        if i > 0:
+            row.fee, row.fee_currency = "", ""
+        exporter.ingest_row(row)
