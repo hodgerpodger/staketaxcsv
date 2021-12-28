@@ -9,13 +9,12 @@ def handle_airdrop_pylon(exporter, elem, txinfo):
     txid = txinfo.txid
     from_contract = elem["logs"][0]["events_by_type"]["from_contract"]
 
-    if "action" in from_contract and from_contract["action"][0] == "airdrop_update":
-        # non financial tx: just ignore
-        return
-
     actions = from_contract["action"]
     contract_addresses = from_contract["contract_address"]
-    amounts = from_contract["amount"]
+    amounts = from_contract.get("amount", None)
+    if amounts is None:
+        # only airdrop update transactions: ignore as there is nothing to do
+        return
 
     count = 0
     for i in range(len(actions)):
