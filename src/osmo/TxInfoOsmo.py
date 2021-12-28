@@ -17,13 +17,11 @@ class TxInfoOsmo(TxInfo):
         print("timestamp: {}".format(self.timestamp))
         print("fee: {}".format(self.fee))
 
-        i = 0
         for i, msg in enumerate(self.msgs):
             print("\nmsg{}:".format(i))
             print("\tmessage: {}".format(msg.message))
             print("\ttransfers_in: {}".format(msg.transfers[0]))
             print("\ttransfers_out: {}".format(msg.transfers[1]))
-            i += 1
         print("\n")
 
 
