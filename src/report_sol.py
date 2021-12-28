@@ -187,7 +187,9 @@ def _query_txids(addresses, progress):
             if before is None:
                 break
 
-    return reversed(out)
+    # Process oldest first
+    out.reverse()
+    return out
 
 
 def _txids(wallet_address, progress):
