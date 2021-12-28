@@ -30,7 +30,7 @@ RPC_TIMEOUT = 600  # seconds
 
 def main():
     wallet_address, format, txid, options = report_util.parse_args()
-    readOptions(options)
+    read_options(options)
 
     if txid:
         exporter = txone(wallet_address, txid)
@@ -40,7 +40,7 @@ def main():
         report_util.run_exports(TICKER_SOL, wallet_address, exporter, format)
 
 
-def readOptions(options):
+def read_options(options):
     if options:
         if options.get("debug") is True:
             localconfig.debug = True
