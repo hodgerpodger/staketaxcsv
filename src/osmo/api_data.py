@@ -1,8 +1,13 @@
-
 import logging
 import requests
 import time
-OSMO_DATA_NODE = "https://api-osmosis-chain.imperator.co"
+
+from urllib.parse import urlunparse, urlencode
+
+OSMO_API_SCHEME = "https"
+OSMO_API_NETLOC = "api-osmosis-chain.imperator.co"
+OSMO_GET_TX_COUNT_PATH_TEMPLATE = "/txs/v1/tx/count/{address}"
+OSMO_GET_TXS_PATH_TEMPLATE = "/txs/v1/tx/address/{address}"
 LIMIT = 50
 
 
@@ -10,30 +15,33 @@ class OsmoDataAPI:
 
     @classmethod
     def get_count_txs(cls, address):
-        uri = "/txs/v1/tx/count/{}".format(address)
-        data = cls._query(uri)
-
-        count = 0
-        for row in data:
-            count += row["count"]
-        return count
+        uri_path = OSMO_GET_TX_COUNT_PATH_TEMPLATE.format(address=address)
+        data = cls._query(uri_path)
+        return sum(row["count"] for row in data)
 
     @classmethod
     def get_txs(cls, address, offset=None):
-        uri = "/txs/v1/tx/address/{}?limit={}".format(address, LIMIT)
+        uri_path = OSMO_GET_TXS_PATH_TEMPLATE.format(address=address)
+        query_params = {}
+        query_params["limit"] = LIMIT
         if offset:
-            uri += "&offset={}".format(offset)
-        data = cls._query(uri)
+            query_params["offset"] = offset
+        data = cls._query(uri_path, query_params)
 
         # Extract "tx_response" (found to be common data across multiple APIs)
-        result = [x["tx_response"] for x in data]
-        return result
+        return [row["tx_response"] for row in data]
 
     @classmethod
-    def _query(cls, uri):
-        url = "{}{}".format(OSMO_DATA_NODE, uri)
+    def _query(cls, uri_path, query_params={}):
+        url = urlunparse((
+            OSMO_API_SCHEME, 
+            OSMO_API_NETLOC, 
+            uri_path, 
+            None, 
+            urlencode(query_params), 
+            None,
+        ))
         logging.info("Querying url=%s...", url)
         response = requests.get(url)
-        data = response.json()
         time.sleep(1)
-        return data
+        return response.json()
