@@ -2,7 +2,7 @@
 import logging
 import requests
 import time
-from settings_csv import OSMO_TX_NODE
+OSMO_TX_NODE = "https://api-osmosis.cosmostation.io"
 
 
 class OsmoTxAPI:
