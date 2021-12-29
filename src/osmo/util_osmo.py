@@ -1,7 +1,8 @@
 
+import osmo.api
+
 from osmo.constants import MILLION, EXP18
 from osmo.config_osmo import localconfig
-from osmo.api_historical import OsmoHistoricalAPI
 
 
 def _transfers(log, wallet_address):
@@ -127,7 +128,7 @@ def _ibc_currency(ibc_address):
     if ibc_address in localconfig.ibc_addresses:
         return localconfig.ibc_addresses[ibc_address]
 
-    result = OsmoHistoricalAPI.get_symbol(ibc_address)
+    result = osmo.api.get_symbol(ibc_address)
     val = result if result else ibc_address
 
     localconfig.ibc_addresses[ibc_address] = val
