@@ -11,6 +11,7 @@ import json
 import os
 import pprint
 import math
+import osmo.api
 
 from settings_csv import TICKER_OSMO
 from common.Exporter import Exporter
@@ -18,8 +19,6 @@ from common.ErrorCounter import ErrorCounter
 from common.Cache import Cache
 from common import report_util
 from osmo.config_osmo import localconfig
-from osmo.api_data import OsmoDataAPI, LIMIT
-from osmo.api_tx import OsmoTxAPI
 from osmo.ProgressOsmo import ProgressOsmo, SECONDS_PER_TX
 import osmo.processor
 
@@ -55,12 +54,12 @@ def _read_options(options):
 def wallet_exists(wallet_address):
     if not wallet_address.startswith("osmo"):
         return False
-    count = OsmoDataAPI.get_count_txs(wallet_address)
+    count = osmo.api.get_count_txs(wallet_address)
     return count > 0
 
 
 def txone(wallet_address, txid):
-    data = OsmoTxAPI.get_tx(txid)
+    data = osmo.api.get_tx(txid)
     print("\ndebug data:")
     pprint.pprint(data)
     print("\n")
@@ -73,12 +72,12 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address):
-    return OsmoDataAPI.get_count_txs(wallet_address) * SECONDS_PER_TX
+    return osmo.api.get_count_txs(wallet_address) * SECONDS_PER_TX
 
 
 def _max_pages():
     max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
-    max_pages = math.ceil(max_txs / LIMIT)
+    max_pages = math.ceil(max_txs / osmo.api.LIMIT)
     logging.info("max_txs: %s, max_pages: %s", max_txs, max_pages)
     return max_pages
 
@@ -96,7 +95,7 @@ def txhistory(wallet_address, job=None, options=None):
     # Estimate total time to create CSV
     progress = ProgressOsmo()
     if not localconfig.debug:
-        num_txs = OsmoDataAPI.get_count_txs(wallet_address)
+        num_txs = osmo.api.get_count_txs(wallet_address)
         progress.set_estimate(num_txs)
 
     # Retrieve data
@@ -148,11 +147,11 @@ def _get_txs(wallet_address, progress):
     for i in range(_max_pages()):
         progress.report(len(out))
 
-        data = OsmoDataAPI.get_txs(wallet_address, i * LIMIT)
+        data = osmo.api.get_txs(wallet_address, i * osmo.api.LIMIT)
         out.extend(data)
         
         # Exit early if length of data indicates no more txs.
-        if len(data) != LIMIT:
+        if len(data) != osmo.api.LIMIT:
             break
 
     # Report final progress
