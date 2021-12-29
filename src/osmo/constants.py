@@ -24,4 +24,3 @@ MSG_TYPE_UPDATE_CLIENT = "MsgUpdateClient"
 MSG_TYPE_VOTE = "MsgVote"
 MSG_TYPE_WITHDRAW_COMMISSION = "MsgWithdrawValidatorCommission"
 MSG_TYPE_WITHDRAW_REWARD = "MsgWithdrawDelegatorReward"
-
