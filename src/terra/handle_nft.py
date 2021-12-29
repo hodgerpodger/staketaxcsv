@@ -3,7 +3,7 @@ import logging
 import pprint
 
 from terra.handle_simple import handle_simple, handle_unknown
-from common.Exporter import TX_TYPE_NFT_WHITELIST
+from common.ExporterTypes import TX_TYPE_NFT_WHITELIST
 from terra import util_terra
 from common.ErrorCounter import ErrorCounter
 from terra.make_tx import (

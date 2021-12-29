@@ -6,8 +6,8 @@ from common.ErrorCounter import ErrorCounter
 from settings_csv import TICKER_ATOM
 
 from datetime import datetime
-from common.Exporter import (
-    TX_TYPE_VOTE, TX_TYPE_UNKNOWN, TX_TYPE_STAKING_DELEGATE, TX_TYPE_STAKING_UNDELEGATE, TX_TYPE_STAKING_REDELEGATE)
+from common.ExporterTypes import TX_TYPE_UNKNOWN, TX_TYPE_STAKING_DELEGATE, TX_TYPE_STAKING_UNDELEGATE, \
+    TX_TYPE_STAKING_REDELEGATE, TX_TYPE_VOTE
 from atom.make_tx import make_transfer_receive_tx, make_atom_reward_tx
 from common.make_tx import make_simple_tx, make_transfer_out_tx
 from atom.constants import MILLION, CURRENCIES, CUR_ATOM, EXCHANGE_COSMOS_BLOCKCHAIN

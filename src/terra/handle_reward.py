@@ -5,8 +5,8 @@ from terra import util_terra
 from terra.constants import CUR_LUNA, CUR_UST, CUR_KRT
 from common.make_tx import make_reward_tx
 from terra.config_terra import localconfig
-from common.Exporter import (
-    TX_TYPE_STAKING_DELEGATE, TX_TYPE_STAKING_UNDELEGATE, TX_TYPE_STAKING_REDELEGATE, TX_TYPE_STAKING_WITHDRAW_REWARD)
+from common.ExporterTypes import TX_TYPE_STAKING_DELEGATE, TX_TYPE_STAKING_UNDELEGATE, TX_TYPE_STAKING_REDELEGATE, \
+    TX_TYPE_STAKING_WITHDRAW_REWARD
 from terra.handle_simple import handle_simple
 
 REWARD_CURRENCIES = set([

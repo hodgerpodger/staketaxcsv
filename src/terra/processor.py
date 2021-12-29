@@ -23,7 +23,7 @@ from terra.handle_anchor_earn import handle_anchor_earn_deposit, handle_anchor_e
 from terra.handle_anchor_borrow import (
     handle_borrow, handle_repay, handle_deposit_collateral, handle_withdraw_collateral)
 from terra.handle_anchor_bond import handle_bond, handle_unbond, handle_unbond_withdraw
-from common.Exporter import TX_TYPE_GOV, TX_TYPE_VOTE, TX_TYPE_LOTA_UNKNOWN
+from common.ExporterTypes import TX_TYPE_VOTE, TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN
 from common.ErrorCounter import ErrorCounter
 from common.TxInfo import TxInfo
 from common.make_tx import make_just_fee_tx
