@@ -62,8 +62,7 @@ def get_symbol(ibc_address: str) -> str or None:
 
 
 def get_tx(txid: str) -> Any:
-    query_params = {"txid": txid}
     uri_path = OSMO_GET_TX_PATH_TEMPLATE.format(txid=txid)
 
-    data = _query(OSMO_API_SCHEME, OSMO_TX_API_NETLOC, uri_path, query_params)
+    data = _query(OSMO_API_SCHEME, OSMO_TX_API_NETLOC, uri_path)
     return data["data"]
