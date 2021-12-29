@@ -57,6 +57,9 @@ def _handle_message(exporter, txinfo, msginfo):
         # transfers
         elif msg_type in [co.MSG_TYPE_IBC_TRANSFER, co.MSG_TYPE_MSGRECVPACKET]:
             handle_transfer_ibc(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_TIMEOUT:
+            # ibc transfer timeout
+            pass
         elif msg_type == co.MSG_TYPE_SEND:
             handle_transfer(exporter, txinfo, msginfo)
 
