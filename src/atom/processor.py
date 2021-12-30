@@ -11,6 +11,7 @@ from common.ExporterTypes import TX_TYPE_UNKNOWN, TX_TYPE_STAKING_DELEGATE, TX_T
 from atom.make_tx import make_transfer_receive_tx, make_atom_reward_tx
 from common.make_tx import make_simple_tx, make_transfer_out_tx
 from atom.constants import MILLION, CURRENCIES, CUR_ATOM, EXCHANGE_COSMOS_BLOCKCHAIN
+from atom.config_atom import localconfig
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -41,6 +42,9 @@ def process_tx(wallet_address, elem, exporter):
         except Exception as e:
             logging.error("Exception when handling txid=%s, exception:%s", txid, str(e))
             handle_simple_tx(exporter, txinfo, TX_TYPE_UNKNOWN)
+
+            if localconfig.debug:
+                raise(e)
 
 
 def _handle_tx(msg_type, exporter, txinfo, elem, txid, i):
@@ -210,7 +214,8 @@ def _amount(amount_string, events=None):
 
     if "ibc" in amount_string:
         amount, address = amount_string.split("ibc/", 1)
-        currency = CURRENCIES[address]
+        ibc_address = "ibc/{}".format(address)
+        currency = CURRENCIES.get(ibc_address, ibc_address)
         amount = float(amount) / MILLION
         return amount, currency
 

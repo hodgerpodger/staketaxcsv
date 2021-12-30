@@ -90,17 +90,18 @@ class Exporter:
     def __init__(self, wallet_address):
         self.wallet_address = wallet_address
         self.rows = []
-        self.reverse = None  # last sorted direction
+        self.is_reverse = None  # last sorted direction
 
     def ingest_row(self, row):
         self.rows.append(row)
 
     def sort_rows(self, reverse=True):
-        if self.reverse != reverse:
+        if self.is_reverse != reverse:
             self.rows.sort(key=lambda row: (row.timestamp, row.z_index), reverse=reverse)
+        self.is_reverse = reverse
 
     def _rows_export(self):
-        return filter(lambda row: row.tx_type in TX_TYPES_CSVEXPORT, self.rows)
+        return filter(lambda row: robw.tx_type in TX_TYPES_CSVEXPORT, self.rows)
 
     def export_print(self):
         """ Prints transactions """
