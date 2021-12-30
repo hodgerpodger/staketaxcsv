@@ -98,7 +98,7 @@ class Exporter:
     def sort_rows(self, reverse=True):
         if self.is_reverse != reverse:
             self.rows.sort(key=lambda row: (row.timestamp, row.z_index), reverse=reverse)
-        self.is_reverse = reverse
+            self.is_reverse = reverse
 
     def _rows_export(self):
         return filter(lambda row: row.tx_type in TX_TYPES_CSVEXPORT, self.rows)

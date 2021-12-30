@@ -32,7 +32,7 @@ def parse_args():
                         help="(LUNA) include minor currency rewards")
     parser.add_argument("--lp", action="store_true", default=False,
                         help="(LUNA/OSMO) treat LP deposits/withdrawals as transfers "
-                             "(default: treat as _LP_DEPOSIT/_LP_WITHDRAW)")
+                             "(default is non-exportable custom tx")
     parser.add_argument("--limit", type=int,
                         help="change to non-default max transactions limit")
 
