@@ -89,11 +89,10 @@ def process_tx(wallet_info, exporter, txid, data):
 
         elif co.PROGRAMID_VOTE in program_ids:
             handle_vote(exporter, txinfo)
-
-        elif is_init_account_tx(txinfo):
-            handle_init_account_tx(exporter, txinfo)
         elif is_simple_tx(txinfo):
             handle_simple_tx(exporter, txinfo)
+        elif is_init_account_tx(txinfo):
+            handle_init_account_tx(exporter, txinfo)
         elif is_transfer(txinfo):
             handle_transfer(exporter, txinfo)
         elif is_close_account_tx(txinfo):
