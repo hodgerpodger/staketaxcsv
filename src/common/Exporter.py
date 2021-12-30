@@ -101,7 +101,7 @@ class Exporter:
         self.is_reverse = reverse
 
     def _rows_export(self):
-        return filter(lambda row: robw.tx_type in TX_TYPES_CSVEXPORT, self.rows)
+        return filter(lambda row: row.tx_type in TX_TYPES_CSVEXPORT, self.rows)
 
     def export_print(self):
         """ Prints transactions """
