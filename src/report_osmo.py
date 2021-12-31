@@ -95,7 +95,7 @@ def txhistory(wallet_address, job=None, options=None):
     # Estimate total time to create CSV
     progress = ProgressOsmo()
     if not localconfig.debug:
-        num_txs = osmo.api.get_count_txs(wallet_address)
+        num_txs = min(osmo.api.get_count_txs(wallet_address), MAX_TRANSACTIONS)
         progress.set_estimate(num_txs)
 
     # Retrieve data
