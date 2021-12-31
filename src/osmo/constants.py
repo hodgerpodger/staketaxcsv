@@ -3,6 +3,7 @@ MILLION = 1000000.0
 EXP18 = 10 ** 18
 EXCHANGE_OSMOSIS = "osmosis_blockchain"
 CUR_OSMO = "OSMO"
+CUR_CRO = "CRO"
 
 MSG_TYPE_ACKNOWLEDGMENT = "MsgAcknowledgement"
 MSG_TYPE_BEGIN_UNLOCKING = "MsgBeginUnlocking"

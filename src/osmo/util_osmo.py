@@ -1,7 +1,7 @@
 
 import osmo.api
 
-from osmo.constants import MILLION, EXP18
+from osmo.constants import MILLION, EXP18, CUR_CRO
 from osmo.config_osmo import localconfig
 
 
@@ -95,7 +95,7 @@ def _amount_currency(amount_string):
 
             gamm_address = "gamm" + gamm_address
             currency = _gamm_currency(gamm_address)
-            amount = float(uamount) / EXP18
+            amount = _amount(uamount, currency)
         elif "u" in amt_string:
             uamount, ucurrency = amt_string.split("u", 1)
 
@@ -110,7 +110,12 @@ def _amount_currency(amount_string):
 
 
 def _amount(uamount, currency):
-    return float(uamount) / MILLION
+    if currency.startswith("GAMM-"):
+        return float(uamount) / EXP18
+    elif currency == CUR_CRO:
+        return float(uamount) / MILLION / 100
+    else:
+        return float(uamount) / MILLION
 
 
 def _denom_to_currency(denom):
