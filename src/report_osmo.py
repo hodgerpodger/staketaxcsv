@@ -23,7 +23,7 @@ from osmo.ProgressOsmo import ProgressOsmo, SECONDS_PER_TX
 import osmo.processor
 
 
-MAX_TRANSACTIONS = 1000
+MAX_TRANSACTIONS = 10000
 
 
 def main():
