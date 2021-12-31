@@ -17,7 +17,7 @@ OSMO_GET_TXS_PATH_TEMPLATE = "/txs/v1/tx/address/{address}"
 OSMO_TX_API_NETLOC = "api-osmosis.cosmostation.io"
 OSMO_GET_TX_PATH_TEMPLATE = "/v1/tx/hash/{txid}"
 
-LIMIT = 50
+LIMIT = 100
 
 
 def _query(scheme: str, netloc: str, uri_path: str, query_params: dict[str, Any] = {}) -> dict[str, Any]:
