@@ -31,7 +31,7 @@ def _query(scheme: str, netloc: str, uri_path: str, query_params: dict[str, Any]
     ))
     logging.info("Querying url=%s...", url)
     response = requests.get(url)
-    time.sleep(1)
+    time.sleep(3)
     return response.json()
 
 
