@@ -14,6 +14,7 @@ from osmo import constants as co
 from osmo.handle_lp import (
     handle_lp_deposit, handle_lp_stake, handle_lp_unstake, handle_lp_withdraw,
     handle_lp_deposit_partial)
+from osmo.config_osmo import localconfig
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -83,6 +84,9 @@ def _handle_message(exporter, txinfo, msginfo):
         logging.error(
             "Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
         handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+
+        if localconfig.debug:
+            raise(e)
 
     return txinfo
 
