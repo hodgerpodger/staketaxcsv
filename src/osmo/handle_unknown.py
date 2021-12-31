@@ -1,5 +1,6 @@
 
 from osmo.make_tx import make_osmo_unknown_tx, make_osmo_unknown_tx_with_transfer
+from osmo import util_osmo
 
 
 def handle_unknown_detect_transfers(exporter, txinfo, msginfo):
@@ -17,20 +18,15 @@ def handle_unknown_detect_transfers(exporter, txinfo, msginfo):
             txinfo, msginfo, sent_amount, sent_currency, received_amount, received_currency)
         exporter.ingest_row(row)
     else:
-        # Present unknown transaction as separate transfers.
-        i = 0
+        # Handle unknown transaction as separate transfers for each row.
+        rows = []
         for sent_amount, sent_currency in transfers_out:
-            row = make_osmo_unknown_tx_with_transfer(
-                txinfo, msginfo, sent_amount, sent_currency, "", "", empty_fee=(i > 0), z_index=i
-            )
-            exporter.ingest_row(row)
-            i += 1
+            rows.extend(
+                make_osmo_unknown_tx_with_transfer(txinfo, msginfo, sent_amount, sent_currency, "", ""))
         for received_amount, received_currency in transfers_in:
-            row = make_osmo_unknown_tx_with_transfer(
-                txinfo, msginfo, "", "", received_amount, received_currency, empty_fee=(i > 0), z_index=i
-            )
-            exporter.ingest_row(row)
-            i += 1
+            rows.extend(
+                make_osmo_unknown_tx_with_transfer(txinfo, msginfo, "", "", received_amount, received_currency))
+        util_osmo._ingest_rows(exporter, rows, "")
 
 
 def handle_unknown(exporter, txinfo, msginfo):
