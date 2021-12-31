@@ -4,11 +4,15 @@ from osmo.make_tx import (make_osmo_lp_deposit_tx, make_osmo_lp_withdraw_tx,
     make_osmo_lp_stake_tx, make_osmo_lp_unstake_tx, make_osmo_transfer_in_tx, make_osmo_transfer_out_tx)
 from osmo.config_osmo import localconfig
 from osmo import util_osmo
+from osmo.handle_claim import handle_claim
 
 
 def handle_lp_deposit(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
     comment = "liquidity pool deposit"
+
+    # Preprocessing step to parse staking reward events first, if exists.
+    handle_claim(exporter, txinfo, msginfo)
 
     if len(transfers_in) == 1 and len(transfers_out) == 2:
         lp_amount, lp_currency = transfers_in[0]
@@ -65,6 +69,9 @@ def handle_lp_deposit_partial(exporter, txinfo, msginfo):
 def handle_lp_withdraw(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
     comment = "liquidity pool withdraw"
+
+    # Preprocessing step to parse staking reward events first, if exists.
+    handle_claim(exporter, txinfo, msginfo)
 
     if len(transfers_in) == 2 and len(transfers_out) == 1:
         lp_amount, lp_currency = transfers_out[0]
