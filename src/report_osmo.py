@@ -20,8 +20,8 @@ from common.Cache import Cache
 from common import report_util
 from osmo.config_osmo import localconfig
 from osmo.ProgressOsmo import ProgressOsmo, SECONDS_PER_TX
+from osmo.lp_rewards import lp_rewards
 import osmo.processor
-import osmo.lp_rewards
 import osmo.api_data
 import osmo.api_tx
 
@@ -109,7 +109,7 @@ def txhistory(wallet_address, job=None, options=None):
     osmo.processor.process_txs(wallet_address, elems, exporter)  # Add to CSV
 
     # LP rewards data
-    osmo.lp_rewards.lp_rewards(wallet_address, reward_tokens, exporter, progress)
+    lp_rewards(wallet_address, reward_tokens, exporter, progress)
 
     # Log error stats if exists
     ErrorCounter.log(TICKER_OSMO, wallet_address)
