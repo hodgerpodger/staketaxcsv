@@ -133,16 +133,17 @@ def txhistory(wallet_address, job=None):
     for addr in RpcAPI.fetch_staking_addresses(wallet_address):
         wallet_info.add_staking_address(addr)
 
-    # Estimate duration of job
+    # Update progress indicator
     progress.set_estimate(len(wallet_info.get_staking_addresses()), len(txids))
 
-    # Fetch transaction data and add to CSV
-    _process_txs(txids, wallet_info, exporter, progress)
+    # Transactions data
+    elems = _fetch_txs(txids, wallet_info, progress)
+    _process_txs(elems, wallet_info, exporter, progress)
 
-    # Update parameter for progress estimation
+    # Update progress indicator
     progress.num_staking_addresses = len(wallet_info.get_staking_addresses())
 
-    # Fetch staking rewards data and add to CSV
+    # Staking rewards data
     staking_rewards.reward_txs(wallet_info, exporter, progress)
 
     ErrorCounter.log(TICKER_SOL, wallet_address)
@@ -193,6 +194,19 @@ def _query_txids(addresses, progress):
 
 
 def _txids(wallet_address, progress):
+    # Sometimes, transactions do not all appear under main wallet address when querying transaction history.
+    # So retrieve token addresses too.
+    addresses = [wallet_address]
+    token_accounts = RpcAPI.fetch_token_accounts(wallet_address).keys()
+    addresses.extend(token_accounts)
+
+    out = _query_txids(addresses, progress)
+    return out
+
+
+def _fetch_txs(txids, wallet_info, progress):
+    wallet_address = wallet_info.wallet_address
+
     # Debugging only
     DEBUG_FILE = "_reports/debugsol.{}.transactions.json".format(wallet_address)
     if localconfig.debug and os.path.exists(DEBUG_FILE):
@@ -201,35 +215,31 @@ def _txids(wallet_address, progress):
             out = json.load(f)
             return out
 
-    # Sometimes, transactions do not all appear under main wallet address when querying transaction history.
-    # So retrieve token addresses too.
-    addresses = [wallet_address]
-    token_accounts = RpcAPI.fetch_token_accounts(wallet_address).keys()
-    addresses.extend(token_accounts)
+    elems = []
+    for i, txid in enumerate(txids):
+        elem = RpcAPI.fetch_tx(txid)
+        elems.append((txid, elem))
 
-    out = _query_txids(addresses, progress)
+        if i % 10 == 0:
+            # Update progress to db every so often for user
+            message = "Fetched {} of {} transactions".format(i + 1, len(txids))
+            progress.report("_process_txs", i, message)
+
+    message = "Finished fetching {} transactions".format(len(elems))
+    progress.report("_process_txs", len(elems), message)
 
     # Debugging only
     if localconfig.debug:
         with open(DEBUG_FILE, 'w') as f:
-            json.dump(out, f, indent=4)
+            json.dump(elems, f, indent=4)
             logging.info("Wrote to %s for debugging", DEBUG_FILE)
-
-    logging.info("Finished retrieving all txids.  length=%s", len(out))
-    return out
+    return elems
 
 
-def _process_txs(txids, wallet_info, exporter, progress):
-    for i, txid in enumerate(txids):
-        data = RpcAPI.fetch_tx(txid)
-        sol.processor.process_tx(wallet_info, exporter, txid, data)
-
-        if i % 10 == 0:
-            # Update progress to db every so often for user
-            message = "Processed {} of {} transactions".format(i + 1, len(txids))
-            progress.report("_process_txs", i, message)
-
-    progress.report("_process_txs", len(txids), "Finished processing {} transactions".format(len(txids)))
+def _process_txs(elems, wallet_info, exporter, progress):
+    for i, (txid, elem) in enumerate(elems):
+        #data = RpcAPI.fetch_tx(txid)
+        sol.processor.process_tx(wallet_info, exporter, txid, elem)
 
 
 if __name__ == "__main__":
