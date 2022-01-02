@@ -24,9 +24,7 @@ from osmo.lp_rewards import lp_rewards
 import osmo.processor
 import osmo.api_data
 import osmo.api_tx
-
-
-MAX_TRANSACTIONS = 10000
+MAX_TRANSACTIONS = 5000
 
 
 def main():
