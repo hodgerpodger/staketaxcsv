@@ -1,5 +1,5 @@
 
-import osmo.api
+import osmo.api_historical
 
 from osmo.constants import MILLION, EXP18, CUR_CRO
 from osmo.config_osmo import localconfig
@@ -133,7 +133,7 @@ def _ibc_currency(ibc_address):
     if ibc_address in localconfig.ibc_addresses:
         return localconfig.ibc_addresses[ibc_address]
 
-    result = osmo.api.get_symbol(ibc_address)
+    result = osmo.api_historical.get_symbol(ibc_address)
     val = result if result else ibc_address
 
     localconfig.ibc_addresses[ibc_address] = val

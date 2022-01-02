@@ -11,7 +11,7 @@ import json
 import os
 import pprint
 import math
-import osmo.api
+import osmo.api_data
 
 from settings_csv import TICKER_OSMO
 from common.Exporter import Exporter
@@ -21,6 +21,9 @@ from common import report_util
 from osmo.config_osmo import localconfig
 from osmo.ProgressOsmo import ProgressOsmo, SECONDS_PER_TX
 import osmo.processor
+import osmo.lp_rewards
+import osmo.api_data
+import osmo.api_tx
 
 
 MAX_TRANSACTIONS = 10000
@@ -54,12 +57,12 @@ def _read_options(options):
 def wallet_exists(wallet_address):
     if not wallet_address.startswith("osmo"):
         return False
-    count = osmo.api.get_count_txs(wallet_address)
+    count = osmo.api_data.get_count_txs(wallet_address)
     return count > 0
 
 
 def txone(wallet_address, txid):
-    data = osmo.api.get_tx(txid)
+    data = osmo.api_tx.get_tx(txid)
     print("\ndebug data:")
     pprint.pprint(data)
     print("\n")
@@ -72,17 +75,19 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address):
-    return osmo.api.get_count_txs(wallet_address) * SECONDS_PER_TX
+    return osmo.api_data.get_count_txs(wallet_address) * SECONDS_PER_TX
 
 
 def _max_pages():
     max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
-    max_pages = math.ceil(max_txs / osmo.api.LIMIT)
+    max_pages = math.ceil(max_txs / osmo.api_data.LIMIT)
     logging.info("max_txs: %s, max_pages: %s", max_txs, max_pages)
     return max_pages
 
 
 def txhistory(wallet_address, job=None, options=None):
+    exporter = Exporter(wallet_address)
+
     if options:
         _read_options(options)
     if job:
@@ -94,28 +99,28 @@ def txhistory(wallet_address, job=None, options=None):
 
     # Estimate total time to create CSV
     progress = ProgressOsmo()
-    if not localconfig.debug:
-        num_txs = min(osmo.api.get_count_txs(wallet_address), MAX_TRANSACTIONS)
-        progress.set_estimate(num_txs)
+    reward_tokens = osmo.api_data.get_lp_tokens(wallet_address)
+    num_txs = min(osmo.api_data.get_count_txs(wallet_address), MAX_TRANSACTIONS)
+    progress.set_estimate(num_txs, len(reward_tokens))
 
-    # Retrieve data
-    elems = _get_txs(wallet_address, progress)
-
-    # Remove duplicates and sort
+    # Transactions data
+    elems = _fetch_txs(wallet_address, progress)
     elems = _remove_dups(elems)
+    osmo.processor.process_txs(wallet_address, elems, exporter)  # Add to CSV
 
-    # Create rows for CSV
-    exporter = Exporter(wallet_address)
-    osmo.processor.process_txs(wallet_address, elems, exporter)
+    # LP rewards data
+    osmo.lp_rewards.lp_rewards(wallet_address, reward_tokens, exporter, progress)
 
     # Log error stats if exists
     ErrorCounter.log(TICKER_OSMO, wallet_address)
 
     if localconfig.cache:
         # Remove entries where no symbol was found
-        localconfig.ibc_addresses = {k: v for k, v in localconfig.ibc_addresses.items() if not v.startswith("ibc/")}
+        localconfig.ibc_addresses = {k: v for k, v in localconfig.ibc_addresses.items()
+                                     if not v.startswith("ibc/")}
         Cache().set_osmo_ibc_addresses(localconfig.ibc_addresses)
     return exporter
+
 
 
 def _remove_dups(elems):
@@ -134,7 +139,7 @@ def _remove_dups(elems):
     return out
 
 
-def _get_txs(wallet_address, progress):
+def _fetch_txs(wallet_address, progress):
     # Debugging only: when --debug flag set, read from cache file
     DEBUG_FILE = "_reports/debugosmo.{}.json".format(wallet_address)
     if localconfig.debug and os.path.exists(DEBUG_FILE):
@@ -145,13 +150,14 @@ def _get_txs(wallet_address, progress):
     # Retrieve all transactions data
     out = []
     for i in range(_max_pages()):
-        progress.report(len(out))
+        message = "Fetching page {} for txs...".format(i)
+        progress.report(_fetch_txs.__name__, len(out), message)
 
-        data = osmo.api.get_txs(wallet_address, i * osmo.api.LIMIT)
+        data = osmo.api_data.get_txs(wallet_address, i * osmo.api_data.LIMIT)
         out.extend(data)
         
         # Exit early if length of data indicates no more txs.
-        if len(data) != osmo.api.LIMIT:
+        if len(data) != osmo.api_data.LIMIT:
             break
 
     # Report final progress

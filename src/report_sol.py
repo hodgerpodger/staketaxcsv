@@ -136,13 +136,13 @@ def txhistory(wallet_address, job=None):
     # Estimate duration of job
     progress.set_estimate(len(wallet_info.get_staking_addresses()), len(txids))
 
-    # Fetch transaction data and create rows for CSV
+    # Fetch transaction data and add to CSV
     _process_txs(txids, wallet_info, exporter, progress)
 
     # Update parameter for progress estimation
     progress.num_staking_addresses = len(wallet_info.get_staking_addresses())
 
-    # Fetch staking rewards data
+    # Fetch staking rewards data and add to CSV
     staking_rewards.reward_txs(wallet_info, exporter, progress)
 
     ErrorCounter.log(TICKER_SOL, wallet_address)

@@ -1,9 +1,12 @@
 
 from common.make_tx import (
     make_swap_tx, make_reward_tx, make_transfer_in_tx, make_transfer_out_tx,
-    make_unknown_tx, make_unknown_tx_with_transfer, _make_tx_exchange
+    make_unknown_tx, make_unknown_tx_with_transfer, _make_tx_exchange,
 )
 from osmo import util_osmo
+from common.Exporter import Row
+from common.ExporterTypes import TX_TYPE_STAKING
+from osmo.constants import EXCHANGE_OSMOSIS
 
 
 def _edit_row(row, txinfo, msginfo):
@@ -37,6 +40,27 @@ def make_osmo_swap_tx(txinfo, msginfo, sent_amount, sent_currency, received_amou
 def make_osmo_reward_tx(txinfo, msginfo, reward_amount, reward_currency):
     row = make_reward_tx(txinfo, reward_amount, reward_currency)
     _edit_row(row, txinfo, msginfo)
+    return row
+
+
+def make_lp_reward_tx(wallet_address, day, reward_amount, reward_currency):
+    timestamp = "{} 23:59:59".format(day)
+    txid = "{}.{}.{}".format(wallet_address, day, reward_currency)
+    row = Row(
+        timestamp=timestamp,
+        tx_type=TX_TYPE_STAKING,
+        received_amount=reward_amount,
+        received_currency=reward_currency,
+        sent_amount="",
+        sent_currency="",
+        fee="",
+        fee_currency="",
+        exchange=EXCHANGE_OSMOSIS,
+        wallet_address=wallet_address,
+        txid=txid,
+        url=""
+    )
+    row.comment = "lp_reward"
     return row
 
 
