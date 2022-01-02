@@ -41,8 +41,7 @@
   source <PATH_TO_SAMPLE_ENV_HERE>/sample.env
   set +o allexport
   ```
-  4. For ATOM only, install `gaiad` 
-  - https://hub.cosmos.network/main/gaia-tutorials/installation.html
+  4. For ATOM only, install `gaiad` (https://hub.cosmos.network/main/getting-started/installation.html)
 
 
 # Contributing Code
