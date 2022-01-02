@@ -336,11 +336,11 @@ class Exporter:
                 line = [
                     row.timestamp,                                       # Date
                     row.sent_amount,                                     # Sent Amount
-                    row.sent_currency,                                   # Sent Currency
+                    self._koinly_currency(row.sent_currency),            # Sent Currency
                     row.received_amount,                                 # Received Amount
-                    row.received_currency,                               # Received Currency
+                    self._koinly_currency(row.received_currency),        # Received Currency
                     row.fee,                                             # Fee Amount
-                    row.fee_currency,                                    # Fee Currency
+                    self._koinly_currency(row.fee_currency),             # Fee Currency
                     "",                                                  # Net Worth Amount
                     "",                                                  # Net Worth Currency
                     label,                                               # Label
@@ -350,6 +350,13 @@ class Exporter:
                 mywriter.writerow(line)
 
         logging.info("Wrote to %s", csvpath)
+
+    def _koinly_currency(self, currency):
+        if currency == "PSI":
+            # koinly default PSI is "Passive Income", not "Nexus Protocol" that we want
+            return "ID:106376"
+        else:
+            return currency
 
     def export_calculator_csv(self, csvpath):
         """ Write CSV, suitable for import into cryptataxcalculator.io """
