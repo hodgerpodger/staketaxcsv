@@ -25,14 +25,14 @@ class ProgressOsmo():
         logging.info({"message": message})
 
     def report(self, stage, num, message):
-        if stage == "_fetch_txs":
+        if stage == "_fetch_and_process_txs":
             txs_left = self.num_txs - num
             reward_tokens_left = self.num_reward_tokens
         elif stage == "lp_rewards":
             txs_left = 0
             reward_tokens_left = self.num_reward_tokens - num
         else:
-            logging.critical("Bad stage=%s in ProgressOsmo.report()", stage)
+            raise("Bad stage={} in ProgressOsmo.report()".format(stage))
 
         # Estimate timestamp job finishes
         seconds_left = txs_left * SECONDS_PER_TX + reward_tokens_left * SECONDS_PER_REWARD_TOKEN

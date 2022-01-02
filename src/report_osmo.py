@@ -102,9 +102,7 @@ def txhistory(wallet_address, job=None, options=None):
     progress.set_estimate(num_txs, len(reward_tokens))
 
     # Transactions data
-    elems = _fetch_txs(wallet_address, progress)
-    elems = _remove_dups(elems)
-    osmo.processor.process_txs(wallet_address, elems, exporter)  # Add to CSV
+    _fetch_and_process_txs(wallet_address, exporter, progress)
 
     # LP rewards data
     lp_rewards(wallet_address, reward_tokens, exporter, progress)
@@ -133,41 +131,29 @@ def _remove_dups(elems):
         out.append(elem)
         txids_seen.add(txid)
 
-    out.sort(key=lambda elem: elem["timestamp"])
+    #out.sort(key=lambda elem: elem["timestamp"])
     return out
 
 
-def _fetch_txs(wallet_address, progress):
+def _fetch_and_process_txs(wallet_address, exporter, progress):
     pages_total_estimate = math.ceil(progress.num_txs / osmo.api_data.LIMIT)
 
-    # Debugging only: when --debug flag set, read from cache file
-    DEBUG_FILE = "_reports/debugosmo.{}.json".format(wallet_address)
-    if localconfig.debug and os.path.exists(DEBUG_FILE):
-        with open(DEBUG_FILE, 'r') as f:
-            out = json.load(f)
-            return out
-
-    # Retrieve all transactions data
+    # Fetch and parse data in batches (Cumulative required too much memory)
     out = []
     for i in range(_max_pages()):
         message = "Fetching txs page {} of {}...".format(i, pages_total_estimate)
-        progress.report(_fetch_txs.__name__, len(out), message)
+        progress.report(_fetch_and_process_txs.__name__, len(out), message)
 
-        data = osmo.api_data.get_txs(wallet_address, i * osmo.api_data.LIMIT)
-        out.extend(data)
+        elems = osmo.api_data.get_txs(wallet_address, i * osmo.api_data.LIMIT)
+        elems_clean = _remove_dups(elems)
+        osmo.processor.process_txs(wallet_address, elems_clean, exporter)
         
         # Exit early if length of data indicates no more txs.
-        if len(data) != osmo.api_data.LIMIT:
+        if len(elems) != osmo.api_data.LIMIT:
             break
 
     # Report final progress
     progress.report_message("Retrieved total {} txids...".format(len(out)))
-
-    # Debugging only: when --debug flat set, write to cache file
-    if localconfig.debug:
-        with open(DEBUG_FILE, 'w') as f:
-            json.dump(out, f, indent=4)
-        logging.info("Wrote to %s for debugging", DEBUG_FILE)
 
     return out
 
