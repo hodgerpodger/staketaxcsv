@@ -2,12 +2,12 @@
 import time
 from osmo.api_util import _query_get
 OSMO_DATA_API_NETLOC = "api-osmosis-chain.imperator.co"
-LIMIT = 100
+LIMIT = 25
 
 
-def _query(netloc, uri_path, query_params):
+def _query(netloc, uri_path, query_params, sleep_seconds=1):
     result = _query_get(netloc, uri_path, query_params)
-    time.sleep(1)
+    time.sleep(sleep_seconds)
     return result
 
 
@@ -21,12 +21,13 @@ def get_count_txs(address):
     return sum(row["count"] for row in data)
 
 
-def get_txs(address, offset):
+def get_txs(address, offset=0):
     template = "/txs/v1/tx/address/{address}"
     uri_path = template.format(address=address)
-    query_params = {"limit": LIMIT}
-    if offset:
-        query_params["offset"] = offset
+    query_params = {
+        "limit": LIMIT,
+        "offset": offset
+    }
 
     data = _query(OSMO_DATA_API_NETLOC, uri_path, query_params)
 

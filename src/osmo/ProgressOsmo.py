@@ -4,7 +4,7 @@ import logging
 import time
 from osmo.config_osmo import localconfig
 
-SECONDS_PER_TX = 0.06
+SECONDS_PER_TX = 0.6
 SECONDS_PER_REWARD_TOKEN = 2.0
 
 
@@ -13,6 +13,7 @@ class ProgressOsmo():
     def __init__(self):
         self.num_txs = 0
         self.num_reward_tokens = 0
+        self.time_start = time.time()
 
     def set_estimate(self, num_txs, num_reward_tokens):
         self.num_txs = num_txs
@@ -41,4 +42,5 @@ class ProgressOsmo():
         if localconfig.job:
             localconfig.job.set_in_progress(message, time_complete)
         else:
-            logging.info("message: %s, seconds_left: %s", message, seconds_left)
+            logging.info("message: %s, seconds_left: %s, time_elapsed: %s",
+                         message, seconds_left, time.time() - self.time_start)

@@ -140,6 +140,8 @@ def _remove_dups(elems):
 
 
 def _fetch_txs(wallet_address, progress):
+    pages_total_estimate = math.ceil(progress.num_txs / osmo.api_data.LIMIT)
+
     # Debugging only: when --debug flag set, read from cache file
     DEBUG_FILE = "_reports/debugosmo.{}.json".format(wallet_address)
     if localconfig.debug and os.path.exists(DEBUG_FILE):
@@ -150,7 +152,7 @@ def _fetch_txs(wallet_address, progress):
     # Retrieve all transactions data
     out = []
     for i in range(_max_pages()):
-        message = "Fetching page {} for txs...".format(i)
+        message = "Fetching txs page {} of {}...".format(i, pages_total_estimate)
         progress.report(_fetch_txs.__name__, len(out), message)
 
         data = osmo.api_data.get_txs(wallet_address, i * osmo.api_data.LIMIT)
