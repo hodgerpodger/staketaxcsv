@@ -125,6 +125,8 @@ def txhistory(wallet_address, job=None):
         localconfig.blocks = Cache().get_sol_blocks()
         logging.info("Loaded sol blocks info into cache...")
 
+    # Fetch data to so that job progress can be estimated ##########
+
     # Fetch transaction ids for wallet
     txids = _txids(wallet_address, progress)
 
@@ -135,6 +137,8 @@ def txhistory(wallet_address, job=None):
 
     # Update progress indicator
     progress.set_estimate(len(wallet_info.get_staking_addresses()), len(txids))
+
+    #################################################################
 
     # Transactions data
     elems = _fetch_txs(txids, wallet_info, progress)
