@@ -352,7 +352,7 @@ class Exporter:
         logging.info("Wrote to %s", csvpath)
 
     def _koinly_currency(self, currency):
-        if currency.upper() == "PSI":
+        if currency and currency.upper() == "PSI":
             # koinly default PSI is "Passive Income", not "Nexus Protocol" that we want
             return "ID:106376"
         else:
