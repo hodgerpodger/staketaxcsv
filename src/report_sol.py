@@ -141,8 +141,7 @@ def txhistory(wallet_address, job=None):
     #################################################################
 
     # Transactions data
-    elems = _fetch_txs(txids, wallet_info, progress)
-    _process_txs(elems, wallet_info, exporter, progress)
+    _fetch_and_process_txs(txids, wallet_info, exporter, progress)
 
     # Update progress indicator
     progress.num_staking_addresses = len(wallet_info.get_staking_addresses())
@@ -208,42 +207,20 @@ def _txids(wallet_address, progress):
     return out
 
 
-def _fetch_txs(txids, wallet_info, progress):
-    wallet_address = wallet_info.wallet_address
+def _fetch_and_process_txs(txids, wallet_info, exporter, progress):
+    total_count = len(txids)
 
-    # Debugging only
-    DEBUG_FILE = "_reports/debugsol.{}.transactions.json".format(wallet_address)
-    if localconfig.debug and os.path.exists(DEBUG_FILE):
-        logging.info("Debug mode: reading from %s", DEBUG_FILE)
-        with open(DEBUG_FILE, 'r') as f:
-            out = json.load(f)
-            return out
-
-    elems = []
     for i, txid in enumerate(txids):
         elem = RpcAPI.fetch_tx(txid)
-        elems.append((txid, elem))
+        sol.processor.process_tx(wallet_info, exporter, txid, elem)
 
         if i % 10 == 0:
             # Update progress to db every so often for user
-            message = "Fetched {} of {} transactions".format(i + 1, len(txids))
-            progress.report("_process_txs", i, message)
+            message = "Fetched {} of {} transactions".format(i + 1, total_count)
+            progress.report("txs", i, message)
 
-    message = "Finished fetching {} transactions".format(len(elems))
-    progress.report("_process_txs", len(elems), message)
-
-    # Debugging only
-    if localconfig.debug:
-        with open(DEBUG_FILE, 'w') as f:
-            json.dump(elems, f, indent=4)
-            logging.info("Wrote to %s for debugging", DEBUG_FILE)
-    return elems
-
-
-def _process_txs(elems, wallet_info, exporter, progress):
-    for i, (txid, elem) in enumerate(elems):
-        #data = RpcAPI.fetch_tx(txid)
-        sol.processor.process_tx(wallet_info, exporter, txid, elem)
+    message = "Finished fetching {} transactions".format(total_count)
+    progress.report("txs", total_count, message)
 
 
 if __name__ == "__main__":

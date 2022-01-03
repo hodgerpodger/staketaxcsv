@@ -16,7 +16,7 @@ def reward_txs(wallet_info, exporter, progress):
     wallet_address = wallet_info.wallet_address
 
     for i, addr in enumerate(staking_addresses):
-        progress.report("_staking_txs", i, "Fetching rewards for {}...".format(addr))
+        progress.report("staking", i, "Fetching rewards for {}...".format(addr))
         _reward_txs(wallet_address, exporter, addr)
 
 

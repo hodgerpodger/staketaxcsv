@@ -28,10 +28,10 @@ class ProgressSol():
             logging.info(message)
 
     def report(self, stage, num, message):
-        if stage == "_process_txs":
+        if stage == "txs":
             staking_addrs_left = self.num_staking_addresses
             txs_left = self.txs_total - num
-        elif stage == "_staking_txs":
+        elif stage == "staking":
             staking_addrs_left = self.num_staking_addresses - num
             txs_left = 0
         else:
