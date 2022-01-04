@@ -39,10 +39,16 @@
 # Docker
 
 ```sh
+# build the docker container
 docker build --tag staketaxcsv .
 
+# create local directory for reports
 mkdir ~/staketaxcsv
-# get help with: docker run staketaxcsv help
+
+# get all supported chains with: 
+docker run staketaxcsv help
+
+# then run it like
 docker run -v ~/staketaxcsv:/reports staketaxcsv <chain: (like 'terra')> -h
 
 # you can also directly exec into the container with

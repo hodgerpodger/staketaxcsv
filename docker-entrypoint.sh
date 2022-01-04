@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$(readlink -f "${0}")")"
 
 # check chain / help
-chain="${1-}"
+chain="${1:-"help"}"
 if [ "${chain}" = "help" ] || [ "${1#-}" != "$1" ]; then
   echo
   echo '👷 I can offer you the following chains:'
