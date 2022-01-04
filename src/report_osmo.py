@@ -118,7 +118,6 @@ def txhistory(wallet_address, job=None, options=None):
     return exporter
 
 
-
 def _remove_dups(elems):
     """ API data has duplicate transaction data.  Clean it. """
     out = []
@@ -131,7 +130,7 @@ def _remove_dups(elems):
         out.append(elem)
         txids_seen.add(txid)
 
-    #out.sort(key=lambda elem: elem["timestamp"])
+    # out.sort(key=lambda elem: elem["timestamp"])
     return out
 
 
@@ -147,7 +146,7 @@ def _fetch_and_process_txs(wallet_address, exporter, progress):
         elems = osmo.api_data.get_txs(wallet_address, i * osmo.api_data.LIMIT)
         elems_clean = _remove_dups(elems)
         osmo.processor.process_txs(wallet_address, elems_clean, exporter)
-        
+
         # Exit early if length of data indicates no more txs.
         if len(elems) != osmo.api_data.LIMIT:
             break

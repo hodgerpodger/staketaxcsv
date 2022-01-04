@@ -10,6 +10,7 @@ FIELD_SOL_BLOCKS = "sol_blocks"
 FIELD_TERRA_CURRENCY_ADDRESSES = "terra_currency_addresses"
 FIELD_OSMO_IBC_ADDRESSES = "osmo_ibc_addresses"
 
+
 class Cache:
 
     def __init__(self):
