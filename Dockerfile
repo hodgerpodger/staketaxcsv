@@ -29,4 +29,4 @@ RUN pip3 install -r requirements.txt
 COPY . .
 
 # executable
-ENTRYPOINT [ "/staketaxcsv/docker_entrypoint.sh" ]
+ENTRYPOINT [ "/staketaxcsv/docker-entrypoint.sh" ]

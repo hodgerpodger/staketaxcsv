@@ -38,11 +38,15 @@
 
 # Docker
 
-```
+```sh
 docker build --tag staketaxcsv .
 
 mkdir ~/staketaxcsv
-docker run -v ~/staketaxcsv:/reports staketaxcsv <chain: (atom|osmo|sol|terra)> -h
+# get help with: docker run staketaxcsv help
+docker run -v ~/staketaxcsv:/reports staketaxcsv <chain: (like 'terra')> -h
+
+# you can also directly exec into the container with
+docker run -it staketaxcsv sh
 ```
 
 # Contributing Code
