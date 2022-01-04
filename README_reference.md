@@ -57,6 +57,7 @@ Alternatively, you may implement your own Cache class (common/cache.py).
     
     # python 3.9.9
     brew install openssl readline sqlite3 xz zlib
+    brew install pyenv
     pyenv install 3.9.9
     
     # use virtualenv
