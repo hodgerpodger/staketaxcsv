@@ -82,14 +82,14 @@ def _staking_addresses_found(wallet_address, instructions):
         instruction_type = parsed.get("type", None) if (parsed and type(parsed) is dict) else None
         program = instruction.get("program")
 
-        if (program == PROGRAM_STAKE
-            and instruction_type == INSTRUCTION_TYPE_DELEGATE):
+        if (program == PROGRAM_STAKE and instruction_type == INSTRUCTION_TYPE_DELEGATE):
             stake_account = parsed["info"]["stakeAccount"]
             stake_authority = parsed["info"]["stakeAuthority"]
             if stake_authority == wallet_address:
                 out.append(stake_account)
 
     return out
+
 
 def _has_empty_token_balances(data, mints):
     post_token_balances = data["result"]["meta"]["postTokenBalances"]

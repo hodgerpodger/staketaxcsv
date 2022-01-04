@@ -25,8 +25,3 @@ def handle_swap(exporter, txinfo, msginfo):
         return
 
     handle_unknown_detect_transfers(exporter, txinfo, msginfo)
-
-
-
-
-

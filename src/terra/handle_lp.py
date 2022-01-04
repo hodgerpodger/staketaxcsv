@@ -143,6 +143,7 @@ def _handle_withdraw_collaterals(txinfo, lp_amount, lp_currency, data, from_cont
             i += 1
         return rows
 
+
 def _check_ust_adjustment(amount, currency, data, wallet_address, txid):
     """ Adjusts UST inbound transfer amount if UST fee """
     if currency != CUR_UST:
