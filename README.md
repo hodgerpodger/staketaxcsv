@@ -36,6 +36,24 @@
      ```
   3. For ATOM only, install `gaiad` (https://hub.cosmos.network/main/getting-started/installation.html)
 
+# Docker
+
+```sh
+# build the docker container
+docker build --tag staketaxcsv .
+
+# create local directory for reports
+mkdir ~/staketaxcsv
+
+# get all supported chains with: 
+docker run staketaxcsv help
+
+# then run it like
+docker run -v ~/staketaxcsv:/reports staketaxcsv <chain: (like 'terra')> -h
+
+# you can also directly exec into the container with
+docker run -it staketaxcsv sh
+```
 
 # Contributing Code
 
