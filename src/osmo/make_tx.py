@@ -103,11 +103,13 @@ def make_osmo_lp_withdraw_tx(txinfo, msginfo, lp_amount, lp_currency, received_a
     return row
 
 
-def make_osmo_lp_stake_tx(txinfo, msginfo, lp_amount, lp_currency):
+def make_osmo_lp_stake_tx(txinfo, msginfo, lp_amount, lp_currency, period_lock_id):
     row = make_osmo_tx(txinfo, msginfo, lp_amount, lp_currency, "", "")
+    row.comment = "lp stake (period_lock_id: {})".format(period_lock_id)
     return row
 
 
-def make_osmo_lp_unstake_tx(txinfo, msginfo, lp_amount, lp_currency):
+def make_osmo_lp_unstake_tx(txinfo, msginfo, lp_amount, lp_currency, period_lock_id):
     row = make_osmo_tx(txinfo, msginfo, "", "", lp_amount, lp_currency)
+    row.comment = "lp unstake (period_lock_id: {})".format(period_lock_id)
     return row

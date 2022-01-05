@@ -1,7 +1,9 @@
 
+import logging
 import osmo.api_historical
 
-from osmo.constants import MILLION, EXP18, CUR_CRO
+from osmo.constants import (
+    MILLION, EXP18, CUR_CRO, MSG_TYPE_BEGIN_UNLOCKING, MSG_TYPE_LOCK_TOKENS)
 from osmo.config_osmo import localconfig
 
 
@@ -163,3 +165,32 @@ def _ingest_rows(exporter, rows, comment):
         if i > 0:
             row.fee, row.fee_currency = "", ""
         exporter.ingest_row(row)
+
+
+def _period_lock_id(msginfo):
+    message = msginfo.message
+    msg_index = msginfo.msg_index
+    log = msginfo.log
+    msg_type = _msg_type(msginfo)
+
+    # Determine type to lookup when parsing events
+    if msg_type == MSG_TYPE_LOCK_TOKENS:
+        event_type_target = "lock_tokens"
+    elif msg_type == MSG_TYPE_BEGIN_UNLOCKING:
+        event_type_target = "begin_unlock"
+    else:
+        logging.critical("_period_lock_id(): Unexpected msg_type=%s", msg_type)
+        return ""
+
+    # Extract period_lock_id value from events
+    for event in log["events"]:
+        event_type = event["type"]
+        attributes = event["attributes"]
+
+        if event_type == event_type_target:
+            for kv in attributes:
+                k, v = kv["key"], kv["value"]
+                if k == "period_lock_id":
+                    return v
+
+    logging.error("Unable to find period_lock_id for msg_index=%s", msg_index)

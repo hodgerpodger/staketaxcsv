@@ -41,7 +41,7 @@ def _handle_message(exporter, txinfo, msginfo):
         msg_type = util_osmo._msg_type(msginfo)
 
         # simple transactions, that are typically ignored
-        if msg_type in [co.MSG_TYPE_VOTE, co.MSG_TYPE_SET_WITHDRAW_ADDRESS, co.MSG_TYPE_BEGIN_UNLOCKING]:
+        if msg_type in [co.MSG_TYPE_VOTE, co.MSG_TYPE_SET_WITHDRAW_ADDRESS]:
             # 0 transfers
             handle_simple(exporter, txinfo, msginfo)
         elif msg_type in [co.MSG_TYPE_SUBMIT_PROPOSAL, co.MSG_TYPE_DEPOSIT]:
@@ -77,7 +77,8 @@ def _handle_message(exporter, txinfo, msginfo):
             handle_lp_withdraw(exporter, txinfo, msginfo)
         elif msg_type == co.MSG_TYPE_LOCK_TOKENS:
             handle_lp_stake(exporter, txinfo, msginfo)
-
+        elif msg_type == co.MSG_TYPE_BEGIN_UNLOCKING:
+            handle_lp_unstake(exporter, txinfo, msginfo)
         else:
             handle_unknown_detect_transfers(exporter, txinfo, msginfo)
     except Exception as e:
