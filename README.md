@@ -38,22 +38,8 @@
 
 # Docker
 
-```sh
-# build the docker container
-docker build --tag staketaxcsv .
+See [Docker](README_reference.md#docker) to alternatively run report using docker image with prereq software.
 
-# create local directory for reports
-mkdir ~/staketaxcsv
-
-# get all supported chains with: 
-docker run staketaxcsv help
-
-# then run it like
-docker run -v ~/staketaxcsv:/reports staketaxcsv <chain: (like 'terra')> -h
-
-# you can also directly exec into the container with
-docker run -it staketaxcsv sh
-```
 
 # Contributing Code
 
@@ -71,6 +57,7 @@ See [README_reference.md](README_reference.md):
 
   * [Code Style](README_reference.md#code-style)
   * [Unit Tests](README_reference.md#unit-tests)
+  * [Docker](README_reference.md#docker)
   * [Ideal Configuration](README_reference.md#ideal-configuration)
     * [RPC Node Settings](README_reference.md#rpc-node-settings)
     * [DB Cache](README_reference.md#db-cache)
