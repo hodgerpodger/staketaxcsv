@@ -32,10 +32,13 @@ def parse_tx(txid, data, wallet_info):
         txinfo = TxInfoSol(txid, "", "", wallet_address)
         return txinfo
 
-    # Transaction that resulted in error
+    # Transactions that resulted in error
+    meta = result["meta"]
+    if meta is None:
+        logging.error("empty meta field.  txid=%s", txid)
+        return None
     err = result["meta"]["err"]
-    failed = (err is not None)
-    if failed:
+    if err is not None:
         return None
 
     ts = result["blockTime"]
