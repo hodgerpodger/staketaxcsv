@@ -9,10 +9,10 @@ SECONDS_PER_PAGE = 15.0
 class ProgressAtom():
 
     def __init__(self):
-        self.pages = []
+        self.num_pages = 0
 
-    def set_estimate(self, pages):
-        self.pages = pages
+    def set_estimate(self, num_pages):
+        self.num_pages = num_pages
 
     def report_message(self, message):
         if localconfig.job:
@@ -20,7 +20,7 @@ class ProgressAtom():
         logging.info({"message": message})
 
     def report(self, page, message):
-        pages_left = len(self.pages) - self.pages.index(page)
+        pages_left = self.num_pages - page
 
         # Estimate timestamp job finishes
         seconds_left = pages_left * SECONDS_PER_PAGE
@@ -29,3 +29,4 @@ class ProgressAtom():
         # Write to db
         if localconfig.job:
             localconfig.job.set_in_progress(message, time_complete)
+        logging.info("message: %s, seconds_left:%s", message, seconds_left)

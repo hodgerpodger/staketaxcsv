@@ -39,7 +39,6 @@ def account_exists(wallet_address):
         return False
 
 
-
 def get_txs(wallet_address, is_sender, offset=0, sleep_seconds=1):
     uri_path = "/cosmos/tx/v1beta1/txs"
     query_params = {
@@ -60,3 +59,14 @@ def get_txs(wallet_address, is_sender, offset=0, sleep_seconds=1):
     total_count = int(data["pagination"]["total"])
     return elems, next_offset, total_count
 
+
+def get_txs_count_pages(address):
+    # Number of queries for events message.sender
+    _, _, count_sender = get_txs(address, is_sender=True, offset=0, sleep_seconds=0)
+    pages_sender = max(math.ceil(count_sender / LIMIT), 1)
+
+    # Number of queries for events transfer.recipient
+    _, _, count_receiver = get_txs(address, is_sender=False, offset=0, sleep_seconds=0)
+    pages_receiver = max(math.ceil(count_receiver / LIMIT), 1)
+
+    return pages_sender + pages_receiver

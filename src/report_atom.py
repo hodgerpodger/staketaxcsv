@@ -11,20 +11,18 @@ https://node.atomscan.com/swagger/
 
 """
 
-from json.decoder import JSONDecodeError
 import logging
 import subprocess
 import json
 import os
 import pprint
-import time
 import math
 
 from common import report_util
 from common.Exporter import Exporter
 import atom.processor
 from atom.config_atom import localconfig
-from settings_csv import TICKER_ATOM, ATOM_NODE
+from settings_csv import TICKER_ATOM
 from atom.ProgressAtom import ProgressAtom
 import atom.api_lcd
 
@@ -78,6 +76,9 @@ def txhistory(wallet_address, job=None):
 
     # Fetch count of transactions to estimate progress more accurately
     progress = ProgressAtom()
+    count_pages = atom.api_lcd.get_txs_count_pages(wallet_address)
+    logging.info("count_pages: %s", count_pages)
+    progress.set_estimate(count_pages)
 
     # Fetch transactions
     elems = _fetch_txs(wallet_address, progress)
@@ -97,8 +98,6 @@ def _max_pages():
 
 
 def _fetch_txs(wallet_address, progress):
-    out = []
-
     # Debugging only
     DEBUG_FILE = "_reports/testatom.{}.json".format(wallet_address)
     if localconfig.debug and os.path.exists(DEBUG_FILE):
@@ -106,23 +105,21 @@ def _fetch_txs(wallet_address, progress):
             out = json.load(f)
             return out
 
-    # events as sender
-    offset = 0
-    for i in range(0, _max_pages()):
-        elems, offset, _ = atom.api_lcd.get_txs(wallet_address, True, offset)
+    out = []
+    page_count = 0
+    # Two passes: is_sender=True (message.sender events) and is_sender=False (transfer.recipient events)
+    for is_sender in (True, False):
+        offset = 0
+        for i in range(0, _max_pages()):
+            message = "Fetching page {} of {}".format(page_count, progress.num_pages-1)
+            progress.report(page_count, message)
 
-        out.extend(elems)
-        if offset is None:
-            break
+            elems, offset, _ = atom.api_lcd.get_txs(wallet_address, is_sender, offset)
 
-    # events as receiver
-    offset = 0
-    for i in range(0, _max_pages()):
-        elems, offset, _ = atom.api_lcd.get_txs(wallet_address, False, offset)
-
-        out.extend(elems)
-        if offset is None:
-            break
+            page_count += 1
+            out.extend(elems)
+            if offset is None:
+                break
 
     out = _remove_duplicates(out)
 
