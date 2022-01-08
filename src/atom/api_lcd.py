@@ -29,17 +29,17 @@ def get_tx(txid):
 
 def get_txs_count_pages(address):
     # Number of queries for events message.sender
-    _, _, count_sender = get_txs(address, is_sender=True, offset=0)
+    _, _, count_sender = get_txs(address, is_sender=True, offset=0, sleep_seconds=0)
     pages_sender = max(math.ceil(count_sender / LIMIT), 1)
 
     # Number of queries for events transfer.recipient
-    _, _, count_receiver = get_txs(address, is_sender=False, offset=0)
+    _, _, count_receiver = get_txs(address, is_sender=False, offset=0, sleep_seconds=0)
     pages_receiver = max(math.ceil(count_receiver / LIMIT), 1)
 
     return pages_sender + pages_receiver
 
 
-def get_txs(address, is_sender, offset=0):
+def get_txs(address, is_sender, offset=0, sleep_seconds=1):
     uri_path = "/cosmos/tx/v1beta1/txs"
     query_params = {
         "order_by": "ORDER_BY_DESC",
@@ -52,7 +52,7 @@ def get_txs(address, is_sender, offset=0):
     else:
         query_params["events"] = "transfer.recipient='{}'".format(address)
 
-    data = _query(uri_path, query_params)
+    data = _query(uri_path, query_params, sleep_seconds)
 
     elems = data["tx_responses"]
     next_offset = offset + LIMIT if len(elems) == LIMIT else None

@@ -73,7 +73,7 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address):
-    return osmo.api_data.get_count_txs(wallet_address) * SECONDS_PER_TX
+    return osmo.api_data.get_count_txs(wallet_address, sleep_seconds=0) * SECONDS_PER_TX
 
 
 def _max_pages():
