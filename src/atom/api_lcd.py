@@ -54,6 +54,10 @@ def get_txs(wallet_address, is_sender, offset=0, sleep_seconds=1):
 
     data = _query(uri_path, query_params, sleep_seconds)
 
+    # No results or error
+    if data.get("code") == 3:
+        return [], None, 0
+
     elems = data["tx_responses"]
     next_offset = offset + LIMIT if len(elems) == LIMIT else None
     total_count = int(data["pagination"]["total"])
