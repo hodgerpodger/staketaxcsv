@@ -12,7 +12,7 @@
   * Same arguments apply for report_terra.py (LUNA), report_sol.py (SOL), report_atom.py (ATOM),
     report_osmo.py (OSMO):
     ```
-    # Load requirement environment variables
+    # Load environment variables from sample.env (add to ~/.bash_profile or ~/.bashrc to avoid doing every time)
     set -o allexport
     source sample.env
     set +o allexport

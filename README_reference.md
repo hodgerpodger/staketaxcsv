@@ -20,14 +20,14 @@ ideas for alternatives, since obviously this is non-optimal.
   
 # Docker
 
-Sample of using the docker container
+Sample of using a docker container
 
 ```sh
 # build the docker container
 docker build --platform linux/amd64 --tag staketaxcsv .
 
 # Run/enter/mount docker container 
-docker run --platform linux/amd64 -it --volume $PWD:/staketaxcsv  staketaxcsv bash
+docker run --platform linux/amd64 -it --volume $PWD:/staketaxcsv staketaxcsv bash
 
 # See README usage section to run script(s)
 ```
