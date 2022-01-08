@@ -20,7 +20,7 @@ ideas for alternatives, since obviously this is non-optimal.
   
 # Docker
 
-Sample of using the docker container
+Sample of using a docker container
 
 ```sh
 # build the docker container
