@@ -20,23 +20,16 @@ ideas for alternatives, since obviously this is non-optimal.
   
 # Docker
 
-How to run staketaxcsv with docker
+Sample of using the docker container
 
 ```sh
 # build the docker container
-docker build --tag staketaxcsv .
+docker build --platform linux/amd64 --tag staketaxcsv .
 
-# create local directory for reports
-mkdir ~/staketaxcsv
+# Run/enter/mount docker container 
+docker run --platform linux/amd64 -it --volume $PWD:/staketaxcsv  staketaxcsv bash
 
-# get all supported chains with: 
-docker run staketaxcsv help
-
-# then run it like
-docker run -v ~/staketaxcsv:/reports staketaxcsv <chain: (like 'terra')> -h
-
-# you can also directly exec into the container with
-docker run -it staketaxcsv sh
+# See README Usage section to run script(s)
 ```
 
 

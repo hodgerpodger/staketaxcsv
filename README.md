@@ -13,7 +13,9 @@
     report_osmo.py (OSMO):
     ```
     # Load requirement environment variables
+    set -o allexport
     source sample.env
+    set +o allexport
     
     cd src
     
