@@ -148,7 +148,7 @@ def _fetch_and_process_txs(wallet_address, exporter, progress, num_txs):
 
         elems = osmo.api_data.get_txs(wallet_address, page*osmo.api_data.LIMIT)
 
-        # Remove duplicates so that we don't process same transaction twice
+        # Remove duplicates (data from this api has duplicates)
         elems_clean = _remove_dups(elems, txids_seen)
 
         osmo.processor.process_txs(wallet_address, elems_clean, exporter)
