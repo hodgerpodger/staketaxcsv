@@ -58,8 +58,7 @@ def _read_options(options):
 
 
 def wallet_exists(wallet_address):
-    count = atom.api_lcd.get_txs_count_pages(wallet_address)
-    return count > 0
+    return atom.api_lcd.account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
