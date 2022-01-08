@@ -36,7 +36,6 @@
      ```
      pip3 install -r requirements.txt
      ```
-  3. For ATOM only, install `gaiad` (https://hub.cosmos.network/main/getting-started/installation.html)
 
 # Docker
 
