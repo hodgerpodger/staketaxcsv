@@ -40,7 +40,7 @@
 
 # Docker
 
-See [Docker](README_reference.md#docker) to alternatively run report using docker image with prereq software.
+See [Docker](README_reference.md#docker) to alternatively install/run in docker container.
 
 
 # Contributing Code
