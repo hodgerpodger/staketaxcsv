@@ -1,0 +1,4 @@
+[tool.isort]
+profile = "black"
+src_paths = ["src"]
+line_length = 120
