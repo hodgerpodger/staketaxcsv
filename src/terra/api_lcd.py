@@ -6,8 +6,9 @@ LCD documentation:
 """
 
 import logging
-import requests
 import time
+
+import requests
 
 from settings_csv import TERRA_LCD_NODE
 

@@ -1,7 +1,7 @@
 
-from sol.handle_simple import handle_unknown_detect_transfers
-from sol.constants import BILLION, CURRENCY_SOL
 from common.make_tx import make_transfer_in_tx
+from sol.constants import BILLION, CURRENCY_SOL
+from sol.handle_simple import handle_unknown_detect_transfers
 
 
 def handle_vote(exporter, txinfo):

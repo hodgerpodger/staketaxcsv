@@ -1,17 +1,22 @@
 
 
 import logging
-from common.TxInfo import TxInfo
-from common.ErrorCounter import ErrorCounter
-from settings_csv import TICKER_ATOM
-
 from datetime import datetime
-from common.ExporterTypes import TX_TYPE_UNKNOWN, TX_TYPE_STAKING_DELEGATE, TX_TYPE_STAKING_UNDELEGATE, \
-    TX_TYPE_STAKING_REDELEGATE, TX_TYPE_VOTE
-from atom.make_tx import make_transfer_receive_tx, make_atom_reward_tx
-from common.make_tx import make_simple_tx, make_transfer_out_tx
-from atom.constants import MILLION, CURRENCIES, CUR_ATOM, EXCHANGE_COSMOS_BLOCKCHAIN
+
 from atom.config_atom import localconfig
+from atom.constants import CUR_ATOM, CURRENCIES, EXCHANGE_COSMOS_BLOCKCHAIN, MILLION
+from atom.make_tx import make_atom_reward_tx, make_transfer_receive_tx
+from common.ErrorCounter import ErrorCounter
+from common.ExporterTypes import (
+    TX_TYPE_STAKING_DELEGATE,
+    TX_TYPE_STAKING_REDELEGATE,
+    TX_TYPE_STAKING_UNDELEGATE,
+    TX_TYPE_UNKNOWN,
+    TX_TYPE_VOTE,
+)
+from common.make_tx import make_simple_tx, make_transfer_out_tx
+from common.TxInfo import TxInfo
+from settings_csv import TICKER_ATOM
 
 
 def process_txs(wallet_address, elems, exporter):

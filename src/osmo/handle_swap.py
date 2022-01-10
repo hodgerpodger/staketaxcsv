@@ -1,7 +1,7 @@
 
+from osmo.handle_claim import handle_claim
 from osmo.handle_unknown import handle_unknown_detect_transfers
 from osmo.make_tx import make_osmo_swap_tx
-from osmo.handle_claim import handle_claim
 
 
 def handle_swap(exporter, txinfo, msginfo):

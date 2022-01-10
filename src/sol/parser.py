@@ -3,15 +3,16 @@
 Data parsing functions applicable to all transactions
 """
 
-from datetime import datetime, timezone
 import logging
-import re
 import pprint
-from sol.TxInfoSol import TxInfoSol
-from sol.tickers.tickers import Tickers
-from sol.api_rpc import RpcAPI
-from sol.constants import BILLION, MINT_SOL, CURRENCY_SOL, INSTRUCTION_TYPE_DELEGATE, PROGRAM_STAKE
+import re
+from datetime import datetime, timezone
+
 from sol import util_sol
+from sol.api_rpc import RpcAPI
+from sol.constants import BILLION, CURRENCY_SOL, INSTRUCTION_TYPE_DELEGATE, MINT_SOL, PROGRAM_STAKE
+from sol.tickers.tickers import Tickers
+from sol.TxInfoSol import TxInfoSol
 
 
 def parse_tx(txid, data, wallet_info):

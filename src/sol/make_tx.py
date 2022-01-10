@@ -1,12 +1,19 @@
 
-from common.Exporter import (
-    Row
+from common.Exporter import Row
+from common.ExporterTypes import (
+    TX_TYPE_SOL_LP_DEPOSIT,
+    TX_TYPE_SOL_LP_FARM,
+    TX_TYPE_SOL_LP_WITHDRAW,
+    TX_TYPE_SOL_REWARD_ZERO,
+    TX_TYPE_SOL_SERUM_DEX,
+    TX_TYPE_SOL_SETTLE_FUNDS,
+    TX_TYPE_SOL_STAKE,
+    TX_TYPE_SOL_UNSTAKE,
+    TX_TYPE_STAKING,
+    TX_TYPE_TRADE,
 )
-from common.ExporterTypes import TX_TYPE_STAKING, TX_TYPE_TRADE, TX_TYPE_SOL_SETTLE_FUNDS, TX_TYPE_SOL_LP_DEPOSIT, \
-    TX_TYPE_SOL_LP_WITHDRAW, TX_TYPE_SOL_LP_FARM, TX_TYPE_SOL_STAKE, TX_TYPE_SOL_UNSTAKE, TX_TYPE_SOL_REWARD_ZERO, \
-    TX_TYPE_SOL_SERUM_DEX
+from common.make_tx import _make_tx_exchange, _make_tx_received, _make_tx_sent, make_simple_tx
 from sol.constants import CURRENCY_SOL, EXCHANGE_SOLANA_BLOCKCHAIN
-from common.make_tx import _make_tx_received, _make_tx_sent, _make_tx_exchange, make_simple_tx
 
 
 def make_sol_reward_tx(timestamp, reward, wallet_address, txid):

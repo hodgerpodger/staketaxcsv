@@ -3,9 +3,10 @@ import csv
 import logging
 import os
 import subprocess
+
 from sol.api_rpc import RpcAPI
-from sol.make_tx import make_sol_reward_tx
 from sol.config_sol import localconfig
+from sol.make_tx import make_sol_reward_tx
 
 DATADIR = os.path.dirname(os.path.realpath(__file__)) + "/data_staking_rewards"
 

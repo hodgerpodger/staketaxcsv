@@ -6,24 +6,24 @@ Prints transactions and writes CSV(s) to _reports/OSMO*.csv
 
 """
 
-import logging
 import json
+import logging
+import math
 import os
 import pprint
-import math
-import osmo.api_data
 
-from settings_csv import TICKER_OSMO
-from common.Exporter import Exporter
-from common.ErrorCounter import ErrorCounter
-from common.Cache import Cache
-from common import report_util
-from osmo.config_osmo import localconfig
-from osmo.ProgressOsmo import ProgressOsmo, SECONDS_PER_TX
-from osmo.lp_rewards import lp_rewards
-import osmo.processor
 import osmo.api_data
 import osmo.api_tx
+import osmo.processor
+from common import report_util
+from common.Cache import Cache
+from common.ErrorCounter import ErrorCounter
+from common.Exporter import Exporter
+from osmo.config_osmo import localconfig
+from osmo.lp_rewards import lp_rewards
+from osmo.ProgressOsmo import SECONDS_PER_TX, ProgressOsmo
+from settings_csv import TICKER_OSMO
+
 MAX_TRANSACTIONS = 5000
 
 

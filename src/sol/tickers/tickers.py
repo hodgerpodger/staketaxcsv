@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+
 from sol.api_rpc import RpcAPI
 from sol.config_sol import localconfig
 

@@ -2,19 +2,28 @@
 import logging
 import pprint
 from datetime import datetime
-from osmo.TxInfoOsmo import TxInfoOsmo, MsgInfo
-from osmo.handle_unknown import handle_unknown_detect_transfers
+
+from osmo import constants as co
+from osmo import util_osmo
+from osmo.config_osmo import localconfig
 from osmo.handle_general import (
-    handle_simple, handle_simple_outbound, handle_transfer_ibc, handle_failed_tx, handle_transfer
+    handle_failed_tx,
+    handle_simple,
+    handle_simple_outbound,
+    handle_transfer,
+    handle_transfer_ibc,
+)
+from osmo.handle_lp import (
+    handle_lp_deposit,
+    handle_lp_deposit_partial,
+    handle_lp_stake,
+    handle_lp_unstake,
+    handle_lp_withdraw,
 )
 from osmo.handle_staking import handle_staking
 from osmo.handle_swap import handle_swap
-from osmo import util_osmo
-from osmo import constants as co
-from osmo.handle_lp import (
-    handle_lp_deposit, handle_lp_stake, handle_lp_unstake, handle_lp_withdraw,
-    handle_lp_deposit_partial)
-from osmo.config_osmo import localconfig
+from osmo.handle_unknown import handle_unknown_detect_transfers
+from osmo.TxInfoOsmo import MsgInfo, TxInfoOsmo
 
 
 def process_txs(wallet_address, elems, exporter):

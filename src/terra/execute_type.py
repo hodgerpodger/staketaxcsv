@@ -1,8 +1,9 @@
 
-import logging
-from terra import util_terra
 import base64
 import json
+import logging
+
+from terra import util_terra
 
 EXECUTE_TYPE_UNKNOWN = "unknown_execute_type"
 EXECUTE_TYPE_SWAP = "swap"

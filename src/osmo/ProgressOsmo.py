@@ -2,6 +2,7 @@
 
 import logging
 import time
+
 from osmo.config_osmo import localconfig
 
 SECONDS_PER_TX = 0.6

@@ -1,6 +1,7 @@
 
 import logging
 import time
+
 from atom.config_atom import localconfig
 
 SECONDS_PER_PAGE = 15.0

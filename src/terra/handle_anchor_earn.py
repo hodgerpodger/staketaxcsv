@@ -1,8 +1,8 @@
 
 from terra import util_terra
-from terra.make_tx import make_swap_tx_terra
-from terra.constants import CUR_UST, CUR_AUST
+from terra.constants import CUR_AUST, CUR_UST
 from terra.handle_simple import handle_unknown
+from terra.make_tx import make_swap_tx_terra
 
 
 def _exchange_rate(ust, aust):

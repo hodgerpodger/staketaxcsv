@@ -1,7 +1,9 @@
 
 import time
 from urllib.parse import quote
+
 from osmo.api_util import _query_get
+
 OSMO_HISTORICAL_API_NETLOC = "api-osmosis.imperator.co"
 
 

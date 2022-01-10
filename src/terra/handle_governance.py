@@ -1,7 +1,7 @@
 
-from common.make_tx import make_unknown_tx, make_reward_tx
-from terra.make_tx import make_gov_stake_tx, make_gov_unstake_tx
+from common.make_tx import make_reward_tx, make_unknown_tx
 from terra import util_terra
+from terra.make_tx import make_gov_stake_tx, make_gov_unstake_tx
 
 
 def handle_governance_stake(exporter, elem, txinfo):

@@ -1,13 +1,15 @@
 
+import logging
+import pprint
+import random
+import time
 from datetime import datetime
 
-import pprint
 import requests
-import time
-import logging
-import random
+
 from settings_csv import SOL_NODE
-from sol.constants import PROGRAMID_STAKE, PROGRAMID_TOKEN_ACCOUNTS, BILLION
+from sol.constants import BILLION, PROGRAMID_STAKE, PROGRAMID_TOKEN_ACCOUNTS
+
 TOKEN_ACCOUNTS = {}
 
 

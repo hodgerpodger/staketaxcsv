@@ -1,13 +1,18 @@
 
 import logging
 
-from osmo.handle_unknown import handle_unknown_detect_transfers
-from osmo.make_tx import (make_osmo_lp_deposit_tx, make_osmo_lp_withdraw_tx,
-                          make_osmo_lp_stake_tx, make_osmo_lp_unstake_tx,
-                          make_osmo_transfer_in_tx, make_osmo_transfer_out_tx)
-from osmo.config_osmo import localconfig
 from osmo import util_osmo
+from osmo.config_osmo import localconfig
 from osmo.handle_claim import handle_claim
+from osmo.handle_unknown import handle_unknown_detect_transfers
+from osmo.make_tx import (
+    make_osmo_lp_deposit_tx,
+    make_osmo_lp_stake_tx,
+    make_osmo_lp_unstake_tx,
+    make_osmo_lp_withdraw_tx,
+    make_osmo_transfer_in_tx,
+    make_osmo_transfer_out_tx,
+)
 
 
 class LockedTokens:

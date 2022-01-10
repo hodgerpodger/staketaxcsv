@@ -1,8 +1,10 @@
 
 import logging
-import requests
-import time
 import pprint
+import time
+
+import requests
+
 from settings_csv import TERRA_FIGMENT_KEY
 
 # https://docs.figment.io/network-documentation/terra/enriched-apis/transaction-search

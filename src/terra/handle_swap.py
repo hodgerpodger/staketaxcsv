@@ -1,8 +1,9 @@
 
 import logging
+
+from terra import util_terra
 from terra.make_tx import make_swap_tx_terra
 from terra.util_terra import _asset_to_currency, _float_amount
-from terra import util_terra
 
 
 def handle_swap_msgswap(exporter, elem, txinfo):
