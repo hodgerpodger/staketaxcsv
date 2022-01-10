@@ -62,6 +62,8 @@ def wallet_exists(wallet_address):
     if not wallet_address.startswith("terra"):
         return False
     data = SearchAPIFigment.get_txs(wallet_address, limit=2)
+    if data is None:
+        return False
     return len(data) > 0
 
 
