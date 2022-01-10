@@ -63,4 +63,5 @@ See [README_reference.md](README_reference.md):
     * [RPC Node Settings](README_reference.md#rpc-node-settings)
     * [DB Cache](README_reference.md#db-cache)
   * [Installing python 3.9.9 on MacOS](README_reference.md#installing-python-39-on-macos)
-  
+
+  [![GitHub Super-Linter](https://github.com/hodgerpodger/staketaxcsv/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)  
