@@ -1,27 +1,25 @@
-
 """
 usage: python3 report_sol.py <walletaddress> [--format all|cointracking|koinly|..]
 
 Prints transactions and writes CSV(s) to _reports/SOL*.csv
 """
 
-import logging
 import json
-from json.decoder import JSONDecodeError
-import os
+import logging
 import math
+from json.decoder import JSONDecodeError
 
-from common.Cache import Cache
-from common.Exporter import Exporter
-from common import report_util
-from settings_csv import TICKER_SOL, MESSAGE_STAKING_ADDRESS_FOUND, MESSAGE_ADDRESS_NOT_FOUND, SOL_NODE
 import sol.processor
-from sol.ProgressSol import ProgressSol, SECONDS_PER_STAKING_ADDRESS, SECONDS_PER_TX
+from common import report_util
+from common.Cache import Cache
+from common.ErrorCounter import ErrorCounter
+from common.Exporter import Exporter
+from settings_csv import MESSAGE_ADDRESS_NOT_FOUND, MESSAGE_STAKING_ADDRESS_FOUND, SOL_NODE, TICKER_SOL
+from sol import staking_rewards
+from sol.api_rpc import RpcAPI
 from sol.config_sol import localconfig
 from sol.constants import PROGRAMID_STAKE
-from sol.api_rpc import RpcAPI
-from sol import staking_rewards
-from common.ErrorCounter import ErrorCounter
+from sol.ProgressSol import SECONDS_PER_STAKING_ADDRESS, SECONDS_PER_TX, ProgressSol
 from sol.TxInfoSol import WalletInfo
 
 LIMIT = 1000

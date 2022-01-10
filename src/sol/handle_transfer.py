@@ -1,8 +1,13 @@
 
-from common.make_tx import make_transfer_out_tx, make_transfer_in_tx
-from sol.constants import (
-    DIRECTION_INBOUND, DIRECTION_OUTBOUND, INSTRUCT_TRANSFERCHECK, INSTRUCT_TRANSFERCHECKED, MINT_SOL)
+from common.make_tx import make_transfer_in_tx, make_transfer_out_tx
 from sol import util_sol
+from sol.constants import (
+    DIRECTION_INBOUND,
+    DIRECTION_OUTBOUND,
+    INSTRUCT_TRANSFERCHECK,
+    INSTRUCT_TRANSFERCHECKED,
+    MINT_SOL,
+)
 
 
 def is_transfer(txinfo):

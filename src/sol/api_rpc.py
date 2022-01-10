@@ -1,13 +1,13 @@
 
-from datetime import datetime
-
-import pprint
-import requests
-import time
 import logging
 import random
+import time
+from datetime import datetime
+
+import requests
 from settings_csv import SOL_NODE
-from sol.constants import PROGRAMID_STAKE, PROGRAMID_TOKEN_ACCOUNTS, BILLION
+from sol.constants import BILLION, PROGRAMID_STAKE, PROGRAMID_TOKEN_ACCOUNTS
+
 TOKEN_ACCOUNTS = {}
 
 
@@ -27,7 +27,7 @@ class RpcAPI(object):
         try:
             response = requests.post(SOL_NODE, json=data, headers=headers)
 
-        except TimeoutError as e:
+        except TimeoutError:
             # quicknode server sometimes refuses connection after hundreds of requests
             s = random.randint(60, 180)
             logging.warning("Returned timeout.  Sleeping %s seconds and retrying once...", s)
@@ -78,7 +78,7 @@ class RpcAPI(object):
 
         try:
             rewards = data["result"]["rewards"]
-        except KeyError as e:
+        except KeyError:
             return None
 
         out = []
@@ -109,7 +109,7 @@ class RpcAPI(object):
                 amount = val["amount"] / BILLION
                 slot = val["effectiveSlot"]
                 return amount, slot
-        except KeyError as e:
+        except KeyError:
             pass
         return None, None
 

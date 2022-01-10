@@ -1,8 +1,8 @@
 
 from terra import util_terra
-from terra.make_tx import make_swap_tx_terra
-from terra.constants import CUR_UST, CUR_AUST
+from terra.constants import CUR_AUST, CUR_UST
 from terra.handle_simple import handle_unknown
+from terra.make_tx import make_swap_tx_terra
 
 
 def _exchange_rate(ust, aust):
@@ -10,7 +10,6 @@ def _exchange_rate(ust, aust):
 
 
 def handle_anchor_earn_deposit(exporter, elem, txinfo):
-    txid = txinfo.txid
     from_contract = util_terra._event_with_action(elem, "from_contract", "deposit_stable")
 
     if from_contract is None:
@@ -29,7 +28,6 @@ def handle_anchor_earn_deposit(exporter, elem, txinfo):
 
 
 def handle_anchor_earn_withdraw(exporter, elem, txinfo):
-    txid = txinfo.txid
     from_contract = util_terra._event_with_action(elem, "from_contract", "redeem_stable")
 
     if from_contract is None:

@@ -1,5 +1,6 @@
 import logging
 import time
+
 from osmo.config_osmo import localconfig
 
 SECONDS_PER_TX = 0.6
@@ -29,7 +30,7 @@ class ProgressOsmo:
             txs_left = 0
             reward_tokens_left = self.num_reward_tokens - num
         else:
-            raise ("Bad stage={} in ProgressOsmo.report()".format(stage))
+            raise ValueError("Bad stage={} in ProgressOsmo.report()".format(stage))
 
         # Estimate timestamp job finishes
         seconds_left = txs_left * SECONDS_PER_TX + reward_tokens_left * SECONDS_PER_REWARD_TOKEN

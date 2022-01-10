@@ -1,17 +1,20 @@
-
-
 import logging
-from common.TxInfo import TxInfo
-from common.ErrorCounter import ErrorCounter
-from settings_csv import TICKER_ATOM
-
 from datetime import datetime
-from common.ExporterTypes import TX_TYPE_UNKNOWN, TX_TYPE_STAKING_DELEGATE, TX_TYPE_STAKING_UNDELEGATE, \
-    TX_TYPE_STAKING_REDELEGATE, TX_TYPE_VOTE
-from atom.make_tx import make_transfer_receive_tx, make_atom_reward_tx
-from common.make_tx import make_simple_tx, make_transfer_out_tx
-from atom.constants import MILLION, CURRENCIES, CUR_ATOM, EXCHANGE_COSMOS_BLOCKCHAIN
+
 from atom.config_atom import localconfig
+from atom.constants import CUR_ATOM, CURRENCIES, EXCHANGE_COSMOS_BLOCKCHAIN, MILLION
+from atom.make_tx import make_atom_reward_tx, make_transfer_receive_tx
+from common.ErrorCounter import ErrorCounter
+from common.ExporterTypes import (
+    TX_TYPE_STAKING_DELEGATE,
+    TX_TYPE_STAKING_REDELEGATE,
+    TX_TYPE_STAKING_UNDELEGATE,
+    TX_TYPE_UNKNOWN,
+    TX_TYPE_VOTE,
+)
+from common.make_tx import make_simple_tx, make_transfer_out_tx
+from common.TxInfo import TxInfo
+from settings_csv import TICKER_ATOM
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -23,8 +26,7 @@ def process_txs(wallet_address, elems, exporter):
 def process_tx(wallet_address, elem, exporter):
     txid = elem["txhash"]
 
-    timestamp = datetime.strptime(
-        elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
     fee = _get_fee(elem)
     url = "https://www.mintscan.io/cosmos/txs/{}".format(txid)
 
@@ -44,7 +46,7 @@ def process_tx(wallet_address, elem, exporter):
             handle_simple_tx(exporter, txinfo, TX_TYPE_UNKNOWN)
 
             if localconfig.debug:
-                raise(e)
+                raise (e)
 
 
 def _handle_tx(msg_type, exporter, txinfo, elem, txid, i):
@@ -62,12 +64,12 @@ def _handle_tx(msg_type, exporter, txinfo, elem, txid, i):
     elif msg_type == "MsgRecvPacket":
         try:
             handle_transfer_ibc_recv(exporter, txinfo, elem, i)
-        except Exception as e:
+        except Exception:
             handle_unknown(exporter, txinfo)
     elif msg_type == "MsgTransfer":
         try:
             handle_transfer_ibc(exporter, txinfo, elem, i)
-        except Exception as e:
+        except Exception:
             handle_unknown(exporter, txinfo)
     else:
         logging.error("Unknown msg_type=%s", msg_type)
@@ -201,7 +203,7 @@ def _atom(uatom):
     Example: '5340003uatom' -> 5.340003
     """
     amount, currency = _amount(uatom)
-    assert(currency == CUR_ATOM)
+    assert currency == CUR_ATOM
     return amount
 
 
@@ -236,13 +238,13 @@ def _get_fee(elem):
     amount = amount_dict["amount"]
 
     if denom != "uatom":
-        raise Exception("Unexpected denom.  amount_dict=%s".format(amount_dict))
+        raise Exception(f"Unexpected denom.  amount_dict={amount_dict}")
     fee = float(amount) / MILLION
     return fee
 
 
 def _msg_types(elem):
-    """ Returns list of @type values found in tx.body.messages """
+    """Returns list of @type values found in tx.body.messages"""
     types = [msg["@type"] for msg in elem["tx"]["body"]["messages"]]
 
     # Simply to last word (i.e. /cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward -> MsgWithdrawDelegatorReward)

@@ -1,6 +1,7 @@
 
 import logging
 import time
+
 from sol.config_sol import localconfig
 
 # Err on the side of overestimating for better user experience

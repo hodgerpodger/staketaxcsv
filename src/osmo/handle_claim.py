@@ -1,6 +1,5 @@
-
-from osmo.make_tx import make_osmo_reward_tx
 from osmo import util_osmo
+from osmo.make_tx import make_osmo_reward_tx
 
 
 def handle_claim(exporter, txinfo, msginfo):

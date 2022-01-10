@@ -1,7 +1,7 @@
-
 import argparse
 import logging
 import os
+
 from settings_csv import REPORTS_DIR
 
 FORMAT_DEFAULT = "default"

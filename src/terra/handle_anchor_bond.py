@@ -1,9 +1,9 @@
 
+from common.ErrorCounter import ErrorCounter
 from common.make_tx import make_unknown_tx
-from terra.make_tx import make_bond_tx, make_unbond_tx, make_unbond_withdraw_tx
 from terra import util_terra
 from terra.constants import CUR_BLUNA, CUR_LUNA
-from common.ErrorCounter import ErrorCounter
+from terra.make_tx import make_bond_tx, make_unbond_tx, make_unbond_withdraw_tx
 
 
 def handle_bond(exporter, elem, txinfo):
@@ -24,15 +24,13 @@ def handle_bond(exporter, elem, txinfo):
 
         row = make_bond_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
         exporter.ingest_row(row)
-    except Exception as e:
+    except Exception:
         row = make_unknown_tx(txinfo)
         exporter.ingest_row(row)
         ErrorCounter.increment("handle_bond_unknown", txid)
 
 
 def handle_unbond(exporter, elem, txinfo):
-    txid = txinfo.txid
-
     row = make_unbond_tx(txinfo)
     exporter.ingest_row(row)
 

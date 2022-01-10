@@ -2,8 +2,6 @@
 import json
 import logging
 import os
-from sol.api_rpc import RpcAPI
-from sol.config_sol import localconfig
 
 # From https://github.com/solana-labs/token-list/blob/main/src/tokens/solana.tokenlist.json
 # https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json
@@ -25,8 +23,8 @@ class Tickers:
                     symbol = info["symbol"]
 
                     # extra stuff I can probably use later
-                    name = info["name"]
-                    logouri = info.get("logoURI")
+                    # name = info["name"]
+                    # logouri = info.get("logoURI")
 
                     cls.tickers[address] = symbol
             cls.loaded = True

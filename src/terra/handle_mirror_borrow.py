@@ -1,12 +1,10 @@
 
-from terra.make_tx import make_deposit_collateral_tx, make_withdraw_collateral_tx
-from terra import util_terra
 from common.make_tx import make_borrow_tx, make_repay_tx
+from terra import util_terra
+from terra.make_tx import make_deposit_collateral_tx, make_withdraw_collateral_tx
 
 
 def handle_deposit_borrow(exporter, elem, txinfo):
-    txid = txinfo.txid
-
     # Query
     data = elem
     from_contract = data["logs"][0]["events_by_type"]["from_contract"]
@@ -26,8 +24,6 @@ def handle_deposit_borrow(exporter, elem, txinfo):
 
 
 def handle_repay_withdraw(exporter, elem, txinfo):
-    txid = txinfo.txid
-
     # Query
     data = elem
 

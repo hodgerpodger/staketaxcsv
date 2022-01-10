@@ -1,23 +1,40 @@
-
 import csv
-from datetime import datetime
-import logging
 import io
-from pytz import timezone
-import pytz
-from tabulate import tabulate
+import logging
+from datetime import datetime
+
 import pandas as pd
+import pytz
 from common.ExporterTypes import (
-    TX_TYPE_STAKING, TX_TYPE_AIRDROP, TX_TYPE_TRADE, TX_TYPE_TRANSFER, TX_TYPE_SPEND,
-    TX_TYPE_INCOME, TX_TYPE_BORROW, TX_TYPE_REPAY, TX_TYPES_CSVEXPORT, TX_TYPES_TAXABLE, ROW_FIELDS, TEST_ROW_FIELDS,
-    CT_FIELDS, TT_FIELDS, CR_FIELDS, KOINLY_FIELDS, CALC_FIELDS, ACCOINT_FIELDS, ZEN_FIELDS, TAXBIT_FIELDS
+    ACCOINT_FIELDS,
+    CALC_FIELDS,
+    CR_FIELDS,
+    CT_FIELDS,
+    KOINLY_FIELDS,
+    ROW_FIELDS,
+    TAXBIT_FIELDS,
+    TEST_ROW_FIELDS,
+    TT_FIELDS,
+    TX_TYPE_AIRDROP,
+    TX_TYPE_BORROW,
+    TX_TYPE_INCOME,
+    TX_TYPE_REPAY,
+    TX_TYPE_SPEND,
+    TX_TYPE_STAKING,
+    TX_TYPE_TRADE,
+    TX_TYPE_TRANSFER,
+    TX_TYPES_CSVEXPORT,
+    TX_TYPES_TAXABLE,
+    ZEN_FIELDS,
 )
+from pytz import timezone
+from tabulate import tabulate
 
 
 class Row:
 
-    def __init__(self, timestamp, tx_type, received_amount, received_currency, sent_amount, sent_currency, fee, fee_currency,
-                 exchange, wallet_address, txid, url="", z_index=0, comment=""):
+    def __init__(self, timestamp, tx_type, received_amount, received_currency, sent_amount, sent_currency, fee,
+                 fee_currency, exchange, wallet_address, txid, url="", z_index=0, comment=""):
         self.timestamp = timestamp
         self.tx_type = tx_type
         self.received_amount = self._format_amount(received_amount)

@@ -3,15 +3,15 @@
 Data parsing functions applicable to all transactions
 """
 
-from datetime import datetime, timezone
 import logging
 import re
-import pprint
-from sol.TxInfoSol import TxInfoSol
-from sol.tickers.tickers import Tickers
-from sol.api_rpc import RpcAPI
-from sol.constants import BILLION, MINT_SOL, CURRENCY_SOL, INSTRUCTION_TYPE_DELEGATE, PROGRAM_STAKE
+from datetime import datetime, timezone
+
 from sol import util_sol
+from sol.api_rpc import RpcAPI
+from sol.constants import BILLION, CURRENCY_SOL, INSTRUCTION_TYPE_DELEGATE, MINT_SOL, PROGRAM_STAKE
+from sol.tickers.tickers import Tickers
+from sol.TxInfoSol import TxInfoSol
 
 
 def parse_tx(txid, data, wallet_info):
@@ -354,7 +354,6 @@ def _transfers_instruction(txinfo):
 
                 amount_string = info.get("amount", None)
                 lamports = info.get("lamports", None)
-                authority = info.get("authority", None)
                 source = info.get("source", None)
                 destination = info.get("destination", None)
 
@@ -396,11 +395,10 @@ def _extract_mint_to(instructions, wallet_address):
                 info = parsed["info"]
                 amount = info["amount"]
                 mint = info["mint"]
-                mint_authority = info["mintAuthority"]
 
                 return amount, mint
 
-    except Exception as e:
+    except Exception:
         pass
     return None, None
 

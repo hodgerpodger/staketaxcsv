@@ -5,9 +5,9 @@ import base64
 import json
 import logging
 
-from terra.config_terra import localconfig
-from terra.constants import MILLION, CUR_ORION, IBC_TOKEN_NAMES
 from terra.api_lcd import LcdAPI
+from terra.config_terra import localconfig
+from terra.constants import CUR_ORION, IBC_TOKEN_NAMES, MILLION
 
 
 def _contracts(elem):

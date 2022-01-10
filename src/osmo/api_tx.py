@@ -1,6 +1,7 @@
-
 import time
+
 from osmo.api_util import _query_get
+
 OSMO_TX_API_NETLOC = "api-osmosis.cosmostation.io"
 
 
