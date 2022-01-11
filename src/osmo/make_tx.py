@@ -1,4 +1,3 @@
-
 from common.Exporter import Row
 from common.ExporterTypes import TX_TYPE_STAKING
 from common.make_tx import (

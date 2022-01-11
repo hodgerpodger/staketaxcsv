@@ -1,4 +1,3 @@
-
 from common.make_tx import make_reward_tx, make_unknown_tx
 from terra import util_terra
 from terra.make_tx import make_gov_stake_tx, make_gov_unstake_tx

@@ -1,4 +1,3 @@
-
 EXCHANGE_COSMOS_BLOCKCHAIN = "cosmos_blockchain"
 CUR_ATOM = "ATOM"
 MILLION = 1000000.0

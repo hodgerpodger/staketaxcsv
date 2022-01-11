@@ -1,4 +1,3 @@
-
 # Unknown program DjVE6JNiYqPL2QXyCUUh8rNjHrbz9hXHNYt99MQ59qw1
 
 from common.make_tx import make_swap_tx

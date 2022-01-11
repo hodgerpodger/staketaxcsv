@@ -1,4 +1,3 @@
-
 from common.ExporterTypes import (
     TX_TYPE_SOL_STAKING_CREATE,
     TX_TYPE_SOL_STAKING_DEACTIVATE,

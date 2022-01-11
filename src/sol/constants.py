@@ -1,5 +1,3 @@
-
-
 CURRENCY_SOL = "SOL"
 EXCHANGE_SOLANA_BLOCKCHAIN = "solana_blockchain"
 

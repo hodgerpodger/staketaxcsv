@@ -33,7 +33,7 @@
 # Install
 
   1. Install python 3.9 ([one way](README_reference.md#installing-python-39-on-macos))
-  2. Install pip packages
+  1. Install pip packages
 
      ```sh
      pip3 install -r requirements.txt

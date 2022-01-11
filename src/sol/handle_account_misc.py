@@ -1,4 +1,3 @@
-
 from common.ExporterTypes import TX_TYPE_SOL_CLOSE_ACCOUNT, TX_TYPE_SOL_INIT_ACCOUNT
 from sol.constants import (
     INSTRUCTION_TYPE_CLOSE_ACCOUNT,

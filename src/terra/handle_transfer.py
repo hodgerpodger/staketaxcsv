@@ -1,4 +1,3 @@
-
 from common.ErrorCounter import ErrorCounter
 from common.make_tx import make_transfer_in_tx, make_transfer_out_tx
 from terra import util_terra

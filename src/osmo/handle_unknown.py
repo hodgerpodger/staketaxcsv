@@ -1,4 +1,3 @@
-
 from osmo import util_osmo
 from osmo.make_tx import make_osmo_unknown_tx, make_osmo_unknown_tx_with_transfer
 

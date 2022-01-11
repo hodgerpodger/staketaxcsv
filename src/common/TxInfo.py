@@ -1,4 +1,3 @@
-
 class TxInfo:
 
     def __init__(self, txid, timestamp, fee, fee_currency, wallet_address, exchange, url):

@@ -1,4 +1,3 @@
-
 """ Parsing and utility functions for fcd tx info """
 
 import base64
