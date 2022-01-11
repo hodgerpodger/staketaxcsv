@@ -1,4 +1,3 @@
-
 from common.make_tx import make_swap_tx
 from sol import util_sol
 from sol.handle_simple import handle_unknown

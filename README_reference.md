@@ -15,9 +15,9 @@
 
 # Unit Tests
 
-You may notice a lack of unit tests in this codebase.  Though tests exist, I omitted them because they rely on extensive
-use of real world wallet data.  For the sake of all users' privacy, I do not include these tests.  I'm open to
-ideas for alternatives, since obviously this is non-optimal.
+You may notice a lack of unit tests in this codebase. Though tests exist, I omitted them because they rely on extensive
+use of real world wallet data. For the sake of all users' privacy, I do not include these tests. I'm open to ideas for
+alternatives, since obviously this is non-optimal.
   
 # Docker
 
@@ -35,9 +35,8 @@ docker run --platform linux/amd64 -it --volume $PWD:/staketaxcsv staketaxcsv bas
 
 # Ideal Configuration
 
-Default code was made to work out of the box.  These are changes that require manual
-actions.  They improve reliability (RPC Node settings) or speed (DB Cache) when compared to
-default version.
+Default code was made to work out of the box. These are changes that require manual actions. They improve reliability
+(RPC Node settings) or speed (DB Cache) when compared to default version.
 
 ## RPC Node settings
 
@@ -47,8 +46,8 @@ default version.
 
 ## DB Cache
 
-Use of a database for caching is ideal to speed up certain RPC queries (especially SOL).  Here is
-the script usage to enable caching:
+Use of a database for caching is ideal to speed up certain RPC queries (especially SOL). Here is the script usage to
+enable caching:
 
 ```sh
 cd src
@@ -85,4 +84,3 @@ Alternatively, you may implement your own Cache class (common/cache.py).
   # install pip packages (same as README.md)
   pip3 install -r requirements.txt
   ```
-  

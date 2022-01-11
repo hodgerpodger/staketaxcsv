@@ -1,4 +1,3 @@
-
 from common.make_tx import make_simple_tx, make_unknown_tx, make_unknown_tx_with_transfer
 from terra import util_terra
 

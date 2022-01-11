@@ -1,4 +1,3 @@
-
 from common.ErrorCounter import ErrorCounter
 from common.make_tx import make_airdrop_tx, make_reward_tx, make_unknown_tx
 from terra import util_terra

@@ -1,4 +1,3 @@
-
 import osmo.constants as co
 from common.ExporterTypes import (
     TX_TYPE_OSMO_WITHDRAW_COMMISSION,

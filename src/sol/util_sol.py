@@ -1,4 +1,3 @@
-
 import logging
 
 from sol.constants import CURRENCY_SOL, MILLION

@@ -1,4 +1,3 @@
-
 """
 Data parsing functions applicable to all transactions
 """

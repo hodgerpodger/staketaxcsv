@@ -1,4 +1,3 @@
-
 class localconfig:
 
     job = None

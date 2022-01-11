@@ -1,4 +1,3 @@
-
 from common.TxInfo import TxInfo
 from osmo.constants import CUR_OSMO, EXCHANGE_OSMOSIS
 

@@ -1,4 +1,3 @@
-
 import re
 
 from common.make_tx import make_reward_tx

@@ -1,4 +1,3 @@
-
 from osmo import api_data
 from osmo.make_tx import make_lp_reward_tx
 

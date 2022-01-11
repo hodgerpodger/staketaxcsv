@@ -1,4 +1,3 @@
-
 from common.make_tx import make_transfer_in_tx, make_transfer_out_tx
 from sol import util_sol
 from sol.constants import (

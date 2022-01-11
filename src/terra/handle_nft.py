@@ -1,4 +1,3 @@
-
 from common.ErrorCounter import ErrorCounter
 from common.ExporterTypes import TX_TYPE_NFT_WHITELIST
 from terra import util_terra

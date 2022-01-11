@@ -1,4 +1,3 @@
-
 import logging
 
 from osmo import util_osmo
