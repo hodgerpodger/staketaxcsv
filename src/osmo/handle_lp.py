@@ -1,13 +1,18 @@
 
 import logging
 
-from osmo.handle_unknown import handle_unknown_detect_transfers
-from osmo.make_tx import (make_osmo_lp_deposit_tx, make_osmo_lp_withdraw_tx,
-                          make_osmo_lp_stake_tx, make_osmo_lp_unstake_tx,
-                          make_osmo_transfer_in_tx, make_osmo_transfer_out_tx)
-from osmo.config_osmo import localconfig
 from osmo import util_osmo
+from osmo.config_osmo import localconfig
 from osmo.handle_claim import handle_claim
+from osmo.handle_unknown import handle_unknown_detect_transfers
+from osmo.make_tx import (
+    make_osmo_lp_deposit_tx,
+    make_osmo_lp_stake_tx,
+    make_osmo_lp_unstake_tx,
+    make_osmo_lp_withdraw_tx,
+    make_osmo_transfer_in_tx,
+    make_osmo_transfer_out_tx,
+)
 
 
 class LockedTokens:
@@ -130,7 +135,6 @@ def handle_lp_withdraw(exporter, txinfo, msginfo):
 def handle_lp_stake(exporter, txinfo, msginfo):
     wallet_address = txinfo.wallet_address
     transfers_in, transfers_out = msginfo.transfers
-    log = msginfo.log
 
     if len(transfers_out) == 1 and len(transfers_in) == 0:
         lp_amount, lp_currency = transfers_out[0]

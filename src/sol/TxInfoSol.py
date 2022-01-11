@@ -1,11 +1,11 @@
+import pprint
 
 from common.TxInfo import TxInfo
-import pprint
-from sol.constants import EXCHANGE_SOLANA_BLOCKCHAIN, CURRENCY_SOL
+from sol.constants import CURRENCY_SOL, EXCHANGE_SOLANA_BLOCKCHAIN
 
 
 class TxInfoSol(TxInfo):
-    """ Common properties across every blockchain transaction (only) """
+    """Common properties across every blockchain transaction (only)"""
 
     def __init__(self, txid, timestamp, fee, wallet_address):
         url = "https://solscan.io/tx/{}".format(txid)
@@ -30,8 +30,8 @@ class TxInfoSol(TxInfo):
         self.balance_changes_all = None
         self.balance_changes = None
 
-        self.transfers = None
-        self.transfers_net = None
+        self.transfers = []
+        self.transfers_net = []
 
     def print(self):
         print("txid: {}".format(self.txid))
@@ -87,7 +87,6 @@ class TxInfoSol(TxInfo):
 
 
 class WalletInfo:
-
     def __init__(self, wallet_address):
         self.wallet_address = wallet_address
         self.staking_addrs = set()

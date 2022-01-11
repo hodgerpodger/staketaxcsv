@@ -1,10 +1,25 @@
-from common.ExporterTypes import TX_TYPE_TRADE, TX_TYPE_TRANSFER, TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW, \
-    TX_TYPE_GOV_STAKE, TX_TYPE_GOV_UNSTAKE, TX_TYPE_LP_STAKE, TX_TYPE_LP_UNSTAKE, TX_TYPE_BOND, TX_TYPE_UNBOND, \
-    TX_TYPE_UNBOND_WITHDRAW, TX_TYPE_UNBOND_INSTANT, TX_TYPE_DEPOSIT_COLLATERAL, TX_TYPE_WITHDRAW_COLLATERAL, \
-    TX_TYPE_NFT_MINT, TX_TYPE_NFT_OFFER_SELL, TX_TYPE_NFT_WITHDRAW, TX_TYPE_NFT_DEPOSIT
+from common.ExporterTypes import (
+    TX_TYPE_BOND,
+    TX_TYPE_DEPOSIT_COLLATERAL,
+    TX_TYPE_GOV_STAKE,
+    TX_TYPE_GOV_UNSTAKE,
+    TX_TYPE_LP_DEPOSIT,
+    TX_TYPE_LP_STAKE,
+    TX_TYPE_LP_UNSTAKE,
+    TX_TYPE_LP_WITHDRAW,
+    TX_TYPE_NFT_DEPOSIT,
+    TX_TYPE_NFT_MINT,
+    TX_TYPE_NFT_OFFER_SELL,
+    TX_TYPE_NFT_WITHDRAW,
+    TX_TYPE_TRADE,
+    TX_TYPE_TRANSFER,
+    TX_TYPE_UNBOND,
+    TX_TYPE_UNBOND_INSTANT,
+    TX_TYPE_UNBOND_WITHDRAW,
+    TX_TYPE_WITHDRAW_COLLATERAL,
+)
+from common.make_tx import _make_tx_exchange, _make_tx_received, _make_tx_sent, make_simple_tx
 from terra.constants import CUR_LUNA
-from common.make_tx import _make_tx_received, _make_tx_sent, _make_tx_exchange, make_simple_tx
-from terra.config_terra import localconfig
 
 
 def make_swap_tx_terra(txinfo, sent_amount, sent_currency, received_amount, received_currency,
@@ -29,21 +44,26 @@ def make_unbond_tx(txinfo):
 
 
 def make_unbond_instant_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency):
-    return _make_tx_exchange(txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_UNBOND_INSTANT)
+    return _make_tx_exchange(txinfo, sent_amount, sent_currency, received_amount, received_currency,
+                             TX_TYPE_UNBOND_INSTANT)
 
 
 def make_unbond_withdraw_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency):
-    return _make_tx_exchange(txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_UNBOND_WITHDRAW)
+    return _make_tx_exchange(txinfo, sent_amount, sent_currency, received_amount, received_currency,
+                             TX_TYPE_UNBOND_WITHDRAW)
 
 
-def make_lp_deposit_tx(txinfo, sent_amount, sent_currency, lp_amount, lp_currency, txid=None, empty_fee=False, z_index=0):
+def make_lp_deposit_tx(txinfo, sent_amount, sent_currency, lp_amount, lp_currency, txid=None, empty_fee=False,
+                       z_index=0):
     # Default is _LP_DEPOSIT.  If optional parameter lp set, treat as trade.
     # tx_type = TX_TYPE_TRADE if localconfig.lp else TX_TYPE_LP_DEPOSIT
     return _make_tx_exchange(
-        txinfo, sent_amount, sent_currency, lp_amount, lp_currency, TX_TYPE_LP_DEPOSIT, txid, empty_fee, z_index=z_index)
+        txinfo, sent_amount, sent_currency, lp_amount, lp_currency, TX_TYPE_LP_DEPOSIT, txid, empty_fee,
+        z_index=z_index)
 
 
-def make_lp_withdraw_tx(txinfo, lp_amount, lp_currency, received_amount, received_currency, txid=None, empty_fee=False):
+def make_lp_withdraw_tx(txinfo, lp_amount, lp_currency, received_amount, received_currency, txid=None,
+                        empty_fee=False):
     # Default is _LP_WITHDRAW.  If optional parameter lp set, treat as trade.
     # tx_type = TX_TYPE_TRADE if localconfig.lp else TX_TYPE_LP_WITHDRAW
     return _make_tx_exchange(

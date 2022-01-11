@@ -1,10 +1,8 @@
 
-import logging
-
-from common.make_tx import make_transfer_out_tx, make_transfer_in_tx
-from terra.handle_simple import handle_unknown
 from common.ErrorCounter import ErrorCounter
+from common.make_tx import make_transfer_in_tx, make_transfer_out_tx
 from terra import util_terra
+from terra.handle_simple import handle_unknown
 
 
 def handle_transfer(exporter, elem, txinfo):

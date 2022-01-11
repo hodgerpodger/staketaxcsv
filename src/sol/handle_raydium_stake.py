@@ -1,10 +1,10 @@
 
 import re
 
-from sol.handle_simple import handle_unknown
 from common.make_tx import make_reward_tx
-from sol.make_tx import make_stake_tx, make_unstake_tx, make_reward_zero_tx
-from sol.constants import MILLION, CURRENCY_SOL
+from sol.constants import CURRENCY_SOL, MILLION
+from sol.handle_simple import handle_unknown
+from sol.make_tx import make_reward_zero_tx, make_stake_tx, make_unstake_tx
 
 
 def handle_raydium_stake_v5(exporter, txinfo):
@@ -93,9 +93,9 @@ def _reward_amounts(log):
     out = []
 
     for line in log:
-        match = re.search("withdraw reward: (\w+) ", line)
+        match = re.search(r"withdraw reward: (\w+) ", line)
         if not match:
-            match = re.search("withdraw reward \w+: (\w+) ", line)
+            match = re.search(r"withdraw reward \w+: (\w+) ", line)
 
         if match:
             amount_string = match.group(1)

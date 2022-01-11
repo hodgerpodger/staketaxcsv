@@ -1,9 +1,15 @@
-
-from common.Exporter import (
-    Row
+from common.Exporter import Row
+from common.ExporterTypes import (
+    TX_TYPE_AIRDROP,
+    TX_TYPE_BORROW,
+    TX_TYPE_INCOME,
+    TX_TYPE_REPAY,
+    TX_TYPE_SPEND,
+    TX_TYPE_STAKING,
+    TX_TYPE_TRADE,
+    TX_TYPE_TRANSFER,
+    TX_TYPE_UNKNOWN,
 )
-from common.ExporterTypes import TX_TYPE_STAKING, TX_TYPE_AIRDROP, TX_TYPE_TRADE, TX_TYPE_TRANSFER, TX_TYPE_SPEND, \
-    TX_TYPE_INCOME, TX_TYPE_BORROW, TX_TYPE_REPAY, TX_TYPE_UNKNOWN
 from settings_csv import DONATION_WALLETS
 
 

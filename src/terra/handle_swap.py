@@ -1,8 +1,6 @@
-
-import logging
+from terra import util_terra
 from terra.make_tx import make_swap_tx_terra
 from terra.util_terra import _asset_to_currency, _float_amount
-from terra import util_terra
 
 
 def handle_swap_msgswap(exporter, elem, txinfo):
@@ -21,7 +19,6 @@ def handle_swap_msgswap(exporter, elem, txinfo):
 
 
 def handle_swap(exporter, elem, txinfo):
-    txid = txinfo.txid
     logs = elem["logs"]
 
     if "coin_received" in logs[0]["events_by_type"]:
@@ -45,8 +42,6 @@ def handle_execute_swap_operations(exporter, elem, txinfo):
 
 
 def _parse_log(exporter, txinfo, log):
-    wallet_address = txinfo.wallet_address
-
     # Parse using from_contract field if exists
     result = _parse_from_contract_if_exists(exporter, txinfo, log)
     if result:

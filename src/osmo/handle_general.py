@@ -1,9 +1,5 @@
-
-from osmo.make_tx import (
-    make_osmo_simple_tx, make_osmo_transfer_in_tx, make_osmo_transfer_out_tx,
-    make_osmo_tx
-)
 from osmo.handle_unknown import handle_unknown_detect_transfers
+from osmo.make_tx import make_osmo_simple_tx, make_osmo_transfer_in_tx, make_osmo_transfer_out_tx, make_osmo_tx
 
 
 def handle_failed_tx(exporter, txinfo):

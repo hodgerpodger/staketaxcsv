@@ -1,7 +1,8 @@
-
 import logging
+from urllib.parse import urlencode, urlunparse
+
 import requests
-from urllib.parse import urlunparse, urlencode
+
 SCHEME = "https"
 
 

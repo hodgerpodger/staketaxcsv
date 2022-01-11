@@ -1,10 +1,10 @@
 
-from terra import util_terra
-from terra.constants import (CUR_MIR, CUR_ANC, CUR_MINE)
-from common.make_tx import make_unknown_tx, make_reward_tx, make_airdrop_tx
 from common.ErrorCounter import ErrorCounter
-from terra.handle_reward import REWARD_CURRENCIES
+from common.make_tx import make_airdrop_tx, make_reward_tx, make_unknown_tx
+from terra import util_terra
 from terra.config_terra import localconfig
+from terra.constants import CUR_ANC, CUR_MINE, CUR_MIR
+from terra.handle_reward import REWARD_CURRENCIES
 
 CONTRACTS_AIRDROP = {
     "terra1kalp2knjm4cs3f59ukr4hdhuuncp648eqrgshw": CUR_MIR,
@@ -83,21 +83,20 @@ def _extract_amount(elem, index, currency):
         execute_msg = util_terra._execute_msg(elem, index)
         amount = util_terra._float_amount(execute_msg["claim"]["amount"], currency)
         return amount
-    except Exception as e:
+    except Exception:
         pass
 
     try:
         from_contract = util_terra._event_with_action(elem, "from_contract", "claim")
         amounts = from_contract["amount"]
         actions = from_contract["action"]
-        contract_addresses = from_contract["contract_address"]
         for i in range(len(amounts)):
             action = actions[i]
             amount = amounts[i]
 
             if action == "claim":
                 return util_terra._float_amount(amount, currency)
-    except Exception as e:
+    except Exception:
         pass
 
     raise Exception("Unable to extract amount")
@@ -143,7 +142,7 @@ def handle_reward_contract(exporter, elem, txinfo):
             row = make_reward_tx(txinfo, amount, currency, txid=txid_row, empty_fee=i > 0)
             exporter.ingest_row(row)
             continue
-        except Exception as e:
+        except Exception:
             pass
 
         # Try "amount" field
@@ -156,7 +155,7 @@ def handle_reward_contract(exporter, elem, txinfo):
             row = make_reward_tx(txinfo, amount, currency, txid=txid_row)
             exporter.ingest_row(row)
             continue
-        except Exception as e:
+        except Exception:
             pass
 
         ErrorCounter.increment("handle_claim_rewards_unknown", txid=txid_row)

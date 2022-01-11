@@ -1,6 +1,6 @@
 
+from common.make_tx import make_airdrop_tx, make_unknown_tx
 from terra import util_terra
-from common.make_tx import make_unknown_tx, make_airdrop_tx
 
 
 def handle_airdrop_pylon(exporter, elem, txinfo):

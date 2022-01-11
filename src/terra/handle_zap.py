@@ -1,7 +1,7 @@
 
 from terra import util_terra
-from terra.make_tx import make_swap_tx_terra, make_lp_stake_tx, make_lp_unstake_tx
 from terra.handle_lp import _handle_lp_deposit, _handle_lp_withdraw
+from terra.make_tx import make_lp_stake_tx, make_lp_unstake_tx, make_swap_tx_terra
 
 
 def handle_zap_into_strategy(exporter, elem, txinfo):

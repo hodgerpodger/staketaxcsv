@@ -1,8 +1,8 @@
 
-from sol.make_tx import make_lp_deposit_tx, make_lp_withdraw_tx
 from common.make_tx import make_swap_tx
-from sol.handle_simple import handle_unknown
 from sol import util_sol
+from sol.handle_simple import handle_unknown
+from sol.make_tx import make_lp_deposit_tx, make_lp_withdraw_tx
 
 
 def handle_raydium_lp_v2(exporter, txinfo):
@@ -65,7 +65,6 @@ def _handle_raydium_lp_deposit(exporter, txinfo, transfers_out):
 
 def _handle_raydium_lp_withdraw(exporter, txinfo, transfers_in, transfers_out):
     txid = txinfo.txid
-    lp_info = txinfo.inner_parsed["burn"][0]
 
     # Get lp currency and amount
     lp_amount, lp_currency, _, _ = transfers_out[0]

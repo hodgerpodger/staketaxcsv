@@ -1,7 +1,8 @@
 
 import logging
-import requests
 import time
+
+import requests
 
 FCD_URL = "https://fcd.terra.dev"
 LIMIT_FCD = 100

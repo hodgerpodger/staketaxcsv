@@ -1,7 +1,5 @@
-
-
-from common.make_tx import make_transfer_out_tx, make_transfer_in_tx, make_reward_tx
 from atom.constants import CUR_ATOM
+from common.make_tx import make_reward_tx, make_transfer_in_tx, make_transfer_out_tx
 
 
 def make_transfer_receive_tx(txinfo, received_amount, received_currency=None):

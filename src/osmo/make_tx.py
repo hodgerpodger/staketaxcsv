@@ -1,11 +1,16 @@
 
-from common.make_tx import (
-    make_swap_tx, make_reward_tx, make_transfer_in_tx, make_transfer_out_tx,
-    make_unknown_tx, make_unknown_tx_with_transfer, _make_tx_exchange,
-)
-from osmo import util_osmo
 from common.Exporter import Row
 from common.ExporterTypes import TX_TYPE_STAKING
+from common.make_tx import (
+    _make_tx_exchange,
+    make_reward_tx,
+    make_swap_tx,
+    make_transfer_in_tx,
+    make_transfer_out_tx,
+    make_unknown_tx,
+    make_unknown_tx_with_transfer,
+)
+from osmo import util_osmo
 from osmo.constants import EXCHANGE_OSMOSIS
 
 

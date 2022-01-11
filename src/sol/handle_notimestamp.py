@@ -1,6 +1,6 @@
 
-from common.make_tx import make_simple_tx
 from common.ExporterTypes import TX_TYPE_MISSING_TIMESTAMP
+from common.make_tx import make_simple_tx
 
 
 def is_notimestamp_tx(txinfo):
