@@ -1,4 +1,3 @@
-
 from common.make_tx import make_swap_tx
 from sol.handle_simple import handle_unknown_detect_transfers
 

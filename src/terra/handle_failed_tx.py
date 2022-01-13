@@ -1,4 +1,3 @@
-
 from common.make_tx import make_spend_tx
 from terra import util_terra
 

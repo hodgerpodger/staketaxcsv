@@ -1,0 +1,27 @@
+# Editor configuration, see https://editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Python Files
+[*.py]
+max_line_length = 120
+
+# Markdown Files
+[*.md]
+indent_size = 2
+max_line_length = 120
+trim_trailing_whitespace = false
+
+# JSON Files
+[*.json]
+indent_size = 2
+
+# YAML Files
+[*.{yml,yaml}]
+indent_size = 2

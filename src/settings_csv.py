@@ -1,4 +1,3 @@
-
 import os
 
 # Environment variables (required for each respective report)
