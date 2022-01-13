@@ -148,6 +148,9 @@ def _fetch_and_process_txs(wallet_address, exporter, progress, num_txs):
         # Remove duplicates (data from this api has duplicates)
         elems_clean = _remove_dups(elems, txids_seen)
 
+        # Sort to process oldest first (so that lock/unlock tokens transactions processed correctly)
+        elems_clean.sort(key=lambda elem: elem["timestamp"])
+
         osmo.processor.process_txs(wallet_address, elems_clean, exporter)
         count_txs_processed += len(elems)
 

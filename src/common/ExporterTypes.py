@@ -1,3 +1,27 @@
+# CSV formats
+FORMAT_DEFAULT = "default"
+FORMAT_BALANCES = "balances"
+FORMAT_ACCOINTING = "accointing"
+FORMAT_COINTRACKING = "cointracking"
+FORMAT_COINTRACKER = "cointracker"
+FORMAT_CRYPTOTAXCALCULATOR = "cryptotaxcalculator"
+FORMAT_KOINLY = "koinly"
+FORMAT_TAXBIT = "taxbit"
+FORMAT_TOKENTAX = "tokentax"
+FORMAT_ZENLEDGER = "zenledger"
+FORMATS = [
+    FORMAT_DEFAULT,
+    FORMAT_BALANCES,
+    FORMAT_ACCOINTING,
+    FORMAT_COINTRACKING,
+    FORMAT_COINTRACKER,
+    FORMAT_CRYPTOTAXCALCULATOR,
+    FORMAT_KOINLY,
+    FORMAT_TAXBIT,
+    FORMAT_TOKENTAX,
+    FORMAT_ZENLEDGER
+]
+
 # Note: TX_TYPE=_* means transaction is not included in non-default CSVs
 # (i.e. _STAKING_DELEGATE is not included in koinly, cointracking, ... )
 

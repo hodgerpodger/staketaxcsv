@@ -3,18 +3,7 @@ import logging
 import os
 
 from settings_csv import REPORTS_DIR
-
-FORMAT_DEFAULT = "default"
-FORMAT_COINTRACKING = "cointracking"
-FORMAT_COINTRACKER = "cointracker"
-FORMAT_KOINLY = "koinly"
-FORMAT_CALCULATOR = "calculator"
-FORMAT_ACCOINTING = "accointing"
-FORMAT_TOKENTAX = "tokentax"
-FORMAT_ZENLEDGER = "zenledger"
-FORMAT_TAXBIT = "taxbit"
-FORMATS = [FORMAT_DEFAULT, FORMAT_COINTRACKING, FORMAT_COINTRACKER, FORMAT_KOINLY, FORMAT_CALCULATOR,
-           FORMAT_ACCOINTING, FORMAT_TOKENTAX, FORMAT_ZENLEDGER, FORMAT_TAXBIT]
+from common.ExporterTypes import FORMAT_DEFAULT, FORMATS
 ALL = "all"
 
 
@@ -68,26 +57,4 @@ def run_exports(ticker, wallet_address, exporter, format):
     for cur_format in formats_list:
         # Write one csv
         csvpath = "{}/{}.{}.{}.csv".format(REPORTS_DIR, ticker, wallet_address, cur_format)
-        if cur_format == FORMAT_DEFAULT:
-            exporter.export_default_csv(csvpath)
-            # Write balance-after-each-transaction csv
-            csvpath2 = "{}/{}.{}.{}.csv".format(REPORTS_DIR, ticker, wallet_address, "balances")
-            exporter.export_balances_csv(csvpath2)
-        elif cur_format == FORMAT_COINTRACKING:
-            exporter.export_cointracking_csv(csvpath)
-        elif cur_format == FORMAT_COINTRACKER:
-            exporter.export_cointracker_csv(csvpath)
-        elif cur_format == FORMAT_KOINLY:
-            exporter.export_koinly_csv(csvpath)
-        elif cur_format == FORMAT_CALCULATOR:
-            exporter.export_calculator_csv(csvpath)
-        elif cur_format == FORMAT_ACCOINTING:
-            xlsxpath = "{}/{}.{}.{}.xlsx".format(REPORTS_DIR, ticker, wallet_address, cur_format)
-            exporter.export_accointing_csv(csvpath)
-            exporter.convert_csv_to_xlsx(csvpath, xlsxpath)
-        elif cur_format == FORMAT_TOKENTAX:
-            exporter.export_tokentax_csv(csvpath)
-        elif cur_format == FORMAT_ZENLEDGER:
-            exporter.export_zenledger_csv(csvpath)
-        elif cur_format == FORMAT_TAXBIT:
-            exporter.export_taxbit_csv(csvpath)
+        exporter.export_format(cur_format, csvpath)

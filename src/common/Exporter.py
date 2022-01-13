@@ -26,6 +26,16 @@ from common.ExporterTypes import (
     TX_TYPES_CSVEXPORT,
     TX_TYPES_TAXABLE,
     ZEN_FIELDS,
+    FORMAT_DEFAULT,
+    FORMAT_BALANCES,
+    FORMAT_ACCOINTING,
+    FORMAT_COINTRACKING,
+    FORMAT_COINTRACKER,
+    FORMAT_CRYPTOTAXCALCULATOR,
+    FORMAT_KOINLY,
+    FORMAT_TAXBIT,
+    FORMAT_TOKENTAX,
+    FORMAT_ZENLEDGER,
 )
 from pytz import timezone
 from tabulate import tabulate
@@ -135,6 +145,32 @@ class Exporter:
         table.extend([row.as_array_short() for row in self.rows])
 
         return tabulate(table)
+
+    def export_format(self, format, csvpath):
+        if format == FORMAT_DEFAULT:
+            self.export_default_csv(csvpath)
+        elif format == FORMAT_BALANCES:
+            self.export_balances_csv(csvpath)
+        elif format == FORMAT_COINTRACKING:
+            self.export_cointracking_csv(csvpath)
+        elif format == FORMAT_COINTRACKER:
+            self.export_cointracker_csv(csvpath)
+        elif format == FORMAT_KOINLY:
+            self.export_koinly_csv(csvpath)
+        elif format == FORMAT_CRYPTOTAXCALCULATOR:
+            self.export_calculator_csv(csvpath)
+        elif format == FORMAT_ACCOINTING:
+            self.export_accointing_csv(csvpath)
+            xlsxpath = csvpath.replace(".csv", ".xlsx")
+            self.convert_csv_to_xlsx(csvpath, xlsxpath)
+            return xlsxpath
+        elif format == FORMAT_TOKENTAX:
+            self.export_tokentax_csv(csvpath)
+        elif format == FORMAT_ZENLEDGER:
+            self.export_zenledger_csv(csvpath)
+        elif format == FORMAT_TAXBIT:
+            self.export_taxbit_csv(csvpath)
+        return csvpath
 
     def export_default_csv(self, csvpath=None, truncate=0):
         self.sort_rows(reverse=True)
