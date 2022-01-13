@@ -276,6 +276,9 @@ def _lookup_lp_address(addr, txid):
         init_msg = _query_wasm(staking_token)
         address_pair = init_msg["init_hook"]["contract_addr"]
         currency1, currency2 = _lookup_address(address_pair, txid)
+    elif "mint" in init_msg:
+        address_pair = init_msg["mint"]["minter"]
+        currency1, currency2 = _lookup_address(address_pair, txid)
     else:
         raise Exception("Unable to determine lp currency for addr={}, txid={}".format(addr, txid))
 
