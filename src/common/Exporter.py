@@ -653,7 +653,7 @@ class Exporter:
                     raise Exception("Bad condition: unable to determined tb_type for txid {}".format(row.txid))
 
                 # Create an ID that determines duplicates
-                exchange_transaction_id = "{}_{}_{}".format(row.txid, row.sent_currency, row.received_currency)
+                exchange_transaction_id = "{}.{}.{}".format(row.txid, row.sent_currency, row.received_currency)
 
                 line = [
                     self._taxbit_timestamp(row.timestamp),       # Date and Time
