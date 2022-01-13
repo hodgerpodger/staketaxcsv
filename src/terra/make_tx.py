@@ -24,13 +24,6 @@ from terra.constants import CUR_LUNA
 
 def make_swap_tx_terra(txinfo, sent_amount, sent_currency, received_amount, received_currency,
                        txid=None, empty_fee=False):
-    # Special case: treat swap into bLUNA as bond transaction
-    if received_currency.upper() == "BLUNA" and sent_currency == CUR_LUNA:
-        return make_bond_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
-    elif received_currency == CUR_LUNA and sent_currency.upper() == "BLUNA":
-        # Special case: instant unbond (looks like swap)
-        return make_unbond_instant_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
-
     return _make_tx_exchange(
         txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_TRADE, txid, empty_fee)
 
