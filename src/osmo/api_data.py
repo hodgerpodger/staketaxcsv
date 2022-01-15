@@ -39,7 +39,7 @@ def get_lp_tokens(address):
 
     data = _query(uri_path)
 
-    return [kv["token"] for kv in data]
+    return [kv["token"] for kv in data if kv["token"]]
 
 
 def get_lp_rewards(address, token):
