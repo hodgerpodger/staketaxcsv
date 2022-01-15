@@ -2,7 +2,7 @@ from common.ErrorCounter import ErrorCounter
 from common.make_tx import make_unknown_tx
 from terra import util_terra
 from terra.constants import CUR_BLUNA, CUR_LUNA
-from terra.make_tx import make_unbond_tx, make_swap_tx_terra
+from terra.make_tx import make_swap_tx_terra, make_unbond_tx
 
 
 def handle_bond(exporter, elem, txinfo):
