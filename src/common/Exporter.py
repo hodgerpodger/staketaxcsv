@@ -39,6 +39,7 @@ from common.ExporterTypes import (
 )
 from pytz import timezone
 from tabulate import tabulate
+from sol.constants import EXCHANGE_SOLANA_BLOCKCHAIN
 
 
 class Row:
@@ -646,16 +647,20 @@ class Exporter:
             mywriter.writerow(TAXBIT_FIELDS)
 
             # data rows
+
             if self.wallet_address.startswith("cosmo"):
                 tx_source = "ATOM WALLET"
             elif self.wallet_address.startswith("terra"):
                 tx_source = "LUNA WALLET"
             elif self.wallet_address.startswith("osmo"):
                 tx_source = "OSMO WALLET"
-            elif len(self.wallet_address) == 44:
-                tx_source = "SOL WALLET"
             else:
-                logging.critical("Bad condition: unable to identify tx_source in export_taxbit_csv()")
+                exchange = self.rows[0].exchange if len(self.rows) else ""
+                if exchange == EXCHANGE_SOLANA_BLOCKCHAIN:
+                    tx_source = "SOL WALLET"
+                else:
+                    tx_source = ""
+                    logging.critical("Bad condition: unable to identify tx_source in export_taxbit_csv()")
 
             for row in rows:
                 # Determine Transaction Type
