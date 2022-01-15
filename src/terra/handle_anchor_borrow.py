@@ -46,7 +46,6 @@ def handle_withdraw_collateral(exporter, elem, txinfo):
 
 def handle_borrow(exporter, elem, txinfo):
     txid = txinfo.txid
-    wallet_address = txinfo.wallet_address
 
     # Extract fee paid by anchor market contract to fee collector
     fee_collector_address = "terra17xpfvakm2amg962yls6f84z3kell8c5lkaeqfa"
