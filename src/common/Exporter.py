@@ -10,6 +10,16 @@ from common.ExporterTypes import (
     CALC_FIELDS,
     CR_FIELDS,
     CT_FIELDS,
+    FORMAT_ACCOINTING,
+    FORMAT_BALANCES,
+    FORMAT_COINTRACKER,
+    FORMAT_COINTRACKING,
+    FORMAT_CRYPTOTAXCALCULATOR,
+    FORMAT_DEFAULT,
+    FORMAT_KOINLY,
+    FORMAT_TAXBIT,
+    FORMAT_TOKENTAX,
+    FORMAT_ZENLEDGER,
     KOINLY_FIELDS,
     ROW_FIELDS,
     TAXBIT_FIELDS,
@@ -26,20 +36,10 @@ from common.ExporterTypes import (
     TX_TYPES_CSVEXPORT,
     TX_TYPES_TAXABLE,
     ZEN_FIELDS,
-    FORMAT_DEFAULT,
-    FORMAT_BALANCES,
-    FORMAT_ACCOINTING,
-    FORMAT_COINTRACKING,
-    FORMAT_COINTRACKER,
-    FORMAT_CRYPTOTAXCALCULATOR,
-    FORMAT_KOINLY,
-    FORMAT_TAXBIT,
-    FORMAT_TOKENTAX,
-    FORMAT_ZENLEDGER,
 )
 from pytz import timezone
-from tabulate import tabulate
 from sol.constants import EXCHANGE_SOLANA_BLOCKCHAIN
+from tabulate import tabulate
 
 
 class Row:

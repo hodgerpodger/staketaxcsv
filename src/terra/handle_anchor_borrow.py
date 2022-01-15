@@ -1,7 +1,7 @@
 from common.make_tx import make_borrow_tx, make_repay_tx
 from terra import util_terra
+from terra.constants import CUR_UST, MILLION
 from terra.make_tx import make_deposit_collateral_tx, make_withdraw_collateral_tx
-from terra.constants import MILLION, CUR_UST
 
 
 def handle_deposit_collateral(exporter, elem, txinfo):
@@ -46,7 +46,6 @@ def handle_withdraw_collateral(exporter, elem, txinfo):
 
 def handle_borrow(exporter, elem, txinfo):
     txid = txinfo.txid
-    wallet_address = txinfo.wallet_address
 
     # Extract fee paid by anchor market contract to fee collector
     fee_collector_address = "terra17xpfvakm2amg962yls6f84z3kell8c5lkaeqfa"

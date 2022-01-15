@@ -2,8 +2,9 @@ import argparse
 import logging
 import os
 
-from settings_csv import REPORTS_DIR
 from common.ExporterTypes import FORMAT_DEFAULT, FORMATS
+from settings_csv import REPORTS_DIR
+
 ALL = "all"
 
 
