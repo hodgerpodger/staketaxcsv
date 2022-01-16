@@ -1,4 +1,4 @@
-from common.Progress import Progress
+from common.progress import Progress
 from osmo.config_osmo import localconfig
 
 SECONDS_PER_TX = 0.6

@@ -20,7 +20,7 @@ import subprocess
 import atom.api_lcd
 import atom.processor
 from atom.config_atom import localconfig
-from atom.ProgressAtom import ProgressAtom
+from atom.progress_atom import ProgressAtom
 from common import report_util
 from common.Exporter import Exporter
 from settings_csv import TICKER_ATOM
