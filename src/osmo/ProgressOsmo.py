@@ -30,15 +30,14 @@ class ProgressOsmo:
             txs_left = 0
             reward_tokens_left = self.num_reward_tokens - num
         else:
-            raise ValueError("Bad stage={} in ProgressOsmo.report()".format(stage))
+            raise ValueError(f"Bad stage={stage} in ProgressOsmo.report()")
 
-        # Estimate timestamp job finishes
-        seconds_left = txs_left * SECONDS_PER_TX + reward_tokens_left * SECONDS_PER_REWARD_TOKEN
-        time_complete = int(time.time() + seconds_left)
+        seconds_left = SECONDS_PER_TX * txs_left + SECONDS_PER_REWARD_TOKEN * reward_tokens_left
 
         # Write to db
         if localconfig.job:
-            localconfig.job.set_in_progress(message, time_complete)
+            estimated_completion_timestamp = int(time.time() + seconds_left)
+            localconfig.job.set_in_progress(message, estimated_completion_timestamp)
         else:
             logging.info(
                 "message: %s, seconds_left: %s, time_elapsed: %s", message, seconds_left, time.time() - self.time_start

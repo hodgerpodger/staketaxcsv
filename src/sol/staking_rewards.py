@@ -8,47 +8,47 @@ from sol.config_sol import localconfig
 from sol.make_tx import make_sol_reward_tx
 
 DATADIR = os.path.dirname(os.path.realpath(__file__)) + "/data_staking_rewards"
+START_EPOCH = 132  # epoch of first ever staking reward
 
 
 def reward_txs(wallet_info, exporter, progress):
-    """ Get reward transactions across all staking addresses for this wallet """
+    """Get reward transactions across all staking addresses for this wallet"""
     staking_addresses = wallet_info.get_staking_addresses()
     wallet_address = wallet_info.wallet_address
 
     for i, addr in enumerate(staking_addresses):
-        progress.report("staking", i, "Fetching rewards for {}...".format(addr))
+        progress.report("staking", i, f"Fetching rewards for {addr}...")
         _reward_txs(wallet_address, exporter, addr)
 
 
 def _reward_txs(wallet_address, exporter, staking_address):
-    """ Get reward transactions for this staking address """
-    start_epoch = 132  # epoch of first staking reward ever
+    """Get reward transactions for this staking address"""
     latest_epoch = RpcAPI.get_latest_epoch()
 
     rewards = []
-    for epoch in range(start_epoch, latest_epoch):
+    for epoch in range(START_EPOCH, latest_epoch):
         timestamp, reward = _get_reward(epoch, staking_address)
         if not reward:
             continue
         rewards.append([epoch, timestamp, reward])
 
     for epoch, timestamp, reward in rewards:
-        txid = "{}.{}".format(staking_address, epoch)
+        txid = f"{staking_address}.{epoch}"
         row = make_sol_reward_tx(timestamp, reward, wallet_address, txid)
         exporter.ingest_row(row)
 
 
 def _get_reward(epoch, staking_address):
-    """ Returns single reward (timestamp_of_reward, float_reward_amount) for staking_address at this epoch. """
-    flush = (localconfig.job is None)
+    """Returns single reward (timestamp_of_reward, float_reward_amount) for staking_address at this epoch."""
+    flush = localconfig.job is None
 
-    filename = "{}/{}.csv".format(DATADIR, epoch)
+    filename = f"{DATADIR}/{epoch}.csv"
     if os.path.exists(filename):
         # Reward data in file.  Extract reward.
-        result = _cmd2("head -n 1 {}".format(filename))
+        result = _cmd2(f"head -n 1 {filename}")
         _, slot = result.split(",")
 
-        result = _cmd2("grep {} {}".format(staking_address, filename))
+        result = _cmd2(f"grep {staking_address} {filename}")
         if not result:
             return None, None
         _, amount = result.split(",")
@@ -63,7 +63,7 @@ def _get_reward(epoch, staking_address):
             block_rewards = RpcAPI.get_block_rewards(slot)
             if not block_rewards:
                 return None, None
-            with open(filename, 'w') as f:
+            with open(filename, "w") as f:
                 mywriter = csv.writer(f)
                 mywriter.writerow(["slot", slot])
                 mywriter.writerows(block_rewards)
@@ -71,8 +71,8 @@ def _get_reward(epoch, staking_address):
 
     if not amount or not slot:
         return None, None
-    ts = _get_timestamp(slot)
-    return ts, amount
+    timestamp = _get_timestamp(slot)
+    return timestamp, amount
 
 
 def _cmd2(s):
@@ -86,6 +86,6 @@ def _get_timestamp(block):
         return localconfig.blocks[block]
 
     logging.info("Fetching block time for block=%s", block)
-    ts = RpcAPI.get_block_time(block)
-    localconfig.blocks[block] = ts
-    return ts
+    timestamp = RpcAPI.get_block_time(block)
+    localconfig.blocks[block] = timestamp
+    return timestamp

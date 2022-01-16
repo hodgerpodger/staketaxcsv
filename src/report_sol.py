@@ -28,7 +28,7 @@ RPC_TIMEOUT = 600  # seconds
 
 
 def main():
-    wallet_address, format, txid, options = report_util.parse_args()
+    wallet_address, export_format, txid, options = report_util.parse_args()
     _read_options(options)
 
     if txid:
@@ -36,7 +36,7 @@ def main():
         exporter.export_print()
     else:
         exporter = txhistory(wallet_address)
-        report_util.run_exports(TICKER_SOL, wallet_address, exporter, format)
+        report_util.run_exports(TICKER_SOL, wallet_address, exporter, export_format)
 
 
 def _read_options(options):
@@ -156,7 +156,7 @@ def txhistory(wallet_address, job=None):
 
 
 def _max_queries():
-    """ Calculated max number of queries based off of config limits """
+    """Calculated max number of queries based off of config limits"""
     max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
     max_queries = math.ceil(max_txs / LIMIT)
     logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
@@ -164,14 +164,14 @@ def _max_queries():
 
 
 def _query_txids(addresses, progress):
-    """ Returns transactions txid's across all token account addresses """
+    """Returns transactions txid's across all token account addresses"""
     max_queries = _max_queries()
 
     out = []
     txids_seen = set()
     for i, address in enumerate(addresses):
         if progress and i % 10 == 0:
-            message = "Fetched txids for {} of {} addresses...".format(i, len(addresses))
+            message = f"Fetched txids for {i} of {len(addresses)} addresses..."
             progress.report_message(message)
 
         # Get transaction txids for this token account
@@ -214,10 +214,10 @@ def _fetch_and_process_txs(txids, wallet_info, exporter, progress):
 
         if i % 10 == 0:
             # Update progress to db every so often for user
-            message = "Fetched {} of {} transactions".format(i + 1, total_count)
+            message = f"Fetched {i + 1} of {total_count} transactions"
             progress.report("txs", i, message)
 
-    message = "Finished fetching {} transactions".format(total_count)
+    message = f"Finished fetching {total_count} transactions"
     progress.report("txs", total_count, message)
 
 
