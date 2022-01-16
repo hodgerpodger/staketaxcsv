@@ -80,8 +80,8 @@ def txhistory(wallet_address, job=None):
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = _fetch_txs(wallet_address, progress)
-    progress.report_message("Processing {} ATOM transactions... ".format(len(elems)))
+    elems = _fetch_txs(wallet_address, progress, count_pages)
+    progress.report_message(f"Processing {len(elems)} ATOM transactions... ")
 
     exporter = Exporter(wallet_address)
     atom.processor.process_txs(wallet_address, elems, exporter)
@@ -96,26 +96,25 @@ def _max_pages():
     return max_pages
 
 
-def _fetch_txs(wallet_address, progress):
-    # Debugging only
-    DEBUG_FILE = "_reports/testatom.{}.json".format(wallet_address)
-    if localconfig.debug and os.path.exists(DEBUG_FILE):
-        with open(DEBUG_FILE, 'r') as f:
-            out = json.load(f)
-            return out
+def _fetch_txs(wallet_address, progress, num_pages):
+    if localconfig.debug:
+        debug_file = f"_reports/testatom.{wallet_address}.json"
+        if os.path.exists(debug_file):
+            with open(debug_file, "r") as f:
+                return json.load(f)
 
     out = []
-    page_count = 0
+    current_page = 0
     # Two passes: is_sender=True (message.sender events) and is_sender=False (transfer.recipient events)
     for is_sender in (True, False):
         offset = 0
-        for i in range(0, _max_pages()):
-            message = "Fetching page {} of {}".format(page_count, progress.num_pages-1)
-            progress.report(page_count, message)
+        for _ in range(0, _max_pages()):
+            current_page += 1
+            message = f"Fetching page {current_page} of {num_pages}"
+            progress.report(current_page, message)
 
             elems, offset, _ = atom.api_lcd.get_txs(wallet_address, is_sender, offset)
 
-            page_count += 1
             out.extend(elems)
             if offset is None:
                 break
@@ -124,9 +123,9 @@ def _fetch_txs(wallet_address, progress):
 
     # Debugging only
     if localconfig.debug:
-        with open(DEBUG_FILE, 'w') as f:
+        with open(debug_file, "w") as f:
             json.dump(out, f, indent=4)
-        logging.info("Wrote to %s for debugging", DEBUG_FILE)
+        logging.info("Wrote to %s for debugging", debug_file)
     return out
 
 
