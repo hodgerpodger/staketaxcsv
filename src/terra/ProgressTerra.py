@@ -7,8 +7,7 @@ from terra.config_terra import localconfig
 SECONDS_PER_TX = 0.1
 
 
-class ProgressTerra():
-
+class ProgressTerra:
     def __init__(self):
         self.num_txs = 0
 
@@ -22,12 +21,11 @@ class ProgressTerra():
 
     def report(self, num, message):
         txs_left = self.num_txs - num
-
-        seconds_left = txs_left * SECONDS_PER_TX
-        time_complete = int(time.time() + seconds_left)
+        seconds_left = SECONDS_PER_TX * txs_left
 
         # Write to db
         if localconfig.job:
-            localconfig.job.set_in_progress(message, time_complete)
+            estimated_completion_timestamp = int(time.time() + seconds_left)
+            localconfig.job.set_in_progress(message, estimated_completion_timestamp)
         else:
             logging.info("message: %s, seconds_left: %s", message, seconds_left)

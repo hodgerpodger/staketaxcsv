@@ -6,8 +6,7 @@ from atom.config_atom import localconfig
 SECONDS_PER_PAGE = 15.0
 
 
-class ProgressAtom():
-
+class ProgressAtom:
     def __init__(self):
         self.num_pages = 0
 
@@ -21,12 +20,10 @@ class ProgressAtom():
 
     def report(self, page, message):
         pages_left = self.num_pages - page
-
-        # Estimate timestamp job finishes
         seconds_left = pages_left * SECONDS_PER_PAGE
-        time_complete = int(time.time() + seconds_left)
 
         # Write to db
         if localconfig.job:
-            localconfig.job.set_in_progress(message, time_complete)
-        logging.info("message: %s, seconds_left:%s", message, seconds_left)
+            estimated_completion_timestamp = int(time.time() + seconds_left)
+            localconfig.job.set_in_progress(message, estimated_completion_timestamp)
+        logging.info("message: %s, seconds_left: %s", message, seconds_left)
