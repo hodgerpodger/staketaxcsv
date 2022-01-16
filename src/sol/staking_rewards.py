@@ -44,7 +44,7 @@ def _get_reward(epoch, staking_address):
 
     filename = f"{DATADIR}/{epoch}.csv"
     if os.path.exists(filename):
-        # Reward data in file.  Extract reward.
+        # Reward data in epoch file.
         result = _cmd2(f"head -n 1 {filename}")
         _, slot = result.split(",")
 
@@ -53,12 +53,11 @@ def _get_reward(epoch, staking_address):
             return None, None
         _, amount = result.split(",")
     else:
-        # At epoch, fetch reward data for staking address
         logging.info("Fetching inflation reward for staking_address=%s, epoch=%s ...", staking_address, epoch)
         amount, slot = RpcAPI.get_inflation_reward(staking_address, epoch)
 
         if flush and slot:
-            # At epoch, fetch reward data for all users and save to file
+            # Fetch rewards for all users at epoch.  Write to epoch file.
             logging.info("Retrieving and flushing rewards to file for epoch=%s...", epoch)
             block_rewards = RpcAPI.get_block_rewards(slot)
             if not block_rewards:
