@@ -215,10 +215,10 @@ def _fetch_and_process_txs(txids, wallet_info, exporter, progress):
         if i % 10 == 0:
             # Update progress to db every so often for user
             message = f"Fetched {i + 1} of {total_count} transactions"
-            progress.report("txs", i, message)
+            progress.report(i, message, "txs")
 
     message = f"Finished fetching {total_count} transactions"
-    progress.report("txs", total_count, message)
+    progress.report(total_count, message, "txs")
 
 
 if __name__ == "__main__":

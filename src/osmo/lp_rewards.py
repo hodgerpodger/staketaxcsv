@@ -4,8 +4,8 @@ from osmo.make_tx import make_lp_reward_tx
 
 def lp_rewards(wallet_address, reward_tokens, exporter, progress):
     for i, token in enumerate(reward_tokens):
-        message = "Retrieving lp rewards for token={}".format(token)
-        progress.report(lp_rewards.__name__, i, message)
+        message = f"Retrieving lp rewards for token={token}"
+        progress.report(i, message, "lp_rewards")
 
         elems = api_data.get_lp_rewards(wallet_address, token)
         for elem in elems:
