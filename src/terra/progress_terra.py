@@ -1,4 +1,4 @@
-from common.Progress import Progress
+from common.progress import Progress
 from terra.config_terra import localconfig
 
 # Err on the side of overestimating for better user experience

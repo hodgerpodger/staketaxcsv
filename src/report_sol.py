@@ -19,7 +19,7 @@ from sol import staking_rewards
 from sol.api_rpc import RpcAPI
 from sol.config_sol import localconfig
 from sol.constants import PROGRAMID_STAKE
-from sol.ProgressSol import SECONDS_PER_STAKING_ADDRESS, SECONDS_PER_TX, ProgressSol
+from sol.progress_sol import SECONDS_PER_STAKING_ADDRESS, SECONDS_PER_TX, ProgressSol
 from sol.TxInfoSol import WalletInfo
 
 LIMIT = 1000
