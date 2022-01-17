@@ -34,7 +34,8 @@ class Progress:
             stage = self.stages[stage_name]
             stage.update_task_number(num)
         else:
-            raise ValueError(f"Bad stage={stage_name} in {type(self).__name__}.report()")
+            logging.critical(f"Bad stage={stage_name} in {type(self).__name__}.report()")
+            return
 
         seconds_left = sum(stage.seconds_remaining() for stage in self.stages.values())
 
