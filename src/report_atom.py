@@ -35,7 +35,7 @@ def _cmd(s):
 
 
 def main():
-    wallet_address, format, txid, options = report_util.parse_args()
+    wallet_address, export_format, txid, options = report_util.parse_args()
     _read_options(options)
 
     if txid:
@@ -43,7 +43,7 @@ def main():
         exporter.export_print()
     else:
         exporter = txhistory(wallet_address)
-        report_util.run_exports(TICKER_ATOM, wallet_address, exporter, format)
+        report_util.run_exports(TICKER_ATOM, wallet_address, exporter, export_format)
 
 
 def _read_options(options):

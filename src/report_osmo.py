@@ -25,7 +25,7 @@ MAX_TRANSACTIONS = 5000
 
 
 def main():
-    wallet_address, format, txid, options = report_util.parse_args()
+    wallet_address, export_format, txid, options = report_util.parse_args()
     _read_options(options)
 
     if txid:
@@ -33,7 +33,7 @@ def main():
         exporter.export_print()
     else:
         exporter = txhistory(wallet_address, job=None)
-        report_util.run_exports(TICKER_OSMO, wallet_address, exporter, format)
+        report_util.run_exports(TICKER_OSMO, wallet_address, exporter, export_format)
 
 
 def _read_options(options):
