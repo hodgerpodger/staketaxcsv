@@ -1,7 +1,7 @@
 from common.progress import Progress
 from osmo.config_osmo import localconfig
 
-SECONDS_PER_TX = 0.6
+SECONDS_PER_TX = 0.08
 SECONDS_PER_REWARD_TOKEN = 2.0
 
 
