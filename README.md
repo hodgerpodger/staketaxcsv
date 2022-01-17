@@ -28,6 +28,9 @@
   
   # Show CSV result for single transaction (great for development/debugging)
   python3 report_terra.py <wallet_address> --txid <txid>
+  
+  # Show CSV result for single transaction in debug mode (great for development/debugging)
+  python3 report_terra.py <wallet_address> --txid <txid> --debug
   ```
 
 # Install
