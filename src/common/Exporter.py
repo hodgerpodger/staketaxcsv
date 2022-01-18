@@ -202,11 +202,11 @@ class Exporter:
             TX_TYPE_AIRDROP: "Airdrop",
             TX_TYPE_STAKING: "Staking",
             TX_TYPE_TRADE: "Trade",
-            TX_TYPE_TRANSFER: "Transfer",
+            TX_TYPE_TRANSFER: TX_TYPE_TRANSFER,
             TX_TYPE_INCOME: "Income",
             TX_TYPE_SPEND: "Spend",
-            TX_TYPE_BORROW: "Transfer",
-            TX_TYPE_REPAY: "Transfer"
+            TX_TYPE_BORROW: TX_TYPE_TRANSFER,
+            TX_TYPE_REPAY: TX_TYPE_TRANSFER,
         }
 
         self.sort_rows(reverse=True)
@@ -220,29 +220,36 @@ class Exporter:
 
             # data rows
             for row in rows:
-                tx_type = cointracking_types[row.tx_type]
-                if tx_type == "Transfer":
+                # Determine type
+                ct_type = cointracking_types[row.tx_type]
+                if ct_type == TX_TYPE_TRANSFER:
                     if row.received_amount and not row.sent_amount:
-                        tx_type = "Deposit"
+                        ct_type = "Deposit"
                     elif row.sent_amount and not row.received_amount:
-                        tx_type = "Withdrawal"
+                        ct_type = "Withdrawal"
                     else:
-                        tx_type = "Deposit"
+                        ct_type = "Deposit"
                         logging.error("Bad condition in export_cointracking_csv(): {}, {}, {}".format(
                             row.received_amount, row.sent_amount, row.as_array()))
 
+                # id that determines duplicates
                 txid_cointracking = str(row.txid) + "." + str(row.received_currency) + "." + str(row.sent_currency)
 
+                # add txid to comment, as helpful info in cointracking UI
                 if row.comment:
                     comment = "{} {}".format(row.comment, row.txid)
                 else:
                     comment = row.txid
 
+                # Adjust amount(s) for fee according to cointracking spec
+                # https://cointracking.freshdesk.com/en/support/solutions/articles/29000007202-entering-fees
+                adj_sent_amount, adj_received_amount, other_fee_line = self._cointracking_fee_adjustments(ct_type, row, comment)
+
                 line = [
-                    tx_type,                                             # "Staking" | "Airdrop" | "Trade
-                    row.received_amount,                                 # Buy Amount
+                    ct_type,                                             # "Staking" | "Airdrop" | "Trade
+                    adj_received_amount,                                 # Buy Amount
                     self._cointracking_code(row.received_currency),      # Buy Currency
-                    row.sent_amount,                                     # Sell Amount
+                    adj_sent_amount,                                     # Sell Amount
                     self._cointracking_code(row.sent_currency),          # Sell Currency
                     row.fee,                                             # Fee
                     self._cointracking_code(row.fee_currency),           # Fee Currency
@@ -254,7 +261,45 @@ class Exporter:
                 ]
                 mywriter.writerow(line)
 
+                if other_fee_line:
+                    mywriter.writerow(other_fee_line)
+
         logging.info("Wrote to %s", csvpath)
+
+    def _cointracking_fee_adjustments(self, ct_type, row, comment):
+        if not row.fee:
+            return row.sent_amount, row.received_amount, None
+        elif "multicurrency fee" in comment:
+            return row.sent_amount, row.received_amount, None
+        elif ct_type == "Deposit" and row.tx_type != TX_TYPE_BORROW:
+            return row.sent_amount, row.received_amount, None
+        elif row.received_amount and row.received_currency == row.fee_currency:
+            # adjust received amount
+            return row.sent_amount, row.received_amount - float(row.fee), None
+        elif row.sent_amount and row.sent_currency == row.fee_currency:
+            # adjust sent amount
+            return row.sent_amount + float(row.fee), row.received_amount, None
+        elif row.fee and row.fee_currency not in (row.received_currency, row.sent_currency):
+            # other currency fee case: add csv "Other Fee" row
+            txid_other_fee = str(row.txid) + ".fee"
+            other_fee_line = [
+                "Other Fee",
+                "",                                            # Buy Amount
+                "",                                            # Buy Currency
+                row.fee,                                       # Sell Amount
+                self._cointracking_code(row.fee_currency),     # Sell Currency
+                "",                                            # Fee
+                "",                                            # Fee Currency
+                row.exchange,                                  # Exchange
+                row.wallet_address,                            # Trade-Group
+                "fee for {}".format(row.txid),                 # Comment
+                row.timestamp,                                 # Date
+                txid_other_fee                                 # Tx-ID
+            ]
+            return row.sent_amount, row.received_amount, other_fee_line
+        else:
+            logging.critical("Bad condition in _cointracking_fee_adjustments(): unable to handle txid=%s", row.txid)
+            return row.sent_amount, row.received_amount, None
 
     def export_tokentax_csv(self, csvpath):
         """ Write CSV, suitable for import into TokenTax """
@@ -280,6 +325,7 @@ class Exporter:
 
             # data rows
             for row in rows:
+                # Determine tx_type
                 tx_type = tokentax_types[row.tx_type]
                 if tx_type == "Transfer":
                     if row.received_amount and not row.sent_amount:
