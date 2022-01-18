@@ -275,10 +275,10 @@ class Exporter:
             return row.sent_amount, row.received_amount, None
         elif row.received_amount and row.received_currency == row.fee_currency:
             # adjust received amount
-            return row.sent_amount, row.received_amount - float(row.fee), None
+            return row.sent_amount, float(row.received_amount) - float(row.fee), None
         elif row.sent_amount and row.sent_currency == row.fee_currency:
             # adjust sent amount
-            return row.sent_amount + float(row.fee), row.received_amount, None
+            return float(row.sent_amount) + float(row.fee), row.received_amount, None
         elif row.fee and row.fee_currency not in (row.received_currency, row.sent_currency):
             # other currency fee case: add csv "Other Fee" row
             txid_other_fee = str(row.txid) + ".fee"
