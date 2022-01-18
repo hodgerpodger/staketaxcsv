@@ -14,3 +14,6 @@ class ProgressSol(Progress):
     def set_estimate(self, num_staking_addresses, txs_total):
         self.add_stage("txs", txs_total, SECONDS_PER_TX)
         self.add_stage("staking", num_staking_addresses, SECONDS_PER_STAKING_ADDRESS)
+
+    def update_estimate(self, num_staking_addresses):
+        self.stages["staking"].total_tasks = num_staking_addresses

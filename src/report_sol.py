@@ -142,7 +142,7 @@ def txhistory(wallet_address, job=None):
     _fetch_and_process_txs(txids, wallet_info, exporter, progress)
 
     # Update progress indicator
-    progress.num_staking_addresses = len(wallet_info.get_staking_addresses())
+    progress.update_estimate(len(wallet_info.get_staking_addresses()))
 
     # Staking rewards data
     staking_rewards.reward_txs(wallet_info, exporter, progress)
