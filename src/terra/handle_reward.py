@@ -6,7 +6,7 @@ from common.ExporterTypes import (
     TX_TYPE_STAKING_UNDELEGATE,
     TX_TYPE_STAKING_WITHDRAW_REWARD,
 )
-from common.make_tx import make_reward_tx
+from common.make_tx import make_reward_tx, make_spend_tx
 from terra import util_terra
 from terra.config_terra import localconfig
 from terra.constants import CUR_KRT, CUR_LUNA, CUR_UST
@@ -24,18 +24,6 @@ def handle_reward(exporter, elem, txinfo, msgtype):
     txid = txinfo.txid
     wallet_address = txinfo.wallet_address
     transfers_in, transfers_out = util_terra._transfers(elem, wallet_address, txid, multicurrency=True)
-
-    # Create separate row for action
-    if msgtype == "staking/MsgDelegate":
-        handle_simple(exporter, txinfo, TX_TYPE_STAKING_DELEGATE, z_index=-1)
-    elif msgtype == "distribution/MsgWithdrawDelegationReward":
-        handle_simple(exporter, txinfo, TX_TYPE_STAKING_WITHDRAW_REWARD, z_index=-1)
-    elif msgtype == "staking/MsgBeginRedelegate":
-        handle_simple(exporter, txinfo, TX_TYPE_STAKING_REDELEGATE, z_index=-1)
-    elif msgtype == "staking/MsgUndelegate":
-        handle_simple(exporter, txinfo, TX_TYPE_STAKING_UNDELEGATE, z_index=-1)
-    else:
-        logging.error("handle_reward(): unhandled msgtype=%s", msgtype)
 
     # Sum rewards by currency (may have multiple multiple messages within same transaction)
     rewards = {}
@@ -57,3 +45,19 @@ def handle_reward(exporter, elem, txinfo, msgtype):
         row = make_reward_tx(txinfo, amount, currency, txid, empty_fee=True)
         exporter.ingest_row(row)
         i += 1
+
+    # Create row for spend fee
+    row = make_spend_tx(txinfo, txinfo.fee, txinfo.fee_currency)
+    row.fee, row.fee_currency = "", ""
+    row.z_index = -1
+    if msgtype == "staking/MsgDelegate":
+        row.comment = "fee for delegate"
+    elif msgtype == "distribution/MsgWithdrawDelegationReward":
+        row.comment = "fee for withdraw_delegate_reward"
+    elif msgtype == "staking/MsgBeginRedelegate":
+        row.comment = "fee for redelegate"
+    elif msgtype == "staking/MsgUndelegate":
+        row.comment = "fee for undelegate"
+    else:
+        logging.error("handle_reward(): unhandled msgtype=%s", msgtype)
+    exporter.ingest_row(row)
