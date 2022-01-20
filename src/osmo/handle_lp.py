@@ -11,6 +11,7 @@ from osmo.make_tx import (
     make_osmo_lp_withdraw_tx,
     make_osmo_transfer_in_tx,
     make_osmo_transfer_out_tx,
+    make_osmo_swap_tx,
 )
 
 
@@ -54,11 +55,15 @@ def handle_lp_deposit(exporter, txinfo, msginfo):
 
         # Construct rows (note: only 1 row has fee)
         rows = []
-        if localconfig.lp:
+        if localconfig.lp_transfers:
             # Optional: treat lp deposit as 2 outbound transfers and 1 lp receive token.
             rows.append(make_osmo_transfer_out_tx(txinfo, msginfo, sent_amount1, sent_currency1))
             rows.append(make_osmo_transfer_out_tx(txinfo, msginfo, sent_amount2, sent_currency2))
             rows.append(make_osmo_lp_deposit_tx(txinfo, msginfo, "", "", lp_amount, lp_currency))
+        elif localconfig.lp_trades:
+            # Optional: treat lp deposit as trades
+            rows.append(make_osmo_swap_tx(txinfo, msginfo, sent_amount1, sent_currency1, lp_amount / 2, lp_currency))
+            rows.append(make_osmo_swap_tx(txinfo, msginfo, sent_amount2, sent_currency2, lp_amount / 2, lp_currency))
         else:
             # Default: 2 _MsgJoinPool rows
             rows.append(make_osmo_lp_deposit_tx(
@@ -83,10 +88,13 @@ def handle_lp_deposit_partial(exporter, txinfo, msginfo):
 
         # Construct rows
         rows = []
-        if localconfig.lp:
+        if localconfig.lp_transfers:
             # Optional: treat lp deposit as 1 outbound transfers and 1 lp receive token.
             rows.append(make_osmo_transfer_out_tx(txinfo, msginfo, sent_amount, sent_currency))
             rows.append(make_osmo_lp_deposit_tx(txinfo, msginfo, "", "", lp_amount, lp_currency))
+        elif localconfig.lp_trades:
+            # Optional: treat lp deposit as trade
+            rows.append(make_osmo_swap_tx(txinfo, msginfo, sent_amount, sent_currency, lp_amount, lp_currency))
         else:
             # 1 _MsgJoinSwapExternAmountIn row
             rows.append(
@@ -113,11 +121,17 @@ def handle_lp_withdraw(exporter, txinfo, msginfo):
 
         # Construct rows (note: only 1 row has fee)
         rows = []
-        if localconfig.lp:
+        if localconfig.lp_transfers:
             # Optional: treat lp withdraw as 2 inbound transfers and 1 lp send token.
             rows.append(make_osmo_lp_withdraw_tx(txinfo, msginfo, lp_amount, lp_currency, "", ""))
             rows.append(make_osmo_transfer_in_tx(txinfo, msginfo, receive_amount1, receive_currency1))
             rows.append(make_osmo_transfer_in_tx(txinfo, msginfo, receive_amount2, receive_currency2))
+        elif localconfig.lp_trades:
+            # Optional: treat lp withdraw as trades
+            rows.append(
+                make_osmo_swap_tx(txinfo, msginfo, lp_amount / 2, lp_currency, receive_amount1, receive_currency1))
+            rows.append(
+                make_osmo_swap_tx(txinfo, msginfo, lp_amount / 2, lp_currency, receive_amount2, receive_currency2))
         else:
             # Default: 2 _MsgExitPool rows
             rows.append(make_osmo_lp_withdraw_tx(

@@ -44,10 +44,16 @@ def parse_args():
         help="(LUNA) include minor currency rewards",
     )
     parser.add_argument(
-        "--lp",
+        "--lp_transfers",
         action="store_true",
         default=False,
-        help="(LUNA/OSMO) treat LP deposits/withdrawals as transfers (default is non-exportable custom tx",
+        help="(LUNA/OSMO) treat LP deposits/withdrawals as transfers (default is non-exportable custom tx)",
+    )
+    parser.add_argument(
+        "--lp_trades",
+        action="store_true",
+        default=False,
+        help="(LUNA/OSMO) treat LP deposits/withdrawals as trades (default is non-exportable custom tx)",
     )
     parser.add_argument(
         "--limit",
@@ -65,8 +71,10 @@ def parse_args():
         options["cache"] = True
     if args.minor_rewards:
         options["minor_rewards"] = True
-    if args.lp:
-        options["lp"] = True
+    if args.lp_transfers:
+        options["lp_transfers"] = True
+    if args.lp_trades:
+        options["lp_trades"] = True
     if args.limit:
         options["limit"] = args.limit
 

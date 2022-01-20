@@ -9,6 +9,7 @@ from terra.make_tx import (
     make_lp_unstake_tx,
     make_lp_withdraw_tx,
     make_withdraw_collateral_tx,
+    make_swap_tx_terra,
 )
 
 
@@ -34,31 +35,28 @@ def _handle_lp_deposit(txinfo, from_contract):
 
     # Determine sent collateral
     deposits = _extract_collateral_amounts(txid, from_contract, "assets")
+    currency1, amount1 = deposits[0]
+    currency2, amount2 = deposits[1]
 
-    if localconfig.lp:
-        # Optional setting: treat LP deposit as 2 outbound transfers and 1 lp token receive
-        currency1, amount1 = deposits[0]
-        currency2, amount2 = deposits[1]
-
-        row = make_transfer_out_tx(txinfo, amount1, currency1)
-        rows.append(row)
-        row = make_transfer_out_tx(txinfo, amount2, currency2)
-        rows.append(row)
-
-        row = make_lp_deposit_tx(txinfo, "", "", lp_amount, lp_currency, txid)
-        rows.append(row)
-
-        return rows
+    if localconfig.lp_transfers:
+        # Optional: treat LP deposit as 2 outbound transfers and 1 lp token receive
+        rows.append(make_transfer_out_tx(txinfo, amount1, currency1))
+        rows.append(make_transfer_out_tx(txinfo, amount2, currency2))
+        rows.append(make_lp_deposit_tx(txinfo, "", "", lp_amount, lp_currency, txid))
+    elif localconfig.lp_trades:
+        # Optional: treat LP deposit as trades
+        rows.append(make_swap_tx_terra(
+            txinfo, amount1, currency1, lp_amount / 2, lp_currency, txid, empty_fee=False))
+        rows.append(make_swap_tx_terra(
+            txinfo, amount2, currency2, lp_amount / 2, lp_currency, txid, empty_fee=True))
     else:
         # Default: create two LP_DEPOSIT rows
-        i = 0
-        for currency, amount in deposits:
-            row = make_lp_deposit_tx(
-                txinfo, amount, currency, lp_amount / len(deposits), lp_currency, txid, empty_fee=(i > 0))
-            rows.append(row)
-            i += 1
-        return rows
+        rows.append(make_lp_deposit_tx(
+            txinfo, amount1, currency1, lp_amount / 2, lp_currency, txid, empty_fee=False))
+        rows.append(make_lp_deposit_tx(
+            txinfo, amount2, currency2, lp_amount / 2, lp_currency, txid, empty_fee=True))
 
+    return rows
 
 def handle_lp_withdraw(exporter, elem, txinfo):
     comment = "liquidity pool withdraw"
@@ -116,35 +114,30 @@ def _handle_withdraw_collaterals(txinfo, lp_amount, lp_currency, data, from_cont
 
     # Determine received collateral
     withdraws = _extract_collateral_amounts(txid, from_contract, "refund_assets")
+    currency1, amount1 = withdraws[0]
+    amount1, currency1 = _check_ust_adjustment(amount1, currency1, data, wallet_address, txid)
+    currency2, amount2 = withdraws[1]
+    amount2, currency2 = _check_ust_adjustment(amount2, currency2, data, wallet_address, txid)
 
-    if localconfig.lp:
-        # Optional setting: treat lp withdraw as 2 inbound transfers and 1 lp token send
-
-        # 2 inbound transfers
-        i = 0
-        for currency, amount in withdraws:
-            amount, currency = _check_ust_adjustment(amount, currency, data, wallet_address, txid)
-            row = make_transfer_in_tx(txinfo, amount, currency)
-            rows.append(row)
-            i += 1
-
-        # 1 lp token send
-        row = make_lp_withdraw_tx(txinfo, lp_amount, lp_currency, "", "", txid)
-        rows.append(row)
-        return rows
+    if localconfig.lp_transfers:
+        # Optional: treat lp withdraw as 2 inbound transfers and 1 lp token send
+        rows.append(make_transfer_in_tx(txinfo, amount1, currency1))
+        rows.append(make_transfer_in_tx(txinfo, amount2, currency2))
+        rows.append(make_lp_withdraw_tx(txinfo, lp_amount, lp_currency, "", "", txid))
+    elif localconfig.lp_trades:
+        # Optional: treat lp withdraw as trades
+        rows.append(make_swap_tx_terra(
+            txinfo, lp_amount / 2, lp_currency, amount1, currency1, txid, empty_fee=False))
+        rows.append(make_swap_tx_terra(
+            txinfo, lp_amount / 2, lp_currency, amount2, currency2, txid, empty_fee=True))
     else:
         # Default: create two LP_WITHDRAW rows
+        rows.append(make_lp_withdraw_tx(
+                txinfo, lp_amount / 2, lp_currency, amount1, currency1, txid, empty_fee=False))
+        rows.append(make_lp_withdraw_tx(
+            txinfo, lp_amount / 2, lp_currency, amount2, currency2, txid, empty_fee=True))
 
-        i = 0
-        for currency, amount in withdraws:
-            # Adjust UST withdrawal amount to account for small fee
-            amount, currency = _check_ust_adjustment(amount, currency, data, wallet_address, txid)
-
-            row = make_lp_withdraw_tx(
-                txinfo, lp_amount / len(withdraws), lp_currency, amount, currency, txid, empty_fee=(i > 0))
-            rows.append(row)
-            i += 1
-        return rows
+    return rows
 
 
 def _check_ust_adjustment(amount, currency, data, wallet_address, txid):

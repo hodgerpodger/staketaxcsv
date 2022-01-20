@@ -43,8 +43,10 @@ def _read_options(options):
             localconfig.debug = True
         if options.get("limit"):
             localconfig.limit = options.get("limit")
-        if options.get("lp") is True:
-            localconfig.lp = True
+        if options.get("lp_transfers") is True:
+            localconfig.lp_transfers = True
+        if options.get("lp_trades") is True:
+            localconfig.lp_trades = True
         if options.get("cache") is True:
             localconfig.cache = True
 
