@@ -15,7 +15,6 @@ import logging
 import math
 import os
 import pprint
-import subprocess
 
 import atom.api_lcd
 import atom.processor
@@ -27,11 +26,6 @@ from settings_csv import TICKER_ATOM
 
 LIMIT = 50
 MAX_TRANSACTIONS = 1000
-
-
-def _cmd(s):
-    logging.info(s)
-    return subprocess.getoutput(s)
 
 
 def main():
@@ -47,11 +41,11 @@ def main():
 
 
 def _read_options(options):
-    if options:
-        if options.get("debug") is True:
-            localconfig.debug = True
-        if options.get("limit"):
-            localconfig.limit = options.get("limit")
+    if not options:
+        return
+
+    localconfig.debug = options.get("debug", False)
+    localconfig.limit = options.get("limit", None)
 
 
 def wallet_exists(wallet_address):
@@ -75,12 +69,10 @@ def txhistory(wallet_address, job=None):
 
     # Fetch count of transactions to estimate progress more accurately
     progress = ProgressAtom()
-    count_pages = atom.api_lcd.get_txs_count_pages(wallet_address)
-    logging.info("count_pages: %s", count_pages)
-    progress.set_estimate(count_pages)
+    sender_page_count, receiver_page_count = atom.api_lcd.get_txs_count_pages(wallet_address)
 
     # Fetch transactions
-    elems = _fetch_txs(wallet_address, progress, count_pages)
+    elems = _fetch_txs(wallet_address, progress, sender_page_count, receiver_page_count)
     progress.report_message(f"Processing {len(elems)} ATOM transactions... ")
 
     exporter = Exporter(wallet_address)
@@ -90,36 +82,63 @@ def txhistory(wallet_address, job=None):
 
 
 def _max_pages():
-    max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
+    max_txs = localconfig.limit if localconfig.limit is not None else MAX_TRANSACTIONS
     max_pages = math.ceil(max_txs / LIMIT)
     logging.info("max_txs: %s, max_pages: %s", max_txs, max_pages)
     return max_pages
 
 
-def _fetch_txs(wallet_address, progress, num_pages):
+def _fetch_txs(wallet_address, progress, sender_page_count, receiver_page_count):
     if localconfig.debug:
         debug_file = f"_reports/testatom.{wallet_address}.json"
         if os.path.exists(debug_file):
             with open(debug_file, "r") as f:
                 return json.load(f)
 
+    page_limit = _max_pages()
+    sender_page_limit = min(sender_page_count, page_limit)
+    receiver_page_limit = min(receiver_page_count, page_limit)
+
+    progress.set_estimate(sender_page_limit, receiver_page_limit)
+
     out = []
-    current_page = 0
-    # Two passes: is_sender=True (message.sender events) and is_sender=False (transfer.recipient events)
-    for is_sender in (True, False):
-        offset = 0
-        for _ in range(0, _max_pages()):
-            current_page += 1
-            message = f"Fetching page {current_page} of {num_pages}"
-            progress.report(current_page, message)
+    seen_txids = set()
 
-            elems, offset, _ = atom.api_lcd.get_txs(wallet_address, is_sender, offset)
+    message = f"Fetching sender txs. {sender_page_limit} pages..."
+    progress.report(0, message, "sender")
 
-            out.extend(elems)
-            if offset is None:
-                break
+    sender_offset = 0
+    for current_page in range(1, sender_page_limit + 1):
+        elems, sender_offset, _ = atom.api_lcd.get_txs(wallet_address, True, sender_offset)
+        _add_unseen_transaction(out, seen_txids, elems)
 
-    out = _remove_duplicates(out)
+        message = f"Fetched sender txs page {current_page} of {sender_page_limit}"
+        progress.report(current_page, message, "sender")
+
+    # Sender txs fetching completed, report if results are truncated
+    if sender_page_limit < sender_page_count:
+        progress.report_message(
+            f"Sender tx fetching stopped at {sender_page_limit} of possible {sender_page_count} pages..."
+        )
+
+    message = f"Fetching receiver txs. {receiver_page_limit} pages..."
+    progress.report(0, message, "receiver")
+
+    receiver_offset = 0
+    for current_page in range(1, receiver_page_limit + 1):
+        elems, receiver_offset, _ = atom.api_lcd.get_txs(wallet_address, False, receiver_offset)
+        _add_unseen_transaction(out, seen_txids, elems)
+
+        message = f"Fetched receiver txs page {current_page} of {receiver_page_limit}"
+        progress.report(current_page, message, "receiver")
+
+    # Receiver txs fetching completed, report if results are truncated
+    if receiver_page_limit < receiver_page_count:
+        progress.report_message(
+            f"Receiver tx fetching stopped at {receiver_page_limit} of possible {receiver_page_count} pages..."
+        )
+
+    out.sort(key=lambda elem: elem["timestamp"], reverse=True)
 
     # Debugging only
     if localconfig.debug:
@@ -129,20 +148,13 @@ def _fetch_txs(wallet_address, progress, num_pages):
     return out
 
 
-def _remove_duplicates(elems):
-    out = []
-    txids = set()
-
+def _add_unseen_transaction(out, seen_txids, elems):
     for elem in elems:
-        if elem["txhash"] in txids:
+        if elem["txhash"] in seen_txids:
             continue
 
         out.append(elem)
-        txids.add(elem["txhash"])
-
-    out.sort(key=lambda elem: elem["timestamp"], reverse=True)
-
-    return out
+        seen_txids.add(elem["txhash"])
 
 
 if __name__ == "__main__":
