@@ -9,6 +9,7 @@ from common.ExporterTypes import (
     TX_TYPE_TRADE,
     TX_TYPE_TRANSFER,
     TX_TYPE_UNKNOWN,
+    TX_TYPE_SOL_TRANSFER_SELF,
 )
 from settings_csv import DONATION_WALLETS
 
@@ -52,6 +53,10 @@ def make_transfer_in_tx(txinfo, received_amount, received_currency):
         return _make_tx_received(txinfo, received_amount, received_currency, TX_TYPE_INCOME)
     else:
         return _make_tx_received(txinfo, received_amount, received_currency, TX_TYPE_TRANSFER)
+
+
+def make_transfer_self(txinfo):
+    return make_simple_tx(txinfo, TX_TYPE_SOL_TRANSFER_SELF)
 
 
 def make_borrow_tx(txinfo, received_amount, received_currency, empty_fee=False, z_index=0):

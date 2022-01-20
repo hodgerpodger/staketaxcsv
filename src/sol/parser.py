@@ -60,8 +60,8 @@ def parse_tx(txid, data, wallet_info):
     txinfo.wallet_accounts = _wallet_accounts(txid, wallet_address, txinfo.instructions, txinfo.inner)
     txinfo.account_to_mint, txinfo.mints = _mints(data, wallet_address)
 
-    txinfo.balance_changes_all, txinfo.balance_changes = _balance_changes(data, txinfo.wallet_accounts, txinfo.mints)
-    txinfo.transfers = _transfers(txinfo.balance_changes)
+    txinfo.balance_changes_all, txinfo.balance_changes_wallet = _balance_changes(data, txinfo.wallet_accounts, txinfo.mints)
+    txinfo.transfers = _transfers(txinfo.balance_changes_wallet)
     txinfo.transfers_net, txinfo.fee = _transfers_net(txinfo, txinfo.transfers, fee)
 
     if _has_empty_token_balances(data, txinfo.mints):

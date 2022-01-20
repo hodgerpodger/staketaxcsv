@@ -28,7 +28,7 @@ class TxInfoSol(TxInfo):
         self.log_string = None
 
         self.balance_changes_all = None
-        self.balance_changes = None
+        self.balance_changes_wallet = None
 
         self.transfers = []
         self.transfers_net = []
@@ -68,8 +68,8 @@ class TxInfoSol(TxInfo):
 
         print("\nbalance_changes_all:")
         pprint.pprint(self.balance_changes_all)
-        print("\nbalance_changes:")
-        pprint.pprint(self.balance_changes)
+        print("\nbalance_changes_wallet:")
+        pprint.pprint(self.balance_changes_wallet)
 
         print("\ntransfers_in:")
         pprint.pprint(self.transfers[0])
