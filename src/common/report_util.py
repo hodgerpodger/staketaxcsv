@@ -81,13 +81,13 @@ def parse_args(ticker):
         options["cache"] = True
     if args.limit:
         options["limit"] = args.limit
-    if "minor_rewards" in args:
+    if "minor_rewards" in args and args.minor_rewards:
         options["minor_rewards"] = True
-    if "lp_transfers" in args:
+    if "lp_transfers" in args and args.lp_transfers:
         options["lp_transfers"] = True
-    if "lp_trades" in args:
+    if "lp_trades" in args and args.lp_trades:
         options["lp_trades"] = True
-    if "legacy" in args:
+    if "legacy" in args and args.legacy:
         options["legacy"] = True
 
     return args.wallet_address, args.format, args.txid, options
