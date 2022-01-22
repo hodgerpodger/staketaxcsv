@@ -12,7 +12,7 @@ import os
 import pprint
 
 import algo.processor
-from algo.api_algoindexer import AlgoIndexerAPI, LIMIT_ALGOINDEXER
+from algo.api_algoindexer import LIMIT_ALGOINDEXER, AlgoIndexerAPI
 from algo.config_algo import localconfig
 from algo.progress_algo import ProgressAlgo
 from common import report_util
@@ -24,7 +24,7 @@ MAX_TRANSACTIONS = 10000
 
 
 def main():
-    wallet_address, format, txid, options = report_util.parse_args(TICKER_ALGO)
+    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_ALGO)
     _read_options(options)
 
     if txid:
@@ -32,7 +32,7 @@ def main():
         exporter.export_print()
     else:
         exporter = txhistory(wallet_address)
-        report_util.run_exports(TICKER_ALGO, wallet_address, exporter, format)
+        report_util.run_exports(TICKER_ALGO, wallet_address, exporter, export_format)
 
 
 def _read_options(options):
@@ -51,14 +51,18 @@ def wallet_exists(wallet_address):
 
 
 def txone(wallet_address, txid):
+    progress = ProgressAlgo()
+
     data = AlgoIndexerAPI.get_transaction(txid)
     print("\ndebug data:")
     pprint.pprint(data)
     print("")
 
+    progress.set_estimate(1)
     exporter = Exporter(wallet_address)
-    algo.processor.process_tx(wallet_address, data, exporter)
+    algo.processor.process_txs(wallet_address, [data], exporter, progress)
     print("")
+
     return exporter
 
 

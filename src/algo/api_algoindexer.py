@@ -1,7 +1,7 @@
 
 import logging
+
 import requests
-import time
 from settings_csv import ALGO_INDEXER_NODE
 
 LIMIT_ALGOINDEXER = 1000

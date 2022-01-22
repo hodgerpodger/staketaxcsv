@@ -6,15 +6,14 @@ from datetime import datetime
 from algo import constants as co
 from algo.asset import Algo
 from algo.config_algo import localconfig
+from algo.handle_tinyman import handle_tinyman_transaction, is_tinyman_transaction
 from algo.handle_transfer import (
+    handle_asa_transaction,
     handle_governance_reward_transaction,
     handle_payment_transaction,
-    handle_asa_transaction,
-    is_governance_reward_transaction
+    is_governance_reward_transaction,
 )
-from algo.handle_tinyman import handle_tinyman_transaction, is_tinyman_transaction
 from algo.handle_yieldly import handle_yieldly_transaction, is_yieldly_transaction
-
 from common.ErrorCounter import ErrorCounter
 from common.TxInfo import TxInfo
 

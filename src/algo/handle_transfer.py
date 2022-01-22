@@ -1,9 +1,8 @@
 
 import base64
 
-from algo.asset import Asset, Algo
-
-from common.make_tx import make_reward_tx, make_transfer_out_tx, make_transfer_in_tx
+from algo.asset import Algo, Asset
+from common.make_tx import make_reward_tx, make_transfer_in_tx, make_transfer_out_tx
 
 
 def is_governance_reward_transaction(wallet_address, group):
