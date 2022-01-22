@@ -1,14 +1,19 @@
 
-from datetime import datetime
 import logging
 import urllib.parse
+from datetime import datetime
 
 from algo import constants as co
-from algo.asset import Asset, Algo
+from algo.asset import Algo
 from algo.config_algo import localconfig
-from algo.handle_transfer import handle_payment_transaction, handle_asa_transaction
-from algo.handle_tinyman import is_tinyman_transaction, handle_tinyman_transaction
-from algo.handle_yieldly import is_yieldly_transaction, handle_yieldly_transaction
+from algo.handle_transfer import (
+    handle_governance_reward_transaction,
+    handle_payment_transaction,
+    handle_asa_transaction,
+    is_governance_reward_transaction
+)
+from algo.handle_tinyman import handle_tinyman_transaction, is_tinyman_transaction
+from algo.handle_yieldly import handle_yieldly_transaction, is_yieldly_transaction
 
 from common.ErrorCounter import ErrorCounter
 from common.TxInfo import TxInfo
@@ -87,7 +92,9 @@ def _get_transaction_group(groupid, i, elems):
 
 def _handle_transaction_group(wallet_address, group, exporter, txinfo):
     # TODO handle algofi and algomint transactions
-    if is_tinyman_transaction(group):
+    if is_governance_reward_transaction(wallet_address, group):
+        handle_governance_reward_transaction(group, exporter, txinfo)
+    elif is_tinyman_transaction(group):
         handle_tinyman_transaction(wallet_address, group, exporter, txinfo)
     elif is_yieldly_transaction(group):
         handle_yieldly_transaction(group, exporter, txinfo)

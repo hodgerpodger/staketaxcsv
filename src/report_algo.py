@@ -5,19 +5,19 @@ usage: python3 report_algo.py <walletaddress> [--format all|cointracking|koinly|
 Prints transactions and writes CSV(s) to _reports/ALGO.<walletaddress>.<format>.csv
 """
 
-import logging
 import json
+import logging
+import math
 import os
 import pprint
-import math
 
-from common.Exporter import Exporter
-from common import report_util
-from algo.config_algo import localconfig
-from algo.api_algoindexer import AlgoIndexerAPI, LIMIT_ALGOINDEXER
 import algo.processor
+from algo.api_algoindexer import AlgoIndexerAPI, LIMIT_ALGOINDEXER
+from algo.config_algo import localconfig
 from algo.progress_algo import ProgressAlgo
+from common import report_util
 from common.ErrorCounter import ErrorCounter
+from common.Exporter import Exporter
 from settings_csv import TICKER_ALGO
 
 MAX_TRANSACTIONS = 10000
