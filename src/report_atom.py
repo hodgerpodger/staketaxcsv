@@ -16,6 +16,7 @@ import math
 import os
 import pprint
 
+import atom.api_cosmostation
 import atom.api_lcd
 import atom.processor
 from atom.config_atom import localconfig
@@ -29,7 +30,7 @@ MAX_TRANSACTIONS = 1000
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args()
+    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_ATOM)
     _read_options(options)
 
     if txid:
@@ -46,6 +47,7 @@ def _read_options(options):
 
     localconfig.debug = options.get("debug", False)
     localconfig.limit = options.get("limit", None)
+    localconfig.legacy = options.get("legacy", False)
 
 
 def wallet_exists(wallet_address):
@@ -53,13 +55,16 @@ def wallet_exists(wallet_address):
 
 
 def txone(wallet_address, txid):
-    data = atom.api_lcd.get_tx(txid)
+    if localconfig.legacy:
+        elem = atom.api_cosmostation.get_tx(txid)
+    else:
+        elem = atom.api_lcd.get_tx(txid)
 
     print("Transaction data:")
-    pprint.pprint(data)
+    pprint.pprint(elem)
 
     exporter = Exporter(wallet_address)
-    atom.processor.process_tx(wallet_address, data, exporter)
+    atom.processor.process_tx(wallet_address, elem, exporter)
     return exporter
 
 
@@ -69,11 +74,19 @@ def txhistory(wallet_address, job=None):
 
     # Fetch count of transactions to estimate progress more accurately
     progress = ProgressAtom()
-    sender_page_count, receiver_page_count = atom.api_lcd.get_txs_count_pages(wallet_address)
+    count_pages = atom.api_lcd.get_txs_count_pages(wallet_address)
+    progress.set_estimate(count_pages)
+
+    # Fetch legacy transactions conditionally (cosmoshub-3)
+    elems = []
+    if localconfig.legacy:
+        elems.extend(_fetch_txs_legacy(wallet_address, progress))
 
     # Fetch transactions
-    elems = _fetch_txs(wallet_address, progress, sender_page_count, receiver_page_count)
+    elems.extend(_fetch_txs(wallet_address, progress, count_pages))
     progress.report_message(f"Processing {len(elems)} ATOM transactions... ")
+
+    elems = _remove_duplicates(elems)
 
     exporter = Exporter(wallet_address)
     atom.processor.process_txs(wallet_address, elems, exporter)
@@ -88,57 +101,46 @@ def _max_pages():
     return max_pages
 
 
-def _fetch_txs(wallet_address, progress, sender_page_count, receiver_page_count):
+def _fetch_txs_legacy(wallet_address, progress):
+    out = []
+    next_id = None
+    current_page = 0
+
+    for _ in range(0, _max_pages()):
+        current_page += 1
+        message = f"Fetching page {current_page} for legacy transactions ..."
+        progress.report_message(message)
+
+        elems, next_id = atom.api_cosmostation.get_txs_legacy(wallet_address, next_id)
+        out.extend(elems)
+        if next_id is None:
+            break
+
+    return out
+
+
+def _fetch_txs(wallet_address, progress, num_pages):
     if localconfig.debug:
         debug_file = f"_reports/testatom.{wallet_address}.json"
         if os.path.exists(debug_file):
             with open(debug_file, "r") as f:
                 return json.load(f)
 
-    page_limit = _max_pages()
-    sender_page_limit = min(sender_page_count, page_limit)
-    receiver_page_limit = min(receiver_page_count, page_limit)
-
-    progress.set_estimate(sender_page_limit, receiver_page_limit)
-
     out = []
-    seen_txids = set()
+    current_page = 0
+    # Two passes: is_sender=True (message.sender events) and is_sender=False (transfer.recipient events)
+    for is_sender in (True, False):
+        offset = 0
+        for _ in range(0, _max_pages()):
+            current_page += 1
+            message = f"Fetching page {current_page} of {num_pages}"
+            progress.report(current_page, message)
 
-    message = f"Fetching sender txs. {sender_page_limit} pages..."
-    progress.report(0, message, "sender")
+            elems, offset, _ = atom.api_lcd.get_txs(wallet_address, is_sender, offset)
 
-    sender_offset = 0
-    for current_page in range(1, sender_page_limit + 1):
-        elems, sender_offset, _ = atom.api_lcd.get_txs(wallet_address, True, sender_offset)
-        _add_unseen_transaction(out, seen_txids, elems)
-
-        message = f"Fetched sender txs page {current_page} of {sender_page_limit}"
-        progress.report(current_page, message, "sender")
-
-    # Sender txs fetching completed, report if results are truncated
-    if sender_page_limit < sender_page_count:
-        progress.report_message(
-            f"Sender tx fetching stopped at {sender_page_limit} of possible {sender_page_count} pages..."
-        )
-
-    message = f"Fetching receiver txs. {receiver_page_limit} pages..."
-    progress.report(0, message, "receiver")
-
-    receiver_offset = 0
-    for current_page in range(1, receiver_page_limit + 1):
-        elems, receiver_offset, _ = atom.api_lcd.get_txs(wallet_address, False, receiver_offset)
-        _add_unseen_transaction(out, seen_txids, elems)
-
-        message = f"Fetched receiver txs page {current_page} of {receiver_page_limit}"
-        progress.report(current_page, message, "receiver")
-
-    # Receiver txs fetching completed, report if results are truncated
-    if receiver_page_limit < receiver_page_count:
-        progress.report_message(
-            f"Receiver tx fetching stopped at {receiver_page_limit} of possible {receiver_page_count} pages..."
-        )
-
-    out.sort(key=lambda elem: elem["timestamp"], reverse=True)
+            out.extend(elems)
+            if offset is None:
+                break
 
     # Debugging only
     if localconfig.debug:
@@ -148,13 +150,19 @@ def _fetch_txs(wallet_address, progress, sender_page_count, receiver_page_count)
     return out
 
 
-def _add_unseen_transaction(out, seen_txids, elems):
+def _remove_duplicates(elems):
+    out = []
+    txids = set()
+
     for elem in elems:
-        if elem["txhash"] in seen_txids:
+        if elem["txhash"] in txids:
             continue
 
         out.append(elem)
-        seen_txids.add(elem["txhash"])
+        txids.add(elem["txhash"])
+
+    out.sort(key=lambda elem: elem["timestamp"], reverse=True)
+    return out
 
 
 if __name__ == "__main__":

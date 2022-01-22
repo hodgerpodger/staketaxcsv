@@ -3,12 +3,12 @@ import logging
 import os
 
 from common.ExporterTypes import FORMAT_DEFAULT, FORMATS
-from settings_csv import REPORTS_DIR
+from settings_csv import REPORTS_DIR, TICKER_ATOM, TICKER_LUNA, TICKER_OSMO
 
 ALL = "all"
 
 
-def parse_args():
+def parse_args(ticker):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "wallet_address",
@@ -38,28 +38,38 @@ def parse_args():
         help="use Cache class (only work if implemented)",
     )
     parser.add_argument(
-        "--minor_rewards",
-        action="store_true",
-        default=False,
-        help="(LUNA) include minor currency rewards",
-    )
-    parser.add_argument(
-        "--lp_transfers",
-        action="store_true",
-        default=False,
-        help="(LUNA/OSMO) treat LP deposits/withdrawals as transfers (default is non-exportable custom tx)",
-    )
-    parser.add_argument(
-        "--lp_trades",
-        action="store_true",
-        default=False,
-        help="(LUNA/OSMO) treat LP deposits/withdrawals as trades (default is non-exportable custom tx)",
-    )
-    parser.add_argument(
         "--limit",
         type=int,
         help="change to non-default max transactions limit",
     )
+    if ticker == TICKER_LUNA:
+        parser.add_argument(
+            "--minor_rewards",
+            action="store_true",
+            default=False,
+            help="include minor currency rewards",
+        )
+    if ticker in (TICKER_LUNA, TICKER_OSMO):
+        parser.add_argument(
+            "--lp_transfers",
+            action="store_true",
+            default=False,
+            help="treat LP deposits/withdrawals as transfers (default is non-exportable custom tx)",
+        )
+    if ticker in (TICKER_LUNA, TICKER_OSMO):
+        parser.add_argument(
+            "--lp_trades",
+            action="store_true",
+            default=False,
+            help="treat LP deposits/withdrawals as trades (default is non-exportable custom tx)",
+        )
+    if ticker == TICKER_ATOM:
+        parser.add_argument(
+            "--legacy",
+            action="store_true",
+            default=False,
+            help="include legacy transactions for cosmoshub-3",
+        )
 
     args = parser.parse_args()
 
@@ -69,14 +79,16 @@ def parse_args():
         logging.basicConfig(level=logging.DEBUG)
     if args.cache:
         options["cache"] = True
-    if args.minor_rewards:
-        options["minor_rewards"] = True
-    if args.lp_transfers:
-        options["lp_transfers"] = True
-    if args.lp_trades:
-        options["lp_trades"] = True
     if args.limit:
         options["limit"] = args.limit
+    if "minor_rewards" in args:
+        options["minor_rewards"] = True
+    if "lp_transfers" in args:
+        options["lp_transfers"] = True
+    if "lp_trades" in args:
+        options["lp_trades"] = True
+    if "legacy" in args:
+        options["legacy"] = True
 
     return args.wallet_address, args.format, args.txid, options
 

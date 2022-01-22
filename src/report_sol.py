@@ -28,7 +28,7 @@ RPC_TIMEOUT = 600  # seconds
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args()
+    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_SOL)
     _read_options(options)
 
     if txid:

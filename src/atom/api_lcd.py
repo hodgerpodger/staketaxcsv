@@ -68,12 +68,12 @@ def get_txs(wallet_address, is_sender, offset=0, sleep_seconds=1):
 def get_txs_count_pages(address):
     # Number of queries for events message.sender
     _, _, count_sender = get_txs(address, is_sender=True, offset=0, sleep_seconds=0)
-    pages_sender = math.ceil(count_sender / LIMIT)
+    pages_sender = min(math.ceil(count_sender / LIMIT), 1)
 
     # Number of queries for events transfer.recipient
     _, _, count_receiver = get_txs(address, is_sender=False, offset=0, sleep_seconds=0)
-    pages_receiver = math.ceil(count_receiver / LIMIT)
+    pages_receiver = min(math.ceil(count_receiver / LIMIT), 1)
 
     logging.info("pages_sender: %s pages_receiver: %s", pages_sender, pages_receiver)
 
-    return pages_sender, pages_receiver
+    return pages_sender + pages_receiver

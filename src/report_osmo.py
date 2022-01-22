@@ -25,7 +25,7 @@ MAX_TRANSACTIONS = 5000
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args()
+    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_OSMO)
     _read_options(options)
 
     if txid:
