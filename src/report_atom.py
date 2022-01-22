@@ -68,7 +68,9 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def txhistory(wallet_address, job=None):
+def txhistory(wallet_address, job=None, options=None):
+    if options:
+        _read_options(options)
     if job:
         localconfig.job = job
 
