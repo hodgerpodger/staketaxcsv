@@ -24,7 +24,7 @@ MAX_TRANSACTIONS = 10000
 
 
 def main():
-    wallet_address, format, txid, options = report_util.parse_args()
+    wallet_address, format, txid, options = report_util.parse_args(TICKER_ALGO)
     _read_options(options)
 
     if txid:
