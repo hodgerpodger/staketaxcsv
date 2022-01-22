@@ -109,9 +109,9 @@ def _fetch_txs_legacy(wallet_address, progress):
     current_page = 0
 
     for _ in range(0, _max_pages()):
-        current_page += 1
         message = f"Fetching page {current_page} for legacy transactions ..."
         progress.report_message(message)
+        current_page += 1
 
         elems, next_id = atom.api_cosmostation.get_txs_legacy(wallet_address, next_id)
         out.extend(elems)
@@ -134,15 +134,16 @@ def _fetch_txs(wallet_address, progress, num_pages):
     for is_sender in (True, False):
         offset = 0
         for _ in range(0, _max_pages()):
-            current_page += 1
-            message = f"Fetching page {current_page} of {num_pages}"
+            message = f"Fetching page {current_page + 1} of {num_pages}"
             progress.report(current_page, message)
+            current_page += 1
 
             elems, offset, _ = atom.api_lcd.get_txs(wallet_address, is_sender, offset)
 
             out.extend(elems)
             if offset is None:
                 break
+
 
     # Debugging only
     if localconfig.debug:
