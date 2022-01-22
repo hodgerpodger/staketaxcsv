@@ -1,9 +1,8 @@
 
 from algo import constants as co
-from algo.asset import Asset, Algo
-
+from algo.asset import Algo, Asset
 from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW
-from common.make_tx import make_reward_tx, make_swap_tx, _make_tx_exchange
+from common.make_tx import _make_tx_exchange, make_reward_tx, make_swap_tx
 
 
 def is_tinyman_transaction(group):
@@ -124,11 +123,13 @@ def _handle_tinyman_lp_add(wallet_address, group, exporter, txinfo):
     txinfo.comment = "Tinyman"
 
     row = _make_tx_exchange(
-        txinfo, send_asset_1.amount, send_asset_1.ticker, lp_asset.amount / 2, lp_asset.ticker, TX_TYPE_LP_DEPOSIT)
+        txinfo, send_asset_1.amount, send_asset_1.ticker,
+        lp_asset.amount / 2, lp_asset.ticker, TX_TYPE_LP_DEPOSIT)
     exporter.ingest_row(row)
 
     row = _make_tx_exchange(
-        txinfo, send_asset_2.amount, send_asset_2.ticker, lp_asset.amount / 2, lp_asset.ticker, TX_TYPE_LP_DEPOSIT)
+        txinfo, send_asset_2.amount, send_asset_2.ticker,
+        lp_asset.amount / 2, lp_asset.ticker, TX_TYPE_LP_DEPOSIT)
     exporter.ingest_row(row)
 
 
@@ -179,9 +180,13 @@ def _handle_tinyman_lp_remove(wallet_address, group, exporter, txinfo):
     txinfo.comment = "Tinyman"
 
     row = _make_tx_exchange(
-        txinfo, lp_asset.amount / 2, lp_asset.ticker, receive_asset_1.amount, receive_asset_1.ticker, TX_TYPE_LP_WITHDRAW)
+        txinfo, lp_asset.amount / 2, lp_asset.ticker,
+        receive_asset_1.amount, receive_asset_1.ticker,
+        TX_TYPE_LP_WITHDRAW)
     exporter.ingest_row(row)
 
     row = _make_tx_exchange(
-        txinfo, lp_asset.amount / 2, lp_asset.ticker, receive_asset_2.amount, receive_asset_2.ticker, TX_TYPE_LP_WITHDRAW)
+        txinfo, lp_asset.amount / 2, lp_asset.ticker,
+        receive_asset_2.amount, receive_asset_2.ticker,
+        TX_TYPE_LP_WITHDRAW)
     exporter.ingest_row(row)

@@ -1,8 +1,40 @@
 
-from algo import constants as co
-from algo.asset import Asset, Algo
+import base64
 
-from common.make_tx import make_transfer_out_tx, make_transfer_in_tx, make_reward_tx
+from algo.asset import Algo, Asset
+from common.make_tx import make_reward_tx, make_transfer_in_tx, make_transfer_out_tx
+
+
+def is_governance_reward_transaction(wallet_address, group):
+    if len(group) != 1:
+        return False
+
+    transaction = group[0]
+    if transaction["tx-type"] != "pay":
+        return False
+
+    if transaction["payment-transaction"]["receiver"] != wallet_address:
+        return False
+
+    if "note" not in transaction:
+        return False
+
+    note = base64.b64decode(transaction["note"]).decode("utf-8")
+    if "af/gov" not in note:
+        return False
+
+    return True
+
+
+def handle_governance_reward_transaction(group, exporter, txinfo):
+    transaction = group[0]
+    payment_details = transaction["payment-transaction"]
+
+    reward = Algo(payment_details["amount"] + transaction["receiver-rewards"])
+    txinfo.txid = transaction["id"]
+    txinfo.comment = "Governance"
+    row = make_reward_tx(txinfo, reward, reward.ticker)
+    exporter.ingest_row(row)
 
 
 def handle_payment_transaction(wallet_address, elem, exporter, txinfo):
