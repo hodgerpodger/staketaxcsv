@@ -1,6 +1,7 @@
 import logging
-import requests
 import time
+
+import requests
 
 LIMIT = 250
 INITIAL_ID = 3197873

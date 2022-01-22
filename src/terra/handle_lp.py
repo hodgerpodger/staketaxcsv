@@ -8,8 +8,8 @@ from terra.make_tx import (
     make_lp_stake_tx,
     make_lp_unstake_tx,
     make_lp_withdraw_tx,
-    make_withdraw_collateral_tx,
     make_swap_tx_terra,
+    make_withdraw_collateral_tx,
 )
 
 

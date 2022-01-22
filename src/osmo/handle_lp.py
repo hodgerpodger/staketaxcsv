@@ -9,9 +9,9 @@ from osmo.make_tx import (
     make_osmo_lp_stake_tx,
     make_osmo_lp_unstake_tx,
     make_osmo_lp_withdraw_tx,
+    make_osmo_swap_tx,
     make_osmo_transfer_in_tx,
     make_osmo_transfer_out_tx,
-    make_osmo_swap_tx,
 )
 
 

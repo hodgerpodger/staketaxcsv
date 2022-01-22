@@ -18,7 +18,7 @@ from common.ErrorCounter import ErrorCounter
 from common.Exporter import Exporter
 from osmo.config_osmo import localconfig
 from osmo.lp_rewards import lp_rewards
-from osmo.progress_osmo import ProgressOsmo, SECONDS_PER_PAGE
+from osmo.progress_osmo import SECONDS_PER_PAGE, ProgressOsmo
 from settings_csv import TICKER_OSMO
 
 MAX_TRANSACTIONS = 5000
