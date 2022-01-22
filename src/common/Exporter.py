@@ -184,7 +184,7 @@ class Exporter:
             table.extend([row.as_array() for row in rows])
 
         if csvpath:
-            with open(csvpath, 'w') as f:
+            with open(csvpath, 'w', newline='', encoding='utf-8') as f:
                 mywriter = csv.writer(f)
                 mywriter.writerows(table)
                 logging.info("Wrote to %s", csvpath)
@@ -212,7 +212,7 @@ class Exporter:
         self.sort_rows(reverse=True)
         rows = self._rows_export()
 
-        with open(csvpath, 'w') as f:
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
 
             # header row
@@ -317,7 +317,7 @@ class Exporter:
         self.sort_rows(reverse=True)
         rows = self._rows_export()
 
-        with open(csvpath, 'w') as f:
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
 
             # header row
@@ -375,7 +375,7 @@ class Exporter:
         self.sort_rows(reverse=True)
         rows = self._rows_export()
 
-        with open(csvpath, 'w') as f:
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
 
             # header row
@@ -405,7 +405,7 @@ class Exporter:
         self.sort_rows(reverse=True)
         rows = self._rows_export()
 
-        with open(csvpath, 'w') as f:
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
 
             # header row
@@ -463,7 +463,7 @@ class Exporter:
         self.sort_rows(reverse=True)
         rows = self._rows_export()
 
-        with open(csvpath, 'w') as f:
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
 
             # header row
@@ -547,7 +547,7 @@ class Exporter:
         self.sort_rows(reverse=True)
 
         rows = self._rows_export()
-        with open(csvpath, 'w') as f:
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
 
             # header row
@@ -628,7 +628,7 @@ class Exporter:
         self.sort_rows(reverse=True)
         rows = self._rows_export()
 
-        with open(csvpath, 'w') as f:
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
 
             # header row
@@ -686,7 +686,7 @@ class Exporter:
             TX_TYPE_REPAY: "Transfer Unknown"
         }
 
-        with open(csvpath, 'w') as f:
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
 
             # header row
@@ -853,7 +853,7 @@ class Exporter:
         table.insert(0, header_row)
 
         # Write table array to csv
-        with open(csvpath, 'w') as f:
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
             mywriter.writerows(table)
             logging.info("Wrote to %s", csvpath)
