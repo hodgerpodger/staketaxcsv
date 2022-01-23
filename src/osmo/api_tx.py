@@ -5,7 +5,7 @@ from osmo.api_util import _query_get
 OSMO_TX_API_NETLOC = "api-osmosis.cosmostation.io"
 
 
-def _query(uri_path, query_params={}):
+def _query(uri_path, query_params):
     result = _query_get(OSMO_TX_API_NETLOC, uri_path, query_params)
     time.sleep(1)
     return result
@@ -14,6 +14,6 @@ def _query(uri_path, query_params={}):
 def get_tx(txid):
     uri_path = f"/v1/tx/hash/{txid}"
 
-    data = _query(uri_path)
+    data = _query(uri_path, {})
 
     return data["data"]

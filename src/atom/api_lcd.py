@@ -8,7 +8,7 @@ from settings_csv import ATOM_NODE
 LIMIT_PER_QUERY = 50
 
 
-def _query(uri_path, query_params={}, sleep_seconds=1):
+def _query(uri_path, query_params, sleep_seconds=1):
     url = f"{ATOM_NODE}{uri_path}"
 
     response = requests.get(url, query_params)
@@ -21,18 +21,16 @@ def _query(uri_path, query_params={}, sleep_seconds=1):
 
 def get_tx(txid):
     uri_path = f"/cosmos/tx/v1beta1/txs/{txid}"
-    query_params = {}
 
-    data = _query(uri_path, query_params)
+    data = _query(uri_path, {})
 
     return data.get("tx_response", None)
 
 
 def account_exists(wallet_address):
     uri_path = f"/cosmos/auth/v1beta1/accounts/{wallet_address}"
-    query_params = {}
 
-    data = _query(uri_path, query_params)
+    data = _query(uri_path, {})
 
     if "account" in data and data.get("account").get("account_number", None):
         return True
