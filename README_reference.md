@@ -3,9 +3,9 @@
 
 * Random notes, hopefully helpful on occasion.  Probably not helpful on first look.
   
-# Code Style / Linting
+# Linting
 
-* pep8
+* pep8 code style
 * Can check for linter errors before submitting a pull request:
   ```sh
   # (some configuration in setup.cfg)
