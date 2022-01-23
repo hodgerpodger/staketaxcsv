@@ -5,7 +5,7 @@ import time
 import requests
 from settings_csv import ATOM_NODE
 
-LIMIT = 50
+LIMIT_PER_QUERY = 50
 
 
 def _query(uri_path, query_params={}, sleep_seconds=1):
@@ -44,7 +44,7 @@ def get_txs(wallet_address, is_sender, offset=0, sleep_seconds=1):
     uri_path = "/cosmos/tx/v1beta1/txs"
     query_params = {
         "order_by": "ORDER_BY_DESC",
-        "pagination.limit": LIMIT,
+        "pagination.limit": LIMIT_PER_QUERY,
         "pagination.offset": offset,
         "pagination.count_total": True,
     }
@@ -60,7 +60,7 @@ def get_txs(wallet_address, is_sender, offset=0, sleep_seconds=1):
         return [], None, 0
 
     elems = data["tx_responses"]
-    next_offset = offset + LIMIT if len(elems) == LIMIT else None
+    next_offset = offset + LIMIT_PER_QUERY if len(elems) == LIMIT_PER_QUERY else None
     total_count = int(data["pagination"]["total"])
     return elems, next_offset, total_count
 
@@ -68,11 +68,11 @@ def get_txs(wallet_address, is_sender, offset=0, sleep_seconds=1):
 def get_txs_count_pages(address):
     # Number of queries for events message.sender
     _, _, count_sender = get_txs(address, is_sender=True, offset=0, sleep_seconds=0)
-    pages_sender = min(math.ceil(count_sender / LIMIT), 1)
+    pages_sender = min(math.ceil(count_sender / LIMIT_PER_QUERY), 1)
 
     # Number of queries for events transfer.recipient
     _, _, count_receiver = get_txs(address, is_sender=False, offset=0, sleep_seconds=0)
-    pages_receiver = min(math.ceil(count_receiver / LIMIT), 1)
+    pages_receiver = min(math.ceil(count_receiver / LIMIT_PER_QUERY), 1)
 
     logging.info("pages_sender: %s pages_receiver: %s", pages_sender, pages_receiver)
 
