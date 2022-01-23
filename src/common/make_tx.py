@@ -4,12 +4,12 @@ from common.ExporterTypes import (
     TX_TYPE_BORROW,
     TX_TYPE_INCOME,
     TX_TYPE_REPAY,
+    TX_TYPE_SOL_TRANSFER_SELF,
     TX_TYPE_SPEND,
     TX_TYPE_STAKING,
     TX_TYPE_TRADE,
     TX_TYPE_TRANSFER,
     TX_TYPE_UNKNOWN,
-    TX_TYPE_SOL_TRANSFER_SELF,
 )
 from settings_csv import DONATION_WALLETS
 

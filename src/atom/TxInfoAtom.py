@@ -1,5 +1,6 @@
-from common.TxInfo import TxInfo
 from atom.constants import CUR_ATOM, EXCHANGE_COSMOS_BLOCKCHAIN
+from common.TxInfo import TxInfo
+
 
 class TxInfoAtom(TxInfo):
 

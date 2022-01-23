@@ -2,8 +2,11 @@ import logging
 from datetime import datetime
 
 from atom.config_atom import localconfig
-from atom.constants import CUR_ATOM, CURRENCIES, MILLION, CHAIN_ID_COSMOHUB3, CHAIN_ID_COSMOHUB4
+from atom.constants import CHAIN_ID_COSMOHUB3, CHAIN_ID_COSMOHUB4, CUR_ATOM, CURRENCIES, MILLION
 from atom.make_tx import make_atom_reward_tx, make_transfer_receive_tx
+
+# from common.TxInfo import TxInfo
+from atom.TxInfoAtom import TxInfoAtom
 from common.ErrorCounter import ErrorCounter
 from common.ExporterTypes import (
     TX_TYPE_STAKING_DELEGATE,
@@ -13,8 +16,6 @@ from common.ExporterTypes import (
     TX_TYPE_VOTE,
 )
 from common.make_tx import make_simple_tx, make_transfer_out_tx
-# from common.TxInfo import TxInfo
-from atom.TxInfoAtom import TxInfoAtom
 from settings_csv import TICKER_ATOM
 
 
