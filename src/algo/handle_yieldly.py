@@ -1,4 +1,3 @@
-
 from algo import constants as co
 from algo.asset import Algo, Asset
 from common.make_tx import make_reward_tx

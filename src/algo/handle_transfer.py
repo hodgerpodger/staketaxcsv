@@ -1,4 +1,3 @@
-
 import base64
 
 from algo.asset import Algo, Asset

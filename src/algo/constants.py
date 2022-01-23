@@ -1,4 +1,3 @@
-
 CURRENCY_ALGO = "ALGO"
 EXCHANGE_ALGORAND_BLOCKCHAIN = "algorand_blockchain"
 
