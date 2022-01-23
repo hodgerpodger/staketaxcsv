@@ -1,4 +1,3 @@
-
 from algo.api_algoindexer import AlgoIndexerAPI
 
 # TODO Strong candidate for dynamodb cache
