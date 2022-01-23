@@ -136,9 +136,11 @@ def _fetch_and_process_txs(wallet_address, exporter, progress, pages):
     # Note: oldest first is opposite of api default (allows simpler lp stake/unstake logic)
     count_txs_processed = 0
     txids_seen = set()
+    i = 0
     for page in pages:
-        message = "Fetching txs page={} in range [0,{}]".format(page, len(pages)-1)
-        progress.report(page, message, "txs")
+        message = "Fetching txs page={} in range [0,{}]".format(page, pages[0])
+        progress.report(i, message, "txs")
+        i += 1
 
         elems = osmo.api_data.get_txs(wallet_address, page * osmo.api_data.LIMIT_PER_QUERY)
 
@@ -152,7 +154,7 @@ def _fetch_and_process_txs(wallet_address, exporter, progress, pages):
         count_txs_processed += len(elems)
 
     # Report final progress
-    progress.report(len(pages), f"Retrieved total {count_txs_processed} transactions...", "txs")
+    progress.report(i, f"Retrieved total {count_txs_processed} transactions...", "txs")
 
 
 if __name__ == "__main__":
