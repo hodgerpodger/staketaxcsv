@@ -5,6 +5,7 @@ certifi==2021.10.8
 charset-normalizer==2.0.9
 et-xmlfile==1.1.0
 idna==3.3
+isort==5.10.1
 jmespath==0.10.0
 mock==4.0.3
 numpy==1.21.4

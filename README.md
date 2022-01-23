@@ -49,6 +49,7 @@ See [Docker](README_reference.md#docker) to alternatively install/run in docker 
 # Contributing Code
 
 * Code style follows `pep8`.  This can be tested with `pycodestyle`.
+* Address for super-linter github action errors before making pull request.
 * Providing a sample txid will expedite a pull request (email support@stake.tax,
   DM @staketax, etc.):
 
@@ -62,6 +63,7 @@ See [Docker](README_reference.md#docker) to alternatively install/run in docker 
 See [README_reference.md](README_reference.md):
 
 * [Code Style](README_reference.md#code-style)
+* [Linting](README_reference.md#linting)
 * [Unit Tests](README_reference.md#unit-tests)
 * [Docker](README_reference.md#docker)
 * [Ideal Configuration](README_reference.md#ideal-configuration)
