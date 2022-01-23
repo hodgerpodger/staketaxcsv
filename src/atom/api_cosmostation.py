@@ -38,6 +38,3 @@ def get_tx(txid):
     time.sleep(1)
 
     return data["data"]
-
-
-

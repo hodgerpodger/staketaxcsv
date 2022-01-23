@@ -58,6 +58,7 @@ def _handle_lp_deposit(txinfo, from_contract):
 
     return rows
 
+
 def handle_lp_withdraw(exporter, elem, txinfo):
     comment = "liquidity pool withdraw"
     from_contract = util_terra._event_with_action(elem, "from_contract", "withdraw_liquidity")
