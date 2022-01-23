@@ -48,7 +48,7 @@ See [Docker](README_reference.md#docker) to alternatively install/run in docker 
 
 # Contributing Code
 
-* See [Linting] to see code style feedback.
+* See [Linting](README_reference.md#linting) to see code style feedback.
 * Providing a sample txid will expedite a pull request (email support@stake.tax,
   DM @staketax, etc.):
 
