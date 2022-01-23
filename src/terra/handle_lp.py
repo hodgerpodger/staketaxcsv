@@ -134,7 +134,7 @@ def _handle_withdraw_collaterals(txinfo, lp_amount, lp_currency, data, from_cont
     else:
         # Default: create two LP_WITHDRAW rows
         rows.append(make_lp_withdraw_tx(
-                txinfo, lp_amount / 2, lp_currency, amount1, currency1, txid, empty_fee=False))
+            txinfo, lp_amount / 2, lp_currency, amount1, currency1, txid, empty_fee=False))
         rows.append(make_lp_withdraw_tx(
             txinfo, lp_amount / 2, lp_currency, amount2, currency2, txid, empty_fee=True))
 

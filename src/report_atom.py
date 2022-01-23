@@ -144,7 +144,6 @@ def _fetch_txs(wallet_address, progress, num_pages):
             if offset is None:
                 break
 
-
     # Debugging only
     if localconfig.debug:
         with open(debug_file, "w") as f:
