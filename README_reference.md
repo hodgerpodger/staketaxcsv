@@ -3,21 +3,15 @@
 
 * Random notes, hopefully helpful on occasion.  Probably not helpful on first look.
   
-# Code Style
+# Code Style / Linting
 
 * pep8
-* To run python code style check:
-
+* Can check for linter errors before submitting a pull request:
   ```sh
   # (some configuration in setup.cfg)
   pycodestyle
   ```
-
-# Linting
-
-* Check for linter errors before submitting a pull request.
 * Auto fix import sorting by running isort from the project root:
-
   ```sh
   isort .
   ```
