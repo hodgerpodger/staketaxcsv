@@ -88,7 +88,9 @@ def _max_queries():
 
 def _num_txs(wallet_address):
     num_txs = 0
-    for _ in range(_max_queries()):
+    figment_max_queries = math.ceil(MAX_TRANSACTIONS / LIMIT_FIGMENT)
+
+    for _ in range(figment_max_queries):
         logging.info("estimate_duration() loop num_txs=%s", num_txs)
 
         data = SearchAPIFigment.get_txs(wallet_address, offset=num_txs)
@@ -118,7 +120,7 @@ def txhistory(wallet_address, job=None, options=None):
         logging.info("num_txs=%s", num_txs)
 
     # Retrieve data
-    elems = _get_txs(wallet_address, progress, num_txs)
+    elems = _get_txs(wallet_address, progress)
     elems.sort(key=lambda elem: elem["timestamp"])
 
     # Create rows for CSV
@@ -133,7 +135,7 @@ def txhistory(wallet_address, job=None, options=None):
     return exporter
 
 
-def _get_txs(wallet_address, progress, total_txs):
+def _get_txs(wallet_address, progress):
     # Debugging only: when --debug flag set, read from cache file
     if localconfig.debug:
         debug_file = f"_reports/debugterra.{wallet_address}.json"
@@ -146,7 +148,7 @@ def _get_txs(wallet_address, progress, total_txs):
     out = []
     for _ in range(_max_queries()):
         num_tx = len(out)
-        progress.report(num_tx, f"Retrieving transaction {num_tx + 1} of {total_txs} ...")
+        progress.report(num_tx, f"Retrieving transaction {num_tx + 1} ...")
 
         data = FcdAPI.get_txs(wallet_address, offset)
         result = data["txs"]
