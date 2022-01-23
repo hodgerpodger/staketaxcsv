@@ -7,14 +7,12 @@ LIMIT = 250
 INITIAL_ID = 3197873
 
 
-def get_txs_legacy(wallet_address, id=None):
-    if id is None:
-        id = INITIAL_ID
+def get_txs_legacy(wallet_address, from_id=INITIAL_ID):
     query_params = {
         "limit": LIMIT,
-        "from": id,
+        "from": from_id,
     }
-    url = "https://api.cosmostation.io/v1/account/new_txs/{}".format(wallet_address)
+    url = f"https://api.cosmostation.io/v1/account/new_txs/{wallet_address}"
 
     logging.info("Requesting url=%s", url)
     response = requests.get(url, query_params)
@@ -31,7 +29,7 @@ def get_txs_legacy(wallet_address, id=None):
 
 
 def get_tx(txid):
-    url = "https://api.cosmostation.io/v1/tx/hash/{}".format(txid)
+    url = f"https://api.cosmostation.io/v1/tx/hash/{txid}"
 
     logging.info("Requesting url=%s", url)
     response = requests.get(url)

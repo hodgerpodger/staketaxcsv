@@ -6,7 +6,7 @@ OSMO_DATA_API_NETLOC = "api-osmosis-chain.imperator.co"
 LIMIT_PER_QUERY = 25
 
 
-def _query(uri_path, query_params={}, sleep_seconds=1):
+def _query(uri_path, query_params, sleep_seconds=1):
     result = _query_get(OSMO_DATA_API_NETLOC, uri_path, query_params)
     time.sleep(sleep_seconds)
     return result
@@ -22,10 +22,7 @@ def get_count_txs(address, sleep_seconds=1):
 
 def get_txs(address, offset=0):
     uri_path = f"/txs/v1/tx/address/{address}"
-    query_params = {
-        "limit": LIMIT_PER_QUERY,
-        "offset": offset
-    }
+    query_params = {"limit": LIMIT_PER_QUERY, "offset": offset}
 
     data = _query(uri_path, query_params)
 
@@ -34,10 +31,10 @@ def get_txs(address, offset=0):
 
 
 def get_lp_tokens(address):
-    """ Returns list of symbols """
+    """Returns list of symbols"""
     uri_path = f"/lp/v1/rewards/token/{address}"
 
-    data = _query(uri_path)
+    data = _query(uri_path, {})
 
     return [kv["token"] for kv in data if kv["token"]]
 
@@ -45,6 +42,6 @@ def get_lp_tokens(address):
 def get_lp_rewards(address, token):
     uri_path = f"/lp/v1/rewards/historical/{address}/{token}"
 
-    data = _query(uri_path)
+    data = _query(uri_path, {})
 
     return data
