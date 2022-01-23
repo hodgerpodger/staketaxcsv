@@ -13,6 +13,15 @@
   pycodestyle
   ```
 
+# Linting
+
+* Check for linter errors before submitting a pull request.
+* Auto fix import sorting by running isort from the project root:
+
+  ```sh
+  isort .
+  ```
+
 # Unit Tests
 
 You may notice a lack of unit tests in this codebase. Though tests exist, I omitted them because they rely on extensive
