@@ -1,4 +1,3 @@
-
 """
 usage: python3 report_algo.py <walletaddress> [--format all|cointracking|koinly|..]
 

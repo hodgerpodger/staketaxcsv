@@ -19,6 +19,7 @@ from common.Exporter import Exporter
 from osmo.config_osmo import localconfig
 from osmo.lp_rewards import lp_rewards
 from osmo.progress_osmo import SECONDS_PER_TX, ProgressOsmo
+from osmo.api_data import LIMIT_PER_QUERY
 from settings_csv import TICKER_OSMO
 
 MAX_TRANSACTIONS = 5000
@@ -37,18 +38,14 @@ def main():
 
 
 def _read_options(options):
-    if options:
-        # Check for options with non-default values
-        if options.get("debug") is True:
-            localconfig.debug = True
-        if options.get("limit"):
-            localconfig.limit = options.get("limit")
-        if options.get("lp_transfers") is True:
-            localconfig.lp_transfers = True
-        if options.get("lp_trades") is True:
-            localconfig.lp_trades = True
-        if options.get("cache") is True:
-            localconfig.cache = True
+    if not options:
+        return
+
+    localconfig.debug = options.get("debug", False)
+    localconfig.cache = options.get("cache", False)
+    localconfig.limit = options.get("limit", None)
+    localconfig.lp_transfers = options.get("lp_transfers", False)
+    localconfig.lp_trades = options.get("lp_trades", False)
 
 
 def wallet_exists(wallet_address):
@@ -88,10 +85,10 @@ def txhistory(wallet_address, job=None, options=None):
         localconfig.ibc_addresses = Cache().get_osmo_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")
 
-    # Estimate total time to create CSV
+    # Estimate total time of job to estimate progress later
     reward_tokens = osmo.api_data.get_lp_tokens(wallet_address)
-
-    num_txs = min(osmo.api_data.get_count_txs(wallet_address), MAX_TRANSACTIONS)
+    max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
+    num_txs = min(osmo.api_data.get_count_txs(wallet_address), max_txs)
     progress.set_estimate(num_txs, len(reward_tokens))
     logging.info("num_txs: %s", num_txs)
 
@@ -127,7 +124,7 @@ def _remove_dups(elems, txids_seen):
 
 def _fetch_and_process_txs(wallet_address, exporter, progress, num_txs):
     # Predetermine pages to retrieve
-    last_page = math.ceil(num_txs / osmo.api_data.LIMIT) - 1
+    last_page = math.ceil(num_txs / osmo.api_data.LIMIT_PER_QUERY) - 1
     pages = range(last_page, -1, -1)
 
     # Fetch and parse data in batches (cumulative required too much memory), oldest first.
@@ -138,7 +135,7 @@ def _fetch_and_process_txs(wallet_address, exporter, progress, num_txs):
         message = f"Fetching txs page={page} for range [0, {last_page}]"
         progress.report(count_txs_processed, message, "txs")
 
-        elems = osmo.api_data.get_txs(wallet_address, page * osmo.api_data.LIMIT)
+        elems = osmo.api_data.get_txs(wallet_address, page * osmo.api_data.LIMIT_PER_QUERY)
 
         # Remove duplicates (data from this api has duplicates)
         elems_clean = _remove_dups(elems, txids_seen)

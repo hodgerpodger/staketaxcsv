@@ -43,20 +43,15 @@ def main():
 
 
 def _read_options(options):
-    if options:
-        # Check for options with non-default values
-        if options.get("debug") is True:
-            localconfig.debug = True
-        if options.get("cache") is True:
-            localconfig.cache = True
-        if options.get("minor_rewards") is True:
-            localconfig.minor_rewards = True
-        if options.get("lp_transfers") is True:
-            localconfig.lp_transfers = True
-        if options.get("lp_trades") is True:
-            localconfig.lp_trades = True
-        if options.get("limit"):
-            localconfig.limit = options.get("limit")
+    if not options:
+        return
+
+    localconfig.debug = options.get("debug", False)
+    localconfig.cache = options.get("cache", False)
+    localconfig.limit = options.get("limit", None)
+    localconfig.lp_transfers = options.get("lp_transfers", False)
+    localconfig.lp_trades = options.get("lp_trades", False)
+    localconfig.minor_rewards = options.get("minor_rewards", False)
 
 
 def wallet_exists(wallet_address):

@@ -3,7 +3,7 @@ import time
 from osmo.api_util import _query_get
 
 OSMO_DATA_API_NETLOC = "api-osmosis-chain.imperator.co"
-LIMIT = 25
+LIMIT_PER_QUERY = 25
 
 
 def _query(uri_path, query_params={}, sleep_seconds=1):
@@ -23,7 +23,7 @@ def get_count_txs(address, sleep_seconds=1):
 def get_txs(address, offset=0):
     uri_path = f"/txs/v1/tx/address/{address}"
     query_params = {
-        "limit": LIMIT,
+        "limit": LIMIT_PER_QUERY,
         "offset": offset
     }
 
