@@ -12,6 +12,7 @@ from common.ExporterTypes import (
     CT_FIELDS,
     FORMAT_ACCOINTING,
     FORMAT_BALANCES,
+    FORMAT_BITWAVE,
     FORMAT_COINTRACKER,
     FORMAT_COINTRACKING,
     FORMAT_CRYPTOTAXCALCULATOR,
@@ -171,6 +172,8 @@ class Exporter:
             self.export_zenledger_csv(csvpath)
         elif format == FORMAT_TAXBIT:
             self.export_taxbit_csv(csvpath)
+        elif format == FORMAT_BITWAVE:
+            self.export_bitwave_csv(csvpath)
         return csvpath
 
     def export_default_csv(self, csvpath=None, truncate=0):
@@ -395,6 +398,46 @@ class Exporter:
                     self._cointracker_code(row.fee_currency),            # Fee Currency
                     tag,                                                 # Tag
                     row.txid                                             # extra field added for user danb
+                ]
+                mywriter.writerow(line)
+
+        logging.info("Wrote to %s", csvpath)
+
+    def export_bitwave_csv(self, csvpath):
+        self.sort_rows(reverse=True)
+        rows = self._rows_export()
+
+        made_up_types = {
+            TX_TYPE_AIRDROP: "airdrop",
+            TX_TYPE_STAKING: "staked",
+            TX_TYPE_TRADE: "",
+            TX_TYPE_TRANSFER: "",
+            TX_TYPE_INCOME: "payment",
+            TX_TYPE_SPEND: "",
+            TX_TYPE_BORROW: "",
+            TX_TYPE_REPAY: ""
+        }
+
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
+            mywriter = csv.writer(f)
+
+            # header row
+            mywriter.writerow(CR_FIELDS)
+
+            # data rows
+            for row in rows:
+                tag = made_up_types[row.tx_type]
+
+                line = [
+                    row.timestamp,          # Date
+                    row.received_amount,    # Received Quantity
+                    row.received_currency,  # Received Currency
+                    row.sent_amount,        # Sent Quantity
+                    row.sent_currency,      # Sent Currency
+                    row.fee,                # Fee Amount
+                    row.fee_currency,       # Fee Currency
+                    tag,                    # Tag
+                    row.txid                # id to determine duplicates
                 ]
                 mywriter.writerow(line)
 

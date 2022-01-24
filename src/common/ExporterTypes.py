@@ -9,6 +9,7 @@ FORMAT_KOINLY = "koinly"
 FORMAT_TAXBIT = "taxbit"
 FORMAT_TOKENTAX = "tokentax"
 FORMAT_ZENLEDGER = "zenledger"
+FORMAT_BITWAVE = "bitwave"
 FORMATS = [
     FORMAT_DEFAULT,
     FORMAT_BALANCES,
@@ -19,7 +20,7 @@ FORMATS = [
     FORMAT_KOINLY,
     FORMAT_TAXBIT,
     FORMAT_TOKENTAX,
-    FORMAT_ZENLEDGER
+    FORMAT_BITWAVE,
 ]
 
 # Note: TX_TYPE=_* means transaction is not included in non-default CSVs
