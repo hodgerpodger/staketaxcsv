@@ -19,6 +19,7 @@ def reward_txs(wallet_info, exporter, progress):
     for i, addr in enumerate(staking_addresses):
         progress.report(i, f"Fetching rewards for {addr}...", "staking")
         _reward_txs(wallet_address, exporter, addr)
+    progress.report(len(staking_addresses), "Finished fetching rewards", "staking")
 
 
 def _reward_txs(wallet_address, exporter, staking_address):
