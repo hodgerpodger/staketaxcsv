@@ -231,7 +231,7 @@ def _lookup_address(addr, txid):
         localconfig.currency_addresses[addr] = [currency, None]
         logging.info("Found symbol=%s ", currency)
 
-        return currency, None
+        return [currency, None]
     elif "asset_infos" in init_msg:
         out = [None, None]
 
