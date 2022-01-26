@@ -1,6 +1,5 @@
-from common.make_tx import (
-    make_simple_tx, make_transfer_out_tx, make_transfer_in_tx)
 from common.ExporterTypes import TX_TYPE_SOL_WORMHOLE_NOOP
+from common.make_tx import make_simple_tx, make_transfer_in_tx, make_transfer_out_tx
 from sol.handle_simple import handle_unknown_detect_transfers
 
 

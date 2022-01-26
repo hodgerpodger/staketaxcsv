@@ -22,8 +22,8 @@ from sol.handle_simple import handle_simple_tx, handle_unknown, handle_unknown_d
 from sol.handle_swap_v2 import handle_program_swap_v2
 from sol.handle_transfer import handle_transfer, is_transfer
 from sol.handle_unknowns import handle_2kd, handle_djv
-from sol.handle_wormhole import handle_wormhole
 from sol.handle_vote import handle_vote
+from sol.handle_wormhole import handle_wormhole
 from sol.parser import parse_tx
 
 
