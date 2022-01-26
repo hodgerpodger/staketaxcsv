@@ -1,7 +1,7 @@
 from common.ErrorCounter import ErrorCounter
 from common.make_tx import make_transfer_in_tx, make_transfer_out_tx
 from terra import util_terra
-from terra.handle_simple import handle_unknown
+from terra.handle_simple import handle_unknown, handle_unknown_detect_transfers
 
 
 def handle_transfer(exporter, elem, txinfo):
@@ -57,3 +57,24 @@ def handle_transfer_contract(exporter, elem, txinfo):
     else:
         handle_unknown(exporter, txinfo)
         ErrorCounter.increment("unknown_transfer_contract", txid)
+
+
+def handle_transfer_bridge_wormhole(exporter, elem, txinfo):
+    wallet_address = txinfo.wallet_address
+    txid = txinfo.txid
+    COMMENT = "bridge wormhole"
+
+    transfers_in, transfers_out = util_terra._transfers(elem, wallet_address, txid)
+
+    if len(transfers_out) == 1 and len(transfers_in) == 0:
+        sent_amount, sent_currency = transfers_out[0]
+        row = make_transfer_out_tx(txinfo, sent_amount, sent_currency)
+        row.comment = COMMENT
+        exporter.ingest_row(row)
+    elif len(transfers_in) == 1 and len(transfers_out) == 0:
+        received_amount, received_currency = transfers_in[0]
+        row = make_transfer_in_tx(txinfo, received_amount, received_currency)
+        row.comment = COMMENT
+        exporter.ingest_row(row)
+    else:
+        handle_unknown_detect_transfers(exporter, txinfo, elem)

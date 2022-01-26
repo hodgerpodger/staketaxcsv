@@ -59,6 +59,8 @@ EXECUTE_TYPE_SEND_NFT = "send_nft"
 EXECUTE_TYPE_AIRDROP = "airdrop"
 EXECUTE_TYPE_ZAP_INTO_STRATEGY = "zap_into_strategy"
 EXECUTE_TYPE_ZAP_OUT_OF_STRATEGY = "zap_out_of_strategy"
+EXECUTE_TYPE_DEPOSIT_TOKENS = "deposit_tokens"
+EXECUTE_TYPE_SUBMIT_VAA = "submit_vaa"
 
 
 def _execute_type(elem, txinfo, index=0):
@@ -181,6 +183,10 @@ def _execute_type(elem, txinfo, index=0):
         return EXECUTE_TYPE_ZAP_INTO_STRATEGY
     elif "zap_out_of_strategy" in execute_msg:
         return EXECUTE_TYPE_ZAP_OUT_OF_STRATEGY
+    elif "deposit_tokens" in execute_msg:
+        return EXECUTE_TYPE_DEPOSIT_TOKENS
+    elif "submit_vaa" in execute_msg:
+        return EXECUTE_TYPE_SUBMIT_VAA
 
     logging.error("Unable to determine execute type for txid=%s", txid, extra={
         "txid": txid,
