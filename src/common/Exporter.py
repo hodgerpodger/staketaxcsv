@@ -794,6 +794,8 @@ class Exporter:
             return "MIR2"
         if currency == "SOL":
             return "SOL2"
+        if currency == "wtUST":
+            return "UST3"
         return currency
 
     def _cointracker_code(self, currency):

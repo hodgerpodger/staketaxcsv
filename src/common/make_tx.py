@@ -38,7 +38,7 @@ def make_just_fee_tx(txinfo, fee_amount, fee_currency):
 
 
 def make_transfer_out_tx(txinfo, sent_amount, sent_currency, dest_address=None):
-    if DONATION_WALLETS and dest_address in DONATION_WALLETS:
+    if dest_address and dest_address in DONATION_WALLETS:
         return make_spend_tx(txinfo, sent_amount, sent_currency)
     else:
         return _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_TRANSFER)

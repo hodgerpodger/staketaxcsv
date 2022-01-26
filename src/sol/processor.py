@@ -22,6 +22,7 @@ from sol.handle_simple import handle_simple_tx, handle_unknown, handle_unknown_d
 from sol.handle_swap_v2 import handle_program_swap_v2
 from sol.handle_transfer import handle_transfer, is_transfer
 from sol.handle_unknowns import handle_2kd, handle_djv
+from sol.handle_wormhole import handle_wormhole
 from sol.handle_vote import handle_vote
 from sol.parser import parse_tx
 
@@ -36,6 +37,10 @@ def process_tx(wallet_info, exporter, txid, data):
 
         if is_notimestamp_tx(txinfo):
             handle_notimestamp_tx(exporter, txinfo)
+
+        # Bridges
+        elif co.PROGRAMID_WORMHOLE in program_ids or co.PROGRAMID_WORMHOLE2 in program_ids:
+            handle_wormhole(exporter, txinfo)
 
         # Serum programs
         elif co.PROGRAMID_SWAP_V2 in program_ids:
@@ -91,6 +96,7 @@ def process_tx(wallet_info, exporter, txid, data):
         elif is_nft_mint(txinfo):
             handle_nft_mint(exporter, txinfo)
 
+        # Other
         elif co.PROGRAMID_VOTE in program_ids:
             handle_vote(exporter, txinfo)
         elif is_simple_tx(txinfo):
