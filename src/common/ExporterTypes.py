@@ -22,6 +22,8 @@ FORMATS = [
     FORMAT_ZENLEDGER
 ]
 
+#
+
 # Note: TX_TYPE=_* means transaction is not included in non-default CSVs
 # (i.e. _STAKING_DELEGATE is not included in koinly, cointracking, ... )
 

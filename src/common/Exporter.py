@@ -39,6 +39,7 @@ from common.ExporterTypes import (
 )
 from pytz import timezone
 from sol.constants import EXCHANGE_SOLANA_BLOCKCHAIN
+from algo.constants import EXCHANGE_ALGORAND_BLOCKCHAIN
 from tabulate import tabulate
 
 
@@ -665,13 +666,6 @@ class Exporter:
         logging.info("Wrote to %s", csvpath)
 
     def export_taxbit_csv(self, csvpath):
-        """
-        This is experimental non-working version of TaxBit CSV
-
-        I tried integration to TaxBit website, but there were some unresolved errors.  Some transactions
-        succeeded, but others did not.  CSV imports fail silently, and support did not provide any feedback.
-        So this is only a draft implementation according to the website spec.
-        """
         self.sort_rows(reverse=True)
         rows = self._rows_export()
 
@@ -704,6 +698,8 @@ class Exporter:
                 exchange = self.rows[0].exchange if len(self.rows) else ""
                 if exchange == EXCHANGE_SOLANA_BLOCKCHAIN:
                     tx_source = "SOL WALLET"
+                elif exchange == EXCHANGE_ALGORAND_BLOCKCHAIN:
+                    tx_source = "ALGO WALLET"
                 else:
                     tx_source = ""
                     logging.critical("Bad condition: unable to identify tx_source in export_taxbit_csv()")
