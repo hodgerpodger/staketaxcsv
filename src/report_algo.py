@@ -35,14 +35,7 @@ def main():
 
 
 def _read_options(options):
-    if options:
-        # Check for options with non-default values
-        if options.get("debug") is True:
-            localconfig.debug = True
-        if options.get("cache") is True:
-            localconfig.cache = True
-        if options.get("limit"):
-            localconfig.limit = options.get("limit")
+    report_util.read_common_options(localconfig, options)
 
 
 def wallet_exists(wallet_address):

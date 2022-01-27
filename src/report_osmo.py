@@ -39,10 +39,8 @@ def main():
 def _read_options(options):
     if not options:
         return
+    report_util.read_common_options(localconfig, options)
 
-    localconfig.debug = options.get("debug", False)
-    localconfig.cache = options.get("cache", False)
-    localconfig.limit = options.get("limit", None)
     localconfig.lp_transfers = options.get("lp_transfers", False)
     localconfig.lp_trades = options.get("lp_trades", False)
 
