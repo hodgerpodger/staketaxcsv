@@ -44,6 +44,7 @@ def process_txs(wallet_address, elems, exporter, progress):
         except Exception as e:
             logging.error("Exception when handling txid=%s, exception=%s", txid, str(e))
             ErrorCounter.increment("exception", txid)
+            handle_unknown(exporter, txinfo)
 
             if localconfig.debug:
                 raise(e)
