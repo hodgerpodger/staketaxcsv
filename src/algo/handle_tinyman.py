@@ -2,6 +2,7 @@ from algo import constants as co
 from algo.asset import Algo, Asset
 from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW
 from common.make_tx import _make_tx_exchange, make_reward_tx, make_swap_tx
+from algo.handle_unknown import handle_unknown
 
 
 def is_tinyman_transaction(group):
