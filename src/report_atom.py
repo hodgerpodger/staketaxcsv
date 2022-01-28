@@ -46,6 +46,9 @@ def _read_options(options):
         return
     report_util.read_common_options(localconfig, options)
 
+    localconfig.legacy = options.get("legacy", False)
+    logging.info("localconfig: %s", localconfig.__dict__)
+
 
 def wallet_exists(wallet_address):
     return atom.api_lcd.account_exists(wallet_address)

@@ -114,3 +114,4 @@ def read_common_options(localconfig, options):
     localconfig.debug = options.get("debug", False)
     localconfig.cache = options.get("cache", False)
     localconfig.limit = options.get("limit", None)
+

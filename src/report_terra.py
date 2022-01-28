@@ -50,6 +50,7 @@ def _read_options(options):
     localconfig.lp_transfers = options.get("lp_transfers", False)
     localconfig.lp_trades = options.get("lp_trades", False)
     localconfig.minor_rewards = options.get("minor_rewards", False)
+    logging.info("localconfig: %s", localconfig.__dict__)
 
 
 def wallet_exists(wallet_address):

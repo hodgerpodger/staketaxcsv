@@ -38,6 +38,7 @@ def _read_options(options):
     if not options:
         return
     report_util.read_common_options(localconfig, options)
+    logging.info("localconfig: %s", localconfig.__dict__)
 
 
 def wallet_exists(wallet_address):

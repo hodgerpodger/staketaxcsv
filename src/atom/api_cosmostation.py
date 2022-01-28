@@ -7,7 +7,7 @@ LIMIT = 250
 INITIAL_ID = 3197873
 
 
-def get_txs_legacy(wallet_address, from_id=INITIAL_ID):
+def _get_txs_legacy(wallet_address, from_id):
     query_params = {
         "limit": LIMIT,
         "from": from_id,
@@ -18,6 +18,12 @@ def get_txs_legacy(wallet_address, from_id=INITIAL_ID):
     response = requests.get(url, query_params)
     data = response.json()
     time.sleep(1)
+
+    return data
+
+
+def get_txs_legacy(wallet_address, from_id=INITIAL_ID):
+    data = _get_txs_legacy(wallet_address, from_id)
 
     # Filter to only cosmoshub-3 transactions
     elems = [datum["data"] for datum in data if datum["header"]["chain_id"] == "cosmoshub-3"]
