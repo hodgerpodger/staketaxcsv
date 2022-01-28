@@ -93,6 +93,6 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
     if is_governance_reward_transaction(wallet_address, group):
         handle_governance_reward_transaction(group, exporter, txinfo)
     elif is_tinyman_transaction(group):
-        handle_tinyman_transaction(wallet_address, group, exporter, txinfo)
+        handle_tinyman_transaction(group, exporter, txinfo)
     elif is_yieldly_transaction(group):
         handle_yieldly_transaction(group, exporter, txinfo)
