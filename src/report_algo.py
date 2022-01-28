@@ -35,6 +35,8 @@ def main():
 
 
 def _read_options(options):
+    if not options:
+        return
     report_util.read_common_options(localconfig, options)
 
 

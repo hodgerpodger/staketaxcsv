@@ -44,10 +44,7 @@ def main():
 def _read_options(options):
     if not options:
         return
-
-    localconfig.debug = options.get("debug", False)
-    localconfig.limit = options.get("limit", None)
-    localconfig.legacy = options.get("legacy", False)
+    report_util.read_common_options(localconfig, options)
 
 
 def wallet_exists(wallet_address):
