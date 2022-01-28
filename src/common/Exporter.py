@@ -5,6 +5,7 @@ from datetime import datetime
 
 import pandas as pd
 import pytz
+from algo.constants import EXCHANGE_ALGORAND_BLOCKCHAIN
 from common.ExporterTypes import (
     ACCOINT_FIELDS,
     CALC_FIELDS,
@@ -39,7 +40,6 @@ from common.ExporterTypes import (
 )
 from pytz import timezone
 from sol.constants import EXCHANGE_SOLANA_BLOCKCHAIN
-from algo.constants import EXCHANGE_ALGORAND_BLOCKCHAIN
 from tabulate import tabulate
 
 

@@ -243,7 +243,6 @@ def process_tx(wallet_address, elem, exporter):
         ErrorCounter.increment("exception", txid)
         handle_unknown(exporter, txinfo)
 
-        # roger
         if localconfig.debug:
             raise (e)
 
