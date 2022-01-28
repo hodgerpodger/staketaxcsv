@@ -1,3 +1,7 @@
+# Documentation
+# https://developer.algorand.org/docs/get-details/transactions/
+# https://developer.algorand.org/docs/get-details/transactions/transactions/
+# https://github.com/algorand/go-algorand
 import base64
 
 from algo.asset import Algo, Asset
@@ -36,52 +40,65 @@ def handle_governance_reward_transaction(group, exporter, txinfo):
     exporter.ingest_row(row)
 
 
-def handle_payment_transaction(wallet_address, elem, exporter, txinfo):
-    payment_details = elem["payment-transaction"]
-    txsender = elem["sender"]
-    txreceiver = payment_details["receiver"]
-    amount = Algo(payment_details["amount"])
+def handle_payment_transaction(wallet_address, transaction, exporter, txinfo):
+    payment_details = transaction["payment-transaction"]
+    asset_id = 0
 
-    _handle_transfer(wallet_address, elem, exporter, txinfo, amount, txsender, txreceiver)
-
-    # When closing an account the remaining balance is transferred to "close-remainder-to"
-    if "close-remainder-to" in payment_details:
-        txreceiver = payment_details["close-remainder-to"]
-        amount = Algo(payment_details["close-amount"])
-        if not amount.zero():
-            row = make_transfer_out_tx(txinfo, amount, amount.ticker, txreceiver)
-            exporter.ingest_row(row)
+    _handle_transfer(wallet_address, transaction, payment_details, exporter, txinfo, asset_id)
 
 
-def handle_asa_transaction(wallet_address, elem, exporter, txinfo):
-    transfer_details = elem["asset-transfer-transaction"]
-    txsender = elem["sender"]
-    txreceiver = transfer_details["receiver"]
+def handle_asa_transaction(wallet_address, transaction, exporter, txinfo):
+    transfer_details = transaction["asset-transfer-transaction"]
     asset_id = transfer_details["asset-id"]
-    amount = Asset(asset_id, transfer_details["amount"])
 
-    _handle_transfer(wallet_address, elem, exporter, txinfo, amount, txsender, txreceiver)
-
-    if "close-to" in transfer_details:
-        txreceiver = transfer_details["close-to"]
-        amount = Asset(asset_id, transfer_details["close-amount"])
-        if not amount.zero():
-            row = make_transfer_out_tx(txinfo, amount, amount.ticker, txreceiver)
-            exporter.ingest_row(row)
+    _handle_transfer(wallet_address, transaction, transfer_details, exporter, txinfo, asset_id)
 
 
-def _handle_transfer(wallet_address, elem, exporter, txinfo, amount, txsender, txreceiver):
-    if not amount.zero():
-        row = None
-        if wallet_address == txsender:
-            row = make_transfer_out_tx(txinfo, amount, amount.ticker, txreceiver)
-        else:
-            row = make_transfer_in_tx(txinfo, amount, amount.ticker)
+def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, asset_id):
+    txsender = transaction["sender"]
+    txreceiver = details["receiver"]
+    close_to = details.get("close-to", details.get("close-remainder-to", None))
+    rewards_amount = 0
+
+    if txreceiver == wallet_address or close_to == wallet_address:
+        receive_amount = 0
+        send_amount = 0
+        # We could be all receiver, sender and close-to account
+        if txreceiver == wallet_address:
+            receive_amount += details["amount"]
+            rewards_amount += transaction["receiver-rewards"]
+        # A closed account sent us their remaining balance
+        if close_to == wallet_address:
+            receive_amount += details["close-amount"]
+            rewards_amount += transaction["close-rewards"]
+        # A transaction to self was commonly used for compounding rewards
+        if txsender == wallet_address:
+            send_amount += details["amount"]
+            rewards_amount += transaction["sender-rewards"]
+        amount = Asset(asset_id, receive_amount - send_amount)
+        row = make_transfer_in_tx(txinfo, amount, amount.ticker)
         exporter.ingest_row(row)
-        # Fee already paid
+    else:
+        rewards_amount += transaction["sender-rewards"]
+        if close_to and txreceiver != close_to:
+            # We are closing the account, but sending the remaining balance is sent to different address
+            close_amount = Asset(asset_id, details["close-amount"])
+            txinfo.fee = 0
+            row = make_transfer_out_tx(txinfo, close_amount, close_amount.ticker, close_to)
+            exporter.ingest_row(row)
+            send_amount = Asset(asset_id, details["amount"])
+            txinfo.fee = transaction["fee"]
+            row = make_transfer_out_tx(txinfo, send_amount, send_amount.ticker, txreceiver)
+            exporter.ingest_row(row)
+        else:
+            # Regular send or closing to the same account
+            send_amount = Asset(asset_id, details["amount"] + details["close-amount"])
+            txinfo.fee = transaction["fee"]
+            row = make_transfer_out_tx(txinfo, send_amount, send_amount.ticker, txreceiver)
+            exporter.ingest_row(row)
         txinfo.fee = 0
 
-    reward = Algo(max(elem["sender-rewards"], elem["receiver-rewards"]))
-    if not reward.zero():
+    if rewards_amount > 0:
+        reward = Algo(rewards_amount)
         row = make_reward_tx(txinfo, reward, reward.ticker)
         exporter.ingest_row(row)
