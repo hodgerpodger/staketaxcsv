@@ -67,12 +67,12 @@ def _max_queries():
 
 def txhistory(wallet_address):
     progress = ProgressAlgo()
+    exporter = Exporter(wallet_address)
 
     # Retrieve data
     elems = _get_txs(wallet_address, progress)
 
     # Create rows for CSV
-    exporter = Exporter(wallet_address)
     algo.processor.process_txs(wallet_address, elems, exporter, progress)
 
     # Log error stats if exists

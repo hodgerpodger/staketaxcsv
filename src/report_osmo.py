@@ -32,7 +32,7 @@ def main():
         exporter = txone(wallet_address, txid)
         exporter.export_print()
     else:
-        exporter = txhistory(wallet_address, job=None)
+        exporter = txhistory(wallet_address)
         report_util.run_exports(TICKER_OSMO, wallet_address, exporter, export_format)
 
 
@@ -81,8 +81,8 @@ def _pages(wallet_address):
 
 
 def txhistory(wallet_address, job=None, options=None):
-    exporter = Exporter(wallet_address)
     progress = ProgressOsmo()
+    exporter = Exporter(wallet_address)
 
     if options:
         _read_options(options)

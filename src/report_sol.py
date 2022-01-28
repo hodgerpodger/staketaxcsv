@@ -106,18 +106,20 @@ def _num_txids(wallet_address):
     return len(txids)
 
 
-def txhistory(wallet_address, job=None):
+def txhistory(wallet_address, job=None, options=None):
     progress = ProgressSol()
-    wallet_info = WalletInfo(wallet_address)
     exporter = Exporter(wallet_address)
+    wallet_info = WalletInfo(wallet_address)
 
-    logging.info("Using SOLANA_URL=%s...", SOL_NODE)
+    if options:
+        _read_options(options)
     if job:
         localconfig.job = job
         localconfig.cache = True
     if localconfig.cache:
         localconfig.blocks = Cache().get_sol_blocks()
         logging.info("Loaded sol blocks info into cache...")
+    logging.info("Using SOLANA_URL=%s...", SOL_NODE)
 
     # Fetch data to so that job progress can be estimated ##########
 

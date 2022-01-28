@@ -69,13 +69,15 @@ def txone(wallet_address, txid):
 
 
 def txhistory(wallet_address, job=None, options=None):
+    progress = ProgressAtom()
+    exporter = Exporter(wallet_address)
+
     if options:
         _read_options(options)
     if job:
         localconfig.job = job
 
     # Fetch count of transactions to estimate progress more accurately
-    progress = ProgressAtom()
     count_pages = atom.api_lcd.get_txs_count_pages(wallet_address)
     progress.set_estimate(count_pages)
 
@@ -86,11 +88,9 @@ def txhistory(wallet_address, job=None, options=None):
 
     # Fetch transactions
     elems.extend(_fetch_txs(wallet_address, progress, count_pages))
-    progress.report_message(f"Processing {len(elems)} ATOM transactions... ")
-
     elems = _remove_duplicates(elems)
 
-    exporter = Exporter(wallet_address)
+    progress.report_message(f"Processing {len(elems)} ATOM transactions... ")
     atom.processor.process_txs(wallet_address, elems, exporter)
 
     return exporter
