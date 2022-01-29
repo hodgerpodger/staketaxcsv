@@ -3,7 +3,7 @@ import logging
 import os
 
 from common.ExporterTypes import FORMAT_DEFAULT, FORMATS
-from settings_csv import REPORTS_DIR, TICKER_ATOM, TICKER_LUNA, TICKER_OSMO
+from settings_csv import REPORTS_DIR, TICKER_ATOM, TICKER_LUNA, TICKER_OSMO, TICKER_ALGO
 
 ALL = "all"
 
@@ -70,6 +70,13 @@ def parse_args(ticker):
             default=False,
             help="include legacy transactions for cosmoshub-3",
         )
+    if ticker == TICKER_ALGO:
+        parser.add_argument(
+            "--txidgroup",
+            type=str,
+            default="",
+            help="If specified, runs report on the entire group for this transaction (useful for debugging) "
+        )
 
     args = parser.parse_args()
 
@@ -89,6 +96,8 @@ def parse_args(ticker):
         options["lp_trades"] = True
     if "legacy" in args and args.legacy:
         options["legacy"] = True
+    if "txidgroup" in args and args.txidgroup:
+        options["txidgroup"] = args.txidgroup
 
     return args.wallet_address, args.format, args.txid, options
 

@@ -12,6 +12,7 @@ import pprint
 
 import algo.processor
 from algo.api_algoindexer import LIMIT_ALGOINDEXER, AlgoIndexerAPI
+from algo.api_indexer import IndexerAPI
 from algo.config_algo import localconfig
 from algo.progress_algo import ProgressAlgo
 from common import report_util
@@ -28,6 +29,10 @@ def main():
 
     if txid:
         exporter = txone(wallet_address, txid)
+        exporter.export_print()
+    elif "txidgroup" in options:
+        txid = options["txidgroup"]
+        exporter = _txgroup(wallet_address, txid)
         exporter.export_print()
     else:
         exporter = txhistory(wallet_address)
@@ -58,6 +63,20 @@ def txone(wallet_address, txid):
     algo.processor.process_txs(wallet_address, [data], exporter, progress)
     print("")
 
+    return exporter
+
+
+def _txgroup(wallet_address, txid):
+    exporter = Exporter(wallet_address)
+
+    # Get transaction data, to identify group
+    data = AlgoIndexerAPI.get_transaction(txid)
+    group_id = data["group"]
+
+    # Get group of transactions
+    elems = IndexerAPI.get_transactions_by_group(group_id)
+
+    algo.processor.process_txs(wallet_address, elems, exporter, ProgressAlgo())
     return exporter
 
 
