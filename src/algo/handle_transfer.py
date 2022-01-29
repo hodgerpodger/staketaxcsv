@@ -84,20 +84,22 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
         if close_to and txreceiver != close_to:
             # We are closing the account, but sending the remaining balance is sent to different address
             close_amount = Asset(asset_id, details["close-amount"])
-            txinfo.fee = 0
             row = make_transfer_out_tx(txinfo, close_amount, close_amount.ticker, close_to)
+            row.fee = 0
             exporter.ingest_row(row)
             send_amount = Asset(asset_id, details["amount"])
-            txinfo.fee = transaction["fee"]
+
             if not send_amount.zero():
                 row = make_transfer_out_tx(txinfo, send_amount, send_amount.ticker, txreceiver)
+                row.fee = Algo(transaction["fee"])
                 exporter.ingest_row(row)
         else:
             # Regular send or closing to the same account
             send_amount = Asset(asset_id, details["amount"] + details["close-amount"])
-            txinfo.fee = transaction["fee"]
+
             if not send_amount.zero():
                 row = make_transfer_out_tx(txinfo, send_amount, send_amount.ticker, txreceiver)
+                row.fee = Algo(transaction["fee"])
                 exporter.ingest_row(row)
         txinfo.fee = 0
 
