@@ -24,15 +24,11 @@ MAX_TRANSACTIONS = 10000
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_ALGO)
+    wallet_address, export_format, txid_or_groupid, options = report_util.parse_args(TICKER_ALGO)
     _read_options(options)
 
-    if txid:
-        exporter = txone(wallet_address, txid)
-        exporter.export_print()
-    elif "group_id" in options:
-        group_id = options["group_id"]
-        exporter = _txgroup(wallet_address, group_id)
+    if txid_or_groupid:
+        exporter = txone(wallet_address, txid_or_groupid)
         exporter.export_print()
     else:
         exporter = txhistory(wallet_address)
@@ -50,29 +46,24 @@ def wallet_exists(wallet_address):
     return AlgoIndexerAPI.account_exists(wallet_address)
 
 
-def txone(wallet_address, txid):
+def txone(wallet_address, txid_or_groupid):
     progress = ProgressAlgo()
 
-    data = AlgoIndexerAPI.get_transaction(txid)
+    data = AlgoIndexerAPI.get_transaction(txid_or_groupid)
+    if data:
+        elems = [data]
+    else:
+        elems = IndexerAPI.get_transactions_by_group(txid_or_groupid)
+
     print("\ndebug data:")
-    pprint.pprint(data)
+    pprint.pprint(elems)
     print("")
 
     progress.set_estimate(1)
     exporter = Exporter(wallet_address)
-    algo.processor.process_txs(wallet_address, [data], exporter, progress)
+    algo.processor.process_txs(wallet_address, elems, exporter, progress)
     print("")
 
-    return exporter
-
-
-def _txgroup(wallet_address, group_id):
-    exporter = Exporter(wallet_address)
-
-    # Get group of transactions
-    elems = IndexerAPI.get_transactions_by_group(group_id)
-
-    algo.processor.process_txs(wallet_address, elems, exporter, ProgressAlgo())
     return exporter
 
 

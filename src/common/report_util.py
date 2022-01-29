@@ -70,13 +70,6 @@ def parse_args(ticker):
             default=False,
             help="include legacy transactions for cosmoshub-3",
         )
-    if ticker == TICKER_ALGO:
-        parser.add_argument(
-            "--group_id",
-            type=str,
-            default="",
-            help="If group id specified, runs report on group of this transaction (useful for debugging) "
-        )
 
     args = parser.parse_args()
 
@@ -96,10 +89,6 @@ def parse_args(ticker):
         options["lp_trades"] = True
     if "legacy" in args and args.legacy:
         options["legacy"] = True
-    if "txidgroup" in args and args.txidgroup:
-        options["txidgroup"] = args.txidgroup
-    if "group_id" in args and args.group_id:
-        options["group_id"] = args.group_id
 
     return args.wallet_address, args.format, args.txid, options
 
