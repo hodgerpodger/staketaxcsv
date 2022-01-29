@@ -72,10 +72,10 @@ def parse_args(ticker):
         )
     if ticker == TICKER_ALGO:
         parser.add_argument(
-            "--txidgroup",
+            "--group_id",
             type=str,
             default="",
-            help="If specified, runs report on the entire group for this transaction (useful for debugging) "
+            help="If group id specified, runs report on group of this transaction (useful for debugging) "
         )
 
     args = parser.parse_args()
@@ -98,6 +98,8 @@ def parse_args(ticker):
         options["legacy"] = True
     if "txidgroup" in args and args.txidgroup:
         options["txidgroup"] = args.txidgroup
+    if "group_id" in args and args.group_id:
+        options["group_id"] = args.group_id
 
     return args.wallet_address, args.format, args.txid, options
 

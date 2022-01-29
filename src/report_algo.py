@@ -30,9 +30,9 @@ def main():
     if txid:
         exporter = txone(wallet_address, txid)
         exporter.export_print()
-    elif "txidgroup" in options:
-        txid = options["txidgroup"]
-        exporter = _txgroup(wallet_address, txid)
+    elif "group_id" in options:
+        group_id = options["group_id"]
+        exporter = _txgroup(wallet_address, group_id)
         exporter.export_print()
     else:
         exporter = txhistory(wallet_address)
@@ -66,12 +66,8 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def _txgroup(wallet_address, txid):
+def _txgroup(wallet_address, group_id):
     exporter = Exporter(wallet_address)
-
-    # Get transaction data, to identify group
-    data = AlgoIndexerAPI.get_transaction(txid)
-    group_id = data["group"]
 
     # Get group of transactions
     elems = IndexerAPI.get_transactions_by_group(group_id)
