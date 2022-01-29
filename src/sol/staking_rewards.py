@@ -26,6 +26,7 @@ def _reward_txs(wallet_address, exporter, staking_address):
     latest_epoch = RpcAPI.get_latest_epoch()
 
     rewards = []
+
     for epoch in range(START_EPOCH, latest_epoch):
         timestamp, reward = _get_reward(epoch, staking_address)
         if not reward:

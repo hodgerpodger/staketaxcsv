@@ -76,8 +76,9 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
             send_amount += details["amount"]
             rewards_amount += transaction["sender-rewards"]
         amount = Asset(asset_id, receive_amount - send_amount)
-        row = make_transfer_in_tx(txinfo, amount, amount.ticker)
-        exporter.ingest_row(row)
+        if not amount.zero():
+            row = make_transfer_in_tx(txinfo, amount, amount.ticker)
+            exporter.ingest_row(row)
     else:
         rewards_amount += transaction["sender-rewards"]
         if close_to and txreceiver != close_to:
@@ -88,14 +89,16 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
             exporter.ingest_row(row)
             send_amount = Asset(asset_id, details["amount"])
             txinfo.fee = transaction["fee"]
-            row = make_transfer_out_tx(txinfo, send_amount, send_amount.ticker, txreceiver)
-            exporter.ingest_row(row)
+            if not send_amount.zero():
+                row = make_transfer_out_tx(txinfo, send_amount, send_amount.ticker, txreceiver)
+                exporter.ingest_row(row)
         else:
             # Regular send or closing to the same account
             send_amount = Asset(asset_id, details["amount"] + details["close-amount"])
             txinfo.fee = transaction["fee"]
-            row = make_transfer_out_tx(txinfo, send_amount, send_amount.ticker, txreceiver)
-            exporter.ingest_row(row)
+            if not send_amount.zero():
+                row = make_transfer_out_tx(txinfo, send_amount, send_amount.ticker, txreceiver)
+                exporter.ingest_row(row)
         txinfo.fee = 0
 
     if rewards_amount > 0:

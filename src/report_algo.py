@@ -68,9 +68,14 @@ def _max_queries():
     return max_queries
 
 
-def txhistory(wallet_address):
+def txhistory(wallet_address, job=None, options=None):
     progress = ProgressAlgo()
     exporter = Exporter(wallet_address)
+
+    if options:
+        _read_options(options)
+    if job:
+        localconfig.job = job
 
     # Retrieve data
     elems = _get_txs(wallet_address, progress)
