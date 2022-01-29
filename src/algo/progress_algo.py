@@ -2,7 +2,7 @@ from algo.config_algo import localconfig
 from common.progress import Progress
 
 # Err on the side of overestimating for better user experience
-SECONDS_PER_TX = 0.1
+SECONDS_PER_TX = 0.01
 
 
 class ProgressAlgo(Progress):
