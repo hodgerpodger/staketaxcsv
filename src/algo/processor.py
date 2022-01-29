@@ -68,8 +68,8 @@ def _txinfo(wallet_address, elem):
 
 
 def _grouptxinfo(wallet_address, elem):
-    txid = ""
     groupid = elem["group"]
+    txid = groupid
     timestamp = datetime.utcfromtimestamp(elem["round-time"]).strftime('%Y-%m-%d %H:%M:%S')
     fee = Algo(0)
     url = "https://algoexplorer.io/tx/group/{}".format(urllib.parse.quote(groupid))
