@@ -4,14 +4,15 @@ import time
 
 import requests
 from settings_csv import ATOM_NODE
+from urllib.parse import urlencode
 
 LIMIT_PER_QUERY = 50
 
 
 def _query(uri_path, query_params, sleep_seconds=1):
     url = f"{ATOM_NODE}{uri_path}"
+    logging.info("Requesting url %s?%s", url, urlencode(query_params))
     response = requests.get(url, query_params)
-    logging.info("requested url=%s", response.url)
 
     time.sleep(sleep_seconds)
     return response.json()
