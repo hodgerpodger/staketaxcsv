@@ -21,7 +21,7 @@ from osmo.lp_rewards import lp_rewards
 from osmo.progress_osmo import SECONDS_PER_PAGE, ProgressOsmo
 from settings_csv import TICKER_OSMO
 
-MAX_TRANSACTIONS = 5000
+MAX_TRANSACTIONS = 10000
 
 
 def main():
