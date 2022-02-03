@@ -258,10 +258,15 @@ def _txinfo(exporter, elem, wallet_address):
     msgtype = _get_first_msgtype(elem)
 
     # Handle transaction with multi-currency fee (treat as "spend" transactions)
-    for cur_fee, cur_currency in more_fees:
-        row = make_just_fee_tx(txinfo, cur_fee, cur_currency)
-        row.comment = "multicurrency fee"
-        exporter.ingest_row(row)
+    if more_fees:
+        if msgtype == "bank/MsgSend" and elem["tx"]["value"]["msg"][0]["value"]["to_address"] == wallet_address:
+            # This is a inbound transfer.  No fees
+            pass
+        else:
+            for cur_fee, cur_currency in more_fees:
+                row = make_just_fee_tx(txinfo, cur_fee, cur_currency)
+                row.comment = "multicurrency fee"
+                exporter.ingest_row(row)
 
     return msgtype, txinfo
 
