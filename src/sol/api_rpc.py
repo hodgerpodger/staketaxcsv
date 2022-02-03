@@ -90,7 +90,7 @@ class RpcAPI(object):
         return out
 
     @classmethod
-    def get_inflation_reward(cls, staking_address, epoch):
+    def _get_inflation_reward(cls, staking_address, epoch):
         params_list = [
             [staking_address],
             {
@@ -98,6 +98,11 @@ class RpcAPI(object):
             }
         ]
         data = cls._fetch("getInflationReward", params_list)
+        return data
+
+    @classmethod
+    def get_inflation_reward(cls, staking_address, epoch):
+        data = cls._get_inflation_reward(staking_address, epoch)
 
         if not data or "result" not in data:
             return None, None
@@ -121,6 +126,16 @@ class RpcAPI(object):
 
     @classmethod
     def fetch_staking_addresses(cls, wallet_address):
+        data = cls._fetch_staking_addresses(wallet_address)
+
+        if "result" not in data:
+            return []
+
+        addresses = [elem["pubkey"] for elem in data["result"]]
+        return addresses
+
+    @classmethod
+    def _fetch_staking_addresses(cls, wallet_address):
         params_list = [
             PROGRAMID_STAKE,
             {
@@ -135,50 +150,42 @@ class RpcAPI(object):
                 ]
             }
         ]
-
-        data = cls._fetch("getProgramAccounts", params_list)
-        if "result" not in data:
-            return []
-
-        addresses = [elem["pubkey"] for elem in data["result"]]
-        return addresses
+        return cls._fetch("getProgramAccounts", params_list)
 
     @classmethod
     def fetch_tx(cls, txid):
         params_list = [txid, {"encoding": "jsonParsed"}]
         return cls._fetch("getConfirmedTransaction", params_list)
 
-    # https://spl.solana.com/token#finding-all-token-accounts-for-a-wallet
     @classmethod
     def fetch_token_accounts(cls, wallet_address):
-        """ Returns dict of <account_address> -> {"mint": <mint_address>, "decimals": <decimals>}  """
         if wallet_address in TOKEN_ACCOUNTS:
             return TOKEN_ACCOUNTS[wallet_address]
 
-        logging.info("Querying fetch_token_accounts()... wallet_address=%s", wallet_address)
+        data = cls._fetch_token_accounts(wallet_address)
+
+        result = cls._extract_token_accounts(data["result"]["value"])
+        TOKEN_ACCOUNTS[wallet_address] = result
+        return result
+
+    @classmethod
+    def _fetch_token_accounts(cls, wallet_address):
+        logging.info("Querying fetch_token_accounts_()... wallet_address=%s", wallet_address)
         params_list = [
-            PROGRAMID_TOKEN_ACCOUNTS,
+            wallet_address,
             {
-                "encoding": "jsonParsed",
-                "filters": [
-                    {
-                        "dataSize": 165
-                    },
-                    {
-                        "memcmp": {
-                            "offset": 32,
-                            "bytes": wallet_address
-                        }
-                    }
-                ]
+                "programId": PROGRAMID_TOKEN_ACCOUNTS
+            },
+            {
+                "encoding": "jsonParsed"
             }
         ]
+        return cls._fetch("getTokenAccountsByOwner", params_list)
 
-        data = cls._fetch("getProgramAccounts", params_list)
-        logging.info("Fetched.")
-
+    @classmethod
+    def _extract_token_accounts(cls, elems):
         out = {}
-        for elem in data["result"]:
+        for elem in elems:
             address = elem["pubkey"]
             info = elem["account"]["data"]["parsed"]["info"]
             mint = info["mint"]
@@ -188,24 +195,11 @@ class RpcAPI(object):
                 "mint": mint,
                 "decimals": decimals
             }
-
-        TOKEN_ACCOUNTS[wallet_address] = out
-
         return out
 
     @classmethod
     def get_txids(cls, wallet_address, limit=None, before=None):
-        config = {}
-        if limit:
-            config["limit"] = limit
-        if before:
-            config["before"] = before
-        params_list = [
-            wallet_address,
-            config
-        ]
-
-        data = cls._fetch("getConfirmedSignaturesForAddress2", params_list)
+        data = cls._get_txids(wallet_address, limit, before)
 
         if "result" not in data:
             return [], None
@@ -229,3 +223,18 @@ class RpcAPI(object):
             last_txid = None
 
         return out, last_txid
+
+    @classmethod
+    def _get_txids(cls, wallet_address, limit=None, before=None):
+        config = {}
+        if limit:
+            config["limit"] = limit
+        if before:
+            config["before"] = before
+        params_list = [
+            wallet_address,
+            config
+        ]
+
+        return cls._fetch("getConfirmedSignaturesForAddress2", params_list)
+
