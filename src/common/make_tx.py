@@ -50,7 +50,9 @@ def make_transfer_in_tx(txinfo, received_amount, received_currency):
     txinfo.fee_currency = ""
 
     if DONATION_WALLETS and txinfo.wallet_address in DONATION_WALLETS:
-        return _make_tx_received(txinfo, received_amount, received_currency, TX_TYPE_INCOME)
+        row = _make_tx_received(txinfo, received_amount, received_currency, TX_TYPE_INCOME)
+        row.comment = "donation " + row.comment
+        return row
     else:
         return _make_tx_received(txinfo, received_amount, received_currency, TX_TYPE_TRANSFER)
 

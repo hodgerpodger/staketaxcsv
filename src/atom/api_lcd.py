@@ -6,7 +6,12 @@ import requests
 from settings_csv import ATOM_NODE
 from urllib.parse import urlencode
 
+"""
+Docs: https://v1.cosmos.network/rpc/
+"""
+
 LIMIT_PER_QUERY = 50
+
 
 
 def _query(uri_path, query_params, sleep_seconds=1):
