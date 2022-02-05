@@ -27,7 +27,7 @@ from common.Exporter import Exporter
 from settings_csv import TICKER_ATOM
 
 LIMIT = 50
-MAX_TRANSACTIONS = 1000
+MAX_TRANSACTIONS = 2000
 
 
 def main():
