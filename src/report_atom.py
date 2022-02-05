@@ -77,6 +77,7 @@ def txhistory(wallet_address, job=None, options=None):
         _read_options(options)
     if job:
         localconfig.job = job
+        localconfig.cache = True
     if localconfig.cache:
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")
