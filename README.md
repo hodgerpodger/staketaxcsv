@@ -2,7 +2,7 @@
 # staketaxcsv
 
 * Python repository to create blockchain CSVs for Terra (LUNA), Solana (SOL), Cosmos (ATOM),
-  Osmosis (OSMO), and Algorand (ALGO) blockchains.
+  Osmosis (OSMO), Algorand (ALGO), and IoTex (IOTX) blockchains.
 * CSV codebase for <https://stake.tax>
 * Community contribution and PRs are most welcome, especially to fix/support new types of
   protocols/transactions.
@@ -10,7 +10,7 @@
 # Usage
 
 * Same arguments apply for report_terra.py (LUNA), report_sol.py (SOL), report_atom.py (ATOM),
-  report_osmo.py (OSMO), report_algo.py (ALGO):
+  report_osmo.py (OSMO), report_algo.py (ALGO), report_iotex.py (IOTX):
 
   ```sh
   # Load environment variables from sample.env (add to ~/.bash_profile or ~/.bashrc to avoid doing every time)
