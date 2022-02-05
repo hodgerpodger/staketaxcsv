@@ -4,3 +4,4 @@ class localconfig:
     debug = False
     limit = None
     legacy = False
+    ibc_addresses = {}

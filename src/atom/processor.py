@@ -4,9 +4,8 @@ from datetime import datetime
 from atom.config_atom import localconfig
 from atom.constants import CHAIN_ID_COSMOHUB3, CHAIN_ID_COSMOHUB4, CUR_ATOM, CURRENCIES, MILLION
 from atom.make_tx import make_atom_reward_tx, make_transfer_receive_tx
-
-# from common.TxInfo import TxInfo
 from atom.TxInfoAtom import TxInfoAtom
+import common.ibc_tokens
 from common.ErrorCounter import ErrorCounter
 from common.ExporterTypes import (
     TX_TYPE_STAKING_DELEGATE,
@@ -245,10 +244,10 @@ def _amount(amount_string):
     if amount_string == "":
         return 0, None
 
-    if "ibc" in amount_string:
+    if "ibc/" in amount_string:
         amount, address = amount_string.split("ibc/", 1)
         ibc_address = "ibc/{}".format(address)
-        currency = CURRENCIES.get(ibc_address, ibc_address)
+        currency = common.ibc_tokens.get_symbol(localconfig, TICKER_ATOM, ibc_address)
         amount = float(amount) / MILLION
         return amount, currency
 

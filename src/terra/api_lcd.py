@@ -9,17 +9,31 @@ import time
 
 import requests
 from settings_csv import TERRA_LCD_NODE
+from urllib.parse import urlencode
+
+
+def _query(uri_path, query_params, sleep_seconds=1):
+    url = f"{TERRA_LCD_NODE}{uri_path}"
+    logging.info("Requesting url %s?%s", url, urlencode(query_params))
+    response = requests.get(url, query_params)
+
+    time.sleep(sleep_seconds)
+    return response.json()
 
 
 class LcdAPI:
 
     @classmethod
     def contract_info(cls, contract):
-        url = "{}/wasm/contracts/{}".format(TERRA_LCD_NODE, contract)
+        # url = "{}/wasm/contracts/{}".format(TERRA_LCD_NODE, contract)
+        uri = "/wasm/contracts/{}".format(contract)
 
         logging.info("Querying lcd for contract=%s...", contract)
-        response = requests.get(url)
-        data = response.json()
-        time.sleep(0.1)
+
+        data = _query(uri, {})
+
+        #response = requests.get(url)
+        #data = response.json()
+        #time.sleep(0.1)
 
         return data

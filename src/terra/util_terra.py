@@ -7,6 +7,8 @@ import logging
 from terra.api_lcd import LcdAPI
 from terra.config_terra import localconfig
 from terra.constants import CUR_ORION, IBC_TOKEN_NAMES, MILLION
+import common.ibc_tokens
+from settings_csv import TICKER_LUNA
 
 
 def _contracts(elem):
@@ -147,7 +149,8 @@ def _extract_amounts(amount_string):
             # ibc token (i.e. "165ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B" for osmo)
             uamount, ibc_address = amount.split("ibc")
             ibc_address = "ibc" + ibc_address
-            currency = _ibc_token_name(ibc_address)
+
+            currency = common.ibc_tokens.get_symbol(localconfig, TICKER_LUNA, ibc_address)
             out[currency] = float(uamount) / MILLION
         else:
             # regular (i.e. 99700703uusd)

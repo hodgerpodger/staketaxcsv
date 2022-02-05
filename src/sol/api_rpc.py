@@ -170,7 +170,7 @@ class RpcAPI(object):
 
     @classmethod
     def _fetch_token_accounts(cls, wallet_address):
-        logging.info("Querying fetch_token_accounts_()... wallet_address=%s", wallet_address)
+        logging.info("Querying _fetch_token_accounts_()... wallet_address=%s", wallet_address)
         params_list = [
             wallet_address,
             {
@@ -196,6 +196,35 @@ class RpcAPI(object):
                 "decimals": decimals
             }
         return out
+
+    @classmethod
+    def fetch_staking_accounts(cls, wallet_address):
+        data = cls._fetch_staking_accounts(wallet_address)
+
+        if "result" not in data:
+            return []
+
+        addresses = [elem["pubkey"] for elem in data["result"]]
+        return addresses
+
+    @classmethod
+    def _fetch_staking_accounts(cls, wallet_address):
+        logging.info("Querying _fetch_staking_accounts_()... wallet_address=%s", wallet_address)
+        params_list = [
+            PROGRAMID_STAKE,
+            {
+                "encoding": "jsonParsed",
+                "filters" : [
+                    {
+                        "memcmp": {
+                            "offset": 12,
+                            "bytes": wallet_address
+                        }
+                    }
+                ]
+            }
+        ]
+        return cls._fetch("getProgramAccounts", params_list)
 
     @classmethod
     def get_txids(cls, wallet_address, limit=None, before=None):

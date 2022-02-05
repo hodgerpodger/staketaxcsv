@@ -22,6 +22,7 @@ import atom.processor
 from atom.config_atom import localconfig
 from atom.progress_atom import ProgressAtom
 from common import report_util
+from common.Cache import Cache
 from common.Exporter import Exporter
 from settings_csv import TICKER_ATOM
 
@@ -76,6 +77,9 @@ def txhistory(wallet_address, job=None, options=None):
         _read_options(options)
     if job:
         localconfig.job = job
+    if localconfig.cache:
+        localconfig.ibc_addresses = Cache().get_ibc_addresses()
+        logging.info("Loaded ibc_addresses from cache ...")
 
     # Fetch count of transactions to estimate progress more accurately
     count_pages = atom.api_lcd.get_txs_count_pages(wallet_address)
@@ -93,6 +97,10 @@ def txhistory(wallet_address, job=None, options=None):
     progress.report_message(f"Processing {len(elems)} ATOM transactions... ")
     atom.processor.process_txs(wallet_address, elems, exporter)
 
+    if localconfig.cache:
+        # Remove entries where no symbol was found
+        localconfig.ibc_addresses = {k: v for k, v in localconfig.ibc_addresses.items() if not v.startswith("ibc/")}
+        Cache().set_ibc_addresses(localconfig.ibc_addresses)
     return exporter
 
 
