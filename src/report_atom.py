@@ -25,9 +25,10 @@ from common import report_util
 from common.Cache import Cache
 from common.Exporter import Exporter
 from settings_csv import TICKER_ATOM
+from atom.progress_atom import SECONDS_PER_PAGE
 
 LIMIT = 50
-MAX_TRANSACTIONS = 2000
+MAX_TRANSACTIONS = 10000
 
 
 def main():
@@ -67,6 +68,10 @@ def txone(wallet_address, txid):
     exporter = Exporter(wallet_address)
     atom.processor.process_tx(wallet_address, elem, exporter)
     return exporter
+
+
+def estimate_duration(wallet_address):
+    return SECONDS_PER_PAGE * atom.api_lcd.get_txs_count_pages(wallet_address)
 
 
 def txhistory(wallet_address, job=None, options=None):
