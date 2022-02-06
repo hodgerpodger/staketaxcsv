@@ -6,7 +6,12 @@ from common.ErrorCounter import ErrorCounter
 from common.TxInfo import TxInfo
 from iotex import constants as co
 from iotex.config_iotex import localconfig
-from iotex.handle_transfer import handle_transfer_transaction, is_transfer_transaction
+from iotex.handle_transfer import (
+    handle_staking_reward_transaction,
+    handle_transfer_transaction,
+    is_staking_reward_transaction,
+    is_transfer_transaction
+)
 from iotex.handle_unknown import handle_unknown
 
 
@@ -25,6 +30,8 @@ def process_tx(wallet_address, elem, exporter):
     try:
         if is_transfer_transaction(elem):
             handle_transfer_transaction(wallet_address, elem, exporter, txinfo)
+        elif is_staking_reward_transaction(elem):
+            handle_staking_reward_transaction(elem, exporter, txinfo)
         else:
             handle_unknown(exporter, txinfo)
 
