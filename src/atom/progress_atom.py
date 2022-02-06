@@ -1,7 +1,7 @@
 from atom.config_atom import localconfig
 from common.progress import Progress
 
-SECONDS_PER_PAGE = 15.0
+SECONDS_PER_PAGE = 5
 
 
 class ProgressAtom(Progress):

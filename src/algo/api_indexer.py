@@ -3,6 +3,7 @@ import requests
 import urllib.parse
 INDEXER_URL = "https://indexer.algoexplorerapi.io"
 
+
 class IndexerAPI:
 
     @classmethod

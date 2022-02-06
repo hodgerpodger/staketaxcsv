@@ -214,7 +214,7 @@ class RpcAPI(object):
             PROGRAMID_STAKE,
             {
                 "encoding": "jsonParsed",
-                "filters" : [
+                "filters": [
                     {
                         "memcmp": {
                             "offset": 12,
@@ -266,4 +266,3 @@ class RpcAPI(object):
         ]
 
         return cls._fetch("getConfirmedSignaturesForAddress2", params_list)
-

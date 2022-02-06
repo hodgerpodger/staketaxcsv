@@ -13,7 +13,6 @@ Docs: https://v1.cosmos.network/rpc/
 LIMIT_PER_QUERY = 50
 
 
-
 def _query(uri_path, query_params, sleep_seconds=1):
     url = f"{ATOM_NODE}{uri_path}"
     logging.info("Requesting url %s?%s", url, urlencode(query_params))

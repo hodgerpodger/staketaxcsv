@@ -25,15 +25,7 @@ class LcdAPI:
 
     @classmethod
     def contract_info(cls, contract):
-        # url = "{}/wasm/contracts/{}".format(TERRA_LCD_NODE, contract)
         uri = "/wasm/contracts/{}".format(contract)
-
         logging.info("Querying lcd for contract=%s...", contract)
-
         data = _query(uri, {})
-
-        #response = requests.get(url)
-        #data = response.json()
-        #time.sleep(0.1)
-
         return data
