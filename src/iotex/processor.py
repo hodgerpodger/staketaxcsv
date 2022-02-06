@@ -10,7 +10,7 @@ from iotex.handle_transfer import (
     handle_staking_reward_transaction,
     handle_transfer_transaction,
     is_staking_reward_transaction,
-    is_transfer_transaction
+    is_transfer_transaction,
 )
 from iotex.handle_unknown import handle_unknown
 

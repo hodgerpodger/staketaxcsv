@@ -1,11 +1,11 @@
 import logging
 from datetime import datetime
 
+import common.ibc_tokens
 from atom.config_atom import localconfig
 from atom.constants import CHAIN_ID_COSMOHUB3, CHAIN_ID_COSMOHUB4, CUR_ATOM, CURRENCIES, MILLION
 from atom.make_tx import make_atom_reward_tx, make_transfer_receive_tx
 from atom.TxInfoAtom import TxInfoAtom
-import common.ibc_tokens
 from common.ErrorCounter import ErrorCounter
 from common.ExporterTypes import (
     TX_TYPE_STAKING_DELEGATE,

@@ -1,7 +1,7 @@
 
-from settings_csv import TICKER_LUNA, TICKER_ATOM
 import atom.api_lcd
 import terra.api_lcd
+from settings_csv import TICKER_ATOM, TICKER_LUNA
 
 
 def get_symbol(localconfig, ticker, ibc_address):

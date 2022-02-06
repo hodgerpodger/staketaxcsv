@@ -1,10 +1,10 @@
 import logging
 import math
 import time
+from urllib.parse import urlencode
 
 import requests
 from settings_csv import ATOM_NODE
-from urllib.parse import urlencode
 
 """
 Docs: https://v1.cosmos.network/rpc/

@@ -20,12 +20,11 @@ import atom.api_cosmostation
 import atom.api_lcd
 import atom.processor
 from atom.config_atom import localconfig
-from atom.progress_atom import ProgressAtom
+from atom.progress_atom import SECONDS_PER_PAGE, ProgressAtom
 from common import report_util
 from common.Cache import Cache
 from common.Exporter import Exporter
 from settings_csv import TICKER_ATOM
-from atom.progress_atom import SECONDS_PER_PAGE
 
 LIMIT = 50
 MAX_TRANSACTIONS = 10000

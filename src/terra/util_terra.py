@@ -4,11 +4,11 @@ import base64
 import json
 import logging
 
+import common.ibc_tokens
+from settings_csv import TICKER_LUNA
 from terra.api_lcd import LcdAPI
 from terra.config_terra import localconfig
 from terra.constants import CUR_ORION, IBC_TOKEN_NAMES, MILLION
-import common.ibc_tokens
-from settings_csv import TICKER_LUNA
 
 
 def _contracts(elem):
