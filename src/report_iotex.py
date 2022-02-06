@@ -14,7 +14,9 @@ import iotex.processor
 from common import report_util
 from common.ErrorCounter import ErrorCounter
 from common.Exporter import Exporter
-from iotex.api_graphql import IoTexGraphQL, IOTEX_GRAPHQL_LIMIT
+from iotex import constants as co
+from iotex.api_graphql import IoTexGraphQL
+from iotex.api_iotexscan import IoTexScan
 from iotex.config_iotex import localconfig
 from iotex.progress_iotex import ProgressIotex
 from settings_csv import TICKER_IOTEX
@@ -64,7 +66,7 @@ def txone(wallet_address, txid):
 
 def _max_queries():
     max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
-    max_queries = math.ceil(max_txs / IOTEX_GRAPHQL_LIMIT)
+    max_queries = math.ceil(max_txs / co.IOTEX_API_LIMIT)
     logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
     return max_queries
 
@@ -98,18 +100,47 @@ def _get_txs(wallet_address, progress):
             out = json.load(f)
             return out
 
-    num_txs = IoTexGraphQL.num_actions(wallet_address)
+    num_actions = IoTexGraphQL.num_actions(wallet_address)
+    num_stake_actions = IoTexScan.num_stake_actions(wallet_address)
+    num_txs = num_actions + num_stake_actions
     progress.set_estimate(num_txs)
 
     start = 0
-    count = min(num_txs, IOTEX_GRAPHQL_LIMIT)
+    count = min(num_actions, co.IOTEX_API_LIMIT)
     out = []
     for i in range(_max_queries()):
-        transactions = IoTexGraphQL.get_actions(wallet_address, start, count)
-        out.extend(transactions)
+        actions = IoTexGraphQL.get_actions_by_address(wallet_address, start, count)
+        out.extend([act for act in actions if act.get("action", {}).get("core", {}).get("transfer")])
 
-        if len(transactions) < IOTEX_GRAPHQL_LIMIT:
+        if len(actions) < co.IOTEX_API_LIMIT:
             break
+        start += count
+
+    message = "Retrieved {} txids...".format(len(out))
+    progress.report_message(message)
+
+    count = min(num_stake_actions, co.IOTEX_API_LIMIT)
+    ids = []
+    for i in range(_max_queries()):
+        actions = IoTexScan.get_stake_actions(wallet_address, i, count)
+        ids.extend(
+            [act["action_hash"]
+                for act in actions
+                    if act["act_type"].lower() == co.ACTION_TYPE_DEPOSIT_STAKE])
+
+        if len(actions) < co.IOTEX_API_LIMIT:
+            break
+
+    start = 0
+    count = min(len(ids), co.IOTEX_API_LIMIT)
+    for i in range(_max_queries()):
+        end = min(start + count, len(ids))
+        actions = IoTexGraphQL.get_actions_by_hashes(ids[start:end])
+        out.extend(actions)
+
+        if len(actions) < co.IOTEX_API_LIMIT:
+            break
+        start += count
 
     message = "Retrieved total {} txids...".format(len(out))
     progress.report_message(message)

@@ -1,9 +1,9 @@
 import logging
+
 import requests
 
 # Basic documentation and playground available here
 IOTEX_GRAPHQL_URL = "https://iotexscan.io/api-gateway"
-IOTEX_GRAPHQL_LIMIT = 100
 
 
 class IoTexGraphQL:
@@ -29,7 +29,7 @@ class IoTexGraphQL:
         return data.get("data", {}).get("getAccount", {}).get("accountMeta", {}).get("numActions", 0)
 
     @classmethod
-    def get_actions(cls, address, start, count):
+    def get_actions_by_address(cls, address, start, count):
         query = ("query GetActions($address:String!, $start:BigNumber!, $count:BigNumber!) { "
                     "getActions(byAddr:{ address:$address, start: $start, count: $count }) { "
                         "actionInfo { "
@@ -41,6 +41,7 @@ class IoTexGraphQL:
                                     "gasLimit "
                                     "gasPrice "
                                     "transfer { amount recipient }"
+                                    "stakeAddDeposit { amount bucketIndex } "
                                 "} "
                             "} "
                         "} "
@@ -72,6 +73,7 @@ class IoTexGraphQL:
                                     "gasLimit "
                                     "gasPrice "
                                     "transfer { amount recipient }"
+                                    "stakeAddDeposit { amount bucketIndex } "
                                 "} "
                             "} "
                         "} "
@@ -91,7 +93,46 @@ class IoTexGraphQL:
         return data.get("data", {}).get("getActions", {}).get("actionInfo", [])
 
     @classmethod
+    def get_actions_by_hashes(cls, txhashes):
+        if not txhashes:
+            return []
+
+        query = "query { "
+        for i, txhash in enumerate(txhashes):
+            query += "action{}: getActions(byHash:{{ actionHash:\"{}\", checkingPending:true }})".format(i, txhash)
+            query += "{ actionInfo { ...action } } "
+        query += "} "
+        query += ("fragment action on ActionInfo {"
+                    "actHash "
+                    "timestamp { seconds } "
+                    "action { "
+                        "senderPubKey "
+                        "core { "
+                            "gasLimit "
+                            "gasPrice "
+                            "transfer { amount recipient } "
+                            "stakeAddDeposit { amount bucketIndex } "
+                        "} "
+                    "} "
+                 "}")
+
+        payload = {
+            "query": query
+        }
+
+        data, status_code = cls._query(IOTEX_GRAPHQL_URL, payload)
+
+        if status_code != 200:
+            return False
+
+        result = []
+        for _, value in data.get("data", {}).items():
+            result.extend(value.get("actionInfo", []))
+
+        return result
+
+    @classmethod
     def _query(cls, url, payload):
-        logging.info("Querying IOTEX GRAPHQL url=%s...", url)
+        logging.info("Querying iotex graphql url=%s...", url)
         response = requests.post(url, json=payload, headers={})
         return response.json(), response.status_code
