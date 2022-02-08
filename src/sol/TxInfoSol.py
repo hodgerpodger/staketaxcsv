@@ -102,7 +102,6 @@ class TxInfoSol(TxInfo):
         pprint.pprint(self.lp_fee)
 
 
-
 class WalletInfo:
     def __init__(self, wallet_address):
         self.wallet_address = wallet_address

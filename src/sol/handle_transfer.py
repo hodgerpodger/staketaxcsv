@@ -5,6 +5,7 @@ from sol.constants import (
 )
 import sol.util_sol
 
+
 def is_transfer(txinfo):
     instruction_types = txinfo.instruction_types
     log_instructions = txinfo.log_instructions
