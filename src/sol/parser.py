@@ -11,6 +11,8 @@ from sol.api_rpc import RpcAPI
 from sol.constants import BILLION, CURRENCY_SOL, INSTRUCTION_TYPE_DELEGATE, MINT_SOL, PROGRAM_STAKE
 from sol.tickers.tickers import Tickers
 from sol.TxInfoSol import TxInfoSol
+from sol.handle_transfer import is_transfer
+import sol.util_sol
 
 
 def parse_tx(txid, data, wallet_info):
@@ -42,11 +44,12 @@ def parse_tx(txid, data, wallet_info):
 
     ts = result["blockTime"]
     timestamp = datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S") if ts else ""
-    fee = float(result["meta"]["fee"]) / BILLION
+    fee = ""
     instructions = data["result"]["transaction"]["message"]["instructions"]
 
     txinfo = TxInfoSol(txid, timestamp, fee, wallet_address)
 
+    txinfo.fee_blockchain = float(result["meta"]["fee"]) / BILLION
     txinfo.instructions = instructions
     txinfo.instruction_types = _instruction_types(instructions)
     txinfo.program_ids = [x["programId"] for x in txinfo.instructions]
@@ -62,12 +65,18 @@ def parse_tx(txid, data, wallet_info):
 
     txinfo.balance_changes_all, txinfo.balance_changes_wallet = _balance_changes(data, txinfo.wallet_accounts, txinfo.mints)
     txinfo.transfers = _transfers(txinfo.balance_changes_wallet)
+
     txinfo.transfers_net, txinfo.fee = _transfers_net(txinfo, txinfo.transfers, fee)
 
     if _has_empty_token_balances(data, txinfo.mints):
         # Fall back to alternative method to calculate transfers
-        txinfo.transfers = _transfers_instruction(txinfo)
-        txinfo.transfers_net, _ = _transfers_net(txinfo, txinfo.transfers, fee, mint_to=True)
+        if is_transfer(txinfo):
+            txinfo.transfers = _transfers_instruction(txinfo, txinfo.instructions)
+            txinfo.transfers_net, _ = _transfers_net(txinfo, txinfo.transfers, fee, mint_to=True)
+
+    txinfo.lp_transfers = _transfers_instruction(txinfo, txinfo.inner)
+    txinfo.lp_transfers_net, txinfo.lp_fee = _transfers_net(
+        txinfo, txinfo.lp_transfers, txinfo.fee, mint_to=True)
 
     # Update wallet_info with any staking addresses found
     addresses = _staking_addresses_found(wallet_address, txinfo.instructions)
@@ -191,6 +200,7 @@ def _balance_changes_sol(data):
 def _wallet_accounts(txid, wallet_address, instructions, inner):
     token_accounts = RpcAPI.fetch_token_accounts(wallet_address)
     accounts_wallet = set(token_accounts.keys())
+
     accounts_instruction = _instruction_accounts(txid, wallet_address, instructions, inner)
 
     accounts = set(accounts_instruction)
@@ -310,7 +320,7 @@ def _instruction_accounts(txid, wallet_address, instructions, inner):
             parsed = instruction["parsed"]
             if type(parsed) is dict:
                 # if wallet associated with source
-                if parsed.get("type") in ["initializeAccount", "approve", "transfer"]:
+                if parsed.get("type") in ["initializeAccount", "approve", "transfer", "transferChecked"]:
                     info = parsed["info"]
 
                     # Grab set of addresses associated with source
@@ -334,18 +344,18 @@ def _instruction_accounts(txid, wallet_address, instructions, inner):
     return accounts
 
 
-def _transfers_instruction(txinfo):
+def _transfers_instruction(txinfo, instructions):
     """ Returns transfers using information from instructions data (alternative method instead of balance changes) """
-
+    txid = txinfo.txid
     account_to_mint = txinfo.account_to_mint
-    inner_instructions = txinfo.inner
     wallet_accounts = txinfo.wallet_accounts
+    wallet_address = txinfo.wallet_address
 
     transfers_in = []
     transfers_out = []
     transfers_unknown = []
 
-    for i, instruction in enumerate(inner_instructions):
+    for i, instruction in enumerate(instructions):
         if "parsed" in instruction:
             parsed = instruction["parsed"]
             if parsed["type"] == "transfer":
@@ -353,34 +363,47 @@ def _transfers_instruction(txinfo):
 
                 amount_string = info.get("amount", None)
                 lamports = info.get("lamports", None)
+                token_amount = info.get("tokenAmount", None)
+                authority = info.get("authority", None)
                 source = info.get("source", None)
                 destination = info.get("destination", None)
 
-                if not amount_string:
-                    amount_string = lamports
+                # self transfer
+                if source and source == destination:
+                    continue
                 if amount_string == "0":
                     continue
 
-                # Find mint address
+                # Determine amount
+                if amount_string is not None:
+                    pass
+                elif lamports is not None:
+                    amount_string = lamports
+                elif token_amount is not None:
+                    amount_string = token_amount["amount"]
+
+                # Determine mint
                 if lamports:
                     mint = MINT_SOL
+                elif source in account_to_mint and account_to_mint[source] != MINT_SOL:
+                    mint = account_to_mint[source]
+                elif destination in account_to_mint and account_to_mint[destination] != MINT_SOL:
+                    mint = account_to_mint[destination]
                 else:
-                    if source in account_to_mint and account_to_mint[source] != MINT_SOL:
-                        mint = account_to_mint[source]
-                    elif destination in account_to_mint and account_to_mint[destination] != MINT_SOL:
-                        mint = account_to_mint[destination]
-                    else:
-                        mint = MINT_SOL
+                    mint = MINT_SOL
 
                 # Determine amount, currency
                 amount, currency = util_sol.amount_currency(txinfo, amount_string, mint)
 
                 # Determine direction of transfer
                 if source in wallet_accounts:
-                    transfers_out.append((amount, currency, source, destination))
+                    transfers_out.append((amount, currency, wallet_address, destination))
+                elif authority in wallet_accounts:
+                    transfers_out.append((amount, currency, wallet_address, destination))
                 elif destination in wallet_accounts:
                     transfers_in.append((amount, currency, source, destination))
                 else:
+                    logging.error("Unable to determine direction for info: %s", info)
                     transfers_unknown.append((amount, currency, source, destination))
 
     return transfers_in, transfers_out, transfers_unknown
@@ -424,7 +447,8 @@ def _add_mint_to_as_transfers(txinfo, net_transfers_in):
 
 
 def _transfers_net(txinfo, transfers, fee, mint_to=False):
-    _transfers_in, _transfers_out, _ = transfers
+    """ Combines like currencies and removes fees from transfers lists """
+    _transfers_in, _transfers_out, _transfers_unknown = transfers
 
     transfers_in, transfers_out, fee = util_sol.detect_fees(_transfers_in, _transfers_out, fee)
 
@@ -456,7 +480,7 @@ def _transfers_net(txinfo, transfers, fee, mint_to=False):
     if mint_to:
         _add_mint_to_as_transfers(txinfo, net_transfers_in)
 
-    return (net_transfers_in, net_transfers_out, []), fee
+    return (net_transfers_in, net_transfers_out, _transfers_unknown), fee
 
 
 def _get_source_destination(currency, is_transfer_in, transfers_in, transfers_out):

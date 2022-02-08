@@ -16,6 +16,7 @@ from sol.constants import (
     PROGRAM_STAKE,
     PROGRAM_SYSTEM,
 )
+import sol.util_sol
 
 SIMPLE_TXS = {
     (INSTRUCTION_TYPE_DEACTIVATE, PROGRAM_STAKE): TX_TYPE_SOL_STAKING_DEACTIVATE,
@@ -49,11 +50,13 @@ def handle_simple_tx(exporter, txinfo):
 
 
 def handle_unknown(exporter, txinfo):
+    txinfo.fee = sol.util_sol.calculate_fee(txinfo)
     row = make_unknown_tx(txinfo)
     exporter.ingest_row(row)
 
 
 def _handle_generic(exporter, txinfo, tx_type):
+    txinfo.fee = sol.util_sol.calculate_fee(txinfo)
     row = make_simple_tx(txinfo, tx_type)
     exporter.ingest_row(row)
 

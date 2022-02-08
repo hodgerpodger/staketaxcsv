@@ -11,6 +11,7 @@ class TxInfoSol(TxInfo):
         url = "https://solscan.io/tx/{}".format(txid)
         super().__init__(txid, timestamp, fee, CURRENCY_SOL, wallet_address, EXCHANGE_SOLANA_BLOCKCHAIN, url)
 
+        self.fee_blockchain = None
         self.instructions = None
         self.instruction_types = None
         self.program_ids = None
@@ -33,10 +34,15 @@ class TxInfoSol(TxInfo):
         self.transfers = []
         self.transfers_net = []
 
+        self.lp_transfers = []
+        self.lp_transfers_net = []
+        self.lp_fee = ""
+
     def print(self):
         print("txid: {}".format(self.txid))
         print("timestamp: {}".format(self.timestamp))
         print("fee: {}".format(self.fee))
+        print("fee_blockhain: {}".format(self.fee_blockchain))
 
         print("\ninstructions:")
         pprint.pprint(self.instructions)
@@ -82,8 +88,19 @@ class TxInfoSol(TxInfo):
         pprint.pprint(self.transfers_net[0])
         print("\ntransfers_net_out:")
         pprint.pprint(self.transfers_net[1])
-        print("\ntransfers_net_unknown")
-        pprint.pprint(self.transfers_net[2])
+
+        print("\nlp_transfers_in:")
+        pprint.pprint(self.lp_transfers[0])
+        print("\nlp_transfers_out:")
+        pprint.pprint(self.lp_transfers[1])
+
+        print("\nlp_transfers_net_in:")
+        pprint.pprint(self.lp_transfers_net[0])
+        print("\nlp_transfers_net_out:")
+        pprint.pprint(self.lp_transfers_net[1])
+        print("\nlp_fee:")
+        pprint.pprint(self.lp_fee)
+
 
 
 class WalletInfo:

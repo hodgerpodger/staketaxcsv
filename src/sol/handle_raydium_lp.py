@@ -22,7 +22,10 @@ def handle_raydium_lp_v4(exporter, txinfo):
 def _handle_raydium_lp(exporter, txinfo):
     log_instructions = txinfo.log_instructions
     log_string = txinfo.log_string
+
     transfers_in, transfers_out, _ = txinfo.transfers_net
+    if len(transfers_in) == 0 and len(transfers_out) == 0:
+        transfers_in, transfers_out, _ = txinfo.lp_transfers_net
 
     if ("MintTo" in log_instructions
        and len(transfers_in) == 1

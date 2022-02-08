@@ -4,6 +4,7 @@ from common.make_tx import make_reward_tx
 from sol.constants import CURRENCY_SOL, MILLION
 from sol.handle_simple import handle_unknown
 from sol.make_tx import make_reward_zero_tx, make_stake_tx, make_unstake_tx
+import sol.parser
 
 
 def handle_raydium_stake_v5(exporter, txinfo):
@@ -22,14 +23,13 @@ def handle_raydium_stake(exporter, txinfo):
 
 
 def _handle_raydium_stake(exporter, txinfo):
+    transfers_in, transfers_out, _ = txinfo.lp_transfers
     log_instructions = txinfo.log_instructions
-    transfers_in, transfers_out, _ = txinfo.transfers
     log = txinfo.log
     log_string = txinfo.log_string
     input_accounts = txinfo.input_accounts
     user_reward_token_account = input_accounts[0][6]
     pool_reward_token_account = input_accounts[0][7]
-
     reward_amounts = _reward_amounts(log)
 
     # Remove sol fee from txinfo.transfers if exists
