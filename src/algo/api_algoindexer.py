@@ -1,4 +1,5 @@
 import logging
+import urllib.parse
 
 import requests
 from settings_csv import ALGO_INDEXER_NODE
@@ -35,6 +36,16 @@ class AlgoIndexerAPI:
 
         if status_code == 200:
             return data["transactions"], data["next-token"] if "next-token" in data else None
+        else:
+            return None
+
+    @classmethod
+    def get_transactions_by_group(cls, group_id):
+        url = "{}/v2/transactions?group-id={}".format(ALGO_INDEXER_NODE, urllib.parse.quote(group_id))
+        data, status_code = cls._query(url)
+
+        if status_code == 200:
+            return data["transactions"]
         else:
             return None
 
