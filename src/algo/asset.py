@@ -68,7 +68,10 @@ known_assets = {
 class Asset:
     def __init__(self, id, amount=0):
         if id < 0:
-            raise ValueError("id must be greater than zero")
+            raise ValueError("Asset id must be greater than zero")
+        if int(amount) < 0:
+            raise ValueError("Asset amount cannot be negative")
+
         self._id = id
         params = None
         if id in known_assets:
@@ -80,11 +83,15 @@ class Asset:
             raise ValueError("invalid asset id")
         self._decimals = params["decimals"]
         self._ticker = params["unit-name"]
-        self._amount = float(amount) / float(10 ** self._decimals)
+        self._uint_amount = int(amount)
+
+    @property
+    def id(self):
+        return self._id
 
     @property
     def amount(self):
-        return self._amount
+        return float(self._uint_amount) / float(10 ** self._decimals)
 
     @property
     def ticker(self):
@@ -96,15 +103,74 @@ class Asset:
 
     def __add__(self, other):
         if type(other) == int:
-            return Asset(self._id, self._amount + (float(other) / float(10 ** self._decimals)))
-        return Asset(self._id, self._amount + other.amount)
+            if other < 0:
+                raise ValueError("Amounts cannot be negative")
+            return Asset(self._id, self._uint_amount + other)
+
+        if not isinstance(other, Asset):
+            raise TypeError("Invalid argument")
+
+        if self._id != other.id:
+            raise ValueError("Cannot add different assets")
+
+        return Asset(self._id, self._uint_amount + other._uint_amount)
 
     def __iadd__(self, other):
         if type(other) == int:
-            self._amount += float(other) / float(10 ** self._decimals)
+            if other < 0:
+                raise ValueError("Amounts cannot be negative")
+            self._uint_amount += other
         else:
-            self._amount += other.amount
+            if not isinstance(other, Asset):
+                raise TypeError("Invalid argument")
+            if self._id != other.id:
+                raise ValueError("Cannot add different assets")
+            self._uint_amount += other._uint_amount
+
         return self
+
+    def __sub__(self, other):
+        if type(other) == int:
+            if other < 0:
+                raise ValueError("Amounts cannot be negative")
+            if self._uint_amount < other:
+                raise ValueError("Asset amount cannot be negative")
+            return Asset(self._id, self._uint_amount - other)
+
+        if not isinstance(other, Asset):
+            raise TypeError("Invalid argument")
+        if self._id != other.id:
+            raise ValueError("Cannot substruct different assets")
+        if self._uint_amount < other._uint_amount:
+            raise ValueError("Asset amount cannot be negative")
+
+        return Asset(self._id, self._uint_amount - other._uint_amount)
+
+    def __isub__(self, other):
+        if type(other) == int:
+            if other < 0:
+                raise ValueError("Amounts cannot be negative")
+            if self._uint_amount < other:
+                raise ValueError("Asset amount cannot be negative")
+            self._uint_amount -= other
+        else:
+            if not isinstance(other, Asset):
+                raise TypeError("Invalid argument")
+            if self._id != other.id:
+                raise ValueError("Cannot substruct different assets")
+            if self._uint_amount < other._uint_amount:
+                raise ValueError("Asset amount cannot be negative")
+            self._uint_amount -= other._uint_amount
+
+        return self
+
+    def __mul__(self, other):
+        if not isinstance(other, (int, float)):
+            raise TypeError("Invalid argument")
+        if other < 0:
+            raise ValueError("Asset amount cannot be negative")
+
+        return Asset(self._id, self._uint_amount * other)
 
     def __float__(self):
         return self.amount
@@ -113,7 +179,7 @@ class Asset:
         return "{{:.{}f}}".format(self.decimals).format(self.amount)
 
     def zero(self):
-        return self._amount == 0
+        return self._uint_amount == 0
 
 
 class Algo(Asset):
