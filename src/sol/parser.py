@@ -358,7 +358,7 @@ def _transfers_instruction(txinfo, instructions):
     for i, instruction in enumerate(instructions):
         if "parsed" in instruction:
             parsed = instruction["parsed"]
-            if parsed["type"] == "transfer":
+            if type(parsed) is dict and parsed.get("type") == "transfer":
                 info = parsed["info"]
 
                 amount_string = info.get("amount", None)
