@@ -52,7 +52,7 @@ def _extract_amount(elem, txid, target_action):
         contract_address = contract_addresses[i]
 
         if action == target_action:
-            currency, _ = util_terra._lookup_address(contract_address, txid)
+            currency = util_terra._lookup_address(contract_address, txid)
             amount = util_terra._float_amount(amount_string, currency)
 
             return amount, currency

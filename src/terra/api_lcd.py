@@ -26,6 +26,6 @@ class LcdAPI:
     @classmethod
     def contract_info(cls, contract):
         uri = "/wasm/contracts/{}".format(contract)
-        logging.info("Querying lcd for contract=%s...", contract)
+        logging.info("Querying lcd for contract = %s ...", contract)
         data = _query(uri, {})
         return data

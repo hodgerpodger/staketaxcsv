@@ -27,7 +27,7 @@ def _handle_lp_deposit(txinfo, from_contract):
 
     # Determine LP currency
     lp_currency_address = _extract_contract_address(txid, from_contract, "mint")
-    lp_currency, _ = util_terra._lookup_lp_address(lp_currency_address, txid)
+    lp_currency = util_terra._lookup_lp_address(lp_currency_address, txid)
 
     # Determine received LP amount
     lp_amount_string = from_contract["share"][0]
@@ -77,7 +77,7 @@ def _handle_lp_withdraw(elem, txinfo, from_contract):
 
     # Determine LP currenecy
     lp_currency_address = _extract_contract_address(txid, from_contract, "send")
-    lp_currency, _ = util_terra._lookup_lp_address(lp_currency_address, txid)
+    lp_currency = util_terra._lookup_lp_address(lp_currency_address, txid)
 
     # Determine sent LP amount
     lp_amount_string = from_contract["withdrawn_share"][0]
@@ -188,7 +188,7 @@ def handle_lp_stake(exporter, elem, txinfo):
 
     # Determine LP currency
     lp_currency_address = util_terra._contract(elem)
-    lp_currency, _ = util_terra._lookup_lp_address(lp_currency_address, txid)
+    lp_currency = util_terra._lookup_lp_address(lp_currency_address, txid)
     if not lp_currency:
         raise Exception("Bad condition handle_lp_stake() txid=%s", txid)
 
@@ -207,7 +207,7 @@ def handle_lp_stake_deposit_strategy(exporter, elem, txinfo):
 
     # Determine LP currency
     lp_currency_address = from_contract["lp_token"][0]
-    lp_currency, _ = util_terra._lookup_lp_address(lp_currency_address, txid)
+    lp_currency = util_terra._lookup_lp_address(lp_currency_address, txid)
 
     # Determine LP amount
     lp_amount = util_terra._float_amount(execute_msg["send"]["amount"], lp_currency)
@@ -221,7 +221,7 @@ def handle_lp_unstake(exporter, elem, txinfo):
 
     # Determine LP currency
     lp_currency_address = elem["logs"][0]["events_by_type"]["execute_contract"]["contract_address"][0]
-    lp_currency, _ = util_terra._lookup_lp_address(lp_currency_address, txid)
+    lp_currency = util_terra._lookup_lp_address(lp_currency_address, txid)
     if not lp_currency:
         raise Exception("Bad condition handle_lp_stake() txid=%s", txid)
 
@@ -246,7 +246,7 @@ def handle_lp_unstake_withdraw_from_strategy(exporter, elem, txinfo):
 
     # Determine LP currency
     lp_currency_address = from_contract["lp_token"][0]
-    lp_currency, _ = util_terra._lookup_lp_address(lp_currency_address, txid)
+    lp_currency = util_terra._lookup_lp_address(lp_currency_address, txid)
     if not lp_currency:
         raise Exception("Bad condition handle_lp_unstake_withdraw() txid=%s", txid)
 
@@ -267,7 +267,7 @@ def handle_lp_long_farm(exporter, elem, txinfo):
 
     # Determine LP currency
     lp_currency_address = _extract_contract_address(txid, from_contract, "mint")
-    lp_currency, _ = util_terra._lookup_lp_address(lp_currency_address, txid)
+    lp_currency = util_terra._lookup_lp_address(lp_currency_address, txid)
 
     # Determine received LP amount
     lp_amount = util_terra._float_amount(from_contract["share"][0], lp_currency)

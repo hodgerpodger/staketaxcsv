@@ -109,7 +109,7 @@ def _lookup_airdrop_currency(txid, data, index):
         contract_address = from_contract['contract_address'][i]
 
         if action == "transfer":
-            currency, _ = util_terra._lookup_address(contract_address, txid)
+            currency = util_terra._lookup_address(contract_address, txid)
             return currency
     return None
 
@@ -168,7 +168,7 @@ def _get_currency(from_contract, txid):
         contract_address = from_contract["contract_address"][i]
 
         if action == "transfer":
-            currency, _ = util_terra._lookup_address(contract_address, txid)
+            currency = util_terra._lookup_address(contract_address, txid)
             return currency
 
     raise Exception("_get_currency(): unable to determine currency txid={}".format(txid))

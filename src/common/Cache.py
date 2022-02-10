@@ -7,6 +7,8 @@ STAGE = os.environ.get("STAGE")
 DYNAMO_TABLE_CACHE = "prod_cache" if STAGE == "prod" else "dev_cache"
 FIELD_SOL_BLOCKS = "sol_blocks"
 FIELD_TERRA_CURRENCY_ADDRESSES = "terra_currency_addresses"
+FIELD_TERRA_DECIMALS = "terra_decimals"
+FIELD_TERRA_LP_CURRENCY_ADDRESSES = "terra_lp_currency_addresses"
 FIELD_IBC_ADDRESSES = "ibc_addresses"
 
 
@@ -56,6 +58,18 @@ class Cache:
 
     def get_terra_currency_addresses(self):
         return self._get(FIELD_TERRA_CURRENCY_ADDRESSES)
+
+    def set_terra_lp_currency_addresses(self, data):
+        return self._set_merge(FIELD_TERRA_LP_CURRENCY_ADDRESSES, data)
+
+    def get_terra_lp_currency_addresses(self):
+        return self._get(FIELD_TERRA_LP_CURRENCY_ADDRESSES)
+
+    def set_terra_decimals(self, data):
+        return self._set_merge(FIELD_TERRA_DECIMALS, data)
+
+    def get_terra_decimals(self):
+        return self._get(FIELD_TERRA_DECIMALS)
 
     def set_ibc_addresses(self, data):
         return self._set_merge(FIELD_IBC_ADDRESSES, data)

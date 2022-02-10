@@ -146,7 +146,7 @@ def _extract_amounts(amount_string):
             # token address (i.e. "766890terra1vxtwu4ehgzz77mnfwrntyrmgl64qjs75mpwqaz")
             uamount, partial_address = amount.split("terra")
             address = "terra{}".format(partial_address)
-            currency, _ = _lookup_address(address, "")
+            currency = _lookup_address(address, "")
             out[currency] = _float_amount(uamount, currency)
         elif "ibc" in amount:
             # ibc token (i.e. "165ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B" for osmo)
@@ -165,9 +165,9 @@ def _extract_amounts(amount_string):
 
 
 def _asset_to_currency(asset, txid):
-    # Examples: terra1mqsjugsugfprn3cvgxsrr8akkvdxv2pzc74us7 -> 'uusd'
+    # Example: 'terra1mqsjugsugfprn3cvgxsrr8akkvdxv2pzc74us7' -> USD
     if asset.startswith("terra"):
-        currency, _ = _lookup_address(asset, txid)
+        currency = _lookup_address(asset, txid)
         return currency
 
     if asset.startswith("u"):
@@ -203,6 +203,7 @@ def _float_amount(amount_string, currency):
 
 
 def _currency(currency_string):
+    # Example: 'luna' -> 'LUNA'
     currency_string = currency_string.upper()
     if currency_string == "KRW":
         return "KRT"
@@ -212,25 +213,24 @@ def _currency(currency_string):
 
 
 def _denom_to_currency(denom):
+    # Example: 'uluna' -> 'LUNA'
     currency = denom[1:]
     return _currency(currency)
 
 
 def _decimals(currency):
     # default is 6 decimals
-    decimals = 6
+    if currency in localconfig.decimals and localconfig.decimals[currency]:
+        return int(localconfig.decimals[currency])
+    else:
+        return 6
 
-    if currency in localconfig.currency_addresses:
-      decimals, _ = localconfig.currency_addresses[currency]
-
-    return int(decimals)
 
 # https://github.com/terra-project/shuttle
 # https://github.com/terra-project/shuttle/blob/main/terra/src/config/TerraAssetInfos.ts
 # https://lcd.terra.dev/swagger-ui/#/Wasm/get_wasm_contracts__contractAddress_
 def _lookup_address(addr, txid):
-    """ Returns (currency1, None) for currency address.
-        Returns (currency1, currency2) for swap pair """
+    """ Returns (currency, decimals) for currency address. """
     if addr in localconfig.currency_addresses:
         return localconfig.currency_addresses[addr]
 
@@ -238,14 +238,65 @@ def _lookup_address(addr, txid):
     logging.info("init_msg: %s", init_msg)
 
     if "symbol" in init_msg:
-        # Currency address
         currency = init_msg["symbol"]
-        localconfig.currency_addresses[addr] = [currency, None]
-        localconfig.currency_addresses[currency] = [init_msg["decimals"], addr]
-        logging.info("Found symbol=%s ", currency)
+        decimals = int(init_msg["decimals"])
 
-        return [currency, None]
-    elif "asset_infos" in init_msg:
+        # Cache result
+        localconfig.currency_addresses[addr] = currency
+        localconfig.decimals[currency] = decimals
+
+        logging.info("Found symbol=%s decimals=%s", currency, decimals)
+        return currency
+    elif "terraswap_factory" in init_msg:
+        localconfig.currency_addresses[addr] = None
+        return None
+    else:
+        localconfig.currency_addresses[addr] = ""
+        raise Exception("Unable to determine currency/swap pair for addr=%s, txid=%s", addr, txid)
+
+
+def _lookup_lp_address(addr, txid):
+    """ Returns symbol for lp currency address """
+    if addr in localconfig.lp_currency_addresses:
+        return localconfig.lp_currency_addresses[addr]
+
+    init_msg = _query_wasm(addr)
+    logging.info("init_msg: %s, txid:%s", init_msg, txid)
+
+    if "init_hook" in init_msg:
+        address_for_pair = init_msg["init_hook"]["contract_addr"]
+        currency1, currency2 = _query_lp_address(address_for_pair, txid)
+    elif "staking_token" in init_msg:
+        staking_token = init_msg["staking_token"]
+        init_msg = _query_wasm(staking_token)
+        address_for_pair = init_msg["init_hook"]["contract_addr"]
+        currency1, currency2 = _query_lp_address(address_for_pair, txid)
+    elif "mint" in init_msg:
+        address_for_pair = init_msg["mint"]["minter"]
+        currency1, currency2 = _query_lp_address(address_for_pair, txid)
+    else:
+        raise Exception("Unable to determine lp currency for addr={}, txid={}".format(addr, txid))
+
+    if currency1 == "UST":
+        lp_currency = "LP_{}_UST".format(currency2)
+    elif currency2 == "UST":
+        lp_currency = "LP_{}_UST".format(currency1)
+    elif currency1 and currency2:
+        lp_currency = "LP_{}_{}".format(currency1, currency2)
+    else:
+        localconfig.currency_addresses[addr] = ""
+        raise Exception("Unable to determine lp currency for addr={}, txid={}".format(addr, txid))
+
+    localconfig.lp_currency_addresses[addr] = lp_currency
+    return lp_currency
+
+
+def _query_lp_address(addr, txid):
+    """ Queries lp currency address and returns [currency1, currency2] """
+    init_msg = _query_wasm(addr)
+    logging.info("init_msg: %s", init_msg)
+
+    if "asset_infos" in init_msg:
         out = [None, None]
 
         # Swap contract pair address
@@ -264,52 +315,10 @@ def _lookup_address(addr, txid):
         if out[0] is None or out[1] is None:
             raise Exception("Unable to determine swap pair", txid, init_msg)
 
-        localconfig.currency_addresses[addr] = out
         return out
-    elif "terraswap_factory" in init_msg:
-        localconfig.currency_addresses[addr] = [None, None]
-        return [None, None]
-
-    localconfig.currency_addresses[addr] = ""
-    raise Exception("Unable to determine currency/swap pair for addr=%s, txid=%s", addr, txid)
-
-
-def _lookup_lp_address(addr, txid):
-    if addr in localconfig.currency_addresses:
-        return localconfig.currency_addresses[addr]
-
-    init_msg = _query_wasm(addr)
-    logging.info("init_msg: %s", init_msg)
-
-    if "init_hook" in init_msg:
-        address_pair = init_msg["init_hook"]["contract_addr"]
-        currency1, currency2 = _lookup_address(address_pair, txid)
-    elif "staking_token" in init_msg:
-        staking_token = init_msg["staking_token"]
-        init_msg = _query_wasm(staking_token)
-        address_pair = init_msg["init_hook"]["contract_addr"]
-        currency1, currency2 = _lookup_address(address_pair, txid)
-    elif "mint" in init_msg:
-        address_pair = init_msg["mint"]["minter"]
-        currency1, currency2 = _lookup_address(address_pair, txid)
     else:
-        raise Exception("Unable to determine lp currency for addr={}, txid={}".format(addr, txid))
-
-    if currency1 == "UST":
-        lp_currency = "LP_{}_UST".format(currency2)
-        localconfig.currency_addresses[addr] = [lp_currency, None]
-        return [lp_currency, None]
-    elif currency2 == "UST":
-        lp_currency = "LP_{}_UST".format(currency1)
-        localconfig.currency_addresses[addr] = [lp_currency, None]
-        return [lp_currency, None]
-    elif currency1 and currency2:
-        lp_currency = "LP_{}_{}".format(currency1, currency2)
-        localconfig.currency_addresses[addr] = [lp_currency, None]
-        return [lp_currency, None]
-    else:
-        localconfig.currency_addresses[addr] = ""
-        raise Exception("Unable to determine lp currency for addr={}, txid={}".format(addr, txid))
+        localconfig.lp_currency_addresses[addr] = ""
+        raise Exception("Unable to determine currency/swap pair for addr=%s, txid=%s", addr, txid)
 
 
 def _query_wasm(addr):
