@@ -17,7 +17,7 @@ def handle_deposit_collateral(exporter, elem, txinfo):
     currency_address, amount = collateral[0], collateral[1]
     assert(len(collaterals) == 1)
 
-    sent_currency, _ = util_terra._lookup_address(currency_address, txid)
+    sent_currency = util_terra._lookup_address(currency_address, txid)
     sent_amount = util_terra._float_amount(amount, sent_currency)
 
     row = make_deposit_collateral_tx(txinfo, sent_amount, sent_currency)
@@ -37,7 +37,7 @@ def handle_withdraw_collateral(exporter, elem, txinfo):
     currency_address, amount = collateral[0], collateral[1]
     assert (len(collaterals) == 1)
 
-    received_currency, _ = util_terra._lookup_address(currency_address, txid)
+    received_currency = util_terra._lookup_address(currency_address, txid)
     received_amount = util_terra._float_amount(amount, received_currency)
 
     row = make_withdraw_collateral_tx(txinfo, received_amount, received_currency)

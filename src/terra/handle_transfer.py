@@ -46,7 +46,7 @@ def handle_transfer_contract(exporter, elem, txinfo):
         msg_value = elem["tx"]["value"]["msg"][0]["value"]
         contract = msg_value.get("contract")
         sender = msg_value.get("sender")
-        currency, _ = util_terra._lookup_address(contract, txid)
+        currency = util_terra._lookup_address(contract, txid)
 
         if sender == wallet_address:
             row = make_transfer_out_tx(txinfo, amount, currency, recipient)

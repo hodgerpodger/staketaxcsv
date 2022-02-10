@@ -111,9 +111,8 @@ def txhistory(wallet_address, job=None, options=None):
         localconfig.job = job
         localconfig.cache = True
     if localconfig.cache:
-        localconfig.currency_addresses = Cache().get_terra_currency_addresses()
-        localconfig.ibc_addresses = Cache().get_ibc_addresses()
-        logging.info("Loaded terra_currency_addresses and ibc_addresses from cache ...")
+        cache = Cache()
+        _cache_load(cache)
     if TERRA_FIGMENT_KEY:
         # Optional: Fetch count of transactions to estimate progress more accurately later
         num_txs = _num_txs(wallet_address)
@@ -131,9 +130,24 @@ def txhistory(wallet_address, job=None, options=None):
     ErrorCounter.log(TICKER_LUNA, wallet_address)
 
     if localconfig.cache:
-        Cache().set_terra_currency_addresses(localconfig.currency_addresses)
-        Cache().set_ibc_addresses(localconfig.ibc_addresses)
+        _cache_push(cache)
     return exporter
+
+
+def _cache_load(cache):
+    localconfig.ibc_addresses = cache.get_ibc_addresses()
+    localconfig.currency_addresses = cache.get_terra_currency_addresses()
+    localconfig.decimals = cache.get_terra_decimals()
+    localconfig.lp_currency_addresses = cache.get_terra_lp_currency_addresses()
+    logging.info("_cache_load(): downloaded data from cache ...")
+
+
+def _cache_push(cache):
+    cache.set_ibc_addresses(localconfig.ibc_addresses)
+    cache.set_terra_currency_addresses(localconfig.currency_addresses)
+    cache.set_terra_decimals(localconfig.decimals)
+    cache.set_terra_lp_currency_addresses(localconfig.lp_currency_addresses)
+    logging.info("_cache_push(): push data to cache")
 
 
 def _get_txs(wallet_address, progress):

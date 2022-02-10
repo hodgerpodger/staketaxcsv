@@ -56,7 +56,7 @@ def _handle_swap(txinfo, from_contract):
 def _handle_lp_stake(txinfo, from_contract):
     txid = txinfo.txid
 
-    lp_currency, _ = util_terra._lookup_lp_address(from_contract["lp_token"][0], txid)
+    lp_currency = util_terra._lookup_lp_address(from_contract["lp_token"][0], txid)
     lp_amount = util_terra._float_amount(from_contract["share"][0], lp_currency)
 
     row = make_lp_stake_tx(txinfo, lp_amount, lp_currency)
@@ -69,7 +69,7 @@ def _handle_lp_unstake(txinfo, from_contract):
     # Determine lp currency
     index = from_contract["action"].index("burn")
     lp_currency_address = from_contract["contract_address"][index]
-    lp_currency, _ = util_terra._lookup_lp_address(lp_currency_address, txid)
+    lp_currency = util_terra._lookup_lp_address(lp_currency_address, txid)
 
     # Determine lp amount
     lp_amount = util_terra._float_amount(from_contract["withdraw_lp_amount"][0], lp_currency)

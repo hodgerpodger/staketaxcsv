@@ -23,7 +23,7 @@ def handle_airdrop_pylon(exporter, elem, txinfo):
 
         if action == "transfer":
             # Extract amount/currency for transfer action
-            currency, _ = util_terra._lookup_address(contract_address, txid)
+            currency = util_terra._lookup_address(contract_address, txid)
             amount = util_terra._float_amount(amount_string, currency)
 
             row = make_airdrop_tx(txinfo, amount, currency, empty_fee=count > 0)
