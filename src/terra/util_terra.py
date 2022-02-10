@@ -230,7 +230,10 @@ def _decimals(currency):
 # https://github.com/terra-project/shuttle/blob/main/terra/src/config/TerraAssetInfos.ts
 # https://lcd.terra.dev/swagger-ui/#/Wasm/get_wasm_contracts__contractAddress_
 def _lookup_address(addr, txid):
-    """ Returns (currency, decimals) for currency address. """
+    """
+    Returns <currency_symbol>.
+    Updates cache for localconfig.currency_address, localconfig.decimals.
+    """
     if addr in localconfig.currency_addresses:
         return localconfig.currency_addresses[addr]
 
