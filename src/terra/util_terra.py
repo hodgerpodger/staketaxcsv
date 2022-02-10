@@ -8,7 +8,7 @@ import common.ibc_tokens
 from settings_csv import TICKER_LUNA
 from terra.api_lcd import LcdAPI
 from terra.config_terra import localconfig
-from terra.constants import CUR_ORION, IBC_TOKEN_NAMES, MILLION
+from terra.constants import CUR_ORION, IBC_TOKEN_NAMES
 
 
 def _contracts(elem):
@@ -147,19 +147,19 @@ def _extract_amounts(amount_string):
             uamount, partial_address = amount.split("terra")
             address = "terra{}".format(partial_address)
             currency, _ = _lookup_address(address, "")
-            out[currency] = float(uamount) / MILLION
+            out[currency] = _float_amount(uamount, currency)
         elif "ibc" in amount:
             # ibc token (i.e. "165ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B" for osmo)
             uamount, ibc_address = amount.split("ibc")
             ibc_address = "ibc" + ibc_address
 
             currency = common.ibc_tokens.get_symbol(localconfig, TICKER_LUNA, ibc_address)
-            out[currency] = float(uamount) / MILLION
+            out[currency] = _float_amount(uamount, currency)
         else:
             # regular (i.e. 99700703uusd)
             uamount, currency = amount.split("u", 1)
             currency = _currency(currency)
-            out[currency] = float(uamount) / MILLION
+            out[currency] = _float_amount(uamount, currency)
 
     return out
 
@@ -199,10 +199,7 @@ def _amount(amount_string):
 
 def _float_amount(amount_string, currency):
     # Example input: '50674299' , 'USD'
-    if currency == CUR_ORION:
-        return float(amount_string) / MILLION / 100
-    else:
-        return float(amount_string) / MILLION
+    return float(amount_string) / 10 ** _decimals(currency)
 
 
 def _currency(currency_string):
@@ -218,6 +215,15 @@ def _denom_to_currency(denom):
     currency = denom[1:]
     return _currency(currency)
 
+
+def _decimals(currency):
+    # default is 6 decimals
+    decimals = 6
+
+    if currency in localconfig.currency_addresses:
+      decimals, _ = localconfig.currency_addresses[currency]
+
+    return int(decimals)
 
 # https://github.com/terra-project/shuttle
 # https://github.com/terra-project/shuttle/blob/main/terra/src/config/TerraAssetInfos.ts
@@ -235,6 +241,7 @@ def _lookup_address(addr, txid):
         # Currency address
         currency = init_msg["symbol"]
         localconfig.currency_addresses[addr] = [currency, None]
+        localconfig.currency_addresses[currency] = [init_msg["decimals"], addr]
         logging.info("Found symbol=%s ", currency)
 
         return [currency, None]

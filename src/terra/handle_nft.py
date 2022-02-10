@@ -2,7 +2,6 @@ from common.ErrorCounter import ErrorCounter
 from common.ExporterTypes import TX_TYPE_NFT_WHITELIST
 from terra import util_terra
 from terra.api_lcd import LcdAPI
-from terra.constants import MILLION
 from terra.handle_simple import handle_simple, handle_unknown
 from terra.make_tx import (
     make_nft_buy_tx,
@@ -80,9 +79,9 @@ def _parse_asset(asset):
     elif "native_token" in info:
         denom = info["native_token"]["denom"]
         if denom.startswith("u"):
-            amount = float(amount_string) / MILLION
             currency = denom[1:]
             currency = currency.upper()
+            amount = util_terra._float_amount(amount_string, currency)
             return amount, currency
 
     raise Exception("_parse_asset(): Unable to handle asset {}".format(asset))
