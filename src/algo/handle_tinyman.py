@@ -100,7 +100,7 @@ def _handle_tinyman_redeem(group, exporter, txinfo):
     txinfo.fee = fee.amount
     txinfo.comment = "Tinyman"
 
-    row = make_airdrop_tx(txinfo, receive_asset.amount, receive_asset.ticker)
+    row = make_income_tx(txinfo, receive_asset.amount, receive_asset.ticker)
     exporter.ingest_row(row)
 
 
