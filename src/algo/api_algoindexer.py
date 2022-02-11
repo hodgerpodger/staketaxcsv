@@ -28,8 +28,12 @@ class AlgoIndexerAPI:
             return None
 
     @classmethod
-    def get_transactions(cls, address, next=None):
+    def get_transactions(cls, address, after_date=None, before_date=None, next=None):
         url = "{}/v2/accounts/{}/transactions?limit={}".format(ALGO_INDEXER_NODE, address, LIMIT_ALGOINDEXER)
+        if after_date:
+            url += "&after-time={}".format(after_date.isoformat())
+        if before_date:
+            url += "&before-time={}".format(before_date.isoformat())
         if next:
             url += "&next={}".format(next)
         data, status_code = cls._query(url)

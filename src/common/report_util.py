@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import logging
 import os
 
@@ -42,6 +43,16 @@ def parse_args(ticker):
         type=int,
         help="change to non-default max transactions limit",
     )
+    parser.add_argument(
+        "--after_date",
+        type=datetime.date.fromisoformat,
+        help="Include transactions after the given date",
+    )
+    parser.add_argument(
+        "--before_date",
+        type=datetime.date.fromisoformat,
+        help="Include transactions before the given date",
+    )
     if ticker == TICKER_LUNA:
         parser.add_argument(
             "--minor_rewards",
@@ -81,6 +92,10 @@ def parse_args(ticker):
         options["cache"] = True
     if args.limit:
         options["limit"] = args.limit
+    if args.after_date:
+        options["after_date"] = args.after_date
+    if args.before_date:
+        options["before_date"] = args.before_date
     if "minor_rewards" in args and args.minor_rewards:
         options["minor_rewards"] = True
     if "lp_transfers" in args and args.lp_transfers:
