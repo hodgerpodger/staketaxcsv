@@ -8,6 +8,10 @@ env/*
 src/_reports/*
 src/sol/data_staking_rewards/*.csv
 sample.env
+.env
 
 # pycharm
 .idea/*
+
+.DS_Store
+.vim

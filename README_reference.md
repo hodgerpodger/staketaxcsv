@@ -36,6 +36,17 @@ docker run --platform linux/amd64 -it --volume $PWD:/staketaxcsv staketaxcsv bas
 # See README usage section to run script(s)
 ```
 
+Alternatively using docker compose
+
+```
+# do this once and add any variables
+cp .env.sample .env
+
+docker-compose run staketaxcsv python3 report_terra.py <wallet_address>
+
+# See README usage section to run script(s)
+```
+
 # Ideal Configuration
 
 Default code was made to work out of the box. These are changes that require manual actions. They improve reliability

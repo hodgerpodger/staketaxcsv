@@ -116,6 +116,15 @@ TX_TYPE_OSMO_SET_WITHDRAW_ADDRESS = "_SET_WITHDRAW_ADDRESS"
 TX_TYPE_OSMO_SUBMIT_PROPOSAL = "_SUBMIT_PROPOSAL"
 TX_TYPE_OSMO_DEPOSIT = "_DEPOSIT"
 
+# ### HUAHUA ##########################################################################################
+
+TX_TYPE_HUAHUA_VOTE = "_VOTE"
+TX_TYPE_HUAHUA_WITHDRAW_DELEGATOR_REWARD = "_WITHDRAW_DELEGATOR_REWARD"
+TX_TYPE_HUAHUA_WITHDRAW_COMMISSION = "_WITHDRAW_COMMISSION"
+TX_TYPE_HUAHUA_SET_WITHDRAW_ADDRESS = "_SET_WITHDRAW_ADDRESS"
+TX_TYPE_HUAHUA_SUBMIT_PROPOSAL = "_SUBMIT_PROPOSAL"
+TX_TYPE_HUAHUA_DEPOSIT = "_DEPOSIT"
+
 ################################################################################################
 
 # Types included for all CSVs (i.e. koinly, cointracking, etc).

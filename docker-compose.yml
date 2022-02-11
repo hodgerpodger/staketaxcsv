@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  staketaxcsv:
+    build: .
+    env_file: .env
+    volumes:
+      - ./src:/staketaxcsv
