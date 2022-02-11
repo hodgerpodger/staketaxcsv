@@ -2,7 +2,7 @@ from algo import constants as co
 from algo.asset import Algo, Asset
 from algo.handle_unknown import handle_unknown
 from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW
-from common.make_tx import _make_tx_exchange, make_airdrop_tx, make_reward_tx, make_swap_tx
+from common.make_tx import _make_tx_exchange, make_income_tx, make_just_fee_tx, make_reward_tx, make_swap_tx
 
 
 def is_tinyman_transaction(group):
@@ -22,7 +22,6 @@ def is_tinyman_transaction(group):
 
 def handle_tinyman_transaction(group, exporter, txinfo):
     appl_args = group[1]["application-transaction"]["application-args"]
-    # Ignore slippage redeem transactions as they are taken into account in swaps already
     if co.TINYMAN_TRANSACTION_SWAP in appl_args:
         _handle_tinyman_swap(group, exporter, txinfo)
     elif co.TINYMAN_TRANSACTION_REDEEM in appl_args:
@@ -31,6 +30,8 @@ def handle_tinyman_transaction(group, exporter, txinfo):
         _handle_tinyman_lp_add(group, exporter, txinfo)
     elif co.TINYMAN_TRANSACTION_LP_REMOVE in appl_args:
         _handle_tinyman_lp_remove(group, exporter, txinfo)
+    else:
+        handle_unknown(exporter, txinfo)
 
 
 def _handle_tinyman_swap(group, exporter, txinfo):
@@ -48,6 +49,11 @@ def _handle_tinyman_swap(group, exporter, txinfo):
     send_transaction = group[2]
     fee_amount += send_transaction["fee"]
     send_asset = _get_transfer_asset(send_transaction)
+    # https://docs.tinyman.org/fees
+    swap_fee = send_asset * 0.003
+    send_asset -= swap_fee
+    row = make_just_fee_tx(txinfo, swap_fee.amount, swap_fee.ticker)
+    exporter.ingest_row(row)
 
     receive_transaction = group[3]
     fee_amount += receive_transaction["fee"]
@@ -94,7 +100,7 @@ def _handle_tinyman_redeem(group, exporter, txinfo):
     txinfo.fee = fee.amount
     txinfo.comment = "Tinyman"
 
-    row = make_airdrop_tx(txinfo, receive_asset.amount, receive_asset.ticker)
+    row = make_income_tx(txinfo, receive_asset.amount, receive_asset.ticker)
     exporter.ingest_row(row)
 
 

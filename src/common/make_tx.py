@@ -24,6 +24,10 @@ def make_airdrop_tx(txinfo, reward_amount, reward_currency, txid=None, empty_fee
     return _make_tx_received(txinfo, reward_amount, reward_currency, TX_TYPE_AIRDROP, txid, empty_fee=empty_fee)
 
 
+def make_income_tx(txinfo, income_amount, income_currency, txid=None, empty_fee=False):
+    return _make_tx_received(txinfo, income_amount, income_currency, TX_TYPE_INCOME, txid, empty_fee=empty_fee)
+
+
 def make_reward_tx(txinfo, reward_amount, reward_currency, txid=None, empty_fee=False, z_index=0):
     """ Staking reward transaction """
     return _make_tx_received(txinfo, reward_amount, reward_currency, TX_TYPE_STAKING, txid, empty_fee, z_index=z_index)

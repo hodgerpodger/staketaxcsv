@@ -12,7 +12,6 @@ import pprint
 
 import algo.processor
 from algo.api_algoindexer import LIMIT_ALGOINDEXER, AlgoIndexerAPI
-from algo.api_indexer import IndexerAPI
 from algo.config_algo import localconfig
 from algo.progress_algo import ProgressAlgo
 from common import report_util
@@ -53,7 +52,7 @@ def txone(wallet_address, txid_or_groupid):
     if data:
         elems = [data]
     else:
-        elems = IndexerAPI.get_transactions_by_group(txid_or_groupid)
+        elems = AlgoIndexerAPI.get_transactions_by_group(txid_or_groupid)
 
     print("\ndebug data:")
     pprint.pprint(elems)
