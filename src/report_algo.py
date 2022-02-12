@@ -38,6 +38,8 @@ def _read_options(options):
     if not options:
         return
     report_util.read_common_options(localconfig, options)
+    localconfig.after_date = options.get("after_date", None)
+    localconfig.before_date = options.get("before_date", None)
     logging.info("localconfig: %s", localconfig.__dict__)
 
 
@@ -105,7 +107,8 @@ def _get_txs(wallet_address, progress):
     next = None
     out = []
     for i in range(_max_queries()):
-        transactions, next = AlgoIndexerAPI.get_transactions(wallet_address, next)
+        transactions, next = AlgoIndexerAPI.get_transactions(
+            wallet_address, localconfig.after_date, localconfig.before_date, next)
         out.extend(transactions)
 
         if not next:
