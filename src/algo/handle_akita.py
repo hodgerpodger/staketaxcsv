@@ -2,13 +2,14 @@ from algo import constants as co
 from algo.asset import Algo, Asset
 from common.make_tx import make_reward_tx, make_swap_tx
 
+
 def is_akita_swap_transaction(group):
     if len(group) != 3:
         return False
 
     if (group[0]["tx-type"] != "axfer" or
-        group[1]["tx-type"] != "axfer" or
-        group[2]["tx-type"] != "appl"):
+            group[1]["tx-type"] != "axfer" or
+            group[2]["tx-type"] != "appl"):
         return False
 
     app_transaction = group[2]
@@ -23,6 +24,7 @@ def is_akita_swap_transaction(group):
         return False
 
     return True
+
 
 def handle_akita_swap_transaction(group, exporter, txinfo):
     optin_transaction = group[0]
