@@ -45,10 +45,9 @@ def _handle_yieldly_nll(group, exporter, txinfo):
     asset_transaction = group[2]
     transfer_details = asset_transaction["asset-transfer-transaction"]
     reward = Asset(transfer_details["asset-id"], transfer_details["amount"])
-    fee_amount += asset_transaction["fee"]
 
     fee_transaction = group[3]
-    fee_amount = fee_transaction["fee"] + fee_transaction["payment-transaction"]["amount"]
+    fee_amount += fee_transaction["fee"] + fee_transaction["payment-transaction"]["amount"]
 
     fee = Algo(fee_amount)
     txinfo.fee = fee.amount
@@ -72,12 +71,10 @@ def _handle_yieldly_algo_pool_claim(group, exporter, txinfo):
     axfer_transaction = group[3]
     transfer_details = axfer_transaction["asset-transfer-transaction"]
     yldy_reward = Asset(transfer_details["asset-id"], transfer_details["amount"])
-    fee_amount += axfer_transaction["fee"]
 
     pay_transaction = group[4]
     transfer_details = pay_transaction["payment-transaction"]
     algo_reward = Algo(transfer_details["amount"])
-    fee_amount += pay_transaction["fee"]
 
     fee_transaction = group[5]
     fee_amount = fee_transaction["fee"] + fee_transaction["payment-transaction"]["amount"]
@@ -110,7 +107,6 @@ def _handle_yieldly_asa_pool_claim(group, exporter, txinfo):
     asset_transaction = group[2]
     transfer_details = asset_transaction["asset-transfer-transaction"]
     reward = Asset(transfer_details["asset-id"], transfer_details["amount"])
-    fee_amount += asset_transaction["fee"]
 
     fee = Algo(fee_amount)
     txinfo.fee = fee.amount

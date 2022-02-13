@@ -43,9 +43,6 @@ def _handle_tinyman_swap(group, exporter, txinfo):
         row = make_reward_tx(txinfo, reward, reward.ticker)
         exporter.ingest_row(row)
 
-    appl_transaction = group[1]
-    fee_amount += appl_transaction["fee"]
-
     send_transaction = group[2]
     fee_amount += send_transaction["fee"]
     send_asset = _get_transfer_asset(send_transaction)
@@ -56,7 +53,6 @@ def _handle_tinyman_swap(group, exporter, txinfo):
     exporter.ingest_row(row)
 
     receive_transaction = group[3]
-    fee_amount += receive_transaction["fee"]
     receive_asset = _get_transfer_asset(receive_transaction)
 
     fee = Algo(fee_amount)
@@ -89,11 +85,7 @@ def _handle_tinyman_redeem(group, exporter, txinfo):
         row = make_reward_tx(txinfo, reward, reward.ticker)
         exporter.ingest_row(row)
 
-    appl_transaction = group[1]
-    fee_amount += appl_transaction["fee"]
-
     receive_transaction = group[2]
-    fee_amount += receive_transaction["fee"]
     receive_asset = _get_transfer_asset(receive_transaction)
 
     fee = Algo(fee_amount)
@@ -113,9 +105,6 @@ def _handle_tinyman_lp_add(group, exporter, txinfo):
         row = make_reward_tx(txinfo, reward, reward.ticker)
         exporter.ingest_row(row)
 
-    appl_transaction = group[1]
-    fee_amount += appl_transaction["fee"]
-
     send_transaction = group[2]
     fee_amount += send_transaction["fee"]
     send_asset_1 = _get_transfer_asset(send_transaction)
@@ -125,7 +114,6 @@ def _handle_tinyman_lp_add(group, exporter, txinfo):
     send_asset_2 = _get_transfer_asset(send_transaction)
 
     receive_transaction = group[4]
-    fee_amount += receive_transaction["fee"]
     lp_asset = _get_transfer_asset(receive_transaction)
 
     fee = Algo(fee_amount / 2)
@@ -152,19 +140,14 @@ def _handle_tinyman_lp_remove(group, exporter, txinfo):
         row = make_reward_tx(txinfo, reward, reward.ticker)
         exporter.ingest_row(row)
 
-    appl_transaction = group[1]
-    fee_amount += appl_transaction["fee"]
-
     receive_transaction = group[2]
-    fee_amount += receive_transaction["fee"]
     receive_asset_1 = _get_transfer_asset(receive_transaction)
 
     receive_transaction = group[3]
-    fee_amount += receive_transaction["fee"]
     receive_asset_2 = _get_transfer_asset(receive_transaction)
 
     send_transaction = group[4]
-    fee_amount += receive_transaction["fee"]
+    fee_amount += send_transaction["fee"]
     lp_asset = _get_transfer_asset(send_transaction)
 
     fee = Algo(fee_amount / 2)
