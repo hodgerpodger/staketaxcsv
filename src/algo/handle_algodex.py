@@ -39,7 +39,7 @@ def is_algodex_transaction(wallet_address, group):
     transaction = group[0]
     txtype = transaction["tx-type"]
     if txtype == co.TRANSACTION_TYPE_APP_CALL:
-        app_id = transaction["application-transaction"]["application-id"]
+        app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
         if app_id != APPLICATION_ID_ALGODEX_BUY and app_id != APPLICATION_ID_ALGODEX_SELL:
             return False
 
@@ -85,9 +85,9 @@ def handle_algodex_transaction(group, exporter, txinfo):
 # AlgoDex whitepaper: Diagram 7
 def _handle_algodex_partial_buy(group, exporter, txinfo, order):
     receive_transaction = group[1]
-    receive_amount = receive_transaction["asset-transfer-transaction"]["amount"]
+    receive_amount = receive_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"]
     receive_asset = Asset(
-        receive_transaction["asset-transfer-transaction"]["asset-id"],
+        receive_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"],
         receive_amount)
 
     send_amount = receive_amount * order["price"]
@@ -103,7 +103,7 @@ def _handle_algodex_partial_buy(group, exporter, txinfo, order):
 def _handle_algodex_partial_sell(group, exporter, txinfo):
     send_transaction = group[1]
     fee_amount = send_transaction["fee"]
-    send_asset = Algo(send_transaction["payment-transaction"]["amount"])
+    send_asset = Algo(send_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"])
 
     receive_transaction = group[2]
     receive_asset = Asset(
@@ -111,7 +111,7 @@ def _handle_algodex_partial_sell(group, exporter, txinfo):
         receive_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"])
 
     fee_transaction = group[3]
-    fee_amount += fee_transaction["payment-transaction"]["amount"] + fee_transaction["fee"]
+    fee_amount += fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
 
     fee = Algo(fee_amount)
     txinfo.fee = fee.amount
@@ -124,9 +124,9 @@ def _handle_algodex_partial_sell(group, exporter, txinfo):
 # AlgoDex whitepaper: Diagram 6
 def _handle_algodex_full_buy(group, exporter, txinfo, order):
     receive_transaction = group[2]
-    receive_amount = receive_transaction["asset-transfer-transaction"]["amount"]
+    receive_amount = receive_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"]
     receive_asset = Asset(
-        receive_transaction["asset-transfer-transaction"]["asset-id"],
+        receive_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"],
         receive_amount)
 
     send_amount = receive_amount * order["price"]
@@ -142,7 +142,7 @@ def _handle_algodex_full_buy(group, exporter, txinfo, order):
 def _handle_algodex_full_sell(group, exporter, txinfo):
     send_transaction = group[1]
     fee_amount = send_transaction["fee"]
-    send_asset = Algo(send_transaction["payment-transaction"]["amount"])
+    send_asset = Algo(send_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"])
 
     receive_transaction = group[2]
     receive_asset = Asset(

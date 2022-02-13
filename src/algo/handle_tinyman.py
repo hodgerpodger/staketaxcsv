@@ -4,6 +4,14 @@ from algo.handle_unknown import handle_unknown
 from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW
 from common.make_tx import _make_tx_exchange, make_income_tx, make_just_fee_tx, make_reward_tx, make_swap_tx
 
+APPLICATION_ID_TINYMAN_v10 = 350338509
+APPLICATION_ID_TINYMAN_v11 = 552635992
+
+TINYMAN_TRANSACTION_SWAP = "c3dhcA=="           # "swap"
+TINYMAN_TRANSACTION_REDEEM = "cmVkZWVt"         # "redeem"
+TINYMAN_TRANSACTION_LP_ADD = "bWludA=="         # "mint"
+TINYMAN_TRANSACTION_LP_REMOVE = "YnVybg=="      # "burn"
+
 
 def is_tinyman_transaction(group):
     length = len(group)
@@ -13,22 +21,22 @@ def is_tinyman_transaction(group):
     if group[1]["tx-type"] != "appl":
         return False
 
-    app_id = group[1]["application-transaction"]["application-id"]
-    if (app_id != co.APPLICATION_ID_TINYMAN_v10 and app_id != co.APPLICATION_ID_TINYMAN_v11):
+    app_id = group[1][co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    if (app_id != APPLICATION_ID_TINYMAN_v10 and app_id != APPLICATION_ID_TINYMAN_v11):
         return False
 
     return True
 
 
 def handle_tinyman_transaction(group, exporter, txinfo):
-    appl_args = group[1]["application-transaction"]["application-args"]
-    if co.TINYMAN_TRANSACTION_SWAP in appl_args:
+    appl_args = group[1][co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if TINYMAN_TRANSACTION_SWAP in appl_args:
         _handle_tinyman_swap(group, exporter, txinfo)
-    elif co.TINYMAN_TRANSACTION_REDEEM in appl_args:
+    elif TINYMAN_TRANSACTION_REDEEM in appl_args:
         _handle_tinyman_redeem(group, exporter, txinfo)
-    elif co.TINYMAN_TRANSACTION_LP_ADD in appl_args:
+    elif TINYMAN_TRANSACTION_LP_ADD in appl_args:
         _handle_tinyman_lp_add(group, exporter, txinfo)
-    elif co.TINYMAN_TRANSACTION_LP_REMOVE in appl_args:
+    elif TINYMAN_TRANSACTION_LP_REMOVE in appl_args:
         _handle_tinyman_lp_remove(group, exporter, txinfo)
     else:
         handle_unknown(exporter, txinfo)
@@ -36,7 +44,7 @@ def handle_tinyman_transaction(group, exporter, txinfo):
 
 def _handle_tinyman_swap(group, exporter, txinfo):
     fee_transaction = group[0]
-    fee_amount = fee_transaction["payment-transaction"]["amount"] + fee_transaction["fee"]
+    fee_amount = fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
 
     reward = Algo(fee_transaction["sender-rewards"])
     if not reward.zero():
@@ -68,17 +76,17 @@ def _get_transfer_asset(transaction):
     asset_id = 0
     txtype = transaction["tx-type"]
     if txtype == "pay":
-        amount = transaction["payment-transaction"]["amount"]
+        amount = transaction[co.TRANSACTION_KEY_PAYMENT]["amount"]
     elif txtype == "axfer":
-        amount = transaction["asset-transfer-transaction"]["amount"]
-        asset_id = transaction["asset-transfer-transaction"]["asset-id"]
+        amount = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"]
+        asset_id = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
 
     return Asset(asset_id, amount)
 
 
 def _handle_tinyman_redeem(group, exporter, txinfo):
     fee_transaction = group[0]
-    fee_amount = fee_transaction["payment-transaction"]["amount"] + fee_transaction["fee"]
+    fee_amount = fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
 
     reward = Algo(fee_transaction["sender-rewards"])
     if not reward.zero():
@@ -98,7 +106,7 @@ def _handle_tinyman_redeem(group, exporter, txinfo):
 
 def _handle_tinyman_lp_add(group, exporter, txinfo):
     fee_transaction = group[0]
-    fee_amount = fee_transaction["payment-transaction"]["amount"] + fee_transaction["fee"]
+    fee_amount = fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
 
     reward = Algo(fee_transaction["sender-rewards"])
     if not reward.zero():
@@ -133,7 +141,7 @@ def _handle_tinyman_lp_add(group, exporter, txinfo):
 
 def _handle_tinyman_lp_remove(group, exporter, txinfo):
     fee_transaction = group[0]
-    fee_amount = fee_transaction["payment-transaction"]["amount"] + fee_transaction["fee"]
+    fee_amount = fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
 
     reward = Algo(fee_transaction["sender-rewards"])
     if not reward.zero():

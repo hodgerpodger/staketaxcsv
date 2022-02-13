@@ -4,6 +4,7 @@
 # https://github.com/algorand/go-algorand
 import base64
 
+from algo import constants as co
 from algo.asset import Algo, Asset
 from common.make_tx import make_reward_tx, make_transfer_in_tx, make_transfer_out_tx
 
@@ -16,7 +17,7 @@ def is_governance_reward_transaction(wallet_address, group):
     if transaction["tx-type"] != "pay":
         return False
 
-    if transaction["payment-transaction"]["receiver"] != wallet_address:
+    if transaction[co.TRANSACTION_KEY_PAYMENT]["receiver"] != wallet_address:
         return False
 
     if "note" not in transaction:
@@ -31,7 +32,7 @@ def is_governance_reward_transaction(wallet_address, group):
 
 def handle_governance_reward_transaction(group, exporter, txinfo):
     transaction = group[0]
-    payment_details = transaction["payment-transaction"]
+    payment_details = transaction[co.TRANSACTION_KEY_PAYMENT]
 
     reward = Algo(payment_details["amount"] + transaction["receiver-rewards"])
     txinfo.txid = transaction["id"]
@@ -41,14 +42,14 @@ def handle_governance_reward_transaction(group, exporter, txinfo):
 
 
 def handle_payment_transaction(wallet_address, transaction, exporter, txinfo):
-    payment_details = transaction["payment-transaction"]
+    payment_details = transaction[co.TRANSACTION_KEY_PAYMENT]
     asset_id = 0
 
     _handle_transfer(wallet_address, transaction, payment_details, exporter, txinfo, asset_id)
 
 
 def handle_asa_transaction(wallet_address, transaction, exporter, txinfo):
-    transfer_details = transaction["asset-transfer-transaction"]
+    transfer_details = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]
     asset_id = transfer_details["asset-id"]
 
     _handle_transfer(wallet_address, transaction, transfer_details, exporter, txinfo, asset_id)

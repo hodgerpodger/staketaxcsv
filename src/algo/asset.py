@@ -62,6 +62,26 @@ known_assets = {
         "unit-name": "TMPOOL11",
         "decimals": 6,
     },
+    523683256: {
+        "name": "AKITA INU",
+        "unit-name": "AKTA",
+        "decimals": 6,
+    },
+    470842789: {
+        "name": "Defly Token",
+        "unit-name": "DEFLY",
+        "decimals": 6,
+    },
+    378382099: {
+        "name": "Tinychart Token",
+        "unit-name": "TINY",
+        "decimals": 4,
+    },
+    137594422: {
+        "name": "HEADLINE",
+        "unit-name": "HDL",
+        "decimals": 6,
+    },
 }
 
 

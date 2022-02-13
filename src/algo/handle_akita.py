@@ -2,19 +2,21 @@ from algo import constants as co
 from algo.asset import Algo, Asset
 from common.make_tx import make_reward_tx, make_swap_tx
 
+APPLICATION_ID_AKITA_SWAP = 537279393
+
 
 def is_akita_swap_transaction(group):
     if len(group) != 3:
         return False
 
-    if (group[0]["tx-type"] != "axfer" or
-            group[1]["tx-type"] != "axfer" or
-            group[2]["tx-type"] != "appl"):
+    if (group[0]["tx-type"] != "axfer"
+            or group[1]["tx-type"] != "axfer"
+            or group[2]["tx-type"] != "appl"):
         return False
 
     app_transaction = group[2]
-    app_id = app_transaction["application-transaction"]["application-id"]
-    if app_id != co.APPLICATION_ID_AKITA_SWAP:
+    app_id = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    if app_id != APPLICATION_ID_AKITA_SWAP:
         return False
 
     if "inner-txns" not in app_transaction:
@@ -37,15 +39,15 @@ def handle_akita_swap_transaction(group, exporter, txinfo):
 
     send_transaction = group[1]
     fee_amount += send_transaction["fee"]
-    asset_id = send_transaction["asset-transfer-transaction"]["asset-id"]
-    amount = send_transaction["asset-transfer-transaction"]["amount"]
+    asset_id = send_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
+    amount = send_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"]
     send_asset = Asset(asset_id, amount)
 
     app_transaction = group[2]
     fee_amount += app_transaction["fee"]
     receive_transaction = app_transaction["inner-txns"][0]
-    asset_id = receive_transaction["asset-transfer-transaction"]["asset-id"]
-    amount = receive_transaction["asset-transfer-transaction"]["amount"]
+    asset_id = receive_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
+    amount = receive_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"]
     receive_asset = Asset(asset_id, amount)
 
     fee = Algo(fee_amount)
