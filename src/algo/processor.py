@@ -6,6 +6,7 @@ from algo import constants as co
 from algo.asset import Algo
 from algo.config_algo import localconfig
 from algo.handle_akita import handle_akita_swap_transaction, is_akita_swap_transaction
+from algo.handle_algodex import handle_algodex_transaction, is_algodex_transaction
 from algo.handle_tinyman import handle_tinyman_transaction, is_tinyman_transaction
 from algo.handle_transfer import (
     handle_asa_transaction,
@@ -101,6 +102,8 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
         handle_tinyman_transaction(group, exporter, txinfo)
     elif is_yieldly_transaction(group):
         handle_yieldly_transaction(group, exporter, txinfo)
+    elif is_algodex_transaction(wallet_address, group):
+        handle_algodex_transaction(group, exporter, txinfo)
     elif is_akita_swap_transaction(group):
         handle_akita_swap_transaction(group, exporter, txinfo)
     else:
