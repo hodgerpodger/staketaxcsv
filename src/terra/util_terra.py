@@ -68,8 +68,7 @@ def _transfers(elem, wallet_address, txid, multicurrency=False):
         return _transfers_columbus_3(elem, wallet_address, txid, multicurrency)
 
     for log_index, log in enumerate(elem["logs"]):
-        events = elem["logs"][log_index]["events"]
-
+        events = elem["logs"][log_index].get("events", [])
         for event in events:
             if event["type"] == "transfer":
                 attributes = event["attributes"]

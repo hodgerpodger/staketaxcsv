@@ -275,7 +275,7 @@ def _get_fee(elem):
     amounts = elem["tx"]["value"]["fee"]["amount"]
 
     # Handle special case for old transaction (16421CD60E56DA4F859088B7CA87BCF05A3B3C3F56CD4C0B2528EE0A797CC22D)
-    if len(amounts) == 0:
+    if amounts is None or len(amounts) == 0:
         return 0, "", []
 
     # Parse fee element
