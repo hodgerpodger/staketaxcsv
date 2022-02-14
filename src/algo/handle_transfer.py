@@ -8,6 +8,9 @@ from algo import constants as co
 from algo.asset import Algo, Asset
 from common.make_tx import make_reward_tx, make_transfer_in_tx, make_transfer_out_tx
 
+# Algostake escrow wallet: https://algostake.org/litepaper
+ADDRESS_ALGOSTAKE_ESCROW = "4ZK3UPFRJ643ETWSWZ4YJXH3LQTL2FUEI6CIT7HEOVZL6JOECVRMPP34CY"
+
 
 def is_governance_reward_transaction(wallet_address, group):
     if len(group) != 1:
@@ -78,7 +81,12 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
             rewards_amount += transaction["sender-rewards"]
         amount = Asset(asset_id, receive_amount - send_amount)
         if not amount.zero():
-            row = make_transfer_in_tx(txinfo, amount, amount.ticker)
+            row = None
+            if txsender == ADDRESS_ALGOSTAKE_ESCROW:
+                row = make_reward_tx(txinfo, amount, amount.ticker)
+                row.comment = "Algostake"
+            else:
+                row = make_transfer_in_tx(txinfo, amount, amount.ticker)
             exporter.ingest_row(row)
     else:
         rewards_amount += transaction["sender-rewards"]
