@@ -4,6 +4,7 @@ from common.ExporterTypes import (
     TX_TYPE_DEPOSIT_COLLATERAL,
     TX_TYPE_GOV_STAKE,
     TX_TYPE_GOV_UNSTAKE,
+    TX_TYPE_LIQUIDATE_COLLATERAL,
     TX_TYPE_LP_DEPOSIT,
     TX_TYPE_LP_STAKE,
     TX_TYPE_LP_UNSTAKE,
@@ -12,6 +13,8 @@ from common.ExporterTypes import (
     TX_TYPE_NFT_MINT,
     TX_TYPE_NFT_OFFER_SELL,
     TX_TYPE_NFT_WITHDRAW,
+    TX_TYPE_RETRACT_BID,
+    TX_TYPE_SUBMIT_BID,
     TX_TYPE_TRADE,
     TX_TYPE_TRANSFER,
     TX_TYPE_UNBOND,
@@ -84,6 +87,19 @@ def make_auction_tx(txinfo, sent_amount, sent_currency, received_amount, receive
                        txid=None, empty_fee=False):
     return _make_tx_exchange(
         txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_AUCTION)
+
+def make_liquidate_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
+                       txid=None, empty_fee=False):
+    return _make_tx_exchange(
+        txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_LIQUIDATE_COLLATERAL)
+
+def make_retract_bid_tx(txinfo, bid_amount, bid_currency):
+    return _make_tx_received(txinfo, bid_amount, bid_currency, TX_TYPE_RETRACT_BID)
+    return row
+
+def make_submit_bid_tx(txinfo, bid_amount, bid_currency):
+    return _make_tx_sent(txinfo, bid_amount, bid_currency, TX_TYPE_SUBMIT_BID)
+    return row
 
 def make_gov_stake_tx(txinfo, sent_amount, sent_currency):
     row = _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_GOV_STAKE)

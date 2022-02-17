@@ -62,6 +62,9 @@ EXECUTE_TYPE_ZAP_OUT_OF_STRATEGY = "zap_out_of_strategy"
 EXECUTE_TYPE_DEPOSIT_TOKENS = "deposit_tokens"
 EXECUTE_TYPE_SUBMIT_VAA = "submit_vaa"
 EXECUTE_TYPE_AUCTION = "auction"
+EXECUTE_TYPE_LIQUIDATE_COLLATERAL = "liquidate"
+EXECUTE_TYPE_SUBMIT_BID = "submit_bid"
+EXECUTE_TYPE_RETRACT_BID = "retract_bid"
 
 
 def _execute_type(elem, txinfo, index=0):
@@ -71,6 +74,7 @@ def _execute_type(elem, txinfo, index=0):
     if "send" in execute_msg:
         send = execute_msg["send"]
         msg = send.get("msg", None)
+
         if type(msg) == str:
             msg = json.loads(base64.b64decode(msg))
 
@@ -101,6 +105,8 @@ def _execute_type(elem, txinfo, index=0):
                 return EXECUTE_TYPE_DEPOSIT_STRATEGY_ID_IN_MSG
             if "auction" in msg:
                 return EXECUTE_TYPE_AUCTION
+            if "stake" in msg:
+                return EXECUTE_TYPE_BOND_IN_MSG
 
     elif "claim" in execute_msg:
         return EXECUTE_TYPE_CLAIM
@@ -190,6 +196,12 @@ def _execute_type(elem, txinfo, index=0):
         return EXECUTE_TYPE_DEPOSIT_TOKENS
     elif "submit_vaa" in execute_msg:
         return EXECUTE_TYPE_SUBMIT_VAA
+    elif "liquidate_collateral" in execute_msg:
+        return EXECUTE_TYPE_LIQUIDATE_COLLATERAL
+    elif "submit_bid" in execute_msg:
+        return EXECUTE_TYPE_SUBMIT_BID
+    elif "retract_bid" in execute_msg:
+        return EXECUTE_TYPE_RETRACT_BID
 
     logging.error("Unable to determine execute type for txid=%s", txid, extra={
         "txid": txid,
