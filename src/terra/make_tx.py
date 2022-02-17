@@ -105,6 +105,9 @@ def make_gov_stake_tx(txinfo, sent_amount, sent_currency):
     row = _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_GOV_STAKE)
     return row
 
+def make_burn_collateral_tx(txinfo, sent_amount, sent_currency):
+    row = _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_UNBOND)
+    return row
 
 def make_gov_unstake_tx(txinfo, received_amount, received_currency):
     txinfo.comment += "Need manual stake rewards calculation for {}.".format(received_currency)

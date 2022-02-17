@@ -9,7 +9,7 @@ from common.TxInfo import TxInfo
 from terra import util_terra
 from terra.config_terra import localconfig
 from terra.constants import CONTRACT_RANDOMEARTH, CONTRACTS_LOTA, EXCHANGE_TERRA_BLOCKCHAIN
-from terra.handle_anchor_bond import handle_bond, handle_unbond, handle_unbond_withdraw
+from terra.handle_anchor_bond import handle_bond, handle_unbond, handle_unbond_withdraw, handle_burn_collateral
 from terra.handle_anchor_borrow import (
     handle_borrow,
     handle_deposit_collateral,
@@ -191,6 +191,8 @@ def process_tx(wallet_address, elem, exporter):
                 return handle_unbond(exporter, elem, txinfo)
             elif execute_type == ex.EXECUTE_TYPE_WITHDRAW_UNBONDED:
                 return handle_unbond_withdraw(exporter, elem, txinfo)
+            elif execute_type == ex.EXECUTE_TYPE_BURN_COLLATERAL:
+                return handle_burn_collateral(exporter, elem, txinfo)
 
             # Mirror Borrow Transactions
             elif execute_type in [ex.EXECUTE_TYPE_OPEN_POSITION, ex.EXECUTE_TYPE_OPEN_POSITION_IN_MSG]:

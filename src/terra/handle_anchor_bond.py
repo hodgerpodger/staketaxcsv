@@ -2,7 +2,7 @@ from common.ErrorCounter import ErrorCounter
 from common.make_tx import make_unknown_tx
 from terra import util_terra
 from terra.constants import CUR_BLUNA, CUR_LUNA
-from terra.make_tx import make_swap_tx_terra, make_unbond_tx
+from terra.make_tx import make_swap_tx_terra, make_unbond_tx, make_burn_collateral_tx
 
 
 def handle_bond(exporter, elem, txinfo):
@@ -45,4 +45,15 @@ def handle_unbond_withdraw(exporter, elem, txinfo):
     assert(received_currency == CUR_LUNA)
 
     row = make_swap_tx_terra(txinfo, sent_amount, sent_currency, received_amount, received_currency)
+    exporter.ingest_row(row)
+
+def handle_burn_collateral(exporter, elem, txinfo):
+    txid = txinfo.txid
+    wallet_address = txinfo.wallet_address
+
+    burn_amount = elem["logs"][0]["events_by_type"]["from_contract"]["amount"][0]
+    burn_currency_address = elem["logs"][0]["events_by_type"]["from_contract"]["contract_address"][0]
+    burn_currency = util_terra._asset_to_currency(burn_currency_address, txid)
+
+    row = make_burn_collateral_tx(txinfo, burn_amount, burn_currency)
     exporter.ingest_row(row)

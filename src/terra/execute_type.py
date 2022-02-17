@@ -65,7 +65,7 @@ EXECUTE_TYPE_AUCTION = "auction"
 EXECUTE_TYPE_LIQUIDATE_COLLATERAL = "liquidate"
 EXECUTE_TYPE_SUBMIT_BID = "submit_bid"
 EXECUTE_TYPE_RETRACT_BID = "retract_bid"
-
+EXECUTE_TYPE_BURN_COLLATERAL = "burn_collateral"
 
 def _execute_type(elem, txinfo, index=0):
     txid = txinfo.txid
@@ -206,6 +206,8 @@ def _execute_type(elem, txinfo, index=0):
         return EXECUTE_TYPE_RETRACT_BID
     elif "unstake_governance_token" in execute_msg:
         return EXECUTE_TYPE_WITHDRAW_VOTING_TOKENS
+    elif "burn" in execute_msg:
+        return EXECUTE_TYPE_BURN_COLLATERAL
 
     logging.error("Unable to determine execute type for txid=%s", txid, extra={
         "txid": txid,
