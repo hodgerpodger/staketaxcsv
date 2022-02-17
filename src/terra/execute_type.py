@@ -61,6 +61,7 @@ EXECUTE_TYPE_ZAP_INTO_STRATEGY = "zap_into_strategy"
 EXECUTE_TYPE_ZAP_OUT_OF_STRATEGY = "zap_out_of_strategy"
 EXECUTE_TYPE_DEPOSIT_TOKENS = "deposit_tokens"
 EXECUTE_TYPE_SUBMIT_VAA = "submit_vaa"
+EXECUTE_TYPE_AUCTION = "auction"
 
 
 def _execute_type(elem, txinfo, index=0):
@@ -98,6 +99,8 @@ def _execute_type(elem, txinfo, index=0):
                 return EXECUTE_TYPE_DEPOSIT_IDX_IN_MSG
             if "deposit" in msg and "strategy_id" in msg["deposit"]:
                 return EXECUTE_TYPE_DEPOSIT_STRATEGY_ID_IN_MSG
+            if "auction" in msg:
+                return EXECUTE_TYPE_AUCTION
 
     elif "claim" in execute_msg:
         return EXECUTE_TYPE_CLAIM

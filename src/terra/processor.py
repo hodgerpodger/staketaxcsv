@@ -30,7 +30,7 @@ from terra.handle_lp import (
     handle_lp_withdraw,
     handle_lp_withdraw_idx,
 )
-from terra.handle_mirror_borrow import handle_deposit_borrow, handle_repay_withdraw
+from terra.handle_mirror_borrow import handle_deposit_borrow, handle_repay_withdraw, handle_auction
 from terra.handle_nft import (
     handle_accept_deposit,
     handle_add_to_deposit,
@@ -182,6 +182,8 @@ def process_tx(wallet_address, elem, exporter):
                 return handle_deposit_borrow(exporter, elem, txinfo)
             elif execute_type == ex.EXECUTE_TYPE_BURN:
                 return handle_repay_withdraw(exporter, elem, txinfo)
+            elif execute_type == ex.EXECUTE_TYPE_AUCTION:
+                return handle_auction(exporter, elem, txinfo)
 
             # Mirror LP transactions
             elif execute_type == ex.EXECUTE_TYPE_PROVIDE_LIQUIDITY:
