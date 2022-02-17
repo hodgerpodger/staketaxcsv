@@ -8,8 +8,11 @@ from terra.make_tx import (
 )
 
 def handle_liquidate(exporter, elem, txinfo):
-    # Extract repay amount
+    wallet_address = txinfo.wallet_address
+    txid = txinfo.txid
     from_contract = elem["logs"][0]["events_by_type"]["from_contract"]
+
+    # Extract repay amount
     repay_amount_string = from_contract["repay_amount"][1]
     repay_currency_string = from_contract["stable_denom"][0]
     repay_amount, repay_currency = util_terra._amount(repay_amount_string + repay_currency_string)
@@ -19,7 +22,11 @@ def handle_liquidate(exporter, elem, txinfo):
     collateral_currency_string = from_contract["collateral_token"][0]
     collateral_amount, collateral_currency = util_terra._amount(collateral_amount_string + collateral_currency_string)
 
-    row = make_liquidate_tx(txinfo, repay_amount, repay_currency, collateral_amount, collateral_currency)
+    if wallet_address in from_contract["liquidator"]:
+        row = make_liquidate_tx(txinfo, repay_amount, repay_currency, collateral_amount, collateral_currency)
+    else:
+        row = make_liquidate_tx(txinfo, collateral_amount, collateral_currency, repay_amount, repay_currency)
+    
     exporter.ingest_row(row)
 
 def handle_submit_bid(exporter, elem, txinfo):
