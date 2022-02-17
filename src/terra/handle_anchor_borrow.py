@@ -51,16 +51,17 @@ def handle_borrow(exporter, elem, txinfo):
     txid = txinfo.txid
 
     # Extract borrow amount
-    from_contract = elem["logs"][0]["events_by_type"]["from_contract"]
-    borrow_amount = float(from_contract["borrow_amount"][0]) / MILLION
-    row = make_borrow_tx(txinfo, borrow_amount, CUR_UST)
+    wallet_address = txinfo.wallet_address
+    transfers_in, _ = util_terra._transfers(elem, wallet_address, txid)
+    borrow_amount, borrow_currency = transfers_in[0]
+    row = make_borrow_tx(txinfo, borrow_amount, borrow_currency)
 
     # Extract fee, if any, paid by anchor market contract to fee collector
     fee_collector_address = "terra17xpfvakm2amg962yls6f84z3kell8c5lkaeqfa"
-    transfers_in, _ = util_terra._transfers(elem, fee_collector_address, txid)
+    fee_transfers_in, _ = util_terra._transfers(elem, fee_collector_address, txid)  
 
-    if len(transfers_in) > 0:
-      fee_amount, fee_currency = transfers_in[0]
+    if len(fee_transfers_in) > 0:
+      fee_amount, fee_currency = fee_transfers_in[0]
       row.fee += fee_amount
 
     exporter.ingest_row(row)
