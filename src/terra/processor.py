@@ -54,7 +54,7 @@ from terra.handle_reward_contract import handle_airdrop, handle_reward_contract
 from terra.handle_reward_pylon import handle_airdrop_pylon
 from terra.handle_simple import handle_simple, handle_unknown, handle_unknown_detect_transfers
 from terra.handle_swap import handle_execute_swap_operations, handle_swap, handle_swap_msgswap
-from terra.handle_transfer import handle_transfer, handle_transfer_bridge_wormhole, handle_transfer_contract
+from terra.handle_transfer import handle_transfer, handle_transfer_bridge_wormhole, handle_transfer_contract, handle_ibc_transfer
 from terra.handle_zap import handle_zap_into_strategy, handle_zap_out_of_strategy
 
 # execute_type -> tx_type mapping for generic transactions with no tax details
@@ -83,6 +83,8 @@ def process_tx(wallet_address, elem, exporter):
     try:
         if msgtype == "bank/MsgSend":
             return handle_transfer(exporter, elem, txinfo)
+        elif msgtype == "ibc/MsgUpdateClient":
+            return handle_ibc_transfer(exporter, elem, txinfo)
         elif msgtype in ["gov/MsgVote", "gov/MsgDeposit"]:
             return handle_simple(exporter, txinfo, TX_TYPE_GOV)
         elif msgtype == "market/MsgSwap":
