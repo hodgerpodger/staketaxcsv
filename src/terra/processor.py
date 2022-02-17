@@ -14,7 +14,12 @@ from terra.handle_anchor_borrow import (
     handle_borrow,
     handle_deposit_collateral,
     handle_repay,
-    handle_withdraw_collateral,
+    handle_withdraw_collateral
+)
+from terra.handle_anchor_liquidate import (
+    handle_liquidate,
+    handle_submit_bid,
+    handle_retract_bid
 )
 from terra.handle_anchor_earn import handle_anchor_earn_deposit, handle_anchor_earn_withdraw
 from terra.handle_failed_tx import handle_failed_tx
@@ -30,7 +35,7 @@ from terra.handle_lp import (
     handle_lp_withdraw,
     handle_lp_withdraw_idx,
 )
-from terra.handle_mirror_borrow import handle_deposit_borrow, handle_repay_withdraw
+from terra.handle_mirror_borrow import handle_deposit_borrow, handle_repay_withdraw, handle_auction
 from terra.handle_nft import (
     handle_accept_deposit,
     handle_add_to_deposit,
@@ -169,6 +174,14 @@ def process_tx(wallet_address, elem, exporter):
             elif execute_type == ex.EXECUTE_TYPE_UNLOCK_COLLATERAL:
                 return handle_withdraw_collateral(exporter, elem, txinfo)
 
+            # Anchor Liquidate Transactions
+            elif execute_type == ex.EXECUTE_TYPE_LIQUIDATE_COLLATERAL:
+                return handle_liquidate(exporter, elem, txinfo)
+            elif execute_type == ex.EXECUTE_TYPE_SUBMIT_BID:
+                return handle_submit_bid(exporter, elem, txinfo)
+            elif execute_type == ex.EXECUTE_TYPE_RETRACT_BID:
+                return handle_retract_bid(exporter, elem, txinfo)
+
             # Anchor Bond transactions
             elif execute_type == ex.EXECUTE_TYPE_BOND:
                 return handle_bond(exporter, elem, txinfo)
@@ -182,6 +195,8 @@ def process_tx(wallet_address, elem, exporter):
                 return handle_deposit_borrow(exporter, elem, txinfo)
             elif execute_type == ex.EXECUTE_TYPE_BURN:
                 return handle_repay_withdraw(exporter, elem, txinfo)
+            elif execute_type == ex.EXECUTE_TYPE_AUCTION:
+                return handle_auction(exporter, elem, txinfo)
 
             # Mirror LP transactions
             elif execute_type == ex.EXECUTE_TYPE_PROVIDE_LIQUIDITY:

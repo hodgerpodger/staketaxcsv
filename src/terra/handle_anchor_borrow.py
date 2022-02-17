@@ -1,7 +1,10 @@
 from common.make_tx import make_borrow_tx, make_repay_tx
 from terra import util_terra
 from terra.constants import CUR_UST, MILLION
-from terra.make_tx import make_deposit_collateral_tx, make_withdraw_collateral_tx
+from terra.make_tx import (
+    make_deposit_collateral_tx,
+    make_withdraw_collateral_tx
+)
 
 
 def handle_deposit_collateral(exporter, elem, txinfo):
@@ -47,17 +50,19 @@ def handle_withdraw_collateral(exporter, elem, txinfo):
 def handle_borrow(exporter, elem, txinfo):
     txid = txinfo.txid
 
-    # Extract fee paid by anchor market contract to fee collector
-    fee_collector_address = "terra17xpfvakm2amg962yls6f84z3kell8c5lkaeqfa"
-    transfers_in, _ = util_terra._transfers(elem, fee_collector_address, txid)
-    fee_amount, fee_currency = transfers_in[0]
-
     # Extract borrow amount
-    from_contract = elem["logs"][0]["events_by_type"]["from_contract"]
-    borrow_amount = float(from_contract["borrow_amount"][0]) / MILLION
+    wallet_address = txinfo.wallet_address
+    transfers_in, _ = util_terra._transfers(elem, wallet_address, txid)
+    borrow_amount, borrow_currency = transfers_in[0]
+    row = make_borrow_tx(txinfo, borrow_amount, borrow_currency)
 
-    row = make_borrow_tx(txinfo, borrow_amount, CUR_UST)
-    row.fee += fee_amount
+    # Extract fee, if any, paid by anchor market contract to fee collector
+    fee_collector_address = "terra17xpfvakm2amg962yls6f84z3kell8c5lkaeqfa"
+    fee_transfers_in, _ = util_terra._transfers(elem, fee_collector_address, txid)  
+
+    if len(fee_transfers_in) > 0:
+      fee_amount, fee_currency = fee_transfers_in[0]
+      row.fee += fee_amount
 
     exporter.ingest_row(row)
 

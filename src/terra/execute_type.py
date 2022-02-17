@@ -17,8 +17,10 @@ EXECUTE_TYPE_DEPOSIT = "deposit"
 EXECUTE_TYPE_REDEEM_STABLE = "anchor_withdraw"
 EXECUTE_TYPE_CLAIM = "claim"
 EXECUTE_TYPE_STAKE_VOTING_TOKENS = "stake_voting_tokens"
+EXECUTE_TYPE_STAKE_GOVERNANCE_TOKENS = "stake_governance_tokens"
 EXECUTE_TYPE_WITHDRAW_VOTING_TOKENS = "withdraw_toking_tokens"
 EXECUTE_TYPE_WITHDRAW_VOTING_REWARDS = "withdraw_voting_rewards"
+EXECUTE_TYPE_UNSTAKE_GOVERNANCE_TOKENS = "unstake_governance_tokens"
 EXECUTE_TYPE_TRANSFER = "transfer"
 EXECUTE_TYPE_INCREASE_ALLOWANCE = "increase_allowance"
 EXECUTE_TYPE_BOND = "bond"
@@ -61,6 +63,10 @@ EXECUTE_TYPE_ZAP_INTO_STRATEGY = "zap_into_strategy"
 EXECUTE_TYPE_ZAP_OUT_OF_STRATEGY = "zap_out_of_strategy"
 EXECUTE_TYPE_DEPOSIT_TOKENS = "deposit_tokens"
 EXECUTE_TYPE_SUBMIT_VAA = "submit_vaa"
+EXECUTE_TYPE_AUCTION = "auction"
+EXECUTE_TYPE_LIQUIDATE_COLLATERAL = "liquidate"
+EXECUTE_TYPE_SUBMIT_BID = "submit_bid"
+EXECUTE_TYPE_RETRACT_BID = "retract_bid"
 
 
 def _execute_type(elem, txinfo, index=0):
@@ -70,6 +76,7 @@ def _execute_type(elem, txinfo, index=0):
     if "send" in execute_msg:
         send = execute_msg["send"]
         msg = send.get("msg", None)
+
         if type(msg) == str:
             msg = json.loads(base64.b64decode(msg))
 
@@ -98,6 +105,14 @@ def _execute_type(elem, txinfo, index=0):
                 return EXECUTE_TYPE_DEPOSIT_IDX_IN_MSG
             if "deposit" in msg and "strategy_id" in msg["deposit"]:
                 return EXECUTE_TYPE_DEPOSIT_STRATEGY_ID_IN_MSG
+            if "auction" in msg:
+                return EXECUTE_TYPE_AUCTION
+            if "stake" in msg:
+                return EXECUTE_TYPE_BOND_IN_MSG
+            if "stake_governance_token" in msg:
+                return EXECUTE_TYPE_STAKE_VOTING_TOKENS
+            if "unstake_governance_token" in msg:
+                return EXECUTE_TYPE_UNSTAKE_VOTING_TOKENS
 
     elif "claim" in execute_msg:
         return EXECUTE_TYPE_CLAIM
@@ -187,6 +202,12 @@ def _execute_type(elem, txinfo, index=0):
         return EXECUTE_TYPE_DEPOSIT_TOKENS
     elif "submit_vaa" in execute_msg:
         return EXECUTE_TYPE_SUBMIT_VAA
+    elif "liquidate_collateral" in execute_msg:
+        return EXECUTE_TYPE_LIQUIDATE_COLLATERAL
+    elif "submit_bid" in execute_msg:
+        return EXECUTE_TYPE_SUBMIT_BID
+    elif "retract_bid" in execute_msg:
+        return EXECUTE_TYPE_RETRACT_BID
 
     logging.error("Unable to determine execute type for txid=%s", txid, extra={
         "txid": txid,

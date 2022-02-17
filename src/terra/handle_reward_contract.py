@@ -8,7 +8,8 @@ from terra.handle_reward import REWARD_CURRENCIES
 CONTRACTS_AIRDROP = {
     "terra1kalp2knjm4cs3f59ukr4hdhuuncp648eqrgshw": CUR_MIR,
     "terra146ahqn6d3qgdvmj8cj96hh03dzmeedhsf0kxqm": CUR_ANC,
-    "terra1ud39n6c42hmtp2z0qmy8svsk7z3zmdkxzfwcf2": CUR_MINE
+    "terra1ud39n6c42hmtp2z0qmy8svsk7z3zmdkxzfwcf2": CUR_MINE,
+    "terra1za627n8zc8wqg06n9h7khpmjcnlkdkt38rkl3u": CUR_MINE
 }
 
 
@@ -95,6 +96,13 @@ def _extract_amount(elem, index, currency):
 
             if action == "claim":
                 return util_terra._float_amount(amount, currency)
+    except Exception:
+        pass
+
+    try:
+        from_contract = util_terra._event_with_action(elem, "from_contract", "claim")
+        amounts = from_contract["claim_amount"]
+        return util_terra._float_amount(amount, currency)
     except Exception:
         pass
 
