@@ -116,7 +116,7 @@ def handle_mint_nft(exporter, elem, txinfo):
 
 
 def handle_purchase_nft(exporter, elem, txinfo):
-    # mint nft of styllar
+    # mint nft of styllar or for luart.io assets
     txid = txinfo.txid
     wallet_address = txinfo.wallet_address
 

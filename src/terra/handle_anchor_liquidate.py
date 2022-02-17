@@ -40,19 +40,20 @@ def handle_submit_bid(exporter, elem, txinfo):
 
 def handle_retract_bid(exporter, elem, txinfo):
     txid = txinfo.txid
+    wallet = txinfo.wallet_address
 
     # Extract bid amount
-    transfer = elem["logs"][0]["events_by_type"]["transfer"]
-    bid_string = transfer["amount"][1]
-    bid_amount, bid_currency = util_terra._amount(bid_string)
-
+    transfers_in, _ = util_terra._transfers(elem, wallet, txid)
+    print(transfers_in)
+    bid_amount, bid_currency = transfers_in[0]
     row = make_retract_bid_tx(txinfo, bid_amount, bid_currency)
 
     # Extract fee, if any, paid by anchor market contract to fee collector
     fee_collector_address = "terra17xpfvakm2amg962yls6f84z3kell8c5lkaeqfa"
-    transfers_in, _ = util_terra._transfers(elem, fee_collector_address, txid)
+    fee_transfers_in, _ = util_terra._transfers(elem, fee_collector_address, txid)
 
-    fee_amount, fee_currency = transfers_in[0]
-    row.fee += fee_amount
+    if len(fee_transfers_in) > 0:
+      fee_amount, fee_currency = transfers_in[0]
+      row.fee += fee_amount
 
     exporter.ingest_row(row)

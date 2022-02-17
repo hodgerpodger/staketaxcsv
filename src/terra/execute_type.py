@@ -178,6 +178,8 @@ def _execute_type(elem, txinfo, index=0):
         return EXECUTE_TYPE_ADD_MULTIPLE_USERS_TO_WHITE_LIST
     elif "mint_nft" in execute_msg:
         return EXECUTE_TYPE_MINT_NFT
+    elif "random_mint" in execute_msg:
+        return EXECUTE_TYPE_PURCHASE_NFT
     elif "purchase_nft" in execute_msg:
         return EXECUTE_TYPE_PURCHASE_NFT
     elif "execute_order" in execute_msg:
