@@ -17,10 +17,8 @@ EXECUTE_TYPE_DEPOSIT = "deposit"
 EXECUTE_TYPE_REDEEM_STABLE = "anchor_withdraw"
 EXECUTE_TYPE_CLAIM = "claim"
 EXECUTE_TYPE_STAKE_VOTING_TOKENS = "stake_voting_tokens"
-EXECUTE_TYPE_STAKE_GOVERNANCE_TOKENS = "stake_governance_tokens"
 EXECUTE_TYPE_WITHDRAW_VOTING_TOKENS = "withdraw_toking_tokens"
 EXECUTE_TYPE_WITHDRAW_VOTING_REWARDS = "withdraw_voting_rewards"
-EXECUTE_TYPE_UNSTAKE_GOVERNANCE_TOKENS = "unstake_governance_tokens"
 EXECUTE_TYPE_TRANSFER = "transfer"
 EXECUTE_TYPE_INCREASE_ALLOWANCE = "increase_allowance"
 EXECUTE_TYPE_BOND = "bond"
@@ -111,8 +109,6 @@ def _execute_type(elem, txinfo, index=0):
                 return EXECUTE_TYPE_BOND_IN_MSG
             if "stake_governance_token" in msg:
                 return EXECUTE_TYPE_STAKE_VOTING_TOKENS
-            if "unstake_governance_token" in msg:
-                return EXECUTE_TYPE_UNSTAKE_VOTING_TOKENS
 
     elif "claim" in execute_msg:
         return EXECUTE_TYPE_CLAIM
@@ -208,6 +204,8 @@ def _execute_type(elem, txinfo, index=0):
         return EXECUTE_TYPE_SUBMIT_BID
     elif "retract_bid" in execute_msg:
         return EXECUTE_TYPE_RETRACT_BID
+    elif "unstake_governance_token" in execute_msg:
+        return EXECUTE_TYPE_WITHDRAW_VOTING_TOKENS
 
     logging.error("Unable to determine execute type for txid=%s", txid, extra={
         "txid": txid,

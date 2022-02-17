@@ -158,7 +158,7 @@ def process_tx(wallet_address, elem, exporter):
             elif execute_type == ex.EXECUTE_TYPE_ASSERT_LIMIT_ORDER:
                 return handle_swap_msgswap(exporter, elem, txinfo)
 
-            # Governance staking for ANC or MIR
+            # Governance staking for ANC or MIR or VKR
             elif execute_type == ex.EXECUTE_TYPE_STAKE_VOTING_TOKENS:
                 return handle_governance_stake(exporter, elem, txinfo)
             elif execute_type == ex.EXECUTE_TYPE_WITHDRAW_VOTING_TOKENS:
