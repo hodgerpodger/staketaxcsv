@@ -48,12 +48,6 @@ def handle_unbond_withdraw(exporter, elem, txinfo):
     exporter.ingest_row(row)
 
 def handle_burn_collateral(exporter, elem, txinfo):
-    txid = txinfo.txid
-    wallet_address = txinfo.wallet_address
-
-    burn_amount = elem["logs"][0]["events_by_type"]["from_contract"]["amount"][0]
-    burn_currency_address = elem["logs"][0]["events_by_type"]["from_contract"]["contract_address"][0]
-    burn_currency = util_terra._asset_to_currency(burn_currency_address, txid)
-
-    row = make_burn_collateral_tx(txinfo, burn_amount, burn_currency)
+    # When withdrawing bETH, Anchor will first submit a burn transaction
+    row = make_unbond_tx(txinfo)
     exporter.ingest_row(row)
