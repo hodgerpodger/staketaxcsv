@@ -11,6 +11,10 @@ CONTRACTS_SPEC = [
     "terra1fxwelge6mf5l6z0rjpylzcfq9w9tw2q7tewaf5" # staking contract
 ]
 
+CONTRACTS_ASTROPORT = [
+    "terra1627ldjvxatt54ydd3ns6xaxtd68a2vtyu7kakj" # lockdrop contract
+]
+
 CONTRACT_RANDOMEARTH = "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t"
 
 CHAIN_ID = "columbus-5"
