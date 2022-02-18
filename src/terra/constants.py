@@ -7,6 +7,9 @@ CONTRACTS_LOTA = [
     "terra1ez46kxtulsdv07538fh5ra5xj8l68mu8eg24vr"   # bond stake contract
 ]
 
+CONTRACTS_SPEC = [
+    "terra1fxwelge6mf5l6z0rjpylzcfq9w9tw2q7tewaf5" # staking contract
+]
 
 CONTRACT_RANDOMEARTH = "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t"
 

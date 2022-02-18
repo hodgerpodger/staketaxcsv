@@ -3,12 +3,12 @@ from datetime import datetime
 
 import terra.execute_type as ex
 from common.ErrorCounter import ErrorCounter
-from common.ExporterTypes import TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN, TX_TYPE_VOTE
+from common.ExporterTypes import TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN, TX_TYPE_VOTE, TX_TYPE_SPEC_UNKNOWN
 from common.make_tx import make_just_fee_tx
 from common.TxInfo import TxInfo
 from terra import util_terra
 from terra.config_terra import localconfig
-from terra.constants import CONTRACT_RANDOMEARTH, CONTRACTS_LOTA, EXCHANGE_TERRA_BLOCKCHAIN
+from terra.constants import CONTRACT_RANDOMEARTH, CONTRACTS_LOTA, EXCHANGE_TERRA_BLOCKCHAIN, CONTRACTS_SPEC
 from terra.handle_anchor_bond import handle_bond, handle_unbond, handle_unbond_withdraw, handle_burn_collateral
 from terra.handle_anchor_borrow import (
     handle_borrow,
@@ -97,8 +97,11 @@ def process_tx(wallet_address, elem, exporter):
             contract = util_terra._contract(elem, 0)
 
             # Handle LoTerra contract as _LOTA_unknown
-            if contract in CONTRACTS_LOTA:
+            if util_terra._any_contracts(CONTRACTS_LOTA, elem):
                 return handle_simple(exporter, txinfo, TX_TYPE_LOTA_UNKNOWN)
+            # Handle Spec contract as _SPEC_UNKNOWN
+            elif util_terra._any_contracts(CONTRACTS_SPEC, elem):
+                return handle_simple(exporter, txinfo, TX_TYPE_SPEC_UNKNOWN)
 
             execute_type = ex._execute_type(elem, txinfo)
 
