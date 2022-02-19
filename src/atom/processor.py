@@ -208,6 +208,8 @@ def _extract_transfers_cosmoshub3(events, wallet_address, txid):
                     transfers_out.append([amount, currency, wallet_address, ""])
                 elif k1 == "recipient" and v1 == wallet_address:
                     transfers_in.append([amount, currency, "", wallet_address])
+                elif k1 == "recipient" and v1 != wallet_address:
+                    transfers_out.append([amount, currency, wallet_address, ""])
 
     return transfers_in, transfers_out
 
@@ -276,7 +278,11 @@ def _get_fee(elem, chain_id):
 
 def _get_fee_cosmoshub3(elem):
     # legacy cosmohub3 format
-    amount_string = elem["tx"]["value"]["fee"]["amount"][0]["amount"]
+    amount_list = elem["tx"]["value"]["fee"]["amount"]
+    if not amount_list:
+        return 0
+
+    amount_string = amount_list[0]["amount"]
     fee = float(amount_string) / MILLION
     return fee
 
