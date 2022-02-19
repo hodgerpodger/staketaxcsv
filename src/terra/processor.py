@@ -3,13 +3,20 @@ from datetime import datetime
 
 import terra.execute_type as ex
 from common.ErrorCounter import ErrorCounter
-from common.ExporterTypes import TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN, TX_TYPE_VOTE
+from common.ExporterTypes import TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN, TX_TYPE_VOTE, TX_TYPE_SPEC_UNKNOWN, TX_TYPE_ASTROPORT_UNKNOWN
 from common.make_tx import make_just_fee_tx
 from common.TxInfo import TxInfo
 from terra import util_terra
 from terra.config_terra import localconfig
-from terra.constants import CONTRACT_RANDOMEARTH, CONTRACTS_LOTA, EXCHANGE_TERRA_BLOCKCHAIN
-from terra.handle_anchor_bond import handle_bond, handle_unbond, handle_unbond_withdraw
+from terra.constants import (
+    CONTRACT_RANDOMEARTH,
+    CONTRACTS_LOTA,
+    EXCHANGE_TERRA_BLOCKCHAIN,
+    CONTRACTS_SPEC,
+    CONTRACTS_ASTROPORT
+)
+
+from terra.handle_anchor_bond import handle_bond, handle_unbond, handle_unbond_withdraw, handle_burn_collateral
 from terra.handle_anchor_borrow import (
     handle_borrow,
     handle_deposit_collateral,
@@ -54,7 +61,7 @@ from terra.handle_reward_contract import handle_airdrop, handle_reward_contract
 from terra.handle_reward_pylon import handle_airdrop_pylon
 from terra.handle_simple import handle_simple, handle_unknown, handle_unknown_detect_transfers
 from terra.handle_swap import handle_execute_swap_operations, handle_swap, handle_swap_msgswap
-from terra.handle_transfer import handle_transfer, handle_transfer_bridge_wormhole, handle_transfer_contract
+from terra.handle_transfer import handle_transfer, handle_transfer_bridge_wormhole, handle_transfer_contract, handle_ibc_transfer
 from terra.handle_zap import handle_zap_into_strategy, handle_zap_out_of_strategy
 
 # execute_type -> tx_type mapping for generic transactions with no tax details
@@ -83,6 +90,8 @@ def process_tx(wallet_address, elem, exporter):
     try:
         if msgtype == "bank/MsgSend":
             return handle_transfer(exporter, elem, txinfo)
+        elif msgtype == "ibc/MsgUpdateClient":
+            return handle_ibc_transfer(exporter, elem, txinfo)
         elif msgtype in ["gov/MsgVote", "gov/MsgDeposit"]:
             return handle_simple(exporter, txinfo, TX_TYPE_GOV)
         elif msgtype == "market/MsgSwap":
@@ -94,9 +103,13 @@ def process_tx(wallet_address, elem, exporter):
         elif msgtype == "wasm/MsgExecuteContract":
             contract = util_terra._contract(elem, 0)
 
-            # Handle LoTerra contract as _LOTA_unknown
-            if contract in CONTRACTS_LOTA:
+            # Handle dApp contracts as _{DAPP}_unknown
+            if util_terra._any_contracts(CONTRACTS_LOTA, elem):
                 return handle_simple(exporter, txinfo, TX_TYPE_LOTA_UNKNOWN)
+            elif util_terra._any_contracts(CONTRACTS_SPEC, elem):
+                return handle_simple(exporter, txinfo, TX_TYPE_SPEC_UNKNOWN)
+            elif util_terra._any_contracts(CONTRACTS_ASTROPORT, elem):
+                return handle_simple(exporter, txinfo, TX_TYPE_ASTROPORT_UNKNOWN)
 
             execute_type = ex._execute_type(elem, txinfo)
 
@@ -156,7 +169,7 @@ def process_tx(wallet_address, elem, exporter):
             elif execute_type == ex.EXECUTE_TYPE_ASSERT_LIMIT_ORDER:
                 return handle_swap_msgswap(exporter, elem, txinfo)
 
-            # Governance staking for ANC or MIR
+            # Governance staking for ANC or MIR or VKR
             elif execute_type == ex.EXECUTE_TYPE_STAKE_VOTING_TOKENS:
                 return handle_governance_stake(exporter, elem, txinfo)
             elif execute_type == ex.EXECUTE_TYPE_WITHDRAW_VOTING_TOKENS:
@@ -189,6 +202,8 @@ def process_tx(wallet_address, elem, exporter):
                 return handle_unbond(exporter, elem, txinfo)
             elif execute_type == ex.EXECUTE_TYPE_WITHDRAW_UNBONDED:
                 return handle_unbond_withdraw(exporter, elem, txinfo)
+            elif execute_type == ex.EXECUTE_TYPE_BURN_COLLATERAL:
+                return handle_burn_collateral(exporter, elem, txinfo)
 
             # Mirror Borrow Transactions
             elif execute_type in [ex.EXECUTE_TYPE_OPEN_POSITION, ex.EXECUTE_TYPE_OPEN_POSITION_IN_MSG]:

@@ -2,7 +2,7 @@ from common.ErrorCounter import ErrorCounter
 from common.make_tx import make_unknown_tx
 from terra import util_terra
 from terra.constants import CUR_BLUNA, CUR_LUNA
-from terra.make_tx import make_swap_tx_terra, make_unbond_tx
+from terra.make_tx import make_swap_tx_terra, make_unbond_tx, make_burn_collateral_tx
 
 
 def handle_bond(exporter, elem, txinfo):
@@ -45,4 +45,9 @@ def handle_unbond_withdraw(exporter, elem, txinfo):
     assert(received_currency == CUR_LUNA)
 
     row = make_swap_tx_terra(txinfo, sent_amount, sent_currency, received_amount, received_currency)
+    exporter.ingest_row(row)
+
+def handle_burn_collateral(exporter, elem, txinfo):
+    # When withdrawing bETH, Anchor will first submit a burn transaction
+    row = make_unbond_tx(txinfo)
     exporter.ingest_row(row)
