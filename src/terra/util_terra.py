@@ -21,11 +21,14 @@ def _contracts(elem):
 
 
 def _contract(elem, index=0):
-    return elem["tx"]["value"]["msg"][index]["value"]['contract']
+    msg = elem["tx"]["value"]["msg"][index]
+    return msg["value"].get("contract", None)
+
 
 def _any_contracts(addrs, elem):
-    contracts = _contracts(elem)
-    return len(list(set(addrs) & set(contracts))) > 0
+    contracts = set([c for c in _contracts(elem) if c is not None])
+    return len(set(addrs).intersection(contracts)) > 0
+
 
 def _execute_msgs(elem):
     out = []
