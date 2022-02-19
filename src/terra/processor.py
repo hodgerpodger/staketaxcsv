@@ -3,7 +3,7 @@ from datetime import datetime
 
 import terra.execute_type as ex
 from common.ErrorCounter import ErrorCounter
-from common.ExporterTypes import TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN, TX_TYPE_VOTE, TX_TYPE_SPEC_UNKNOWN, TX_TYPE_ASTROPORT_UNKNOWN
+from common.ExporterTypes import TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN, TX_TYPE_VOTE, TX_TYPE_SPEC_UNKNOWN, TX_TYPE_ASTROPORT_UNKNOWN, TX_TYPE_DISTRIBUTE
 from common.make_tx import make_just_fee_tx
 from common.TxInfo import TxInfo
 from terra import util_terra
@@ -40,7 +40,7 @@ from terra.handle_lp import (
     handle_lp_unstake,
     handle_lp_unstake_withdraw_from_strategy,
     handle_lp_withdraw,
-    handle_lp_withdraw_idx,
+    handle_lp_withdraw_idx
 )
 from terra.handle_mirror_borrow import handle_deposit_borrow, handle_repay_withdraw, handle_auction
 from terra.handle_nft import (
@@ -232,6 +232,8 @@ def process_tx(wallet_address, elem, exporter):
                 return handle_lp_withdraw_idx(exporter, elem, txinfo)
             elif execute_type in [ex.EXECUTE_TYPE_DEPOSIT_IDX, ex.EXECUTE_TYPE_DEPOSIT_IDX_IN_MSG]:
                 return handle_lp_deposit_idx(exporter, elem, txinfo)
+            elif execute_type == ex.EXECUTE_TYPE_DISTRIBUTE:
+                return handle_simple(exporter, txinfo, TX_TYPE_DISTRIBUTE)
 
             # Anchor Earn transactions
             elif execute_type in [ex.EXECUTE_TYPE_DEPOSIT_STABLE, ex.EXECUTE_TYPE_DEPOSIT]:
