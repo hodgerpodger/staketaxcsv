@@ -92,7 +92,7 @@ def process_tx(wallet_address, elem, exporter):
             return handle_transfer(exporter, elem, txinfo)
         elif msgtype == "ibc/MsgUpdateClient":
             return handle_ibc_transfer(exporter, elem, txinfo)
-        elif msgtype in ["gov/MsgVote", "gov/MsgDeposit"]:
+        elif msgtype in ["gov/MsgVote", "gov/MsgDeposit", "gov/MsgSubmitProposal"]:
             return handle_simple(exporter, txinfo, TX_TYPE_GOV)
         elif msgtype == "market/MsgSwap":
             return handle_swap_msgswap(exporter, elem, txinfo)
