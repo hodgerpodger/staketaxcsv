@@ -37,7 +37,7 @@ def _account_exists(wallet_address):
 def account_exists(wallet_address):
     data = _account_exists(wallet_address)
 
-    if "account" in data and data.get("account").get("account_number", None):
+    if "account" in data:
         return True
     else:
         return False
