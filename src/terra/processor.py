@@ -13,7 +13,8 @@ from terra.constants import (
     CONTRACTS_LOTA,
     EXCHANGE_TERRA_BLOCKCHAIN,
     CONTRACTS_SPEC,
-    CONTRACTS_ASTROPORT
+    CONTRACTS_ASTROPORT,
+    CONTRACTS_PYLON
 )
 
 from terra.handle_anchor_bond import handle_bond, handle_unbond, handle_unbond_withdraw, handle_burn_collateral
@@ -58,7 +59,7 @@ from terra.handle_nft import (
 )
 from terra.handle_reward import handle_reward
 from terra.handle_reward_contract import handle_airdrop, handle_reward_contract
-from terra.handle_reward_pylon import handle_airdrop_pylon
+from terra.handle_reward_pylon import handle_airdrop_pylon, handle_pylon_withdraw
 from terra.handle_simple import handle_simple, handle_unknown, handle_unknown_detect_transfers
 from terra.handle_swap import handle_execute_swap_operations, handle_swap, handle_swap_msgswap
 from terra.handle_transfer import handle_transfer, handle_transfer_bridge_wormhole, handle_transfer_contract, handle_ibc_transfer
@@ -102,6 +103,7 @@ def process_tx(wallet_address, elem, exporter):
             return handle_reward(exporter, elem, txinfo, msgtype)
         elif msgtype == "wasm/MsgExecuteContract":
             contract = util_terra._contract(elem, 0)
+            execute_type = ex._execute_type(elem, txinfo)
 
             # Handle dApp contracts as _{DAPP}_unknown
             if util_terra._any_contracts(CONTRACTS_LOTA, elem):
@@ -110,8 +112,10 @@ def process_tx(wallet_address, elem, exporter):
                 return handle_simple(exporter, txinfo, TX_TYPE_SPEC_UNKNOWN)
             elif util_terra._any_contracts(CONTRACTS_ASTROPORT, elem):
                 return handle_simple(exporter, txinfo, TX_TYPE_ASTROPORT_UNKNOWN)
-
-            execute_type = ex._execute_type(elem, txinfo)
+            # Pylon
+            elif util_terra._any_contracts(CONTRACTS_PYLON, elem):
+                if execute_type == ex.EXECUTE_TYPE_WITHDRAW:
+                    return handle_pylon_withdraw(exporter, elem, txinfo)
 
             # General
             if execute_type in EXECUTE_TYPES_SIMPLE:

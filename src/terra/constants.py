@@ -15,6 +15,11 @@ CONTRACTS_ASTROPORT = [
     "terra1627ldjvxatt54ydd3ns6xaxtd68a2vtyu7kakj" # lockdrop contract
 ]
 
+CONTRACTS_PYLON = [
+    "terra1za627n8zc8wqg06n9h7khpmjcnlkdkt38rkl3u" # Pylon MINE 12m pool
+    # Add more Pylon pools here...
+]
+
 CONTRACT_RANDOMEARTH = "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t"
 
 CHAIN_ID = "columbus-5"
