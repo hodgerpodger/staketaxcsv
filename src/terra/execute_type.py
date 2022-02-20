@@ -67,6 +67,7 @@ EXECUTE_TYPE_SUBMIT_BID = "submit_bid"
 EXECUTE_TYPE_RETRACT_BID = "retract_bid"
 EXECUTE_TYPE_BURN_COLLATERAL = "burn_collateral"
 EXECUTE_TYPE_DISTRIBUTE = "distribute"
+EXECUTE_TYPE_INCREASE_LOCKUP = "increase_lockup"
 
 def _execute_type(elem, txinfo, index=0):
     txid = txinfo.txid
@@ -110,6 +111,8 @@ def _execute_type(elem, txinfo, index=0):
                 return EXECUTE_TYPE_BOND_IN_MSG
             if "stake_governance_token" in msg:
                 return EXECUTE_TYPE_STAKE_VOTING_TOKENS
+            if "increase_lockup" in msg:
+                return EXECUTE_TYPE_INCREASE_LOCKUP
 
     elif "claim" in execute_msg:
         return EXECUTE_TYPE_CLAIM

@@ -257,6 +257,10 @@ def process_tx(wallet_address, elem, exporter):
             elif execute_type == ex.EXECUTE_TYPE_ZAP_OUT_OF_STRATEGY:
                 return handle_zap_out_of_strategy(exporter, elem, txinfo)
 
+            # Astroport
+            elif execute_type == ex.EXECUTE_TYPE_INCREASE_LOCKUP:
+                return handle_lp_stake(exporter, elem, txinfo)
+
             # Bridge transfers
             elif execute_type == ex.EXECUTE_TYPE_DEPOSIT_TOKENS:
                 # wormhole bridge: transfer out
