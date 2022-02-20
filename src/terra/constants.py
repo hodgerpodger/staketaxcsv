@@ -12,7 +12,8 @@ CONTRACTS_SPEC = [
 ]
 
 CONTRACTS_ASTROPORT = [
-    "terra1627ldjvxatt54ydd3ns6xaxtd68a2vtyu7kakj" # lockdrop contract
+    "terra1627ldjvxatt54ydd3ns6xaxtd68a2vtyu7kakj", # lockdrop contract
+    "terra1tvld5k6pus2yh7pcu7xuwyjedn7mjxfkkkjjap" # bootstrap contract
 ]
 
 CONTRACTS_PYLON = [
