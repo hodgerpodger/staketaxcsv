@@ -9,7 +9,8 @@ CONTRACTS_LOTA = [
 
 CONTRACTS_SPEC = [
     "terra1fxwelge6mf5l6z0rjpylzcfq9w9tw2q7tewaf5", # staking contract
-    "terra1dpe4fmcz2jqk6t50plw0gqa2q3he2tj6wex5cl" # governance contract
+    "terra1dpe4fmcz2jqk6t50plw0gqa2q3he2tj6wex5cl", # governance contract
+    "terra1xt4ugaxds6wjehjckqchzg4e99n3cjd2rtfw4f" # valkyrie farm
 ]
 
 CONTRACTS_ASTROPORT = [
@@ -20,6 +21,11 @@ CONTRACTS_ASTROPORT = [
 CONTRACTS_PYLON = [
     "terra1za627n8zc8wqg06n9h7khpmjcnlkdkt38rkl3u" # Pylon MINE 12m pool
     # Add more Pylon pools here...
+]
+
+CONTRACTS_VALKYRIE = [
+    "terra1dy9kmlm4anr92e42mrkjwzyvfqwz66un00rwr5",
+    "terra10ng0k6wp40tpxlsyxczqgqr0uqsytzqyh702tj" # Campaign Launch Event
 ]
 
 CONTRACT_RANDOMEARTH = "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t"

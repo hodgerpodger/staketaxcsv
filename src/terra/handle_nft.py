@@ -9,10 +9,11 @@ from terra.make_tx import (
     make_nft_mint_no_purchase_tx,
     make_nft_mint_tx,
     make_nft_offer_sell_tx,
+    make_nft_offer_buy_tx,
     make_nft_reserve_tx,
     make_nft_transfer_in_tx,
     make_nft_transfer_out_tx,
-    make_nft_withdraw,
+    make_nft_offer_deposit
 )
 
 
@@ -285,22 +286,29 @@ def handle_execute_order(exporter, elem, txinfo):
 def handle_post_order(exporter, elem, txinfo):
     """ list item from randomearth.io """
     for execute_msg in util_terra._execute_msgs(elem):
-        order = execute_msg["post_order"]["order"]["order"]
-        maker_asset = order["maker_asset"]
-        taker_asset = order["taker_asset"]
+        if("deposit" in execute_msg):
+            sent_amount, sent_currency = _parse_asset(execute_msg["deposit"]["asset"])
+            row = make_nft_offer_deposit(txinfo, sent_amount, sent_currency)
+            exporter.ingest_row(row)
 
-        if "nft" in maker_asset["info"]:
-            _, nft_currency = _parse_asset(maker_asset)
-            sent_amount, sent_currency = _parse_asset(taker_asset)
-            collection_contract = maker_asset["info"]["nft"]["contract_addr"]
-        else:
-            _, nft_currency = _parse_asset(taker_asset)
-            sent_amount, sent_currency = _parse_asset(maker_asset)
-            collection_contract = taker_asset["info"]["nft"]["contract_addr"]
+        if("post_order" in execute_msg):
+            order = execute_msg["post_order"]["order"]["order"]
+            maker_asset = order["maker_asset"]
+            taker_asset = order["taker_asset"]
 
-        name = _nft_name(collection_contract)
-        row = make_nft_offer_sell_tx(txinfo, nft_currency, sent_amount, sent_currency, name)
-        exporter.ingest_row(row)
+            if "nft" in maker_asset["info"]:
+                _, nft_currency = _parse_asset(maker_asset)
+                sent_amount, sent_currency = _parse_asset(taker_asset)
+                collection_contract = maker_asset["info"]["nft"]["contract_addr"]
+                name = _nft_name(collection_contract)
+                row = make_nft_offer_sell_tx(txinfo, nft_currency, sent_amount, sent_currency, name)
+            else:
+                sent_amount, sent_currency = _parse_asset(maker_asset)
+                collection_contract = taker_asset["info"]["nft"]["contract_addr"]
+                name = _nft_name(collection_contract)
+                row = make_nft_offer_buy_tx(txinfo, sent_amount, sent_currency, name)
+
+            exporter.ingest_row(row)
 
 def handle_withdraw(exporter, elem, txinfo, index=0):
     """ withdraw nft or sell proceeds from randomearth.io """

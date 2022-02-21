@@ -11,6 +11,7 @@ from common.ExporterTypes import (
     TX_TYPE_LP_WITHDRAW,
     TX_TYPE_NFT_DEPOSIT,
     TX_TYPE_NFT_MINT,
+    TX_TYPE_NFT_OFFER_BUY,
     TX_TYPE_NFT_OFFER_SELL,
     TX_TYPE_NFT_WITHDRAW,
     TX_TYPE_RETRACT_BID,
@@ -150,12 +151,20 @@ def make_nft_offer_sell_tx(txinfo, sent_currency, offer_amount, offer_currency, 
     row.comment = "nft {}, offer sell {} {}".format(name, offer_amount, offer_currency)
     return row
 
+def make_nft_offer_buy_tx(txinfo, offer_amount, offer_currency, name=""):
+    row = make_simple_tx(txinfo, TX_TYPE_NFT_OFFER_BUY)
+    row.comment = "nft {}, offer buy {} {}".format(name, offer_amount, offer_currency)
+    return row
 
 def make_nft_buy_tx(txinfo, sent_amount, sent_currency, received_currency, name=""):
     row = _make_tx_exchange(txinfo, sent_amount, sent_currency, 1, received_currency, TX_TYPE_TRADE)
     row.comment = _nft_comment(name)
     return row
 
+def make_nft_offer_deposit(txinfo, sent_amount, sent_currency):
+    row = _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_NFT_DEPOSIT)
+    row.comment = "deposit currency for nft offer"
+    return row
 
 def make_nft_withdraw(txinfo, received_amount, received_currency):
     row = _make_tx_received(txinfo, received_amount, received_currency, TX_TYPE_NFT_WITHDRAW)

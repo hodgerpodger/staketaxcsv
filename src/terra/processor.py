@@ -3,7 +3,7 @@ from datetime import datetime
 
 import terra.execute_type as ex
 from common.ErrorCounter import ErrorCounter
-from common.ExporterTypes import TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN, TX_TYPE_VOTE, TX_TYPE_SPEC_UNKNOWN, TX_TYPE_ASTROPORT_UNKNOWN, TX_TYPE_DISTRIBUTE
+from common.ExporterTypes import TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN, TX_TYPE_VOTE, TX_TYPE_SPEC_UNKNOWN, TX_TYPE_ASTROPORT_UNKNOWN, TX_TYPE_DISTRIBUTE, TX_TYPE_VALKYRIE_UNKNOWN
 from common.make_tx import make_just_fee_tx
 from common.TxInfo import TxInfo
 from terra import util_terra
@@ -14,7 +14,8 @@ from terra.constants import (
     EXCHANGE_TERRA_BLOCKCHAIN,
     CONTRACTS_SPEC,
     CONTRACTS_ASTROPORT,
-    CONTRACTS_PYLON
+    CONTRACTS_PYLON,
+    CONTRACTS_VALKYRIE
 )
 
 from terra.handle_anchor_bond import (
@@ -129,6 +130,8 @@ def process_tx(wallet_address, elem, exporter):
             elif util_terra._any_contracts(CONTRACTS_PYLON, elem):
                 if execute_type == ex.EXECUTE_TYPE_WITHDRAW:
                     return handle_pylon_withdraw(exporter, elem, txinfo)
+            elif util_terra._any_contracts(CONTRACTS_VALKYRIE, elem):
+                return handle_simple(exporter, txinfo, TX_TYPE_VALKYRIE_UNKNOWN)
 
             # General
             if execute_type in EXECUTE_TYPES_SIMPLE:
@@ -173,6 +176,8 @@ def process_tx(wallet_address, elem, exporter):
                     if len(execute_msgs_keys) == 2 and execute_msgs_keys[1] == ex.EXECUTE_TYPE_TRANSFER_NFT:
                         handle_transfer_nft(exporter, elem, txinfo, 1)
                     return
+                elif execute_type == ex.EXECUTE_TYPE_DEPOSIT:
+                    return handle_post_order(exporter, elem, txinfo)
                 elif ex.EXECUTE_TYPE_EXECUTE_ORDER in execute_msgs_keys:
                     return handle_execute_order(exporter, elem, txinfo)
                 elif execute_type == ex.EXECUTE_TYPE_CANCEL_ORDER:
