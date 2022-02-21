@@ -8,7 +8,8 @@ CONTRACTS_LOTA = [
 ]
 
 CONTRACTS_SPEC = [
-    "terra1fxwelge6mf5l6z0rjpylzcfq9w9tw2q7tewaf5" # staking contract
+    "terra1fxwelge6mf5l6z0rjpylzcfq9w9tw2q7tewaf5", # staking contract
+    "terra1dpe4fmcz2jqk6t50plw0gqa2q3he2tj6wex5cl" # governance contract
 ]
 
 CONTRACTS_ASTROPORT = [
@@ -37,6 +38,7 @@ CUR_AUST = "aUST"
 CUR_BLUNA = "bLUNA"
 CUR_MINE = "MINE"
 CUR_ORION = "ORION"
+CUR_SPEC = "SPEC"
 
 IBC_TOKEN_NAMES = {
     "ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B": "OSMO"

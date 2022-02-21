@@ -72,6 +72,7 @@ from terra.handle_simple import handle_simple, handle_unknown, handle_unknown_de
 from terra.handle_swap import handle_execute_swap_operations, handle_swap, handle_swap_msgswap
 from terra.handle_transfer import handle_transfer, handle_transfer_bridge_wormhole, handle_transfer_contract, handle_ibc_transfer
 from terra.handle_zap import handle_zap_into_strategy, handle_zap_out_of_strategy
+from terra.handle_spec import handle_spec_withdraw
 
 # execute_type -> tx_type mapping for generic transactions with no tax details
 EXECUTE_TYPES_SIMPLE = {
@@ -117,7 +118,10 @@ def process_tx(wallet_address, elem, exporter):
             if util_terra._any_contracts(CONTRACTS_LOTA, elem):
                 return handle_simple(exporter, txinfo, TX_TYPE_LOTA_UNKNOWN)
             elif util_terra._any_contracts(CONTRACTS_SPEC, elem):
-                return handle_simple(exporter, txinfo, TX_TYPE_SPEC_UNKNOWN)
+                if execute_type == ex.EXECUTE_TYPE_MINT_COLLATERAL:
+                    return handle_spec_withdraw(exporter, elem, txinfo)
+                else:
+                    return handle_simple(exporter, txinfo, TX_TYPE_SPEC_UNKNOWN)
             elif util_terra._any_contracts(CONTRACTS_ASTROPORT, elem):
                 return handle_simple(exporter, txinfo, TX_TYPE_ASTROPORT_UNKNOWN)
             # Pylon
