@@ -31,23 +31,22 @@ def handle_anchor_earn_withdraw(exporter, elem, txinfo):
     txid = txinfo.txid
     transfers_in, transfers_out = util_terra._transfers(elem, wallet_address, txid)
     from_contract = util_terra._event_with_action(elem, "from_contract", "redeem_stable")
+    
+    # Get UST in
+    amount_ust, currency_ust = transfers_in[0]
 
     if from_contract is None:
-        # some older transactions for some reason missing from LCD and this key in FCD
-        handle_unknown(exporter, txinfo)
-        return
+        execute_msg = util_terra._execute_msg(elem, 0)
+        amount_aust = util_terra._float_amount(execute_msg["send"]["amount"], CUR_AUST)
 
-    if len(transfers_in) == 1 and len(transfers_out) == 0:
-        # Get UST in
-        amount_ust, currency_ust = transfers_in[0]
-
+    elif len(transfers_in) == 1 and len(transfers_out) == 0:
         # Get aUST out
         burn_amount = from_contract["burn_amount"][0]
         amount_aust = util_terra._float_amount(burn_amount, CUR_AUST)
 
-        txinfo.comment = "earn_withdraw [1 aUST = {} UST]".format(_exchange_rate(amount_ust, amount_aust))
-        row = make_swap_tx_terra(txinfo, amount_aust, CUR_AUST, amount_ust, CUR_UST)
-        exporter.ingest_row(row)
-        return
+    txinfo.comment = "earn_withdraw [1 aUST = {} UST]".format(_exchange_rate(amount_ust, amount_aust))
+    row = make_swap_tx_terra(txinfo, amount_aust, CUR_AUST, amount_ust, CUR_UST)
 
-    handle_unknown_detect_transfers(exporter, txinfo, elem)
+    row = util_terra._add_anchor_fees(elem, txid, row)
+    exporter.ingest_row(row)
+    return

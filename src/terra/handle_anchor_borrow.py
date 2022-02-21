@@ -57,12 +57,7 @@ def handle_borrow(exporter, elem, txinfo):
     row = make_borrow_tx(txinfo, borrow_amount, borrow_currency)
 
     # Extract fee, if any, paid by anchor market contract to fee collector
-    fee_collector_address = "terra17xpfvakm2amg962yls6f84z3kell8c5lkaeqfa"
-    fee_transfers_in, _ = util_terra._transfers(elem, fee_collector_address, txid)  
-
-    if len(fee_transfers_in) > 0:
-      fee_amount, fee_currency = fee_transfers_in[0]
-      row.fee += fee_amount
+    row = util_terra._add_anchor_fees(elem, txid, row)
 
     exporter.ingest_row(row)
 

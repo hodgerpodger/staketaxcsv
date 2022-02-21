@@ -74,8 +74,6 @@ def _execute_type(elem, txinfo, index=0):
     txid = txinfo.txid
     execute_msg = util_terra._execute_msg(elem, index)
 
-    print(execute_msg)
-
     if "send" in execute_msg:
         send = execute_msg["send"]
         msg = send.get("msg", None)
