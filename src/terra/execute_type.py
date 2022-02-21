@@ -52,6 +52,7 @@ EXECUTE_TYPE_PURCHASE_NFT = "purchase_nft"
 EXECUTE_TYPE_TRANSFER_NFT = "transfer_nft"
 EXECUTE_TYPE_EXECUTE_ORDER = "execute_order"
 EXECUTE_TYPE_CANCEL_ORDER = "cancel_order"
+EXECUTE_TYPE_POST_ORDER = "post_order"
 EXECUTE_TYPE_APPROVE = "approve"
 EXECUTE_TYPE_ADD_TO_WHITELIST = "add_to_whitelist"
 EXECUTE_TYPE_ADD_TO_DEPOSIT = "add_to_deposit"
@@ -192,6 +193,8 @@ def _execute_type(elem, txinfo, index=0):
         return EXECUTE_TYPE_EXECUTE_ORDER
     elif "cancel_order" in execute_msg:
         return EXECUTE_TYPE_CANCEL_ORDER
+    elif "post_order" in execute_msg:
+        return EXECUTE_TYPE_POST_ORDER
     elif "transfer_nft" in execute_msg:
         return EXECUTE_TYPE_TRANSFER_NFT
     elif "send_nft" in execute_msg:

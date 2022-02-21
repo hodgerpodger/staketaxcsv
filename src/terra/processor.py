@@ -58,6 +58,7 @@ from terra.handle_nft import (
     handle_approve,
     handle_execute_order,
     handle_cancel_order,
+    handle_post_order,
     handle_mint_nft,
     handle_purchase_nft,
     handle_reserve_nft,
@@ -156,6 +157,8 @@ def process_tx(wallet_address, elem, exporter):
                 return handle_purchase_nft(exporter, elem, txinfo)
             elif execute_type == ex.EXECUTE_TYPE_EXECUTE_ORDER:
                 return handle_execute_order(exporter, elem, txinfo)
+            elif execute_type == ex.EXECUTE_TYPE_POST_ORDER:
+                return handle_post_order(exporter, elem, txinfo)
             elif execute_type == ex.EXECUTE_TYPE_TRANSFER_NFT:
                 return handle_transfer_nft(exporter, elem, txinfo)
             elif execute_type == ex.EXECUTE_TYPE_SEND_NFT:

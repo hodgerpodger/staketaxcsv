@@ -282,6 +282,25 @@ def handle_execute_order(exporter, elem, txinfo):
         ErrorCounter.increment("approve", txid)
         handle_unknown(exporter, txinfo)
 
+def handle_post_order(exporter, elem, txinfo):
+    """ list item from randomearth.io """
+    for execute_msg in util_terra._execute_msgs(elem):
+        order = execute_msg["post_order"]["order"]["order"]
+        maker_asset = order["maker_asset"]
+        taker_asset = order["taker_asset"]
+
+        if "nft" in maker_asset["info"]:
+            _, nft_currency = _parse_asset(maker_asset)
+            sent_amount, sent_currency = _parse_asset(taker_asset)
+            collection_contract = maker_asset["info"]["nft"]["contract_addr"]
+        else:
+            _, nft_currency = _parse_asset(taker_asset)
+            sent_amount, sent_currency = _parse_asset(maker_asset)
+            collection_contract = taker_asset["info"]["nft"]["contract_addr"]
+
+        name = _nft_name(collection_contract)
+        row = make_nft_offer_sell_tx(txinfo, nft_currency, sent_amount, sent_currency, name)
+        exporter.ingest_row(row)
 
 def handle_withdraw(exporter, elem, txinfo, index=0):
     """ withdraw nft or sell proceeds from randomearth.io """
