@@ -17,7 +17,14 @@ from terra.constants import (
     CONTRACTS_PYLON
 )
 
-from terra.handle_anchor_bond import handle_bond, handle_unbond, handle_unbond_withdraw, handle_burn_collateral
+from terra.handle_anchor_bond import (
+    handle_bond,
+    handle_unbond,
+    handle_unbond_withdraw,
+    handle_burn_collateral,
+    handle_mint_collateral
+)
+
 from terra.handle_anchor_borrow import (
     handle_borrow,
     handle_deposit_collateral,
@@ -211,6 +218,8 @@ def process_tx(wallet_address, elem, exporter):
                 return handle_unbond_withdraw(exporter, elem, txinfo)
             elif execute_type == ex.EXECUTE_TYPE_BURN_COLLATERAL:
                 return handle_burn_collateral(exporter, elem, txinfo)
+            elif execute_type == ex.EXECUTE_TYPE_MINT_COLLATERAL:
+                return handle_mint_collateral(exporter, elem, txinfo)
 
             # Mirror Borrow Transactions
             elif execute_type in [ex.EXECUTE_TYPE_OPEN_POSITION, ex.EXECUTE_TYPE_OPEN_POSITION_IN_MSG]:

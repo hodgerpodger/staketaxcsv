@@ -66,6 +66,7 @@ EXECUTE_TYPE_AUCTION = "auction"
 EXECUTE_TYPE_LIQUIDATE_COLLATERAL = "liquidate"
 EXECUTE_TYPE_SUBMIT_BID = "submit_bid"
 EXECUTE_TYPE_RETRACT_BID = "retract_bid"
+EXECUTE_TYPE_MINT_COLLATERAL = "mint_collateral"
 EXECUTE_TYPE_BURN_COLLATERAL = "burn_collateral"
 EXECUTE_TYPE_DISTRIBUTE = "distribute"
 EXECUTE_TYPE_INCREASE_LOCKUP = "increase_lockup"
@@ -217,6 +218,8 @@ def _execute_type(elem, txinfo, index=0):
         return EXECUTE_TYPE_WITHDRAW_VOTING_TOKENS
     elif "burn" in execute_msg:
         return EXECUTE_TYPE_BURN_COLLATERAL
+    elif "mint" in execute_msg:
+        return EXECUTE_TYPE_MINT_COLLATERAL
     elif "distribute" in execute_msg:
         return EXECUTE_TYPE_DISTRIBUTE
 
