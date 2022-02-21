@@ -99,7 +99,7 @@ TX_TYPE_NFT_MINT = "_NFT_MINT"
 TX_TYPE_NFT_OFFER_SELL = "_NFT_OFFER_SELL"
 TX_TYPE_NFT_WITHDRAW = "_NFT_WITHDRAW"
 TX_TYPE_NFT_DEPOSIT = "_NFT_DEPOSIT"
-
+TX_TYPE_NFT_CANCEL_ORDER = "_NFT_CANCEL_ORDER"
 
 # ### SOL ##########################################################################################
 

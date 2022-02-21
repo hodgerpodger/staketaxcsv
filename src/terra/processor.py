@@ -50,6 +50,7 @@ from terra.handle_nft import (
     handle_add_whitelist,
     handle_approve,
     handle_execute_order,
+    handle_cancel_order,
     handle_mint_nft,
     handle_purchase_nft,
     handle_reserve_nft,
@@ -160,6 +161,8 @@ def process_tx(wallet_address, elem, exporter):
                     return
                 elif ex.EXECUTE_TYPE_EXECUTE_ORDER in execute_msgs_keys:
                     return handle_execute_order(exporter, elem, txinfo)
+                elif execute_type == ex.EXECUTE_TYPE_CANCEL_ORDER:
+                    return handle_cancel_order(exporter, elem, txinfo)
                 else:
                     handle_unknown(exporter, txinfo)
 
