@@ -1,5 +1,5 @@
 from common.ErrorCounter import ErrorCounter
-from common.ExporterTypes import TX_TYPE_NFT_WHITELIST
+from common.ExporterTypes import TX_TYPE_NFT_WHITELIST, TX_TYPE_NFT_CANCEL_ORDER
 from terra import util_terra
 from terra.api_lcd import LcdAPI
 from terra.handle_simple import handle_simple, handle_unknown
@@ -9,11 +9,34 @@ from terra.make_tx import (
     make_nft_mint_no_purchase_tx,
     make_nft_mint_tx,
     make_nft_offer_sell_tx,
+    make_nft_offer_buy_tx,
     make_nft_reserve_tx,
     make_nft_transfer_in_tx,
     make_nft_transfer_out_tx,
-    make_nft_withdraw,
+    make_nft_offer_deposit,
+    make_nft_withdraw
 )
+import terra.execute_type as ex
+
+
+def handle_randomearth(exporter, elem, txinfo):
+    execute_type = ex._execute_type(elem, txinfo)
+    execute_msgs_keys = util_terra._execute_msgs_keys(elem)
+
+    if ex.EXECUTE_TYPE_EXECUTE_ORDER in execute_msgs_keys:
+        return handle_execute_order(exporter, elem, txinfo)
+    elif execute_type == ex.EXECUTE_TYPE_WITHDRAW:
+        handle_withdraw(exporter, elem, txinfo)
+        if len(execute_msgs_keys) == 2 and execute_msgs_keys[1] == ex.EXECUTE_TYPE_TRANSFER_NFT:
+            handle_transfer_nft(exporter, elem, txinfo, 1)
+        return
+    elif execute_type == ex.EXECUTE_TYPE_DEPOSIT:
+        return handle_post_order(exporter, elem, txinfo)
+
+    elif execute_type == ex.EXECUTE_TYPE_CANCEL_ORDER:
+        return handle_cancel_order(exporter, elem, txinfo)
+    else:
+        handle_unknown(exporter, txinfo)
 
 
 def handle_add_whitelist(exporter, elem, txinfo):
@@ -263,9 +286,15 @@ def handle_execute_order(exporter, elem, txinfo):
             maker_asset = order["maker_asset"]
             taker_asset = order["taker_asset"]
 
-            _, nft_currency = _parse_asset(maker_asset)
-            sent_amount, sent_currency = _parse_asset(taker_asset)
-            collection_contract = maker_asset["info"]["nft"]["contract_addr"]
+            if "nft" in maker_asset["info"]:
+                _, nft_currency = _parse_asset(maker_asset)
+                sent_amount, sent_currency = _parse_asset(taker_asset)
+                collection_contract = maker_asset["info"]["nft"]["contract_addr"]
+            else:
+                _, nft_currency = _parse_asset(taker_asset)
+                sent_amount, sent_currency = _parse_asset(maker_asset)
+                collection_contract = taker_asset["info"]["nft"]["contract_addr"]
+
             name = _nft_name(collection_contract)
 
             row = make_nft_buy_tx(txinfo, sent_amount, sent_currency, nft_currency, name)
@@ -276,6 +305,32 @@ def handle_execute_order(exporter, elem, txinfo):
         ErrorCounter.increment("approve", txid)
         handle_unknown(exporter, txinfo)
 
+def handle_post_order(exporter, elem, txinfo):
+    """ list item from randomearth.io """
+    for execute_msg in util_terra._execute_msgs(elem):
+        if("deposit" in execute_msg):
+            sent_amount, sent_currency = _parse_asset(execute_msg["deposit"]["asset"])
+            row = make_nft_offer_deposit(txinfo, sent_amount, sent_currency)
+            exporter.ingest_row(row)
+
+        if("post_order" in execute_msg):
+            order = execute_msg["post_order"]["order"]["order"]
+            maker_asset = order["maker_asset"]
+            taker_asset = order["taker_asset"]
+
+            if "nft" in maker_asset["info"]:
+                _, nft_currency = _parse_asset(maker_asset)
+                sent_amount, sent_currency = _parse_asset(taker_asset)
+                collection_contract = maker_asset["info"]["nft"]["contract_addr"]
+                name = _nft_name(collection_contract)
+                row = make_nft_offer_sell_tx(txinfo, nft_currency, sent_amount, sent_currency, name)
+            else:
+                sent_amount, sent_currency = _parse_asset(maker_asset)
+                collection_contract = taker_asset["info"]["nft"]["contract_addr"]
+                name = _nft_name(collection_contract)
+                row = make_nft_offer_buy_tx(txinfo, sent_amount, sent_currency, name)
+
+            exporter.ingest_row(row)
 
 def handle_withdraw(exporter, elem, txinfo, index=0):
     """ withdraw nft or sell proceeds from randomearth.io """
@@ -289,3 +344,7 @@ def handle_withdraw(exporter, elem, txinfo, index=0):
         received_amount, received_currency = _parse_asset(asset)
         row = make_nft_withdraw(txinfo, received_amount, received_currency)
         exporter.ingest_row(row)
+
+def handle_cancel_order(exporter, elem, txinfo, index=0):
+    """ cancel offer from randomearth.io """
+    handle_simple(exporter, txinfo, TX_TYPE_NFT_CANCEL_ORDER)
