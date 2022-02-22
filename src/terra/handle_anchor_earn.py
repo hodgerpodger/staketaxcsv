@@ -31,7 +31,7 @@ def handle_anchor_earn_withdraw(exporter, elem, txinfo):
     txid = txinfo.txid
     transfers_in, transfers_out = util_terra._transfers(elem, wallet_address, txid)
     from_contract = util_terra._event_with_action(elem, "from_contract", "redeem_stable")
-    
+
     # Get UST in
     amount_ust, currency_ust = transfers_in[0]
 
@@ -47,6 +47,5 @@ def handle_anchor_earn_withdraw(exporter, elem, txinfo):
     txinfo.comment = "earn_withdraw [1 aUST = {} UST]".format(_exchange_rate(amount_ust, amount_aust))
     row = make_swap_tx_terra(txinfo, amount_aust, CUR_AUST, amount_ust, CUR_UST)
 
-    row = util_terra._add_anchor_fees(elem, txid, row)
     exporter.ingest_row(row)
     return
