@@ -2,6 +2,7 @@ from common.make_tx import make_airdrop_tx, make_unknown_tx
 from terra import util_terra
 from terra.make_tx import make_withdraw_collateral_tx
 
+
 def handle_airdrop_pylon(exporter, elem, txinfo):
     """ Handles airdrops from pylon governance contract """
     wallet_address = txinfo.wallet_address
@@ -39,6 +40,7 @@ def handle_airdrop_pylon(exporter, elem, txinfo):
     if count == 0:
         row = make_unknown_tx(txinfo)
         exporter.ingest_row(row)
+
 
 def handle_pylon_withdraw(exporter, elem, txinfo):
     wallet_address = txinfo.wallet_address

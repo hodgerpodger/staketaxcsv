@@ -72,6 +72,7 @@ EXECUTE_TYPE_BURN_COLLATERAL = "burn_collateral"
 EXECUTE_TYPE_DISTRIBUTE = "distribute"
 EXECUTE_TYPE_INCREASE_LOCKUP = "increase_lockup"
 
+
 def _execute_type(elem, txinfo, index=0):
     txid = txinfo.txid
     execute_msg = util_terra._execute_msg(elem, index)

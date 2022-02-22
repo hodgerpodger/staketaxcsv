@@ -370,13 +370,14 @@ def _ingest_rows(exporter, rows, comment):
             row.fee, row.fee_currency = "", ""
         exporter.ingest_row(row)
 
+
 def _add_anchor_fees(elem, txid, row):
     # Extract fee, if any, paid by anchor market contract to fee collector
     fee_collector_address = "terra17xpfvakm2amg962yls6f84z3kell8c5lkaeqfa"
-    fee_transfers_in, _ = _transfers(elem, fee_collector_address, txid)  
+    fee_transfers_in, _ = _transfers(elem, fee_collector_address, txid)
 
     if len(fee_transfers_in) > 0:
-      fee_amount, fee_currency = fee_transfers_in[0]
-      row.fee += fee_amount
+        fee_amount, fee_currency = fee_transfers_in[0]
+        row.fee += fee_amount
 
     return row

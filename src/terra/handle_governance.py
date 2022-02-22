@@ -42,7 +42,7 @@ def handle_governance_reward(exporter, elem, txinfo):
 def _extract_amount(elem, txid, target_action):
     from_contract = elem["logs"][0]["events_by_type"]["from_contract"]
 
-    try: 
+    try:
         actions = from_contract["action"]
         amounts = from_contract["amount"]
         contract_addresses = from_contract["contract_address"]
@@ -69,7 +69,7 @@ def _extract_amount(elem, txid, target_action):
 
             if action == "transfer":
                 currency = util_terra._lookup_address(contract_address, txid)
-                
+
         amount = util_terra._float_amount(amounts[0], currency)
         return amount, currency
     except Exception:

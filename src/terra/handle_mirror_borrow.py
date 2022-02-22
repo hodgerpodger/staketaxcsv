@@ -35,13 +35,14 @@ def handle_repay_withdraw(exporter, elem, txinfo):
     exporter.ingest_row(row)
 
     if len(data["logs"]) > 1:
-      # Extract withdraw
-      from_contract = data["logs"][1]["events_by_type"]["from_contract"]
-      withdraw_amount_string = from_contract["withdraw_amount"][0]
-      withdraw_amount, withdraw_currency = util_terra._amount(withdraw_amount_string)
+        # Extract withdraw
+        from_contract = data["logs"][1]["events_by_type"]["from_contract"]
+        withdraw_amount_string = from_contract["withdraw_amount"][0]
+        withdraw_amount, withdraw_currency = util_terra._amount(withdraw_amount_string)
 
-      row = make_withdraw_collateral_tx(txinfo, withdraw_amount, withdraw_currency, empty_fee=True, z_index=1)
-      exporter.ingest_row(row)
+        row = make_withdraw_collateral_tx(txinfo, withdraw_amount, withdraw_currency, empty_fee=True, z_index=1)
+        exporter.ingest_row(row)
+
 
 def handle_auction(exporter, elem, txinfo):
     # Query

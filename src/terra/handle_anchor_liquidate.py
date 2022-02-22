@@ -1,11 +1,10 @@
-from common.make_tx import make_borrow_tx, make_repay_tx
 from terra import util_terra
-from terra.constants import CUR_UST, MILLION
 from terra.make_tx import (
     make_liquidate_tx,
     make_submit_bid_tx,
     make_retract_bid_tx
 )
+
 
 def handle_liquidate(exporter, elem, txinfo):
     wallet_address = txinfo.wallet_address
@@ -26,8 +25,9 @@ def handle_liquidate(exporter, elem, txinfo):
         row = make_liquidate_tx(txinfo, repay_amount, repay_currency, collateral_amount, collateral_currency)
     else:
         row = make_liquidate_tx(txinfo, collateral_amount, collateral_currency, repay_amount, repay_currency)
-    
+
     exporter.ingest_row(row)
+
 
 def handle_submit_bid(exporter, elem, txinfo):
     # Extract bid amount
@@ -37,6 +37,7 @@ def handle_submit_bid(exporter, elem, txinfo):
 
     row = make_submit_bid_tx(txinfo, bid_amount, bid_currency)
     exporter.ingest_row(row)
+
 
 def handle_retract_bid(exporter, elem, txinfo):
     txid = txinfo.txid

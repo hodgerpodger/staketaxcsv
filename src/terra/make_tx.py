@@ -84,31 +84,34 @@ def make_withdraw_collateral_tx(txinfo, received_amount, received_currency, empt
     return _make_tx_received(
         txinfo, received_amount, received_currency, TX_TYPE_WITHDRAW_COLLATERAL, empty_fee=empty_fee, z_index=z_index)
 
+
 def make_auction_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
                        txid=None, empty_fee=False):
     return _make_tx_exchange(
         txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_AUCTION)
+
 
 def make_liquidate_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
                        txid=None, empty_fee=False):
     return _make_tx_exchange(
         txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_LIQUIDATE_COLLATERAL)
 
+
 def make_retract_bid_tx(txinfo, bid_amount, bid_currency):
     return _make_tx_received(txinfo, bid_amount, bid_currency, TX_TYPE_RETRACT_BID)
-    return row
+
 
 def make_submit_bid_tx(txinfo, bid_amount, bid_currency):
     return _make_tx_sent(txinfo, bid_amount, bid_currency, TX_TYPE_SUBMIT_BID)
-    return row
+
 
 def make_gov_stake_tx(txinfo, sent_amount, sent_currency):
-    row = _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_GOV_STAKE)
-    return row
+    return _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_GOV_STAKE)
+
 
 def make_burn_collateral_tx(txinfo, sent_amount, sent_currency):
-    row = _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_UNBOND)
-    return row
+    return _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_UNBOND)
+
 
 def make_gov_unstake_tx(txinfo, received_amount, received_currency):
     txinfo.comment += "Need manual stake rewards calculation for {}.".format(received_currency)
@@ -151,20 +154,24 @@ def make_nft_offer_sell_tx(txinfo, sent_currency, offer_amount, offer_currency, 
     row.comment = "nft {}, offer sell {} {}".format(name, offer_amount, offer_currency)
     return row
 
+
 def make_nft_offer_buy_tx(txinfo, offer_amount, offer_currency, name=""):
     row = make_simple_tx(txinfo, TX_TYPE_NFT_OFFER_BUY)
     row.comment = "nft {}, offer buy {} {}".format(name, offer_amount, offer_currency)
     return row
+
 
 def make_nft_buy_tx(txinfo, sent_amount, sent_currency, received_currency, name=""):
     row = _make_tx_exchange(txinfo, sent_amount, sent_currency, 1, received_currency, TX_TYPE_TRADE)
     row.comment = _nft_comment(name)
     return row
 
+
 def make_nft_offer_deposit(txinfo, sent_amount, sent_currency):
     row = _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_NFT_DEPOSIT)
     row.comment = "deposit currency for nft offer"
     return row
+
 
 def make_nft_withdraw(txinfo, received_amount, received_currency):
     row = _make_tx_received(txinfo, received_amount, received_currency, TX_TYPE_NFT_WITHDRAW)

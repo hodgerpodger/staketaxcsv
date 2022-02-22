@@ -79,6 +79,7 @@ def handle_transfer_bridge_wormhole(exporter, elem, txinfo):
     else:
         handle_unknown_detect_transfers(exporter, txinfo, elem)
 
+
 def handle_ibc_transfer(exporter, elem, txinfo):
     wallet_address = txinfo.wallet_address
     txid = txinfo.txid

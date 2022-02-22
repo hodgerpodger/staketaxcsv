@@ -5,6 +5,7 @@ from terra.constants import CUR_BLUNA, CUR_LUNA
 from terra.make_tx import make_swap_tx_terra, make_unbond_tx, make_burn_collateral_tx
 from common.ExporterTypes import TX_TYPE_BOND
 
+
 def handle_bond(exporter, elem, txinfo):
     txid = txinfo.txid
     wallet_address = txinfo.wallet_address
@@ -47,10 +48,12 @@ def handle_unbond_withdraw(exporter, elem, txinfo):
     row = make_swap_tx_terra(txinfo, sent_amount, sent_currency, received_amount, received_currency)
     exporter.ingest_row(row)
 
+
 def handle_burn_collateral(exporter, elem, txinfo):
     # When withdrawing bETH, Anchor will first submit a burn transaction
     row = make_unbond_tx(txinfo)
     exporter.ingest_row(row)
+
 
 def handle_mint_collateral(exporter, elem, txinfo):
     # Minting bETH collateral
