@@ -13,8 +13,30 @@ from terra.make_tx import (
     make_nft_reserve_tx,
     make_nft_transfer_in_tx,
     make_nft_transfer_out_tx,
-    make_nft_offer_deposit
+    make_nft_offer_deposit,
+    make_nft_withdraw
 )
+import terra.execute_type as ex
+
+
+def handle_randomearth(exporter, elem, txinfo):
+    execute_type = ex._execute_type(elem, txinfo)
+    execute_msgs_keys = util_terra._execute_msgs_keys(elem)
+
+    if ex.EXECUTE_TYPE_EXECUTE_ORDER in execute_msgs_keys:
+        return handle_execute_order(exporter, elem, txinfo)
+    elif execute_type == ex.EXECUTE_TYPE_WITHDRAW:
+        handle_withdraw(exporter, elem, txinfo)
+        if len(execute_msgs_keys) == 2 and execute_msgs_keys[1] == ex.EXECUTE_TYPE_TRANSFER_NFT:
+            handle_transfer_nft(exporter, elem, txinfo, 1)
+        return
+    elif execute_type == ex.EXECUTE_TYPE_DEPOSIT:
+        return handle_post_order(exporter, elem, txinfo)
+
+    elif execute_type == ex.EXECUTE_TYPE_CANCEL_ORDER:
+        return handle_cancel_order(exporter, elem, txinfo)
+    else:
+        handle_unknown(exporter, txinfo)
 
 
 def handle_add_whitelist(exporter, elem, txinfo):
