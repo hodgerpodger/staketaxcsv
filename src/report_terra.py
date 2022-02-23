@@ -27,24 +27,20 @@ from terra.api_search_figment import LIMIT_FIGMENT, SearchAPIFigment
 from terra.config_terra import localconfig
 from terra.progress_terra import SECONDS_PER_TX, ProgressTerra
 
-MAX_TRANSACTIONS = 10000
-
 
 def main():
     wallet_address, export_format, txid, options = report_util.parse_args(TICKER_LUNA)
-    _read_options(options)
 
     if txid:
+        _read_options(options)
         exporter = txone(wallet_address, txid)
         exporter.export_print()
     else:
-        exporter = txhistory(wallet_address)
+        exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_LUNA, wallet_address, exporter, export_format)
 
 
 def _read_options(options):
-    if not options:
-        return
     report_util.read_common_options(localconfig, options)
 
     localconfig.lp_transfers = options.get("lp_transfers", False)
@@ -79,7 +75,7 @@ def estimate_duration(wallet_address):
 
 
 def _max_queries():
-    max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
+    max_txs = localconfig.limit
     max_queries = math.ceil(max_txs / LIMIT_FCD)
     logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
     return max_queries
@@ -87,7 +83,7 @@ def _max_queries():
 
 def _num_txs(wallet_address):
     num_txs = 0
-    figment_max_queries = math.ceil(MAX_TRANSACTIONS / LIMIT_FIGMENT)
+    figment_max_queries = math.ceil(localconfig.limit / LIMIT_FIGMENT)
 
     for _ in range(figment_max_queries):
         logging.info("estimate_duration() loop num_txs=%s", num_txs)
@@ -101,18 +97,16 @@ def _num_txs(wallet_address):
     return num_txs
 
 
-def txhistory(wallet_address, job=None, options=None):
+def txhistory(wallet_address, options):
     progress = ProgressTerra()
     exporter = Exporter(wallet_address)
 
-    if options:
-        _read_options(options)
-    if job:
-        localconfig.job = job
-        localconfig.cache = True
+    # Configure localconfig based on options
+    _read_options(options)
     if localconfig.cache:
         cache = Cache()
         _cache_load(cache)
+
     if TERRA_FIGMENT_KEY:
         # Optional: Fetch count of transactions to estimate progress more accurately later
         num_txs = _num_txs(wallet_address)

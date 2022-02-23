@@ -19,24 +19,20 @@ from common.ErrorCounter import ErrorCounter
 from common.Exporter import Exporter
 from settings_csv import TICKER_ALGO
 
-MAX_TRANSACTIONS = 10000
-
 
 def main():
     wallet_address, export_format, txid_or_groupid, options = report_util.parse_args(TICKER_ALGO)
-    _read_options(options)
 
     if txid_or_groupid:
+        _read_options(options)
         exporter = txone(wallet_address, txid_or_groupid)
         exporter.export_print()
     else:
-        exporter = txhistory(wallet_address)
+        exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_ALGO, wallet_address, exporter, export_format)
 
 
 def _read_options(options):
-    if not options:
-        return
     report_util.read_common_options(localconfig, options)
     localconfig.after_date = options.get("after_date", None)
     localconfig.before_date = options.get("before_date", None)
@@ -69,20 +65,18 @@ def txone(wallet_address, txid_or_groupid):
 
 
 def _max_queries():
-    max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
+    max_txs = localconfig.limit
     max_queries = math.ceil(max_txs / LIMIT_ALGOINDEXER)
     logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
     return max_queries
 
 
-def txhistory(wallet_address, job=None, options=None):
+def txhistory(wallet_address, options):
     progress = ProgressAlgo()
     exporter = Exporter(wallet_address)
 
-    if options:
-        _read_options(options)
-    if job:
-        localconfig.job = job
+    # Configure localconfig based on options
+    _read_options(options)
 
     # Retrieve data
     elems = _get_txs(wallet_address, progress)

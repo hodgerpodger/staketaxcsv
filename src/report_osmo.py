@@ -21,24 +21,20 @@ from osmo.lp_rewards import lp_rewards
 from osmo.progress_osmo import SECONDS_PER_PAGE, ProgressOsmo
 from settings_csv import TICKER_OSMO
 
-MAX_TRANSACTIONS = 10000
-
 
 def main():
     wallet_address, export_format, txid, options = report_util.parse_args(TICKER_OSMO)
-    _read_options(options)
 
     if txid:
+        _read_options(options)
         exporter = txone(wallet_address, txid)
         exporter.export_print()
     else:
-        exporter = txhistory(wallet_address)
+        exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_OSMO, wallet_address, exporter, export_format)
 
 
 def _read_options(options):
-    if not options:
-        return
     report_util.read_common_options(localconfig, options)
 
     localconfig.lp_transfers = options.get("lp_transfers", False)
@@ -73,7 +69,7 @@ def estimate_duration(wallet_address):
 
 def _pages(wallet_address):
     """ Returns list of page numbers to be retrieved """
-    max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
+    max_txs = localconfig.limit
     num_txs = min(osmo.api_data.get_count_txs(wallet_address), max_txs)
 
     last_page = math.ceil(num_txs / osmo.api_data.LIMIT_PER_QUERY) - 1
@@ -81,15 +77,12 @@ def _pages(wallet_address):
     return pages
 
 
-def txhistory(wallet_address, job=None, options=None):
+def txhistory(wallet_address, options):
     progress = ProgressOsmo()
     exporter = Exporter(wallet_address)
 
-    if options:
-        _read_options(options)
-    if job:
-        localconfig.job = job
-        localconfig.cache = True
+    # Configure localconfig based on options
+    _read_options(options)
     if localconfig.cache:
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")

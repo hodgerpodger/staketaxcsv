@@ -22,26 +22,23 @@ from sol.constants import PROGRAMID_STAKE
 from sol.progress_sol import SECONDS_PER_STAKING_ADDRESS, SECONDS_PER_TX, ProgressSol
 from sol.TxInfoSol import WalletInfo
 
-LIMIT = 1000
-MAX_TRANSACTIONS = 5000
+LIMIT_PER_QUERY = 1000
 RPC_TIMEOUT = 600  # seconds
 
 
 def main():
     wallet_address, export_format, txid, options = report_util.parse_args(TICKER_SOL)
-    _read_options(options)
 
     if txid:
+        _read_options(options)
         exporter = txone(wallet_address, txid)
         exporter.export_print()
     else:
-        exporter = txhistory(wallet_address)
+        exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_SOL, wallet_address, exporter, export_format)
 
 
 def _read_options(options):
-    if not options:
-        return
     report_util.read_common_options(localconfig, options)
     logging.info("localconfig: %s", localconfig.__dict__)
 
@@ -107,16 +104,13 @@ def _num_txids(wallet_address):
     return len(txids)
 
 
-def txhistory(wallet_address, job=None, options=None):
+def txhistory(wallet_address, options):
     progress = ProgressSol()
     exporter = Exporter(wallet_address)
     wallet_info = WalletInfo(wallet_address)
 
-    if options:
-        _read_options(options)
-    if job:
-        localconfig.job = job
-        localconfig.cache = True
+    # Configure localconfig based on options
+    _read_options(options)
     if localconfig.cache:
         localconfig.blocks = Cache().get_sol_blocks()
         logging.info("Loaded sol blocks info into cache...")
@@ -156,8 +150,8 @@ def txhistory(wallet_address, job=None, options=None):
 
 def _max_queries():
     """Calculated max number of queries based off of config limits"""
-    max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
-    max_queries = math.ceil(max_txs / LIMIT)
+    max_txs = localconfig.limit
+    max_queries = math.ceil(max_txs / LIMIT_PER_QUERY)
     logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
     return max_queries
 
@@ -178,7 +172,7 @@ def _query_txids(addresses, progress):
         for j in range(max_queries):
             logging.info("query %s for address=%s", j, address)
 
-            txids, before = RpcAPI.get_txids(address, limit=LIMIT, before=before)
+            txids, before = RpcAPI.get_txids(address, limit=LIMIT_PER_QUERY, before=before)
             for txid in txids:
                 # Remove duplicate txids
                 if txid not in txids_seen:

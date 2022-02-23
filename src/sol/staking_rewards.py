@@ -57,6 +57,9 @@ def _get_reward(epoch, staking_address):
         logging.info("Fetching inflation reward for staking_address=%s, epoch=%s ...", staking_address, epoch)
         amount, slot = RpcAPI.get_inflation_reward(staking_address, epoch)
 
+        print("roger flush is {}".format(flush))
+        print("roger slot is {}".format(slot))
+
         if flush and slot:
             # Fetch rewards for all users at epoch.  Write to epoch file.
             logging.info("Retrieving and flushing rewards to file for epoch=%s...", epoch)

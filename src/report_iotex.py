@@ -21,24 +21,20 @@ from iotex.config_iotex import localconfig
 from iotex.progress_iotex import ProgressIotex
 from settings_csv import TICKER_IOTEX
 
-MAX_TRANSACTIONS = 10000
-
 
 def main():
     wallet_address, export_format, txid, options = report_util.parse_args(TICKER_IOTEX)
-    _read_options(options)
 
     if txid:
+        _read_options(options)
         exporter = txone(wallet_address, txid)
         exporter.export_print()
     else:
-        exporter = txhistory(wallet_address)
+        exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_IOTEX, wallet_address, exporter, export_format)
 
 
 def _read_options(options):
-    if not options:
-        return
     report_util.read_common_options(localconfig, options)
     logging.info("localconfig: %s", localconfig.__dict__)
 
@@ -65,20 +61,18 @@ def txone(wallet_address, txid):
 
 
 def _max_queries():
-    max_txs = localconfig.limit if localconfig.limit else MAX_TRANSACTIONS
+    max_txs = localconfig.limit
     max_queries = math.ceil(max_txs / co.IOTEX_API_LIMIT)
     logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
     return max_queries
 
 
-def txhistory(wallet_address, job=None, options=None):
+def txhistory(wallet_address, options):
     progress = ProgressIotex()
     exporter = Exporter(wallet_address)
 
-    if options:
-        _read_options(options)
-    if job:
-        localconfig.job = job
+    # Configure localconfig based on options
+    _read_options(options)
 
     # Retrieve data
     elems = _get_txs(wallet_address, progress)

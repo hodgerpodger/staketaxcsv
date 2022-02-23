@@ -4,4 +4,4 @@ class localconfig:
     debug = False
     cache = False
     blocks = {}
-    limit = None
+    limit = 5000  # max txs

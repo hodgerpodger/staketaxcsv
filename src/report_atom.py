@@ -26,25 +26,22 @@ from common.Cache import Cache
 from common.Exporter import Exporter
 from settings_csv import TICKER_ATOM
 
-LIMIT = 50
-MAX_TRANSACTIONS = 10000
+LIMIT_PER_QUERY = 50
 
 
 def main():
     wallet_address, export_format, txid, options = report_util.parse_args(TICKER_ATOM)
-    _read_options(options)
 
     if txid:
+        _read_options(options)
         exporter = txone(wallet_address, txid)
         exporter.export_print()
     else:
-        exporter = txhistory(wallet_address)
+        exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_ATOM, wallet_address, exporter, export_format)
 
 
 def _read_options(options):
-    if not options:
-        return
     report_util.read_common_options(localconfig, options)
 
     localconfig.legacy = options.get("legacy", False)
@@ -73,15 +70,12 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * atom.api_lcd.get_txs_count_pages(wallet_address)
 
 
-def txhistory(wallet_address, job=None, options=None):
+def txhistory(wallet_address, options):
     progress = ProgressAtom()
     exporter = Exporter(wallet_address)
 
-    if options:
-        _read_options(options)
-    if job:
-        localconfig.job = job
-        localconfig.cache = True
+    # Configure localconfig based on options
+    _read_options(options)
     if localconfig.cache:
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")
@@ -110,8 +104,8 @@ def txhistory(wallet_address, job=None, options=None):
 
 
 def _max_pages():
-    max_txs = localconfig.limit if localconfig.limit is not None else MAX_TRANSACTIONS
-    max_pages = math.ceil(max_txs / LIMIT)
+    max_txs = localconfig.limit
+    max_pages = math.ceil(max_txs / LIMIT_PER_QUERY)
     logging.info("max_txs: %s, max_pages: %s", max_txs, max_pages)
     return max_pages
 

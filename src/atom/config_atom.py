@@ -2,7 +2,7 @@ class localconfig:
 
     job = None
     debug = False
-    limit = None
+    limit = 10000  # max txs
     legacy = False
     ibc_addresses = {}
     cache = False

@@ -126,6 +126,7 @@ def run_exports(ticker, wallet_address, exporter, export_format):
 
 
 def read_common_options(localconfig, options):
+    localconfig.job = options.get("job", None)
     localconfig.debug = options.get("debug", False)
-    localconfig.cache = options.get("cache", False)
-    localconfig.limit = options.get("limit", None)
+    localconfig.cache = options.get("cache", localconfig.job is not None)
+    localconfig.limit = options.get("limit", localconfig.limit)
