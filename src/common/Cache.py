@@ -72,6 +72,9 @@ class Cache:
         return self._get(FIELD_TERRA_DECIMALS)
 
     def set_ibc_addresses(self, data):
+        # Remove entries where no symbol was found
+        data = {k: v for k, v in data.items() if not v.startswith("ibc/")}
+
         return self._set_merge(FIELD_IBC_ADDRESSES, data)
 
     def get_ibc_addresses(self):

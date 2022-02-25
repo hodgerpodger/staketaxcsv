@@ -97,8 +97,6 @@ def txhistory(wallet_address, options):
     atom.processor.process_txs(wallet_address, elems, exporter)
 
     if localconfig.cache:
-        # Remove entries where no symbol was found
-        localconfig.ibc_addresses = {k: v for k, v in localconfig.ibc_addresses.items() if not v.startswith("ibc/")}
         Cache().set_ibc_addresses(localconfig.ibc_addresses)
     return exporter
 
