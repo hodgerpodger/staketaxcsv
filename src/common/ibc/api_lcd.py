@@ -20,7 +20,7 @@ class LcdAPI:
 
     def _query(self, uri_path, query_params, sleep_seconds=0):
         url = f"{self.node}{uri_path}"
-        logging.info("Requesting url %s?%s with sleep_seconds=%s", url, urlencode(query_params), sleep_seconds)
+        logging.info("Requesting url %s?%s ...", url, urlencode(query_params))
         response = requests.get(url, query_params)
 
         if sleep_seconds:
