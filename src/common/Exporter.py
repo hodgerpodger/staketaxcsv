@@ -35,7 +35,6 @@ from common.ExporterTypes import (
     TX_TYPE_TRADE,
     TX_TYPE_TRANSFER,
     TX_TYPES_CSVEXPORT,
-    TX_TYPES_TAXABLE,
     ZEN_FIELDS,
 )
 from pytz import timezone
@@ -62,9 +61,6 @@ class Row:
         self.z_index = z_index  # Determines ordering for rows with same txid
         self.comment = comment
 
-        # Use None instead of "False", so that it is consistent with what is shown to user
-        self.taxable = True if (self.tx_type in TX_TYPES_TAXABLE) else None
-
     def _format_currency(self, currency):
         if currency == "BLUNA":
             return "bLUNA"
@@ -85,7 +81,6 @@ class Row:
         return [
             self.timestamp,
             self.tx_type,
-            self.taxable,
             self.received_amount,
             self.received_currency,
             self.sent_amount,
@@ -103,7 +98,6 @@ class Row:
         return [
             self.timestamp,
             self.tx_type,
-            self.taxable,
             self.received_amount,
             self.received_currency,
             self.sent_amount,

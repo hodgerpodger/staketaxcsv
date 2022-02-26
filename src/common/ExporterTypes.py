@@ -149,24 +149,15 @@ TX_TYPES_CSVEXPORT = [
     TX_TYPE_REPAY
 ]
 
-# Types with taxable=True
-TX_TYPES_TAXABLE = [
-    TX_TYPE_STAKING,
-    TX_TYPE_AIRDROP,
-    TX_TYPE_TRADE,
-    TX_TYPE_SPEND,
-    TX_TYPE_INCOME
-]
-
 # stake.tax csv format
 ROW_FIELDS = [
-    "timestamp", "tx_type", "taxable", "received_amount", "received_currency",
+    "timestamp", "tx_type", "received_amount", "received_currency",
     "sent_amount", "sent_currency", "fee", "fee_currency", "comment", "txid",
     "url", "exchange", "wallet_address"
 ]
 
 # fields used for unit testing
-TEST_ROW_FIELDS = ["timestamp", "tx_type", "taxable", "received_amount", "received_currency",
+TEST_ROW_FIELDS = ["timestamp", "tx_type", "received_amount", "received_currency",
                    "sent_amount", "sent_currency", "fee", "fee_currency", "txid"]
 
 # cointracking csv format: https://cointracking.info/import/import_csv/
