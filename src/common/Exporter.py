@@ -456,6 +456,10 @@ class Exporter:
         if currency and currency.upper() == "PSI":
             # koinly default PSI is "Passive Income", not "Nexus Protocol" that we want
             return "ID:106376"
+        elif currency and currency.upper() == "APOLLO":
+            return "ID:28478"
+        elif currency and currency.upper() == "ASTRO":
+            return "ID:48993"
         else:
             return currency
 
