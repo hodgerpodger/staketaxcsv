@@ -6,7 +6,7 @@ SOL_NODE = os.environ.get("SOL_NODE", "")
 ATOM_NODE = os.environ.get("ATOM_NODE", "")
 TERRA_LCD_NODE = os.environ.get("TERRA_LCD_NODE", "")
 ALGO_INDEXER_NODE = os.environ.get("ALGO_INDEXER_NODE", "https://algoindexer.algoexplorerapi.io")
-HUAHUA_NODE = os.environ.get("HUAHUA_NODE", "https://api.chihuahua.wtf")
+HUAHUA_NODE = os.environ.get("HUAHUA_NODE", "")
 
 # Optional environment variables
 TERRA_FIGMENT_KEY = os.environ.get("TERRA_FIGMENT_KEY", "")
