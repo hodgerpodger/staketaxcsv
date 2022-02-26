@@ -20,7 +20,7 @@ import terra.processor
 from common import report_util
 from common.Cache import Cache
 from common.ErrorCounter import ErrorCounter
-from common.Exporter import Exporter
+from common.Exporter import Exporter, FORMAT_DEFAULT
 from settings_csv import TERRA_FIGMENT_KEY, TICKER_LUNA
 from terra.api_fcd import LIMIT_FCD, FcdAPI
 from terra.api_search_figment import LIMIT_FIGMENT, SearchAPIFigment
@@ -35,6 +35,8 @@ def main():
         _read_options(options)
         exporter = txone(wallet_address, txid)
         exporter.export_print()
+        if export_format != FORMAT_DEFAULT:
+            report_util.export_format(exporter, export_format, txid)
     else:
         exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_LUNA, wallet_address, exporter, export_format)

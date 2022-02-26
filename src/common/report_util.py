@@ -125,6 +125,11 @@ def run_exports(ticker, wallet_address, exporter, export_format):
         exporter.export_format(cur_format, csvpath)
 
 
+def export_format(exporter, export_format, txid):
+    csvpath = f"{REPORTS_DIR}/{txid}.{export_format}.csv"
+    exporter.export_format(export_format, csvpath)
+
+
 def read_common_options(localconfig, options):
     localconfig.job = options.get("job", None)
     localconfig.debug = options.get("debug", False)
