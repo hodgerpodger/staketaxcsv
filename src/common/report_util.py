@@ -125,7 +125,7 @@ def run_exports(ticker, wallet_address, exporter, export_format):
         exporter.export_format(cur_format, csvpath)
 
 
-def export_format(exporter, export_format, txid):
+def export_format_for_txid(exporter, export_format, txid):
     csvpath = f"{REPORTS_DIR}/{txid}.{export_format}.csv"
     exporter.export_format(export_format, csvpath)
 

@@ -36,7 +36,7 @@ def main():
         exporter = txone(wallet_address, txid)
         exporter.export_print()
         if export_format != FORMAT_DEFAULT:
-            report_util.export_format(exporter, export_format, txid)
+            report_util.export_format_for_txid(exporter, export_format, txid)
     else:
         exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_LUNA, wallet_address, exporter, export_format)
