@@ -40,6 +40,8 @@ from common.ExporterTypes import (
 from pytz import timezone
 from sol.constants import EXCHANGE_SOLANA_BLOCKCHAIN
 from tabulate import tabulate
+import re
+import json
 
 
 class Row:
@@ -425,7 +427,7 @@ class Exporter:
                 elif row.tx_type == TX_TYPE_TRANSFER:
                     label = ""
                 else:
-                    label = ""
+                    label = row.tx_type
                     logging.error("koinly: unable to handle tx_type=%s", row.tx_type)
 
                 line = [
@@ -447,7 +449,9 @@ class Exporter:
         logging.info("Wrote to %s", csvpath)
 
     def _koinly_currency(self, currency):
-        if currency and currency.upper() == "PSI":
+        if(re.findall(r"LP",currency)):
+            return self.get_koinly_null_symbol(currency)
+        elif currency and currency.upper() == "PSI":
             # koinly default PSI is "Passive Income", not "Nexus Protocol" that we want
             return "ID:106376"
         elif currency and currency.upper() == "APOLLO":
@@ -456,6 +460,28 @@ class Exporter:
             return "ID:48993"
         else:
             return currency
+
+    def get_koinly_null_symbol(self, symbol):
+        # koinly_null_map.json will act as a database for mapping ids to
+        # LP tokens. This file will be different for each user and must
+        # be persisted across runs.
+        try:
+            f = open('../koinly_null_map.json', 'r')
+            null_map = json.load(f)
+            f.close()
+        except IOError:
+            null_map = {"lp_tokens": []}
+
+        if symbol not in null_map["lp_tokens"]:
+            null_map["lp_tokens"].append(symbol)
+            f = open('../koinly_null_map.json', 'w')
+            json.dump(null_map, f)
+            f.close()
+
+        index = null_map["lp_tokens"].index(symbol)
+
+        # Koinly only accepts indices > 0
+        return "NULL{}".format(index + 1)
 
     def export_calculator_csv(self, csvpath):
         """ Write CSV, suitable for import into cryptataxcalculator.io """

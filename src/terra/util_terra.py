@@ -249,6 +249,10 @@ def _lookup_address(addr, txid):
 
     if "symbol" in init_msg:
         currency = init_msg["symbol"]
+
+        if currency == "uLP":
+            currency = _lookup_lp_address(addr, txid)
+
         decimals = int(init_msg["decimals"])
 
         # Cache result
