@@ -45,7 +45,6 @@ def handle_retract_bid(exporter, elem, txinfo):
 
     # Extract bid amount
     transfers_in, _ = util_terra._transfers(elem, wallet, txid)
-    print(transfers_in)
     bid_amount, bid_currency = transfers_in[0]
     row = make_retract_bid_tx(txinfo, bid_amount, bid_currency)
 

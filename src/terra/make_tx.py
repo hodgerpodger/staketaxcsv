@@ -4,7 +4,6 @@ from common.ExporterTypes import (
     TX_TYPE_DEPOSIT_COLLATERAL,
     TX_TYPE_GOV_STAKE,
     TX_TYPE_GOV_UNSTAKE,
-    TX_TYPE_LIQUIDATE_COLLATERAL,
     TX_TYPE_LP_DEPOSIT,
     TX_TYPE_LP_STAKE,
     TX_TYPE_LP_UNSTAKE,
@@ -94,7 +93,7 @@ def make_auction_tx(txinfo, sent_amount, sent_currency, received_amount, receive
 def make_liquidate_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
                        txid=None, empty_fee=False):
     return _make_tx_exchange(
-        txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_LIQUIDATE_COLLATERAL)
+        txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_TRADE)
 
 
 def make_retract_bid_tx(txinfo, bid_amount, bid_currency):
