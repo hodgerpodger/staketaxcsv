@@ -6,6 +6,7 @@ SOL_NODE = os.environ.get("SOL_NODE", "")
 ATOM_NODE = os.environ.get("ATOM_NODE", "")
 TERRA_LCD_NODE = os.environ.get("TERRA_LCD_NODE", "")
 ALGO_INDEXER_NODE = os.environ.get("ALGO_INDEXER_NODE", "https://algoindexer.algoexplorerapi.io")
+HUAHUA_NODE = os.environ.get("HUAHUA_NODE", "")
 
 # Optional environment variables
 TERRA_FIGMENT_KEY = os.environ.get("TERRA_FIGMENT_KEY", "")
@@ -13,6 +14,7 @@ TERRA_FIGMENT_KEY = os.environ.get("TERRA_FIGMENT_KEY", "")
 # #############################################################################
 
 TICKER_ATOM = "ATOM"
+TICKER_HUAHUA = "HUAHUA"
 TICKER_LUNA = "LUNA"
 TICKER_SOL = "SOL"
 TICKER_OSMO = "OSMO"
@@ -25,6 +27,7 @@ DONATION_WALLETS = set([
     os.environ.get("DONATION_WALLET_SOL", ""),
     os.environ.get("DONATION_WALLET_OSMO", ""),
     os.environ.get("DONATION_WALLET_ALGO", ""),
+    os.environ.get("DONATION_WALLET_HUAHUA", ""),
 ])
 
 MESSAGE_ADDRESS_NOT_FOUND = "Wallet address not found"

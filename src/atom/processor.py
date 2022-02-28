@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-import common.ibc_tokens
+import common.ibc.api_lcd
 from atom.config_atom import localconfig
 from atom.constants import CHAIN_ID_COSMOHUB3, CHAIN_ID_COSMOHUB4, CUR_ATOM, CURRENCIES, MILLION
 from atom.make_tx import make_atom_reward_tx, make_transfer_receive_tx
@@ -15,7 +15,7 @@ from common.ExporterTypes import (
     TX_TYPE_VOTE,
 )
 from common.make_tx import make_simple_tx, make_transfer_out_tx
-from settings_csv import TICKER_ATOM
+from settings_csv import TICKER_ATOM, ATOM_NODE
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -249,7 +249,7 @@ def _amount(amount_string):
     if "ibc/" in amount_string:
         amount, address = amount_string.split("ibc/", 1)
         ibc_address = "ibc/{}".format(address)
-        currency = common.ibc_tokens.get_symbol(localconfig, TICKER_ATOM, ibc_address)
+        currency = common.ibc.api_lcd.get_ibc_ticker(ATOM_NODE, ibc_address, localconfig.ibc_addresses)
         amount = float(amount) / MILLION
         return amount, currency
 

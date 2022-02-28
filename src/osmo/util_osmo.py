@@ -125,11 +125,6 @@ def _denom_to_currency(denom):
     return denom[1:].upper()
 
 
-class NoSymbol:
-
-    ibc_addresses = set()
-
-
 def _ibc_currency(ibc_address):
     # i.e. "ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4" -> "IKT"
     if ibc_address in localconfig.ibc_addresses:

@@ -4,11 +4,10 @@ import base64
 import json
 import logging
 
-import common.ibc_tokens
-from settings_csv import TICKER_LUNA
+from settings_csv import TERRA_LCD_NODE
 from terra.api_lcd import LcdAPI
 from terra.config_terra import localconfig
-from terra.constants import CUR_ORION, IBC_TOKEN_NAMES
+import common.ibc.api_lcd
 
 
 def _contracts(elem):
@@ -158,7 +157,7 @@ def _extract_amounts(amount_string):
             uamount, ibc_address = amount.split("ibc")
             ibc_address = "ibc" + ibc_address
 
-            currency = common.ibc_tokens.get_symbol(localconfig, TICKER_LUNA, ibc_address)
+            currency = common.ibc.api_lcd.get_ibc_ticker(TERRA_LCD_NODE, ibc_address, localconfig.ibc_addresses)
             out[currency] = _float_amount(uamount, currency)
         else:
             # regular (i.e. 99700703uusd)
@@ -346,11 +345,6 @@ def _init_msg(data):
 
     init_msg = json.loads(base64.b64decode(init_msg_base64))
     return init_msg
-
-
-def _ibc_token_name(address):
-    # ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B -> "OSMO"
-    return IBC_TOKEN_NAMES.get(address, address)
 
 
 def _event_with_action(elem, event_type, action):
