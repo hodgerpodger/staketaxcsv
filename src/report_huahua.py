@@ -60,6 +60,7 @@ def txhistory(wallet_address, options):
     progress = ProgressHuahua()
     exporter = Exporter(wallet_address)
 
+    # Configure localconfig based on options
     _read_options(options)
     if localconfig.cache:
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
