@@ -18,7 +18,9 @@ def process_tx(wallet_address, elem, exporter):
 
     for msginfo in txinfo.msgs:
         result = common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)
-        if not result:
-            common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+        if result:
+            continue
+
+        common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
     return txinfo
