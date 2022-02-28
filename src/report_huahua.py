@@ -35,12 +35,11 @@ def _read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return common.ibc.api_lcd.account_exists(wallet_address)
+    return common.ibc.api_lcd.LcdAPI(HUAHUA_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    api = common.ibc.api_lcd.LcdAPI(HUAHUA_NODE)
-    elem = api.get_tx(txid)
+    elem = common.ibc.api_lcd.LcdAPI(HUAHUA_NODE).get_tx(txid)
 
     print("Transaction data:")
     pprint.pprint(elem)
