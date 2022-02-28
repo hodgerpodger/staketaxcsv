@@ -165,7 +165,7 @@ def _get_txs(wallet_address, progress):
         result = data["txs"]
         out.extend(result)
 
-        if len(result) == LIMIT_FCD and "next" in data:
+        if data.get("next", None):
             offset = data["next"]
         else:
             break
