@@ -130,10 +130,10 @@ def process_tx(wallet_address, elem, exporter):
             elif util_terra._any_contracts(CONTRACTS_PYLON, elem):
                 if execute_type == ex.EXECUTE_TYPE_WITHDRAW:
                     return handle_pylon_withdraw(exporter, elem, txinfo)
-            elif util_terra._any_contracts(CONTRACTS_VALKYRIE, elem):
-                return handle_simple(exporter, txinfo, TX_TYPE_VALKYRIE_UNKNOWN)
+                else:
+                    return handle_unknown_detect_transfers(exporter, txinfo, elem)
             elif contract == CONTRACT_RANDOMEARTH:
-                handle_randomearth(exporter, elem, txinfo)
+                return handle_randomearth(exporter, elem, txinfo)
 
             # ########## Handle by execute_msg data keys ######################################
 
