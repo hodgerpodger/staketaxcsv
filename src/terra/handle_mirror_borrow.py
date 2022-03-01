@@ -1,6 +1,6 @@
 from common.make_tx import make_borrow_tx, make_repay_tx
 from terra import util_terra
-from terra.make_tx import make_deposit_collateral_tx, make_withdraw_collateral_tx, make_auction_tx
+from terra.make_tx import make_deposit_collateral_tx, make_withdraw_collateral_tx
 
 
 def handle_deposit_borrow(exporter, elem, txinfo):
@@ -57,5 +57,5 @@ def handle_auction(exporter, elem, txinfo):
     collateral_amount_string = from_contract["return_collateral_amount"][0]
     collateral_amount, collateral_currency = util_terra._amount(collateral_amount_string)
 
-    row = make_auction_tx(txinfo, liquidated_amount, liquidated_currency, collateral_amount, collateral_currency)
+    row = make_liquidate_tx(txinfo, liquidated_amount, liquidated_currency, collateral_amount, collateral_currency)
     exporter.ingest_row(row)

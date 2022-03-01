@@ -66,9 +66,6 @@ TX_TYPE_GOV = "_GOV"
 TX_TYPE_GOV_STAKE = "_GOV_STAKE"
 TX_TYPE_GOV_UNSTAKE = "_GOV_UNSTAKE"
 
-# mirror protocol borrow
-TX_TYPE_AUCTION = "_AUCTION"
-
 # mirror protocol lp
 TX_TYPE_LP_STAKE = "_LP_STAKE"
 TX_TYPE_LP_UNSTAKE = "_LP_UNSTAKE"
