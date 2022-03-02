@@ -66,8 +66,7 @@ def _handle_transfer(exporter, txinfo, msginfo):
         return
     elif len(transfers_in) == 0 and len(transfers_out) == 0:
         # ibc transfers can come in batches with unrelated transfers
-        row = make_tx.make_noop_tx(txinfo, msginfo)
-        exporter.ingest_row(row)
+        # omitting orw because too noisy to include non-related messages
         return
     else:
         handle_unknown_detect_transfers(exporter, txinfo, msginfo)
