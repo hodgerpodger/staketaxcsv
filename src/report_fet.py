@@ -2,6 +2,9 @@
 usage: python3 report_fet.py <walletaddress> [--format all|cointracking|koinly|..]
 
 Prints transactions and writes CSV(s) to _reports/HUAHUA*.csv
+
+TODO: fetchhub-2 transactions
+  * requires significant work with querying/parsing legacy rpc api data.
 """
 
 import logging
