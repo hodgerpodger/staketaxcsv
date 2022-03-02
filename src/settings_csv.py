@@ -7,6 +7,7 @@ ATOM_NODE = os.environ.get("ATOM_NODE", "")
 TERRA_LCD_NODE = os.environ.get("TERRA_LCD_NODE", "")
 ALGO_INDEXER_NODE = os.environ.get("ALGO_INDEXER_NODE", "https://algoindexer.algoexplorerapi.io")
 HUAHUA_NODE = os.environ.get("HUAHUA_NODE", "")
+FET_NODE = os.environ.get("FET_NODE", "https://rest-fetchhub.fetch.ai")
 
 # Optional environment variables
 TERRA_FIGMENT_KEY = os.environ.get("TERRA_FIGMENT_KEY", "")
@@ -20,6 +21,7 @@ TICKER_SOL = "SOL"
 TICKER_OSMO = "OSMO"
 TICKER_ALGO = "ALGO"
 TICKER_IOTEX = "IOTX"
+TICKER_FET = "FET"
 
 DONATION_WALLETS = set([
     os.environ.get("DONATION_WALLET_ATOM", ""),
@@ -28,6 +30,7 @@ DONATION_WALLETS = set([
     os.environ.get("DONATION_WALLET_OSMO", ""),
     os.environ.get("DONATION_WALLET_ALGO", ""),
     os.environ.get("DONATION_WALLET_HUAHUA", ""),
+    os.environ.get("DONATION_WALLET_FET", ""),
 ])
 
 MESSAGE_ADDRESS_NOT_FOUND = "Wallet address not found"
