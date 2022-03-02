@@ -2,8 +2,8 @@ import logging
 
 import osmo.api_historical
 from osmo.config_osmo import localconfig
-from osmo.constants import CUR_CRO, EXP18, MILLION, MSG_TYPE_BEGIN_UNLOCKING, MSG_TYPE_LOCK_TOKENS
-
+#from osmo.constants import CUR_CRO, EXP18, MILLION, MSG_TYPE_BEGIN_UNLOCKING, MSG_TYPE_LOCK_TOKENS
+import osmo.constants as co
 
 def _transfers(log, wallet_address):
     """
@@ -113,11 +113,11 @@ def _amount_currency(amount_string):
 
 def _amount(uamount, currency):
     if currency.startswith("GAMM-"):
-        return float(uamount) / EXP18
-    elif currency == CUR_CRO:
-        return float(uamount) / MILLION / 100
+        return float(uamount) / co.EXP18
+    elif currency == co.CUR_CRO:
+        return float(uamount) / co.MILLION / 100
     else:
-        return float(uamount) / MILLION
+        return float(uamount) / co.MILLION
 
 
 def _denom_to_currency(denom):
@@ -168,9 +168,9 @@ def _period_lock_id(msginfo):
     msg_type = _msg_type(msginfo)
 
     # Determine type to lookup when parsing events
-    if msg_type == MSG_TYPE_LOCK_TOKENS:
+    if msg_type in (co.MSG_TYPE_LOCK_TOKENS, co.MSG_TYPE_LOCK_AND_SUPERFLUID_DELEGATE):
         event_type_target = "lock_tokens"
-    elif msg_type == MSG_TYPE_BEGIN_UNLOCKING:
+    elif msg_type == co.MSG_TYPE_BEGIN_UNLOCKING:
         event_type_target = "begin_unlock"
     else:
         logging.critical("_period_lock_id(): Unexpected msg_type=%s", msg_type)

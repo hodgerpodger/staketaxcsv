@@ -79,6 +79,8 @@ def _handle_message(exporter, txinfo, msginfo):
         # superfluid
         elif msg_type == co.MSG_TYPE_SUPERFLUID_DELEGATE:
             osmo.handle_superfluid.handle_delegate(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_LOCK_AND_SUPERFLUID_DELEGATE:
+            osmo.handle_superfluid.handle_lp_stake(exporter, txinfo, msginfo)
 
         else:
             osmo.handle_unknown.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
