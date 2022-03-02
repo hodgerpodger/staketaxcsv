@@ -1,6 +1,8 @@
 
 MILLION = 1000000.0
+EXP18 = 10**18
 CUR_CRO = "CRO"
+CUR_FET = "FET"
 
 MSG_TYPE_ACKNOWLEDGMENT = "MsgAcknowledgement"
 MSG_TYPE_BEGIN_UNLOCKING = "MsgBeginUnlocking"

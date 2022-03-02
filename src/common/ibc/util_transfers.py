@@ -104,6 +104,10 @@ class UtilTransfers:
 
                 currency = ucurrency.upper()
                 amount = self._amount(uamount, currency)
+            elif "afet" in amt_string:
+                uamount, ucurrency = amt_string.split("afet", 1)
+                currency = "FET"
+                amount = self._amount(uamount, currency)
             else:
                 raise Exception("Unexpected amount_string: {}".format(amount_string))
 
@@ -114,6 +118,8 @@ class UtilTransfers:
     def _amount(self, uamount, currency):
         if currency == co.CUR_CRO:
             return float(uamount) / co.MILLION / 100
+        elif currency == co.CUR_FET:
+            return float(uamount) / co.EXP18
         else:
             return float(uamount) / co.MILLION
 

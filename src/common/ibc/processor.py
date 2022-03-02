@@ -36,11 +36,13 @@ def parse_txinfo(wallet_address, elem, mintscan_label, exchange, ibc_addresses, 
 def _get_fee(elem):
     amount_list = elem["tx"]["auth_info"]["fee"]["amount"]
     if len(amount_list) == 0:
-        return 0
+        return 0, ""
 
     # Get fee amount
     amount_string = amount_list[0]["amount"]
     fee = float(amount_string) / MILLION
+    if fee == 0:
+        return 0, ""
 
     # Get fee currency
     denom = amount_list[0]["denom"]
