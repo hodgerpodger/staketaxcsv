@@ -43,7 +43,7 @@ class LockedTokens:
 
 def handle_lp_deposit(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
-    comment = "liquidity pool deposit"
+    comment = "lp_deposit"
 
     # Preprocessing step to parse staking reward events first, if exists.
     handle_claim(exporter, txinfo, msginfo)
@@ -80,7 +80,7 @@ def handle_lp_deposit(exporter, txinfo, msginfo):
 def handle_lp_deposit_partial(exporter, txinfo, msginfo):
     # Only one currency deposited, not two.
     transfers_in, transfers_out = msginfo.transfers
-    comment = "liquidity pool deposit"
+    comment = "lp_deposit"
 
     if len(transfers_in) == 1 and len(transfers_out) == 1:
         lp_amount, lp_currency = transfers_in[0]
@@ -109,7 +109,7 @@ def handle_lp_deposit_partial(exporter, txinfo, msginfo):
 
 def handle_lp_withdraw(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
-    comment = "liquidity pool withdraw"
+    comment = "lp_withdraw"
 
     # Preprocessing step to parse staking reward events first, if exists.
     handle_claim(exporter, txinfo, msginfo)
