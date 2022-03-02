@@ -21,6 +21,7 @@ from osmo.handle_lp import (
 from osmo.handle_staking import handle_staking
 from osmo.handle_swap import handle_swap
 from osmo.handle_unknown import handle_unknown_detect_transfers
+import osmo.handle_superfluid
 from osmo.TxInfoOsmo import MsgInfo, TxInfoOsmo
 
 
@@ -86,6 +87,11 @@ def _handle_message(exporter, txinfo, msginfo):
             handle_lp_stake(exporter, txinfo, msginfo)
         elif msg_type == co.MSG_TYPE_BEGIN_UNLOCKING:
             handle_lp_unstake(exporter, txinfo, msginfo)
+
+        # superfluid
+        elif msg_type == co.MSG_TYPE_SUPERFLUID_DELEGATE:
+            osmo.handle_superfluid.handle_delegate(exporter, txinfo, msginfo)
+
         else:
             handle_unknown_detect_transfers(exporter, txinfo, msginfo)
     except Exception as e:
