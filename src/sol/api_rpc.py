@@ -246,7 +246,8 @@ class RpcAPI(object):
 
         # Extract last txid to use as "before" argument in subsequent query
         result_length = len(data["result"])
-        if result_length == 1000 or (limit and result_length == limit):
+
+        if result_length:
             last_txid = data["result"][-1]["signature"]
         else:
             last_txid = None

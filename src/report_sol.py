@@ -24,7 +24,7 @@ from sol.TxInfoSol import WalletInfo
 
 LIMIT_PER_QUERY = 1000
 RPC_TIMEOUT = 600  # seconds
-
+ABSOLUTE_MAX_QUERIES = 100
 
 def main():
     wallet_address, export_format, txid, options = report_util.parse_args(TICKER_SOL)
@@ -148,17 +148,9 @@ def txhistory(wallet_address, options):
     return exporter
 
 
-def _max_queries():
-    """Calculated max number of queries based off of config limits"""
-    max_txs = localconfig.limit
-    max_queries = math.ceil(max_txs / LIMIT_PER_QUERY)
-    logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
-    return max_queries
-
-
 def _query_txids(addresses, progress):
     """Returns transactions txid's across all token account addresses"""
-    max_queries = _max_queries()
+    max_txs = localconfig.limit
 
     out = []
     txids_seen = set()
@@ -169,17 +161,23 @@ def _query_txids(addresses, progress):
 
         # Get transaction txids for this token account
         before = None
-        for j in range(max_queries):
+        for j in range(ABSOLUTE_MAX_QUERIES):
             logging.info("query %s for address=%s", j, address)
 
             txids, before = RpcAPI.get_txids(address, limit=LIMIT_PER_QUERY, before=before)
+
             for txid in txids:
                 # Remove duplicate txids
                 if txid not in txids_seen:
                     out.append(txid)
                     txids_seen.add(txid)
 
+            # No more transactions
             if before is None:
+                break
+
+            # Reached max transaction limit
+            if len(txids) > max_txs:
                 break
 
     # Process oldest first
