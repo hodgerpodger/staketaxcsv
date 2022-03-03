@@ -1,6 +1,6 @@
 from common.make_tx import make_borrow_tx, make_repay_tx, make_swap_tx
 from terra import util_terra
-from terra.make_tx import make_deposit_collateral_tx, make_withdraw_collateral_tx
+from terra.make_tx import make_deposit_collateral_tx, make_withdraw_collateral_tx, make_liquidate_tx
 from terra.constants import CUR_UST
 
 def handle_deposit_borrow(exporter, elem, txinfo):
