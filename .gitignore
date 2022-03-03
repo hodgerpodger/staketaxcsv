@@ -11,3 +11,5 @@ sample.env
 
 # pycharm
 .idea/*
+
+koinly_null_map.json
