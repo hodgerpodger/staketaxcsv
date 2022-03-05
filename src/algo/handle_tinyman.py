@@ -22,10 +22,8 @@ def is_tinyman_transaction(group):
         return False
 
     app_id = group[1][co.TRANSACTION_KEY_APP_CALL]["application-id"]
-    if (app_id != APPLICATION_ID_TINYMAN_v10 and app_id != APPLICATION_ID_TINYMAN_v11):
-        return False
 
-    return True
+    return (app_id == APPLICATION_ID_TINYMAN_v10 or app_id == APPLICATION_ID_TINYMAN_v11)
 
 
 def handle_tinyman_transaction(group, exporter, txinfo):
@@ -54,11 +52,6 @@ def _handle_tinyman_swap(group, exporter, txinfo):
     send_transaction = group[2]
     fee_amount += send_transaction["fee"]
     send_asset = _get_transfer_asset(send_transaction)
-    # https://docs.tinyman.org/fees
-    swap_fee = send_asset * 0.003
-    send_asset -= swap_fee
-    row = make_just_fee_tx(txinfo, swap_fee.amount, swap_fee.ticker)
-    exporter.ingest_row(row)
 
     receive_transaction = group[3]
     receive_asset = _get_transfer_asset(receive_transaction)
