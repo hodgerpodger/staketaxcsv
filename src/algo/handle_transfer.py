@@ -26,7 +26,11 @@ def is_governance_reward_transaction(wallet_address, group):
     if "note" not in transaction:
         return False
 
-    note = base64.b64decode(transaction["note"]).decode("utf-8")
+    try:
+        note = base64.b64decode(transaction["note"]).decode("utf-8")
+    except Exception:
+        return False
+
     if "af/gov" not in note:
         return False
 
@@ -67,6 +71,7 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
     if txreceiver == wallet_address or close_to == wallet_address:
         receive_amount = 0
         send_amount = 0
+        fee_amount = 0
         # We could be all receiver, sender and close-to account
         if txreceiver == wallet_address:
             receive_amount += details["amount"]
@@ -79,6 +84,7 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
         if txsender == wallet_address:
             send_amount += details["amount"]
             rewards_amount += transaction["sender-rewards"]
+            fee_amount = transaction["fee"]
         amount = Asset(asset_id, receive_amount - send_amount)
         if not amount.zero():
             row = None
@@ -87,6 +93,8 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
                 row.comment = "Algostake"
             else:
                 row = make_transfer_in_tx(txinfo, amount, amount.ticker)
+                fee = Algo(fee_amount)
+                row.fee = fee.amount
             exporter.ingest_row(row)
     else:
         rewards_amount += transaction["sender-rewards"]
@@ -100,7 +108,8 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
 
             if not send_amount.zero():
                 row = make_transfer_out_tx(txinfo, send_amount, send_amount.ticker, txreceiver)
-                row.fee = Algo(transaction["fee"])
+                fee = Algo(transaction["fee"])
+                row.fee = fee.amount
                 exporter.ingest_row(row)
         else:
             # Regular send or closing to the same account
@@ -108,7 +117,8 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
 
             if not send_amount.zero():
                 row = make_transfer_out_tx(txinfo, send_amount, send_amount.ticker, txreceiver)
-                row.fee = Algo(transaction["fee"])
+                fee = Algo(transaction["fee"])
+                row.fee = fee.amount
                 exporter.ingest_row(row)
         txinfo.fee = 0
 

@@ -49,7 +49,10 @@ def is_algodex_transaction(wallet_address, group):
     if len(transaction["note"]) < len(wallet_address):
         return False
 
-    note = json.loads(base64.b64decode(transaction["note"]))
+    try:
+        note = json.loads(base64.b64decode(transaction["note"]))
+    except Exception:
+        return False
     key = next(iter(note))
 
     match = order_pattern.match(key)
@@ -57,10 +60,8 @@ def is_algodex_transaction(wallet_address, group):
         return False
 
     action_type = match.group(1)
-    if action_type not in ALGODEX_ACTION_TYPES:
-        return False
 
-    return True
+    return action_type in ALGODEX_ACTION_TYPES
 
 
 def handle_algodex_transaction(group, exporter, txinfo):
