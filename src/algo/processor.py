@@ -36,6 +36,12 @@ def process_txs(wallet_address, elems, exporter, progress):
                     handle_payment_transaction(wallet_address, elem, exporter, txinfo)
                 elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
                     handle_asa_transaction(wallet_address, elem, exporter, txinfo)
+                elif txtype == co.TRANSACTION_TYPE_APP_CALL:
+                    pass
+                elif txtype == co.TRANSACTION_TYPE_ASSET_CONFIG:
+                    pass
+                elif txtype == co.TRANSACTION_TYPE_KEY_REGISTRATION:
+                    pass
                 else:
                     handle_unknown(exporter, txinfo)
             else:
