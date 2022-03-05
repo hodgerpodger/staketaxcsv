@@ -2,7 +2,7 @@ import logging
 import urllib.parse
 
 import requests
-from settings_csv import ALGO_INDEXER_NODE
+from settings_csv import ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE
 
 LIMIT_ALGOINDEXER = 1000
 
@@ -45,7 +45,7 @@ class AlgoIndexerAPI:
 
     @classmethod
     def get_transactions_by_group(cls, group_id):
-        url = "{}/v2/transactions?group-id={}".format(ALGO_INDEXER_NODE, urllib.parse.quote(group_id))
+        url = "{}/v2/transactions?group-id={}".format(ALGO_HIST_INDEXER_NODE, urllib.parse.quote(group_id))
         data, status_code = cls._query(url)
 
         if status_code == 200:
