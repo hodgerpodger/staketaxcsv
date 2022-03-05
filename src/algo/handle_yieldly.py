@@ -29,6 +29,7 @@ APPLICATION_ID_YIELDLY_YLDY_RIO_POOL = 604219363
 APPLICATION_ID_YIELDLY_YLDY_AO_POOL = 604373501
 APPLICATION_ID_YIELDLY_YLDY_CHIP_POOL = 604392265
 APPLICATION_ID_YIELDLY_YLDY_FLAMINGO_POOL = 604411076
+APPLICATION_ID_YIELDLY_YLDY_WBLN_POOL = 609492331
 APPLICATION_ID_YIELDLY_YLDY_BIRDS_POOL = 604434381
 APPLICATION_ID_YIELDLY_YLDY_DPANDA_POOL = 617707129
 APPLICATION_ID_YIELDLY_YLDY_CURATOR_POOL = 618390867
@@ -50,6 +51,7 @@ APPLICATION_ID_YIELDLY_RIO_LP_POOL = 604223245
 APPLICATION_ID_YIELDLY_AO_LP_POOL = 604375580
 APPLICATION_ID_YIELDLY_CHIP_LP_POOL = 604393901
 APPLICATION_ID_YIELDLY_FLAMINGO_LP_POOL = 604412989
+APPLICATION_ID_YIELDLY_WBLN_LP_POOL = 609496314
 APPLICATION_ID_YIELDLY_BIRDS_LP_POOL = 604437391
 APPLICATION_ID_YIELDLY_DPANDA_LP_POOL = 617728717
 APPLICATION_ID_YIELDLY_CURATOR_LP_POOL = 618393134
@@ -86,6 +88,7 @@ YIELDLY_APPLICATIONS = [
     APPLICATION_ID_YIELDLY_YLDY_AO_POOL,
     APPLICATION_ID_YIELDLY_YLDY_CHIP_POOL,
     APPLICATION_ID_YIELDLY_YLDY_FLAMINGO_POOL,
+    APPLICATION_ID_YIELDLY_YLDY_WBLN_POOL,
     APPLICATION_ID_YIELDLY_YLDY_BIRDS_POOL,
     APPLICATION_ID_YIELDLY_YLDY_DPANDA_POOL,
     APPLICATION_ID_YIELDLY_YLDY_CURATOR_POOL,
@@ -107,6 +110,7 @@ YIELDLY_APPLICATIONS = [
     APPLICATION_ID_YIELDLY_AO_LP_POOL,
     APPLICATION_ID_YIELDLY_CHIP_LP_POOL,
     APPLICATION_ID_YIELDLY_FLAMINGO_LP_POOL,
+    APPLICATION_ID_YIELDLY_WBLN_LP_POOL,
     APPLICATION_ID_YIELDLY_BIRDS_LP_POOL,
     APPLICATION_ID_YIELDLY_DPANDA_LP_POOL,
     APPLICATION_ID_YIELDLY_CURATOR_LP_POOL,
@@ -126,14 +130,15 @@ def is_yieldly_transaction(group):
     if length < 2 or length > 6:
         return False
 
-    if (group[0]["tx-type"] != "appl" or group[1]["tx-type"] != "appl"):
+    if group[0]["tx-type"] != "appl":
         return False
 
-    app_id = group[1][co.TRANSACTION_KEY_APP_CALL]["application-id"]
-    if app_id not in YIELDLY_APPLICATIONS:
-        return False
+    if group[1]["tx-type"] == "appl":
+        app_id = group[1][co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    else:
+        app_id = group[0][co.TRANSACTION_KEY_APP_CALL]["application-id"]
 
-    return True
+    return app_id in YIELDLY_APPLICATIONS
 
 
 def handle_yieldly_transaction(group, exporter, txinfo):
@@ -144,24 +149,29 @@ def handle_yieldly_transaction(group, exporter, txinfo):
         exporter.ingest_row(row)
 
     app_transaction = group[1]
-    app_id = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
-    appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-    if YIELDLY_TRANSACTION_POOL_CLAIM in appl_args:
-        if app_id == APPLICATION_ID_YIELDLY_NLL:
-            _handle_yieldly_nll(group, exporter, txinfo)
-        elif app_id == APPLICATION_ID_YIELDLY_YLDY_ALGO_POOL:
-            _handle_yieldly_algo_pool_claim(group, exporter, txinfo)
-        elif app_id in YIELDLY_APPLICATIONS:
+    txtype = app_transaction["tx-type"]
+    if txtype == co.TRANSACTION_TYPE_APP_CALL:
+        app_id = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+        appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+        if YIELDLY_TRANSACTION_POOL_CLAIM in appl_args:
+            if app_id == APPLICATION_ID_YIELDLY_NLL:
+                _handle_yieldly_nll(group, exporter, txinfo)
+            elif app_id == APPLICATION_ID_YIELDLY_YLDY_ALGO_POOL:
+                _handle_yieldly_algo_pool_claim(group, exporter, txinfo)
+            elif app_id in YIELDLY_APPLICATIONS:
+                _handle_yieldly_asa_pool_claim(group, exporter, txinfo)
+        elif YIELDLY_TRANSACTION_POOL_CLOSE in appl_args:
+            # Claims and legacy closeouts are handled the same way
             _handle_yieldly_asa_pool_claim(group, exporter, txinfo)
-    elif YIELDLY_TRANSACTION_POOL_CLOSE in appl_args:
-        # Claims and legacy closeouts are handled the same way
-        _handle_yieldly_asa_pool_claim(group, exporter, txinfo)
-    elif YIELDLY_TRANSACTION_POOL_BAIL in appl_args:
-        app_transaction = group[0]
-        if (app_transaction[co.TRANSACTION_KEY_APP_CALL]["on-completion"] == "closeout"
-                and "inner-txns" in app_transaction
-                and len(app_transaction["inner-txns"]) == 2):
-            _handle_yieldly_asa_pool_close(group, exporter, txinfo)
+        elif YIELDLY_TRANSACTION_POOL_BAIL in appl_args:
+            app_transaction = group[0]
+            if (app_transaction[co.TRANSACTION_KEY_APP_CALL]["on-completion"] == "closeout"
+                    and "inner-txns" in app_transaction
+                    and len(app_transaction["inner-txns"]) == 2):
+                _handle_yieldly_asa_pool_close(group, exporter, txinfo)
+    else:
+        # Ignore stake transactions
+        pass
 
 
 def _handle_yieldly_nll(group, exporter, txinfo):
