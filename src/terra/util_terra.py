@@ -64,6 +64,33 @@ def _execute_msg(elem, index=0):
 
     return msg
 
+def _multi_transfers(elem, wallet_address, txid):
+    transfers_in = []
+    transfers_out = []
+
+    for log_index, log in enumerate(elem["logs"]):
+        events = elem["logs"][log_index].get("events", [])
+        for event in events:
+            if event["type"] == "message":
+                attributes = event["attributes"]
+                for i in range(0, len(attributes)):
+                    if attributes[i]["key"] == "sender":
+                        sender = attributes[i]["value"]
+
+            if event["type"] == "transfer":
+                attributes = event["attributes"]
+
+                for i in range(0, len(attributes), 2):
+                    recipient = attributes[i]["value"]
+                    amount_string = attributes[i + 1]["value"]
+
+                    if recipient == wallet_address:
+                            amount, currency = _amount(amount_string)
+                            transfers_in.append([amount, currency])
+                    elif sender == wallet_address:
+                            amount, currency = _amount(amount_string)
+                            transfers_out.append([amount, currency])
+    return transfers_in, transfers_out
 
 def _transfers(elem, wallet_address, txid, multicurrency=False):
     transfers_in = []

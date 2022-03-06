@@ -31,6 +31,29 @@ def handle_transfer(exporter, elem, txinfo):
             else:
                 continue
 
+def handle_multi_transfer(exporter, elem, txinfo):
+    wallet_address = txinfo.wallet_address
+    txid = txinfo.txid
+
+    transfers_in, transfers_out = util_terra._multi_transfers(elem, wallet_address, txid)
+
+    if len(transfers_in) == 0 and len(transfers_out) == 0:
+        handle_unknown(exporter, txinfo)
+    elif len(transfers_in) == 1 and len(transfers_out) == 1:
+        sent_amount, sent_currency, _, _ = transfers_out[0]
+        received_amount, received_currency, _, _ = transfers_in[0]
+
+        row = make_unknown_tx_with_transfer(
+            txinfo, sent_amount, sent_currency, received_amount, received_currency)
+        exporter.ingest_row(row)
+    else:
+        for sent_amount, sent_currency in transfers_out:
+            row = make_transfer_out_tx(txinfo, sent_amount, sent_currency)
+            exporter.ingest_row(row)
+        for received_amount, received_currency in transfers_in:
+            row = make_transfer_in_tx(txinfo, received_amount, received_currency)
+            exporter.ingest_row(row)
+
 
 def handle_transfer_contract(exporter, elem, txinfo):
     txid = txinfo.txid
