@@ -61,7 +61,7 @@ def txone(wallet_address, txid):
     print("Transaction data:")
     pprint.pprint(elem)
 
-    exporter = Exporter(wallet_address)
+    exporter = Exporter(wallet_address, localconfig)
     atom.processor.process_tx(wallet_address, elem, exporter)
     return exporter
 
@@ -78,7 +78,7 @@ def txhistory(wallet_address, options):
         logging.info("Loaded ibc_addresses from cache ...")
 
     progress = ProgressAtom()
-    exporter = Exporter(wallet_address)
+    exporter = Exporter(wallet_address, localconfig)
 
     # Fetch count of transactions to estimate progress more accurately
     count_pages = atom.api_lcd.get_txs_count_pages(wallet_address)
