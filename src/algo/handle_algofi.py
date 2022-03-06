@@ -2,7 +2,7 @@ from algo import constants as co
 from algo.asset import Algo, Asset
 from algo.handle_simple import handle_participation_rewards, handle_unknown
 from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW
-from common.make_tx import _make_tx_exchange, make_reward_tx, make_swap_tx
+from common.make_tx import _make_tx_exchange, make_borrow_tx, make_repay_tx, make_reward_tx, make_swap_tx
 
 # For reference
 # https://github.com/Algofiorg/algofi-amm-py-sdk
@@ -10,8 +10,8 @@ from common.make_tx import _make_tx_exchange, make_reward_tx, make_swap_tx
 
 APPLICATION_ID_ALGOFI_AMM = 605753404
 
-ALGOFI_TRANSACTION_SWAP_EXACT_FOR = "c2Vm"          # "sef"
-ALGOFI_TRANSACTION_SWAP_FOR_EXACT = "c2Zl"          # "sfe"
+ALGOFI_TRANSACTION_SWAP_EXACT_FOR       = "c2Vm"    # "sef"
+ALGOFI_TRANSACTION_SWAP_FOR_EXACT       = "c2Zl"    # "sfe"
 ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL = "cnNy"    # "rsr"
 
 ALGOFI_TRANSACTION_CLAIM_REWARDS = "Y3I="           # "cr"
@@ -21,6 +21,9 @@ ALGOFI_TRANSACTION_REDEEM_POOL_ASSET2_RESIDUAL = "cnBhMnI="   # "rpa2r"
 ALGOFI_TRANSACTION_BURN_ASSET1_OUT = "YmExbw=="     # "ba1o"
 ALGOFI_TRANSACTION_BURN_ASSET2_OUT = "YmEybw=="     # "ba2o"
 
+ALGOFI_TRANSACTION_BORROW = "Yg=="                  # "b"
+ALGOFI_TRANSACTION_REPAY_BORROW = "cmI="            # "rb"
+
 
 def is_algofi_transaction(group):
     length = len(group)
@@ -29,7 +32,9 @@ def is_algofi_transaction(group):
 
     last_tx = group[-1]
     if last_tx["tx-type"] != "appl":
-        return False
+        last_tx = group[-2]
+        if last_tx["tx-type"] != "appl":
+            return False
 
     appl_args = last_tx[co.TRANSACTION_KEY_APP_CALL]["application-args"]
     # Swap Exact For
@@ -52,6 +57,12 @@ def is_algofi_transaction(group):
     if ALGOFI_TRANSACTION_BURN_ASSET2_OUT in appl_args:
         return True
 
+    if ALGOFI_TRANSACTION_BORROW in appl_args:
+        return True
+
+    if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
+        return True
+
     return False
 
 
@@ -59,17 +70,27 @@ def handle_algofi_transaction(group, exporter, txinfo):
     reward = Algo(group[0]["sender-rewards"])
     handle_participation_rewards(reward, exporter, txinfo)
 
-    appl_args = group[-1][co.TRANSACTION_KEY_APP_CALL]["application-args"]
-    if ALGOFI_TRANSACTION_SWAP_EXACT_FOR in appl_args or ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL in appl_args:
-        _handle_algofi_swap(group, exporter, txinfo)
-    elif ALGOFI_TRANSACTION_CLAIM_REWARDS in appl_args:
-        _handle_algofi_claim_rewards(group, exporter, txinfo)
-    elif ALGOFI_TRANSACTION_REDEEM_POOL_ASSET2_RESIDUAL in appl_args:
-        _handle_algofi_lp_add(group, exporter, txinfo)
-    elif ALGOFI_TRANSACTION_BURN_ASSET2_OUT in appl_args:
-        _handle_algofi_lp_remove(group, exporter, txinfo)
+    txtype = group[-1]["tx-type"]
+    if txtype == "appl":
+        appl_args = group[-1][co.TRANSACTION_KEY_APP_CALL]["application-args"]
+        if ALGOFI_TRANSACTION_SWAP_EXACT_FOR in appl_args or ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL in appl_args:
+            return _handle_algofi_swap(group, exporter, txinfo)
+        elif ALGOFI_TRANSACTION_CLAIM_REWARDS in appl_args:
+            return _handle_algofi_claim_rewards(group, exporter, txinfo)
+        elif ALGOFI_TRANSACTION_REDEEM_POOL_ASSET2_RESIDUAL in appl_args:
+            return _handle_algofi_lp_add(group, exporter, txinfo)
+        elif ALGOFI_TRANSACTION_BURN_ASSET2_OUT in appl_args:
+            return _handle_algofi_lp_remove(group, exporter, txinfo)
+        elif ALGOFI_TRANSACTION_BORROW in appl_args:
+            return _handle_algofi_borrow(group, exporter, txinfo)
     else:
-        handle_unknown(exporter, txinfo)
+        txtype = group[-2]["tx-type"]
+        if txtype == "appl":
+            appl_args = group[-2][co.TRANSACTION_KEY_APP_CALL]["application-args"]
+            if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
+                return _handle_algofi_repay_borrow(group, exporter, txinfo)
+
+    return handle_unknown(exporter, txinfo)
 
 
 def _get_transfer_asset(transaction):
@@ -229,11 +250,6 @@ def _handle_algofi_lp_remove(group, exporter, txinfo):
 
 
 def _handle_algofi_claim_rewards(group, exporter, txinfo):
-    reward = Algo(group[0]["sender-rewards"])
-    if not reward.zero():
-        row = make_reward_tx(txinfo, reward, reward.ticker)
-        exporter.ingest_row(row)
-
     fee_amount = 0
     for transaction in group:
         fee_amount += transaction["fee"]
@@ -252,3 +268,36 @@ def _handle_algofi_claim_rewards(group, exporter, txinfo):
                 row = make_reward_tx(txinfo, reward, reward.ticker)
                 row.fee = fee.amount
                 exporter.ingest_row(row)
+
+
+def _handle_algofi_borrow(group, exporter, txinfo):
+    fee_amount = 0
+    for transaction in group:
+        fee_amount += transaction["fee"]
+
+    app_transaction = group[-1]
+    receive_transaction = app_transaction["inner-txns"][0]
+    receive_asset = _get_transfer_asset(receive_transaction)
+
+    fee = Algo(fee_amount)
+    txinfo.comment = "AlgoFi"
+
+    row = make_borrow_tx(txinfo, receive_asset.amount, receive_asset.ticker)
+    row.fee = fee.amount
+    exporter.ingest_row(row)
+
+
+def _handle_algofi_repay_borrow(group, exporter, txinfo):
+    fee_amount = 0
+    for transaction in group:
+        fee_amount += transaction["fee"]
+
+    send_transaction = group[-1]
+    send_asset = _get_transfer_asset(send_transaction)
+
+    fee = Algo(fee_amount)
+    txinfo.comment = "AlgoFi"
+
+    row = make_repay_tx(txinfo, send_asset.amount, send_asset.ticker)
+    row.fee = fee.amount
+    exporter.ingest_row(row)
