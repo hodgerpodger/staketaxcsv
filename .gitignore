@@ -13,3 +13,4 @@ sample.env
 .idea/*
 
 koinly_null_map.json
+.DS_Store

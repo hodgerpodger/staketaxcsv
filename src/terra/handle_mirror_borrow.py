@@ -1,7 +1,7 @@
-from common.make_tx import make_borrow_tx, make_repay_tx
+from common.make_tx import make_borrow_tx, make_repay_tx, make_swap_tx
 from terra import util_terra
-from terra.make_tx import make_deposit_collateral_tx, make_withdraw_collateral_tx, make_auction_tx
-
+from terra.make_tx import make_deposit_collateral_tx, make_withdraw_collateral_tx, make_liquidate_tx
+from terra.constants import CUR_UST
 
 def handle_deposit_borrow(exporter, elem, txinfo):
     # Query
@@ -18,9 +18,18 @@ def handle_deposit_borrow(exporter, elem, txinfo):
 
     row = make_deposit_collateral_tx(txinfo, deposit_amount, deposit_currency, z_index=0)
     exporter.ingest_row(row)
+
     row = make_borrow_tx(txinfo, borrow_amount, borrow_currency, empty_fee=True, z_index=1)
     exporter.ingest_row(row)
 
+    try:
+        if(from_contract["is_short"][0] == 'true'):
+            short_amount_string = data["logs"][0]["events_by_type"]["from_contract"]["return_amount"][0]
+            short_amount = util_terra._float_amount(short_amount_string, CUR_UST)
+            row = make_swap_tx(txinfo, borrow_amount, borrow_currency, short_amount, CUR_UST)
+            exporter.ingest_row(row)
+    except Exception:
+        pass
 
 def handle_repay_withdraw(exporter, elem, txinfo):
     # Query
@@ -57,5 +66,5 @@ def handle_auction(exporter, elem, txinfo):
     collateral_amount_string = from_contract["return_collateral_amount"][0]
     collateral_amount, collateral_currency = util_terra._amount(collateral_amount_string)
 
-    row = make_auction_tx(txinfo, liquidated_amount, liquidated_currency, collateral_amount, collateral_currency)
+    row = make_liquidate_tx(txinfo, liquidated_amount, liquidated_currency, collateral_amount, collateral_currency)
     exporter.ingest_row(row)

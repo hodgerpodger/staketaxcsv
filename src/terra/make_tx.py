@@ -1,5 +1,4 @@
 from common.ExporterTypes import (
-    TX_TYPE_AUCTION,
     TX_TYPE_BOND,
     TX_TYPE_DEPOSIT_COLLATERAL,
     TX_TYPE_GOV_STAKE,
@@ -82,13 +81,6 @@ def make_deposit_collateral_tx(txinfo, sent_amount, sent_currency, z_index=0):
 def make_withdraw_collateral_tx(txinfo, received_amount, received_currency, empty_fee=False, z_index=0):
     return _make_tx_received(
         txinfo, received_amount, received_currency, TX_TYPE_WITHDRAW_COLLATERAL, empty_fee=empty_fee, z_index=z_index)
-
-
-def make_auction_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
-                       txid=None, empty_fee=False):
-    return _make_tx_exchange(
-        txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_AUCTION)
-
 
 def make_liquidate_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
                        txid=None, empty_fee=False):
