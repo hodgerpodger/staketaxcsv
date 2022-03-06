@@ -3,7 +3,7 @@ import datetime
 import logging
 import os
 
-from common.ExporterTypes import FORMAT_DEFAULT, FORMATS
+from common.ExporterTypes import FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS
 from settings_csv import REPORTS_DIR, TICKER_ATOM, TICKER_LUNA, TICKER_OSMO
 
 ALL = "all"
@@ -36,7 +36,7 @@ def parse_args(ticker):
         "--cache",
         action="store_true",
         default=False,
-        help="use Cache class (only work if implemented)",
+        help="use Cache class (only works if dynamodb setup or class implemented)",
     )
     parser.add_argument(
         "--limit",
@@ -60,19 +60,14 @@ def parse_args(ticker):
             default=False,
             help="include minor currency rewards",
         )
+
     if ticker in (TICKER_LUNA, TICKER_OSMO):
         parser.add_argument(
-            "--lp_transfers",
-            action="store_true",
-            default=False,
-            help="treat LP deposits/withdrawals as transfers (default is non-exportable custom tx)",
-        )
-    if ticker in (TICKER_LUNA, TICKER_OSMO):
-        parser.add_argument(
-            "--lp_trades",
-            action="store_true",
-            default=False,
-            help="treat LP deposits/withdrawals as trades (default is non-exportable custom tx)",
+            "--lp_treatment",
+            choices=LP_TREATMENT_CHOICES,
+            default=LP_TREATMENT_TRANSFERS,
+            help="Treat LP deposits/withdrawals as transfers(default), omit, or trades. "
+                 "Not applicable to koinly CSV.",
         )
     if ticker == TICKER_ATOM:
         parser.add_argument(
@@ -98,10 +93,8 @@ def parse_args(ticker):
         options["before_date"] = args.before_date
     if "minor_rewards" in args and args.minor_rewards:
         options["minor_rewards"] = True
-    if "lp_transfers" in args and args.lp_transfers:
-        options["lp_transfers"] = True
-    if "lp_trades" in args and args.lp_trades:
-        options["lp_trades"] = True
+    if "lp_treatment" in args and args.lp_treatment:
+        options["lp_treatment"] = args.lp_treatment
     if "legacy" in args and args.legacy:
         options["legacy"] = True
 

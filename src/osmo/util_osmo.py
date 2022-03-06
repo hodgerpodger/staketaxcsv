@@ -2,8 +2,8 @@ import logging
 
 import osmo.api_historical
 from osmo.config_osmo import localconfig
-#from osmo.constants import CUR_CRO, EXP18, MILLION, MSG_TYPE_BEGIN_UNLOCKING, MSG_TYPE_LOCK_TOKENS
 import osmo.constants as co
+
 
 def _transfers(log, wallet_address):
     """

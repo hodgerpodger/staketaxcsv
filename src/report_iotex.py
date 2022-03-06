@@ -53,7 +53,7 @@ def txone(wallet_address, txid):
     print("")
 
     progress.set_estimate(1)
-    exporter = Exporter(wallet_address)
+    exporter = Exporter(wallet_address, localconfig)
     iotex.processor.process_txs(wallet_address, elems, exporter, progress)
     print("")
 
@@ -68,11 +68,11 @@ def _max_queries():
 
 
 def txhistory(wallet_address, options):
-    progress = ProgressIotex()
-    exporter = Exporter(wallet_address)
-
     # Configure localconfig based on options
     _read_options(options)
+
+    progress = ProgressIotex()
+    exporter = Exporter(wallet_address, localconfig)
 
     # Retrieve data
     elems = _get_txs(wallet_address, progress)

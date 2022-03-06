@@ -57,7 +57,7 @@ def txone(wallet_address, txid_or_groupid):
     print("")
 
     progress.set_estimate(1)
-    exporter = Exporter(wallet_address)
+    exporter = Exporter(wallet_address, localconfig)
     algo.processor.process_txs(wallet_address, elems, exporter, progress)
     print("")
 
@@ -72,11 +72,11 @@ def _max_queries():
 
 
 def txhistory(wallet_address, options):
-    progress = ProgressAlgo()
-    exporter = Exporter(wallet_address)
-
     # Configure localconfig based on options
     _read_options(options)
+
+    progress = ProgressAlgo()
+    exporter = Exporter(wallet_address, localconfig)
 
     # Retrieve data
     elems = _get_txs(wallet_address, progress)

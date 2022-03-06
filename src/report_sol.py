@@ -26,6 +26,7 @@ LIMIT_PER_QUERY = 1000
 RPC_TIMEOUT = 600  # seconds
 ABSOLUTE_MAX_QUERIES = 100
 
+
 def main():
     wallet_address, export_format, txid, options = report_util.parse_args(TICKER_SOL)
 
@@ -85,7 +86,7 @@ def txone(wallet_address, txid):
     print(s)
     print("\n")
 
-    exporter = Exporter(wallet_address)
+    exporter = Exporter(wallet_address, localconfig)
     txinfo = sol.processor.process_tx(WalletInfo(wallet_address), exporter, txid, data)
     txinfo.print()
     return exporter
@@ -105,16 +106,16 @@ def _num_txids(wallet_address):
 
 
 def txhistory(wallet_address, options):
-    progress = ProgressSol()
-    exporter = Exporter(wallet_address)
-    wallet_info = WalletInfo(wallet_address)
-
     # Configure localconfig based on options
     _read_options(options)
     if localconfig.cache:
         localconfig.blocks = Cache().get_sol_blocks()
         logging.info("Loaded sol blocks info into cache...")
     logging.info("Using SOLANA_URL=%s...", SOL_NODE)
+
+    progress = ProgressSol()
+    exporter = Exporter(wallet_address, localconfig)
+    wallet_info = WalletInfo(wallet_address)
 
     # Fetch data to so that job progress can be estimated ##########
 

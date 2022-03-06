@@ -361,9 +361,10 @@ def _event_with_action(elem, event_type, action):
     return None
 
 
-def _ingest_rows(exporter, rows, comment):
+def _ingest_rows(exporter, rows, comment=None):
     for i, row in enumerate(rows):
-        row.comment = comment
+        if comment:
+            row.comment = comment
         if i > 0:
             row.fee, row.fee_currency = "", ""
         exporter.ingest_row(row)
