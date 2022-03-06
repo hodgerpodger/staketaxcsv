@@ -22,11 +22,14 @@ def handle_deposit_borrow(exporter, elem, txinfo):
     row = make_borrow_tx(txinfo, borrow_amount, borrow_currency, empty_fee=True, z_index=1)
     exporter.ingest_row(row)
 
-    if(data["logs"][0]["events_by_type"]["from_contract"]["is_short"][0] == 'true'):
-        short_amount_string = data["logs"][0]["events_by_type"]["from_contract"]["return_amount"][0]
-        short_amount = util_terra._float_amount(short_amount_string, CUR_UST)
-        row = make_swap_tx(txinfo, borrow_amount, borrow_currency, short_amount, CUR_UST)
-        exporter.ingest_row(row)
+    try:
+        if(from_contract["is_short"][0] == 'true'):
+            short_amount_string = data["logs"][0]["events_by_type"]["from_contract"]["return_amount"][0]
+            short_amount = util_terra._float_amount(short_amount_string, CUR_UST)
+            row = make_swap_tx(txinfo, borrow_amount, borrow_currency, short_amount, CUR_UST)
+            exporter.ingest_row(row)
+    except Exception:
+        pass
 
 def handle_repay_withdraw(exporter, elem, txinfo):
     # Query
