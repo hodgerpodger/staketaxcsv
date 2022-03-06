@@ -24,6 +24,7 @@ from atom.progress_atom import SECONDS_PER_PAGE, ProgressAtom
 from common import report_util
 from common.Cache import Cache
 from common.Exporter import Exporter
+from common.ExporterTypes import FORMAT_DEFAULT
 from settings_csv import TICKER_ATOM
 
 LIMIT_PER_QUERY = 50
@@ -36,6 +37,8 @@ def main():
         _read_options(options)
         exporter = txone(wallet_address, txid)
         exporter.export_print()
+        if export_format != FORMAT_DEFAULT:
+            report_util.export_format_for_txid(exporter, export_format, txid)
     else:
         exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_ATOM, wallet_address, exporter, export_format)

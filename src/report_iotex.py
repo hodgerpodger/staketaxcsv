@@ -14,6 +14,7 @@ import iotex.processor
 from common import report_util
 from common.ErrorCounter import ErrorCounter
 from common.Exporter import Exporter
+from common.ExporterTypes import FORMAT_DEFAULT
 from iotex import constants as co
 from iotex.api_graphql import IoTexGraphQL
 from iotex.api_iotexscan import IoTexScan
@@ -29,6 +30,8 @@ def main():
         _read_options(options)
         exporter = txone(wallet_address, txid)
         exporter.export_print()
+        if export_format != FORMAT_DEFAULT:
+            report_util.export_format_for_txid(exporter, export_format, txid)
     else:
         exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_IOTEX, wallet_address, exporter, export_format)

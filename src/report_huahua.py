@@ -12,6 +12,7 @@ from huahua.progress_huahua import SECONDS_PER_PAGE, ProgressHuahua
 from common import report_util
 from common.Cache import Cache
 from common.Exporter import Exporter
+from common.ExporterTypes import FORMAT_DEFAULT
 from settings_csv import TICKER_HUAHUA, HUAHUA_NODE
 import huahua.processor
 import common.ibc.api_lcd
@@ -24,6 +25,8 @@ def main():
         _read_options(options)
         exporter = txone(wallet_address, txid)
         exporter.export_print()
+        if export_format != FORMAT_DEFAULT:
+            report_util.export_format_for_txid(exporter, export_format, txid)
     else:
         exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_HUAHUA, wallet_address, exporter, export_format)

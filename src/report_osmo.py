@@ -16,7 +16,7 @@ from common import report_util
 from common.Cache import Cache
 from common.ErrorCounter import ErrorCounter
 from common.Exporter import Exporter
-from common.ExporterTypes import LP_TREATMENT_TRANSFERS
+from common.ExporterTypes import LP_TREATMENT_TRANSFERS, FORMAT_DEFAULT
 from osmo.config_osmo import localconfig
 from osmo.lp_rewards import lp_rewards
 from osmo.progress_osmo import SECONDS_PER_PAGE, ProgressOsmo
@@ -30,6 +30,8 @@ def main():
         _read_options(options)
         exporter = txone(wallet_address, txid)
         exporter.export_print()
+        if export_format != FORMAT_DEFAULT:
+            report_util.export_format_for_txid(exporter, export_format, txid)
     else:
         exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_OSMO, wallet_address, exporter, export_format)

@@ -17,6 +17,7 @@ from algo.progress_algo import ProgressAlgo
 from common import report_util
 from common.ErrorCounter import ErrorCounter
 from common.Exporter import Exporter
+from common.ExporterTypes import FORMAT_DEFAULT
 from settings_csv import TICKER_ALGO
 
 
@@ -27,6 +28,8 @@ def main():
         _read_options(options)
         exporter = txone(wallet_address, txid_or_groupid)
         exporter.export_print()
+        if export_format != FORMAT_DEFAULT:
+            report_util.export_format_for_txid(exporter, export_format, txid_or_groupid)
     else:
         exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_ALGO, wallet_address, exporter, export_format)

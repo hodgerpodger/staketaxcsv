@@ -27,7 +27,6 @@ from terra.api_fcd import LIMIT_FCD, FcdAPI
 from terra.api_search_figment import LIMIT_FIGMENT, SearchAPIFigment
 from terra.config_terra import localconfig
 from terra.progress_terra import SECONDS_PER_TX, ProgressTerra
-from common import exporter_koinly as koinly
 
 
 def main():
