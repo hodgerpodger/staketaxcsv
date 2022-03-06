@@ -489,10 +489,6 @@ class Exporter:
                 elif row.tx_type == et.TX_TYPE_LP_WITHDRAW:
                     label = "Liquidity Out"
                 else:
-<<<<<<< HEAD
-                    label = row.tx_type
-=======
->>>>>>> 5d12991aa2e5b9c41c21dca4d1ac8b12246b6572
                     logging.error("koinly: unable to handle tx_type=%s", row.tx_type)
 
                 # Currency fields
@@ -529,15 +525,9 @@ class Exporter:
         logging.info("Wrote to %s", csvpath)
         NullMap.flush(self.use_cache)
 
-<<<<<<< HEAD
-    def _koinly_currency(self, currency):
-        if(re.findall(r"LP",currency)):
-            return self.get_koinly_null_symbol(currency)
-=======
     def koinly_currency(self, currency):
         if self._is_koinly_lp(currency):
             return NullMap.get_null_symbol(currency)
->>>>>>> 5d12991aa2e5b9c41c21dca4d1ac8b12246b6572
         elif currency and currency.upper() == "PSI":
             # koinly default PSI is "Passive Income", not "Nexus Protocol" that we want
             return "ID:106376"
@@ -548,29 +538,6 @@ class Exporter:
         else:
             return currency
 
-<<<<<<< HEAD
-    def get_koinly_null_symbol(self, symbol):
-        # koinly_null_map.json will act as a database for mapping ids to
-        # LP tokens. This file will be different for each user and must
-        # be persisted across runs.
-        try:
-            f = open('../koinly_null_map.json', 'r')
-            null_map = json.load(f)
-            f.close()
-        except IOError:
-            null_map = {"lp_tokens": []}
-
-        if symbol not in null_map["lp_tokens"]:
-            null_map["lp_tokens"].append(symbol)
-            f = open('../koinly_null_map.json', 'w')
-            json.dump(null_map, f)
-            f.close()
-
-        index = null_map["lp_tokens"].index(symbol)
-
-        # Koinly only accepts indices > 0
-        return "NULL{}".format(index + 1)
-=======
     def _is_koinly_lp(self, currency):
         """ Returns True if lp currency should be replaced with NULL* in koinly CSV (i.e. GAMM-22, LP_MIR_UST) """
         if currency.startswith("LP_"):
@@ -578,7 +545,6 @@ class Exporter:
         if currency.startswith("GAMM-"):
             return True
         return False
->>>>>>> 5d12991aa2e5b9c41c21dca4d1ac8b12246b6572
 
     def export_calculator_csv(self, csvpath):
         """ Write CSV, suitable for import into cryptataxcalculator.io """
