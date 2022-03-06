@@ -26,6 +26,7 @@ LIMIT_PER_QUERY = 1000
 RPC_TIMEOUT = 600  # seconds
 ABSOLUTE_MAX_QUERIES = 100
 
+
 def main():
     wallet_address, export_format, txid, options = report_util.parse_args(TICKER_SOL)
 

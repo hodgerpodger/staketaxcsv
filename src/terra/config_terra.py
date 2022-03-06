@@ -7,9 +7,9 @@ class localconfig:
     debug = False
     cache = False
     minor_rewards = False
-    lp_treatment = et.LP_TREATMENT_DEFAULT  # Treat LP deposits/withdrawals as "transfers"/"omit"/"trades"
-                                            # (ignored for koinly)
-    limit = 10000                           # max txs
+    # Treat LP deposits/withdrawals as "transfers"/"omit"/"trades" (ignored for koinly)
+    lp_treatment = et.LP_TREATMENT_DEFAULT
+    limit = 10000  # max txs
 
     # caches
     ibc_addresses = {}

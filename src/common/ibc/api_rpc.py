@@ -31,5 +31,3 @@ class RpcAPI:
         }
         data = self._query(uri_path, query_params, sleep_seconds=1)
         return data.get("tx_response", None)
-
-

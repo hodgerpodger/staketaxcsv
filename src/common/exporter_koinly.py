@@ -50,5 +50,5 @@ class NullMap:
 
         out = []
         for index in range(len(cls.null_map)):
-            out.append(("NULL{}".format(index+1), cls.null_map[index]))
+            out.append(("NULL{}".format(index + 1), cls.null_map[index]))
         return out
