@@ -7,6 +7,7 @@ from algo.asset import Algo
 from algo.config_algo import localconfig
 from algo.handle_akita import handle_akita_swap_transaction, is_akita_swap_transaction
 from algo.handle_algodex import handle_algodex_transaction, is_algodex_transaction
+from algo.handle_algofi import handle_algofi_transaction, is_algofi_transaction
 from algo.handle_tinyman import handle_tinyman_transaction, is_tinyman_transaction
 from algo.handle_transfer import (
     handle_asa_transaction,
@@ -14,7 +15,7 @@ from algo.handle_transfer import (
     handle_payment_transaction,
     is_governance_reward_transaction,
 )
-from algo.handle_unknown import handle_unknown
+from algo.handle_simple import handle_unknown
 from algo.handle_yieldly import handle_yieldly_transaction, is_yieldly_transaction
 from common.ErrorCounter import ErrorCounter
 from common.TxInfo import TxInfo
@@ -36,6 +37,12 @@ def process_txs(wallet_address, elems, exporter, progress):
                     handle_payment_transaction(wallet_address, elem, exporter, txinfo)
                 elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
                     handle_asa_transaction(wallet_address, elem, exporter, txinfo)
+                elif txtype == co.TRANSACTION_TYPE_APP_CALL:
+                    pass
+                elif txtype == co.TRANSACTION_TYPE_ASSET_CONFIG:
+                    pass
+                elif txtype == co.TRANSACTION_TYPE_KEY_REGISTRATION:
+                    pass
                 else:
                     handle_unknown(exporter, txinfo)
             else:
@@ -102,6 +109,8 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
         handle_tinyman_transaction(group, exporter, txinfo)
     elif is_yieldly_transaction(group):
         handle_yieldly_transaction(group, exporter, txinfo)
+    elif is_algofi_transaction(group):
+        handle_algofi_transaction(group, exporter, txinfo)
     elif is_algodex_transaction(wallet_address, group):
         handle_algodex_transaction(group, exporter, txinfo)
     elif is_akita_swap_transaction(group):

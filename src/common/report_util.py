@@ -4,7 +4,7 @@ import logging
 import os
 
 from common.ExporterTypes import FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS
-from settings_csv import REPORTS_DIR, TICKER_ATOM, TICKER_LUNA, TICKER_OSMO
+from settings_csv import REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA, TICKER_OSMO
 
 ALL = "all"
 
@@ -61,7 +61,7 @@ def parse_args(ticker):
             help="include minor currency rewards",
         )
 
-    if ticker in (TICKER_LUNA, TICKER_OSMO):
+    if ticker in (TICKER_LUNA, TICKER_OSMO, TICKER_ALGO):
         parser.add_argument(
             "--lp_treatment",
             choices=LP_TREATMENT_CHOICES,

@@ -1,3 +1,6 @@
+from common import ExporterTypes as et
+
+
 class localconfig:
 
     job = None
@@ -6,3 +9,4 @@ class localconfig:
     limit = 10000  # max txs
     after_date = None
     before_date = None
+    lp_treatment = et.LP_TREATMENT_DEFAULT
