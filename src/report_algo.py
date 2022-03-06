@@ -17,7 +17,7 @@ from algo.progress_algo import ProgressAlgo
 from common import report_util
 from common.ErrorCounter import ErrorCounter
 from common.Exporter import Exporter
-from common.ExporterTypes import FORMAT_DEFAULT
+from common.ExporterTypes import FORMAT_DEFAULT, LP_TREATMENT_TRANSFERS
 from settings_csv import TICKER_ALGO
 
 
@@ -37,8 +37,11 @@ def main():
 
 def _read_options(options):
     report_util.read_common_options(localconfig, options)
+
     localconfig.after_date = options.get("after_date", None)
     localconfig.before_date = options.get("before_date", None)
+    localconfig.lp_treatment = options.get("lp_treatment", LP_TREATMENT_TRANSFERS)
+
     logging.info("localconfig: %s", localconfig.__dict__)
 
 
