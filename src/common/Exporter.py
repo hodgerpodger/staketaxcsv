@@ -1,17 +1,16 @@
 import csv
 import io
 from datetime import datetime
-import json
 import logging
 import pandas as pd
 import pytz
 from pytz import timezone
-import re
 from tabulate import tabulate
 
 from algo.constants import EXCHANGE_ALGORAND_BLOCKCHAIN
 from common import ExporterTypes as et
 from sol.constants import EXCHANGE_SOLANA_BLOCKCHAIN
+from common.exporter_koinly import NullMap
 
 
 class Row:
@@ -82,10 +81,18 @@ class Row:
 
 class Exporter:
 
-    def __init__(self, wallet_address):
+    def __init__(self, wallet_address, localconfig=None):
         self.wallet_address = wallet_address
         self.rows = []
         self.is_reverse = None  # last sorted direction
+
+        self.lp_treatment = et.LP_TREATMENT_DEFAULT
+        self.use_cache = False
+
+        if localconfig:
+            if hasattr(localconfig, "lp_treatment"):
+                self.lp_treatment = localconfig.lp_treatment
+            self.use_cache = localconfig.cache
 
     def ingest_row(self, row):
         self.rows.append(row)
@@ -95,8 +102,93 @@ class Exporter:
             self.rows.sort(key=lambda row: (row.timestamp, row.z_index), reverse=reverse)
             self.is_reverse = reverse
 
-    def _rows_export(self):
-        return filter(lambda row: row.tx_type in et.TX_TYPES_CSVEXPORT, self.rows)
+    def _rows_export(self, format):
+        self.sort_rows(reverse=True)
+        rows = filter(lambda row: row.tx_type in et.TX_TYPES_CSVEXPORT, self.rows)
+
+        if format == et.FORMAT_KOINLY:
+            return rows
+
+        # For non-koinly CSVs, convert LP_DEPOSIT/LP_WITHDRAW into transfers/omit/trades
+        # (due to lack of native csv import support)
+        out = []
+        for row in rows:
+            if row.tx_type == et.TX_TYPE_LP_DEPOSIT:
+                if self.lp_treatment == et.LP_TREATMENT_OMIT:
+                    continue
+                elif self.lp_treatment == et.LP_TREATMENT_TRANSFERS:
+                    out.append(self._row_as_transfer_out(row))
+                elif self.lp_treatment == et.LP_TREATMENT_TRADES:
+                    out.append(self._row_as_trade(row))
+                else:
+                    raise Exception("Bad condition in _rows_export().  lp_treatment=%s".format(self.lp_treatment))
+            elif row.tx_type == et.TX_TYPE_LP_WITHDRAW:
+                if self.lp_treatment == et.LP_TREATMENT_OMIT:
+                    continue
+                elif self.lp_treatment == et.LP_TREATMENT_TRANSFERS:
+                    out.append(self._row_as_transfer_in(row))
+                elif self.lp_treatment == et.LP_TREATMENT_TRADES:
+                    out.append(self._row_as_trade(row))
+                else:
+                    raise Exception("Bad condition in _rows_export().  lp_treatment=%s".format(self.lp_treatment))
+            else:
+                out.append(row)
+
+        return out
+
+    def _row_as_transfer_out(self, row):
+        return Row(
+            timestamp=row.timestamp,
+            tx_type=et.TX_TYPE_TRANSFER,
+            received_amount="",
+            received_currency="",
+            sent_amount=row.sent_amount,
+            sent_currency=row.sent_currency,
+            fee=row.fee,
+            fee_currency=row.fee_currency,
+            exchange=row.exchange,
+            wallet_address=row.wallet_address,
+            txid=row.txid,
+            url=row.url,
+            z_index=row.z_index,
+            comment=row.comment,
+        )
+
+    def _row_as_transfer_in(self, row):
+        return Row(
+            timestamp=row.timestamp,
+            tx_type=et.TX_TYPE_TRANSFER,
+            received_amount=row.received_amount,
+            received_currency=row.received_currency,
+            sent_amount="",
+            sent_currency="",
+            fee=row.fee,
+            fee_currency=row.fee_currency,
+            exchange=row.exchange,
+            wallet_address=row.wallet_address,
+            txid=row.txid,
+            url=row.url,
+            z_index=row.z_index,
+            comment=row.comment,
+        )
+
+    def _row_as_trade(self, row):
+        return Row(
+            timestamp=row.timestamp,
+            tx_type=et.TX_TYPE_TRADE,
+            received_amount=row.received_amount,
+            received_currency=row.received_currency,
+            sent_amount=row.sent_amount,
+            sent_currency=row.sent_currency,
+            fee=row.fee,
+            fee_currency=row.fee_currency,
+            exchange=row.exchange,
+            wallet_address=row.wallet_address,
+            txid=row.txid,
+            url=row.url,
+            z_index=row.z_index,
+            comment=row.comment,
+        )
 
     def export_print(self):
         """ Prints transactions """
@@ -174,12 +266,8 @@ class Exporter:
             et.TX_TYPE_SPEND: "Spend",
             et.TX_TYPE_BORROW: et.TX_TYPE_TRANSFER,
             et.TX_TYPE_REPAY: et.TX_TYPE_TRANSFER,
-            et.TX_TYPE_LP_DEPOSIT: et.TX_TYPE_TRANSFER,
-            et.TX_TYPE_LP_WITHDRAW: et.TX_TYPE_TRANSFER,
         }
-
-        self.sort_rows(reverse=True)
-        rows = self._rows_export()
+        rows = self._rows_export(et.FORMAT_COINTRACKING)
 
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
@@ -280,11 +368,9 @@ class Exporter:
             et.TX_TYPE_INCOME: "Income",
             et.TX_TYPE_SPEND: "Spend",
             et.TX_TYPE_BORROW: "Transfer",
-            et.TX_TYPE_REPAY: "Transfer"
+            et.TX_TYPE_REPAY: "Transfer",
         }
-
-        self.sort_rows(reverse=True)
-        rows = self._rows_export()
+        rows = self._rows_export(et.FORMAT_TOKENTAX)
 
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
@@ -338,11 +424,9 @@ class Exporter:
             et.TX_TYPE_INCOME: "payment",
             et.TX_TYPE_SPEND: "",
             et.TX_TYPE_BORROW: "",
-            et.TX_TYPE_REPAY: ""
+            et.TX_TYPE_REPAY: "",
         }
-
-        self.sort_rows(reverse=True)
-        rows = self._rows_export()
+        rows = self._rows_export(et.FORMAT_COINTRACKER)
 
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
@@ -371,8 +455,8 @@ class Exporter:
 
     def export_koinly_csv(self, csvpath):
         """ Write CSV, suitable for import into Koinly """
-        self.sort_rows(reverse=True)
-        rows = self._rows_export()
+        NullMap.load(self.use_cache)
+        rows = self._rows_export(et.FORMAT_KOINLY)
 
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
@@ -398,31 +482,50 @@ class Exporter:
                     label = ""
                 elif row.tx_type == et.TX_TYPE_TRANSFER:
                     label = ""
+                elif row.tx_type == et.TX_TYPE_LP_DEPOSIT:
+                    label = "Liquidity In"
+                elif row.tx_type == et.TX_TYPE_LP_WITHDRAW:
+                    label = "Liquidity Out"
                 else:
-                    label = row.tx_type
                     logging.error("koinly: unable to handle tx_type=%s", row.tx_type)
+
+                # Currency fields
+                sent_currency = self.koinly_currency(row.sent_currency)
+                received_currency = self.koinly_currency(row.received_currency)
+                fee_currency = self.koinly_currency(row.fee_currency)
+
+                # Description field
+                # Add note to description if LP token symbol mapped to NULL*
+                description = row.comment
+                if sent_currency.startswith("NULL"):
+                    description += " " + row.sent_currency
+                if received_currency.startswith("NULL"):
+                    description += " " + row.received_currency
+                if fee_currency.startswith("NULL"):
+                    description += " " + row.fee_currency
 
                 line = [
                     row.timestamp,                                       # Date
                     row.sent_amount,                                     # Sent Amount
-                    self._koinly_currency(row.sent_currency),            # Sent Currency
+                    sent_currency,                                       # Sent Currency
                     row.received_amount,                                 # Received Amount
-                    self._koinly_currency(row.received_currency),        # Received Currency
+                    received_currency,                                   # Received Currency
                     row.fee,                                             # Fee Amount
-                    self._koinly_currency(row.fee_currency),             # Fee Currency
+                    fee_currency,                                        # Fee Currency
                     "",                                                  # Net Worth Amount
                     "",                                                  # Net Worth Currency
                     label,                                               # Label
-                    row.comment,                                         # Description
+                    description,                                         # Description
                     row.txid                                             # TxHash
                 ]
                 mywriter.writerow(line)
 
         logging.info("Wrote to %s", csvpath)
+        NullMap.flush(self.use_cache)
 
-    def _koinly_currency(self, currency):
-        if(re.findall(r"LP",currency)):
-            return self.get_koinly_null_symbol(currency)
+    def koinly_currency(self, currency):
+        if self._is_koinly_lp(currency):
+            return NullMap.get_null_symbol(currency)
         elif currency and currency.upper() == "PSI":
             # koinly default PSI is "Passive Income", not "Nexus Protocol" that we want
             return "ID:106376"
@@ -433,32 +536,17 @@ class Exporter:
         else:
             return currency
 
-    def get_koinly_null_symbol(self, symbol):
-        # koinly_null_map.json will act as a database for mapping ids to
-        # LP tokens. This file will be different for each user and must
-        # be persisted across runs.
-        try:
-            f = open('../koinly_null_map.json', 'r')
-            null_map = json.load(f)
-            f.close()
-        except IOError:
-            null_map = {"lp_tokens": []}
-
-        if symbol not in null_map["lp_tokens"]:
-            null_map["lp_tokens"].append(symbol)
-            f = open('../koinly_null_map.json', 'w')
-            json.dump(null_map, f)
-            f.close()
-
-        index = null_map["lp_tokens"].index(symbol)
-
-        # Koinly only accepts indices > 0
-        return "NULL{}".format(index + 1)
+    def _is_koinly_lp(self, currency):
+        """ Returns True if lp currency should be replaced with NULL* in koinly CSV (i.e. GAMM-22, LP_MIR_UST) """
+        if currency.startswith("LP_"):
+            return True
+        if currency.startswith("GAMM-"):
+            return True
+        return False
 
     def export_calculator_csv(self, csvpath):
         """ Write CSV, suitable for import into cryptataxcalculator.io """
-        self.sort_rows(reverse=True)
-        rows = self._rows_export()
+        rows = self._rows_export(et.FORMAT_CRYPTOTAXCALCULATOR)
 
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
@@ -541,9 +629,7 @@ class Exporter:
 
     def export_accointing_csv(self, csvpath):
         """ Writes CSV, whose xlsx translation is suitable for import into Accointing """
-        self.sort_rows(reverse=True)
-
-        rows = self._rows_export()
+        rows = self._rows_export(et.FORMAT_ACCOINTING)
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
 
@@ -621,9 +707,7 @@ class Exporter:
             et.TX_TYPE_BORROW: "transfer",
             et.TX_TYPE_REPAY: "transfer"
         }
-
-        self.sort_rows(reverse=True)
-        rows = self._rows_export()
+        rows = self._rows_export(et.FORMAT_ZENLEDGER)
 
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
@@ -662,9 +746,6 @@ class Exporter:
         logging.info("Wrote to %s", csvpath)
 
     def export_taxbit_csv(self, csvpath):
-        self.sort_rows(reverse=True)
-        rows = self._rows_export()
-
         TAXBIT_TYPES = {
             et.TX_TYPE_STAKING: "Income",
             et.TX_TYPE_AIRDROP: "Income",
@@ -675,6 +756,7 @@ class Exporter:
             et.TX_TYPE_BORROW: "Transfer Unknown",
             et.TX_TYPE_REPAY: "Transfer Unknown"
         }
+        rows = self._rows_export(et.FORMAT_TAXBIT)
 
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)

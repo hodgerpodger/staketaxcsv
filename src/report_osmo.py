@@ -16,6 +16,7 @@ from common import report_util
 from common.Cache import Cache
 from common.ErrorCounter import ErrorCounter
 from common.Exporter import Exporter
+from common.ExporterTypes import LP_TREATMENT_TRANSFERS
 from osmo.config_osmo import localconfig
 from osmo.lp_rewards import lp_rewards
 from osmo.progress_osmo import SECONDS_PER_PAGE, ProgressOsmo
@@ -37,8 +38,7 @@ def main():
 def _read_options(options):
     report_util.read_common_options(localconfig, options)
 
-    localconfig.lp_transfers = options.get("lp_transfers", False)
-    localconfig.lp_trades = options.get("lp_trades", False)
+    localconfig.lp_treatment = options.get("lp_treatment", LP_TREATMENT_TRANSFERS)
     logging.info("localconfig: %s", localconfig.__dict__)
 
 
@@ -55,7 +55,7 @@ def txone(wallet_address, txid):
     pprint.pprint(data)
     print("\n")
 
-    exporter = Exporter(wallet_address)
+    exporter = Exporter(wallet_address, localconfig)
     txinfo = osmo.processor.process_tx(wallet_address, data, exporter)
     txinfo.print()
 
@@ -78,14 +78,14 @@ def _pages(wallet_address):
 
 
 def txhistory(wallet_address, options):
-    progress = ProgressOsmo()
-    exporter = Exporter(wallet_address)
-
     # Configure localconfig based on options
     _read_options(options)
     if localconfig.cache:
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")
+
+    progress = ProgressOsmo()
+    exporter = Exporter(wallet_address, localconfig)
 
     # Set time estimate to estimate progress later
     reward_tokens = osmo.api_data.get_lp_tokens(wallet_address)

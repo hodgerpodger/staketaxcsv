@@ -21,12 +21,13 @@ from common import report_util
 from common.Cache import Cache
 from common.ErrorCounter import ErrorCounter
 from common.Exporter import Exporter
-from common.ExporterTypes import FORMAT_DEFAULT
+from common.ExporterTypes import FORMAT_DEFAULT, LP_TREATMENT_TRANSFERS
 from settings_csv import TERRA_FIGMENT_KEY, TICKER_LUNA
 from terra.api_fcd import LIMIT_FCD, FcdAPI
 from terra.api_search_figment import LIMIT_FIGMENT, SearchAPIFigment
 from terra.config_terra import localconfig
 from terra.progress_terra import SECONDS_PER_TX, ProgressTerra
+from common import exporter_koinly as koinly
 
 
 def main():
@@ -46,8 +47,7 @@ def main():
 def _read_options(options):
     report_util.read_common_options(localconfig, options)
 
-    localconfig.lp_transfers = options.get("lp_transfers", False)
-    localconfig.lp_trades = options.get("lp_trades", False)
+    localconfig.lp_treatment = options.get("lp_treatment", LP_TREATMENT_TRANSFERS)
     localconfig.minor_rewards = options.get("minor_rewards", False)
     logging.info("localconfig: %s", localconfig.__dict__)
 
@@ -67,7 +67,7 @@ def txone(wallet_address, txid):
     pprint.pprint(data)
     print("")
 
-    exporter = Exporter(wallet_address)
+    exporter = Exporter(wallet_address, localconfig)
     terra.processor.process_tx(wallet_address, data, exporter)
     print("")
     return exporter
@@ -101,14 +101,14 @@ def _num_txs(wallet_address):
 
 
 def txhistory(wallet_address, options):
-    progress = ProgressTerra()
-    exporter = Exporter(wallet_address)
-
     # Configure localconfig based on options
     _read_options(options)
     if localconfig.cache:
         cache = Cache()
         _cache_load(cache)
+
+    progress = ProgressTerra()
+    exporter = Exporter(wallet_address, localconfig)
 
     if TERRA_FIGMENT_KEY:
         # Optional: Fetch count of transactions to estimate progress more accurately later
@@ -136,6 +136,7 @@ def _cache_load(cache):
     localconfig.currency_addresses = cache.get_terra_currency_addresses()
     localconfig.decimals = cache.get_terra_decimals()
     localconfig.lp_currency_addresses = cache.get_terra_lp_currency_addresses()
+
     logging.info("_cache_load(): downloaded data from cache ...")
 
 
@@ -144,6 +145,7 @@ def _cache_push(cache):
     cache.set_terra_currency_addresses(localconfig.currency_addresses)
     cache.set_terra_decimals(localconfig.decimals)
     cache.set_terra_lp_currency_addresses(localconfig.lp_currency_addresses)
+
     logging.info("_cache_push(): push data to cache")
 
 

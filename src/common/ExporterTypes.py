@@ -22,7 +22,16 @@ FORMATS = [
     FORMAT_ZENLEDGER
 ]
 
-#
+# Other
+LP_TREATMENT_TRANSFERS = "transfers"
+LP_TREATMENT_OMIT = "omit"
+LP_TREATMENT_TRADES = "trades"
+LP_TREATMENT_CHOICES = [
+    LP_TREATMENT_TRANSFERS,
+    LP_TREATMENT_OMIT,
+    LP_TREATMENT_TRADES
+]
+LP_TREATMENT_DEFAULT = LP_TREATMENT_TRANSFERS
 
 # Note: TX_TYPE=_* means transaction is not included in non-default CSVs
 # (i.e. _STAKING_DELEGATE is not included in koinly, cointracking, ... )
@@ -38,8 +47,8 @@ TX_TYPE_SPEND = "SPEND"
 TX_TYPE_INCOME = "INCOME"
 TX_TYPE_BORROW = "BORROW"
 TX_TYPE_REPAY = "REPAY"
-TX_TYPE_LP_DEPOSIT = "LP_DEPOSIT"
-TX_TYPE_LP_WITHDRAW = "LP_WITHDRAW"
+TX_TYPE_LP_DEPOSIT = "LP_DEPOSIT"    # note: only koinly has export; others treat as transfer
+TX_TYPE_LP_WITHDRAW = "LP_WITHDRAW"  # note: only koinly has export; others treat as transfer
 
 # Common non-exportable transactions
 TX_TYPE_UNKNOWN = "_UNKNOWN"
