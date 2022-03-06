@@ -772,6 +772,8 @@ class Exporter:
                 tx_source = "LUNA WALLET"
             elif self.wallet_address.startswith("osmo"):
                 tx_source = "OSMO WALLET"
+            elif self.wallet_address.startswith("chihuahua"):
+                tx_source = "HUAHUA WALLET"
             else:
                 exchange = self.rows[0].exchange if len(self.rows) else ""
                 if exchange == EXCHANGE_SOLANA_BLOCKCHAIN:
