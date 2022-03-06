@@ -10,8 +10,8 @@ from common.make_tx import _make_tx_exchange, make_borrow_tx, make_repay_tx, mak
 
 APPLICATION_ID_ALGOFI_AMM = 605753404
 
-ALGOFI_TRANSACTION_SWAP_EXACT_FOR       = "c2Vm"    # "sef"
-ALGOFI_TRANSACTION_SWAP_FOR_EXACT       = "c2Zl"    # "sfe"
+ALGOFI_TRANSACTION_SWAP_EXACT_FOR = "c2Vm"          # "sef"
+ALGOFI_TRANSACTION_SWAP_FOR_EXACT = "c2Zl"          # "sfe"
 ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL = "cnNy"    # "rsr"
 
 ALGOFI_TRANSACTION_CLAIM_REWARDS = "Y3I="           # "cr"
@@ -23,6 +23,20 @@ ALGOFI_TRANSACTION_BURN_ASSET2_OUT = "YmEybw=="     # "ba2o"
 
 ALGOFI_TRANSACTION_BORROW = "Yg=="                  # "b"
 ALGOFI_TRANSACTION_REPAY_BORROW = "cmI="            # "rb"
+ALGOFI_TRANSACTION_LIQUIDATE = "bA=="               # "l"
+
+UNDERLYING_ASSETS = {
+    # bALGO -> ALGO
+    465818547: 0,
+    # bUSDC -> USDC
+    465818553: 31566704,
+    # bgoBTC -> goBTC
+    465818554: 386192725,
+    # bgoETH -> goETH
+    465818555: 386195940,
+    # bSTBL -> STBL
+    465818563: 465865291,
+}
 
 
 def is_algofi_transaction(group):
@@ -63,6 +77,9 @@ def is_algofi_transaction(group):
     if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
         return True
 
+    if ALGOFI_TRANSACTION_LIQUIDATE in appl_args:
+        return True
+
     return False
 
 
@@ -83,6 +100,8 @@ def handle_algofi_transaction(group, exporter, txinfo):
             return _handle_algofi_lp_remove(group, exporter, txinfo)
         elif ALGOFI_TRANSACTION_BORROW in appl_args:
             return _handle_algofi_borrow(group, exporter, txinfo)
+        elif ALGOFI_TRANSACTION_LIQUIDATE in appl_args:
+            return _handle_algofi_liquidate(group, exporter, txinfo)
     else:
         txtype = group[-2]["tx-type"]
         if txtype == "appl":
@@ -103,7 +122,7 @@ def _get_transfer_asset(transaction):
         amount = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"]
         asset_id = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
 
-    return Asset(asset_id, amount)
+    return Asset(UNDERLYING_ASSETS.get(asset_id, asset_id), amount)
 
 
 def _handle_algofi_swap(group, exporter, txinfo):
@@ -299,5 +318,28 @@ def _handle_algofi_repay_borrow(group, exporter, txinfo):
     txinfo.comment = "AlgoFi"
 
     row = make_repay_tx(txinfo, send_asset.amount, send_asset.ticker)
+    row.fee = fee.amount
+    exporter.ingest_row(row)
+
+
+def _handle_algofi_liquidate(group, exporter, txinfo):
+    # TODO only handle transactions where we are the liquidator for now.
+    # For the liquidatee side we'll need to lookup transactions
+    # for the corresponding user storage address.
+    fee_amount = 0
+    for transaction in group:
+        fee_amount += transaction["fee"]
+
+    send_transaction = group[-2]
+    send_asset = _get_transfer_asset(send_transaction)
+
+    app_transaction = group[-1]
+    receive_transaction = app_transaction["inner-txns"][0]
+    receive_asset = _get_transfer_asset(receive_transaction)
+
+    fee = Algo(fee_amount)
+    txinfo.comment = "AlgoFi liquidation"
+
+    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
     row.fee = fee.amount
     exporter.ingest_row(row)
