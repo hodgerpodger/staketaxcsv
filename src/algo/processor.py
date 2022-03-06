@@ -15,7 +15,7 @@ from algo.handle_transfer import (
     handle_payment_transaction,
     is_governance_reward_transaction,
 )
-from algo.handle_unknown import handle_unknown
+from algo.handle_simple import handle_unknown
 from algo.handle_yieldly import handle_yieldly_transaction, is_yieldly_transaction
 from common.ErrorCounter import ErrorCounter
 from common.TxInfo import TxInfo

@@ -6,6 +6,7 @@ import base64
 
 from algo import constants as co
 from algo.asset import Algo, Asset
+from algo.handle_simple import handle_participation_rewards
 from common.make_tx import make_reward_tx, make_transfer_in_tx, make_transfer_out_tx
 
 # Algostake escrow wallet: https://algostake.org/litepaper
@@ -120,9 +121,6 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
                 fee = Algo(transaction["fee"])
                 row.fee = fee.amount
                 exporter.ingest_row(row)
-        txinfo.fee = 0
 
-    if rewards_amount > 0:
-        reward = Algo(rewards_amount)
-        row = make_reward_tx(txinfo, reward, reward.ticker)
-        exporter.ingest_row(row)
+    reward = Algo(rewards_amount)
+    handle_participation_rewards(reward, exporter, txinfo)

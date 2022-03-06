@@ -1,5 +1,6 @@
 from algo import constants as co
 from algo.asset import Algo, Asset
+from algo.handle_simple import handle_participation_rewards
 from common.make_tx import make_reward_tx
 
 APPLICATION_ID_YIELDLY = 233725848
@@ -144,9 +145,7 @@ def is_yieldly_transaction(group):
 def handle_yieldly_transaction(group, exporter, txinfo):
     init_transaction = group[0]
     reward = Algo(init_transaction["sender-rewards"])
-    if not reward.zero():
-        row = make_reward_tx(txinfo, reward, reward.ticker)
-        exporter.ingest_row(row)
+    handle_participation_rewards(reward, exporter, txinfo)
 
     app_transaction = group[1]
     txtype = app_transaction["tx-type"]

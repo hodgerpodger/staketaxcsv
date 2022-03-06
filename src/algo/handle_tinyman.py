@@ -1,8 +1,8 @@
 from algo import constants as co
 from algo.asset import Algo, Asset
-from algo.handle_unknown import handle_unknown
+from algo.handle_simple import handle_participation_rewards, handle_unknown
 from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW
-from common.make_tx import _make_tx_exchange, make_income_tx, make_just_fee_tx, make_reward_tx, make_swap_tx
+from common.make_tx import _make_tx_exchange, make_income_tx, make_swap_tx
 
 APPLICATION_ID_TINYMAN_v10 = 350338509
 APPLICATION_ID_TINYMAN_v11 = 552635992
@@ -27,6 +27,9 @@ def is_tinyman_transaction(group):
 
 
 def handle_tinyman_transaction(group, exporter, txinfo):
+    reward = Algo(group[0]["sender-rewards"])
+    handle_participation_rewards(reward, exporter, txinfo)
+
     appl_args = group[1][co.TRANSACTION_KEY_APP_CALL]["application-args"]
     if TINYMAN_TRANSACTION_SWAP in appl_args:
         _handle_tinyman_swap(group, exporter, txinfo)
@@ -43,11 +46,6 @@ def handle_tinyman_transaction(group, exporter, txinfo):
 def _handle_tinyman_swap(group, exporter, txinfo):
     fee_transaction = group[0]
     fee_amount = fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
-
-    reward = Algo(fee_transaction["sender-rewards"])
-    if not reward.zero():
-        row = make_reward_tx(txinfo, reward, reward.ticker)
-        exporter.ingest_row(row)
 
     send_transaction = group[2]
     fee_amount += send_transaction["fee"]
@@ -81,11 +79,6 @@ def _handle_tinyman_redeem(group, exporter, txinfo):
     fee_transaction = group[0]
     fee_amount = fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
 
-    reward = Algo(fee_transaction["sender-rewards"])
-    if not reward.zero():
-        row = make_reward_tx(txinfo, reward, reward.ticker)
-        exporter.ingest_row(row)
-
     receive_transaction = group[2]
     receive_asset = _get_transfer_asset(receive_transaction)
 
@@ -100,11 +93,6 @@ def _handle_tinyman_redeem(group, exporter, txinfo):
 def _handle_tinyman_lp_add(group, exporter, txinfo):
     fee_transaction = group[0]
     fee_amount = fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
-
-    reward = Algo(fee_transaction["sender-rewards"])
-    if not reward.zero():
-        row = make_reward_tx(txinfo, reward, reward.ticker)
-        exporter.ingest_row(row)
 
     send_transaction = group[2]
     fee_amount += send_transaction["fee"]
@@ -135,11 +123,6 @@ def _handle_tinyman_lp_add(group, exporter, txinfo):
 def _handle_tinyman_lp_remove(group, exporter, txinfo):
     fee_transaction = group[0]
     fee_amount = fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
-
-    reward = Algo(fee_transaction["sender-rewards"])
-    if not reward.zero():
-        row = make_reward_tx(txinfo, reward, reward.ticker)
-        exporter.ingest_row(row)
 
     receive_transaction = group[2]
     receive_asset_1 = _get_transfer_asset(receive_transaction)

@@ -1,6 +1,6 @@
 from algo import constants as co
 from algo.asset import Algo, Asset
-from algo.handle_unknown import handle_unknown
+from algo.handle_simple import handle_participation_rewards, handle_unknown
 from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW
 from common.make_tx import _make_tx_exchange, make_reward_tx, make_swap_tx
 
@@ -56,6 +56,9 @@ def is_algofi_transaction(group):
 
 
 def handle_algofi_transaction(group, exporter, txinfo):
+    reward = Algo(group[0]["sender-rewards"])
+    handle_participation_rewards(reward, exporter, txinfo)
+
     appl_args = group[-1][co.TRANSACTION_KEY_APP_CALL]["application-args"]
     if ALGOFI_TRANSACTION_SWAP_EXACT_FOR in appl_args or ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL in appl_args:
         _handle_algofi_swap(group, exporter, txinfo)
@@ -85,11 +88,6 @@ def _get_transfer_asset(transaction):
 def _handle_algofi_swap(group, exporter, txinfo):
     i = 0
     send_transaction = group[i]
-    reward = Algo(send_transaction["sender-rewards"])
-    if not reward.zero():
-        row = make_reward_tx(txinfo, reward, reward.ticker)
-        exporter.ingest_row(row)
-
     fee_amount = send_transaction["fee"]
     txtype = send_transaction["tx-type"]
     # Opt-in transaction
@@ -198,11 +196,6 @@ def _handle_algofi_lp_add(group, exporter, txinfo):
 
 def _handle_algofi_lp_remove(group, exporter, txinfo):
     send_transaction = group[0]
-
-    reward = Algo(send_transaction["sender-rewards"])
-    if not reward.zero():
-        row = make_reward_tx(txinfo, reward, reward.ticker)
-        exporter.ingest_row(row)
 
     fee_amount = send_transaction["fee"]
     lp_asset = _get_transfer_asset(send_transaction)
