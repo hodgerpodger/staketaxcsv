@@ -59,15 +59,15 @@ def estimate_duration(wallet_address):
 
 
 def txhistory(wallet_address, options):
-    progress = ProgressFet()
-    exporter = Exporter(wallet_address)
-
     # Configure localconfig based on options
     _read_options(options)
     if localconfig.cache:
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")
+
     max_txs = localconfig.limit
+    progress = ProgressFet()
+    exporter = Exporter(wallet_address)
 
     # Fetch count of transactions to estimate progress more accurately
     count_pages = common.ibc.api_lcd.get_txs_pages_count(FET_NODE, wallet_address, max_txs, debug=localconfig.debug)

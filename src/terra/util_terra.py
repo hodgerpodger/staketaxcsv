@@ -249,6 +249,10 @@ def _lookup_address(addr, txid):
 
     if "symbol" in init_msg:
         currency = init_msg["symbol"]
+
+        if currency == "uLP":
+            currency = _lookup_lp_address(addr, txid)
+
         decimals = int(init_msg["decimals"])
 
         # Cache result
@@ -357,9 +361,10 @@ def _event_with_action(elem, event_type, action):
     return None
 
 
-def _ingest_rows(exporter, rows, comment):
+def _ingest_rows(exporter, rows, comment=None):
     for i, row in enumerate(rows):
-        row.comment = comment
+        if comment:
+            row.comment = comment
         if i > 0:
             row.fee, row.fee_currency = "", ""
         exporter.ingest_row(row)

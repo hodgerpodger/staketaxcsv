@@ -4,7 +4,6 @@ from common.ExporterTypes import (
     TX_TYPE_DEPOSIT_COLLATERAL,
     TX_TYPE_GOV_STAKE,
     TX_TYPE_GOV_UNSTAKE,
-    TX_TYPE_LIQUIDATE_COLLATERAL,
     TX_TYPE_LP_DEPOSIT,
     TX_TYPE_LP_STAKE,
     TX_TYPE_LP_UNSTAKE,
@@ -53,19 +52,19 @@ def make_unbond_withdraw_tx(txinfo, sent_amount, sent_currency, received_amount,
 
 def make_lp_deposit_tx(txinfo, sent_amount, sent_currency, lp_amount, lp_currency, txid=None, empty_fee=False,
                        z_index=0):
-    # Default is _LP_DEPOSIT.  If optional parameter lp set, treat as trade.
-    # tx_type = TX_TYPE_TRADE if localconfig.lp else TX_TYPE_LP_DEPOSIT
-    return _make_tx_exchange(
+    row = _make_tx_exchange(
         txinfo, sent_amount, sent_currency, lp_amount, lp_currency, TX_TYPE_LP_DEPOSIT, txid, empty_fee,
         z_index=z_index)
+    row.comment = "lp_deposit"
+    return row
 
 
 def make_lp_withdraw_tx(txinfo, lp_amount, lp_currency, received_amount, received_currency, txid=None,
                         empty_fee=False):
-    # Default is _LP_WITHDRAW.  If optional parameter lp set, treat as trade.
-    # tx_type = TX_TYPE_TRADE if localconfig.lp else TX_TYPE_LP_WITHDRAW
-    return _make_tx_exchange(
+    row = _make_tx_exchange(
         txinfo, lp_amount, lp_currency, received_amount, received_currency, TX_TYPE_LP_WITHDRAW, txid, empty_fee)
+    row.comment = "lp_withdraw"
+    return row
 
 
 def make_lp_stake_tx(txinfo, lp_amount, lp_currency, empty_fee=False, z_index=0):
@@ -94,7 +93,7 @@ def make_auction_tx(txinfo, sent_amount, sent_currency, received_amount, receive
 def make_liquidate_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
                        txid=None, empty_fee=False):
     return _make_tx_exchange(
-        txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_LIQUIDATE_COLLATERAL)
+        txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_TRADE)
 
 
 def make_retract_bid_tx(txinfo, bid_amount, bid_currency):

@@ -10,6 +10,8 @@ from common.ExporterTypes import (
     TX_TYPE_TRADE,
     TX_TYPE_TRANSFER,
     TX_TYPE_UNKNOWN,
+    TX_TYPE_LP_DEPOSIT,
+    TX_TYPE_LP_WITHDRAW,
 )
 from settings_csv import DONATION_WALLETS
 
