@@ -15,12 +15,16 @@ FIELD_KOINLY_NULL_MAP = "koinly_null_map"
 
 class Cache:
 
+    dynamodb = None
+    table = None
+
     def __init__(self):
-        self.dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-        self.table = self.dynamodb.Table(DYNAMO_TABLE_CACHE)
+        if not Cache.dynamodb:
+            Cache.dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+            Cache.table = Cache.dynamodb.Table(DYNAMO_TABLE_CACHE)
 
     def _set_overwrite(self, field_name, data):
-        response = self.table.put_item(
+        response = Cache.table.put_item(
             Item={
                 'field': field_name,
                 'data': data
@@ -35,7 +39,7 @@ class Cache:
         self._set_overwrite(field_name, prev_data)
 
     def _get(self, field_name):
-        response = self.table.get_item(
+        response = Cache.table.get_item(
             Key={'field': field_name}
         )
 
