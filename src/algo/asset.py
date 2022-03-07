@@ -102,6 +102,7 @@ class Asset:
         if params is None:
             raise ValueError("invalid asset id")
         self._decimals = params["decimals"]
+        # Remove non-ascii characters from the name
         self._ticker = params["unit-name"].encode('ascii', 'ignore').decode('ascii')
         self._uint_amount = int(amount)
 
