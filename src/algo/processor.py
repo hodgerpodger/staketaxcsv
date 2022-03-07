@@ -8,6 +8,7 @@ from algo.config_algo import localconfig
 from algo.handle_akita import handle_akita_swap_transaction, is_akita_swap_transaction
 from algo.handle_algodex import handle_algodex_transaction, is_algodex_transaction
 from algo.handle_algofi import handle_algofi_transaction, is_algofi_transaction
+from algo.handle_pact import handle_pact_transaction, is_pact_transaction
 from algo.handle_tinyman import handle_tinyman_transaction, is_tinyman_transaction
 from algo.handle_transfer import (
     handle_asa_transaction,
@@ -16,6 +17,7 @@ from algo.handle_transfer import (
     is_governance_reward_transaction,
 )
 from algo.handle_simple import handle_unknown
+from algo.handle_wagmiswap import handle_wagmiswap_transaction, is_wagmiswap_transaction
 from algo.handle_yieldly import handle_yieldly_transaction, is_yieldly_transaction
 from common.ErrorCounter import ErrorCounter
 from common.TxInfo import TxInfo
@@ -111,6 +113,10 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
         handle_yieldly_transaction(group, exporter, txinfo)
     elif is_algofi_transaction(group):
         handle_algofi_transaction(group, exporter, txinfo)
+    elif is_pact_transaction(group):
+        handle_pact_transaction(group, exporter, txinfo)
+    elif is_wagmiswap_transaction(group):
+        handle_wagmiswap_transaction(group, exporter, txinfo)
     elif is_algodex_transaction(wallet_address, group):
         handle_algodex_transaction(group, exporter, txinfo)
     elif is_akita_swap_transaction(group):
