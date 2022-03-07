@@ -1,6 +1,6 @@
 from algo import constants as co
 from algo.asset import Algo, Asset
-from algo.handle_simple import handle_participation_rewards
+from algo.handle_simple import get_transfer_asset, handle_participation_rewards
 from common.make_tx import make_reward_tx
 
 APPLICATION_ID_YIELDLY = 233725848
@@ -121,9 +121,10 @@ YIELDLY_APPLICATIONS = [
     APPLICATION_ID_YIELDLY_NEKOS_LP_POOL
 ]
 
-YIELDLY_TRANSACTION_POOL_CLAIM = "Q0E="
-YIELDLY_TRANSACTION_POOL_CLOSE = "Q0FX"
-YIELDLY_TRANSACTION_POOL_BAIL = "YmFpbA=="
+YIELDLY_TRANSACTION_POOL_CLAIM = "Q0E="         # "CA"
+YIELDLY_TRANSACTION_POOL_CLOSE = "Q0FX"         # "CAW"
+YIELDLY_TRANSACTION_POOL_BAIL = "YmFpbA=="      # "bail"
+YIELDLY_TRANSACTION_POOL_CLAIM_T5 = "Y2xhaW0="  # "claim"
 
 
 def is_yieldly_transaction(group):
@@ -164,10 +165,13 @@ def handle_yieldly_transaction(group, exporter, txinfo):
             _handle_yieldly_asa_pool_claim(group, exporter, txinfo)
         elif YIELDLY_TRANSACTION_POOL_BAIL in appl_args:
             app_transaction = group[0]
+            appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
             if (app_transaction[co.TRANSACTION_KEY_APP_CALL]["on-completion"] == "closeout"
                     and "inner-txns" in app_transaction
                     and len(app_transaction["inner-txns"]) == 2):
                 _handle_yieldly_asa_pool_close(group, exporter, txinfo)
+            elif YIELDLY_TRANSACTION_POOL_CLAIM_T5 in appl_args:
+                _handle_yieldly_teal5_pool_claim(group, exporter, txinfo)
     else:
         # Ignore stake transactions
         pass
@@ -186,10 +190,10 @@ def _handle_yieldly_nll(group, exporter, txinfo):
     fee_amount += fee_transaction["fee"] + fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"]
 
     fee = Algo(fee_amount)
-    txinfo.fee = fee.amount
     txinfo.comment = "Yieldly NLL"
 
     row = make_reward_tx(txinfo, reward, reward.ticker)
+    row.fee = fee.amount
     exporter.ingest_row(row)
 
 
@@ -214,13 +218,14 @@ def _handle_yieldly_algo_pool_claim(group, exporter, txinfo):
 
     # Distribute fee over the two transactions
     fee = Algo(fee_amount / 2)
-    txinfo.fee = fee.amount
     txinfo.comment = "Yieldly Staking Pool"
 
     row = make_reward_tx(txinfo, yldy_reward, yldy_reward.ticker)
+    row.fee = fee.amount
     exporter.ingest_row(row)
 
     row = make_reward_tx(txinfo, algo_reward, algo_reward.ticker)
+    row.fee = fee.amount
     exporter.ingest_row(row)
 
 
@@ -235,7 +240,6 @@ def _handle_yieldly_asa_pool_claim(group, exporter, txinfo):
 
     if not reward.zero():
         fee = Algo(fee_amount)
-        txinfo.fee = fee.amount
         appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
         if YIELDLY_TRANSACTION_POOL_CLOSE in appl_args:
             txinfo.comment = "Yieldly Staking Pool Close"
@@ -243,6 +247,7 @@ def _handle_yieldly_asa_pool_claim(group, exporter, txinfo):
             txinfo.comment = "Yieldly Staking Pool"
 
         row = make_reward_tx(txinfo, reward, reward.ticker)
+        row.fee = fee.amount
         exporter.ingest_row(row)
 
 
@@ -259,8 +264,28 @@ def _handle_yieldly_asa_pool_close(group, exporter, txinfo):
 
     if not reward.zero():
         fee = Algo(fee_amount)
-        txinfo.fee = fee.amount
         txinfo.comment = "Yieldly Staking Pool Close"
 
         row = make_reward_tx(txinfo, reward, reward.ticker)
+        row.fee = fee.amount
         exporter.ingest_row(row)
+
+
+def _handle_yieldly_teal5_pool_claim(group, exporter, txinfo):
+    fee_amount = 0
+    for transaction in group:
+        fee_amount += transaction["fee"]
+
+    app_transaction = group[0]
+    inner_transactions = app_transaction.get("inner-txns", [])
+    length = len(inner_transactions)
+    if length > 0:
+        fee = Algo(fee_amount / length)
+        txinfo.comment = "Yieldly Staking Pool"
+
+        for transaction in inner_transactions:
+            reward = get_transfer_asset(transaction)
+            if not reward.zero():
+                row = make_reward_tx(txinfo, reward, reward.ticker)
+                row.fee = fee.amount
+                exporter.ingest_row(row)

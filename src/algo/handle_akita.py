@@ -1,5 +1,6 @@
 from algo import constants as co
 from algo.asset import Algo, Asset
+from algo.handle_simple import handle_participation_rewards
 from common.make_tx import make_reward_tx, make_swap_tx
 
 APPLICATION_ID_AKITA_SWAP = 537279393
@@ -33,9 +34,7 @@ def handle_akita_swap_transaction(group, exporter, txinfo):
     fee_amount = optin_transaction["fee"]
 
     reward = Algo(optin_transaction["sender-rewards"])
-    if not reward.zero():
-        row = make_reward_tx(txinfo, reward, reward.ticker)
-        exporter.ingest_row(row)
+    handle_participation_rewards(reward, exporter, txinfo)
 
     send_transaction = group[1]
     fee_amount += send_transaction["fee"]
@@ -51,8 +50,8 @@ def handle_akita_swap_transaction(group, exporter, txinfo):
     receive_asset = Asset(asset_id, amount)
 
     fee = Algo(fee_amount)
-    txinfo.fee = fee.amount
-    txinfo.comment = "Akita Swap"
+    txinfo.comment = "Akita Migration Swap"
 
     row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
+    row.fee = fee.amount
     exporter.ingest_row(row)
