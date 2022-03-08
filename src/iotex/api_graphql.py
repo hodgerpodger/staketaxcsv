@@ -25,6 +25,8 @@ class IoTexGraphQL:
 
         if status_code != 200:
             return False
+        if not data or data.get("data", None) is None:
+            return False
 
         return data.get("data", {}).get("getAccount", {}).get("accountMeta", {}).get("numActions", 0)
 
