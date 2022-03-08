@@ -869,11 +869,16 @@ class Exporter:
         # Reference: https://cointracking.info/coin_charts.php
         remap = {
             "ANC": "ANC2",
+            "ASTRO": "ASTRO5",
             "LUNA": "LUNA2",
+            "MINE": "MINE2",
             "MIR": "MIR2",
+            "PRISM": "PRISM3",
+            "PSI": "PSI2",
             "SOL": "SOL2",
-            "WTUST": "UST3",
             "STARS": "STARS3",
+            "WHALE": "WHALE3",
+            "WTUST": "UST3",
         }
         if currency and currency.upper() in remap:
             return remap[currency.upper()]
