@@ -526,17 +526,19 @@ class Exporter:
         NullMap.flush(self.use_cache)
 
     def koinly_currency(self, currency):
+        # Reference: https://app.koinly.io/p/markets?search=STARS
+        remap = {
+            "APOLLO": "ID:28478",
+            "ASTRO": "ID:48993",
+            "PSI": "ID:106376",
+            "STARS": "ID:36899",
+        }
+
         if self._is_koinly_lp(currency):
             return NullMap.get_null_symbol(currency)
-        elif currency and currency.upper() == "PSI":
-            # koinly default PSI is "Passive Income", not "Nexus Protocol" that we want
-            return "ID:106376"
-        elif currency and currency.upper() == "APOLLO":
-            return "ID:28478"
-        elif currency and currency.upper() == "ASTRO":
-            return "ID:48993"
-        else:
-            return currency
+        if currency and currency.upper() in remap:
+            return remap[currency.upper()]
+        return currency
 
     def _is_koinly_lp(self, currency):
         """ Returns True if lp currency should be replaced with NULL* in koinly CSV (i.e. GAMM-22, LP_MIR_UST) """
@@ -864,16 +866,17 @@ class Exporter:
         return local_dt.strftime("%Y-%m-%d %H:%M:%S")
 
     def _cointracking_code(self, currency):
-        if currency == "ANC":
-            return "ANC2"
-        if currency == "LUNA":
-            return "LUNA2"
-        if currency == "MIR":
-            return "MIR2"
-        if currency == "SOL":
-            return "SOL2"
-        if currency == "wtUST":
-            return "UST3"
+        # Reference: https://cointracking.info/coin_charts.php
+        remap = {
+            "ANC": "ANC2",
+            "LUNA": "LUNA2",
+            "MIR": "MIR2",
+            "SOL": "SOL2",
+            "WTUST": "UST3",
+            "STARS": "STARS3",
+        }
+        if currency and currency.upper() in remap:
+            return remap[currency.upper()]
         return currency
 
     def _cointracker_code(self, currency):
