@@ -19,7 +19,7 @@ from iotex import constants as co
 from iotex.api_graphql import IoTexGraphQL
 from iotex.api_iotexscan import IoTexScan
 from iotex.config_iotex import localconfig
-from iotex.progress_iotex import ProgressIotex
+from iotex.progress_iotex import ProgressIotex, SECONDS_PER_TX
 from settings_csv import TICKER_IOTEX
 
 
@@ -89,6 +89,18 @@ def txhistory(wallet_address, options):
     return exporter
 
 
+def estimate_duration(wallet_address):
+    _, _, num_txs = _num_txs(wallet_address)
+    return SECONDS_PER_TX * num_txs
+
+
+def _num_txs(wallet_address):
+    num_actions = IoTexGraphQL.num_actions(wallet_address)
+    num_stake_actions = IoTexScan.num_stake_actions(wallet_address)
+    num_txs = num_actions + num_stake_actions
+    return num_actions, num_stake_actions, num_txs
+
+
 def _get_txs(wallet_address, progress):
     # Debugging only: when --debug flag set, read from cache file
     DEBUG_FILE = "_reports/debugiotex.{}.json".format(wallet_address)
@@ -97,9 +109,7 @@ def _get_txs(wallet_address, progress):
             out = json.load(f)
             return out
 
-    num_actions = IoTexGraphQL.num_actions(wallet_address)
-    num_stake_actions = IoTexScan.num_stake_actions(wallet_address)
-    num_txs = num_actions + num_stake_actions
+    num_actions, num_stake_actions, num_txs = _num_txs(wallet_address)
     progress.set_estimate(num_txs)
 
     start = 0
