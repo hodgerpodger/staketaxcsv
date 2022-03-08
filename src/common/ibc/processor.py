@@ -1,3 +1,11 @@
+"""
+Special note on IBC receive: mintscan sometimes shows multiple transactions for same "IBC receive event":
+  * I believe it's due to mintscan indexing on events: recv_packet.packet_data.receiver (or something similar)
+  * Current solution: LCD queries for wallet only searches on events: message.sender and transfer.receipient .
+                      This avoids multiple transactions for same "IBC receive event".
+  * Found examples in JUNO.
+"""
+
 import logging
 from datetime import datetime
 from common.ibc import constants as co
@@ -16,7 +24,7 @@ def parse_txinfo(wallet_address, elem, mintscan_label, exchange, ibc_addresses, 
     timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
     fee, fee_currency = _get_fee(elem)
 
-    # Construct list of MsgInfo's
+    # Parse elem data into list of MsgInfoIBC objects
     msgs = []
     for i in range(len(elem["logs"])):
         message = elem["tx"]["body"]["messages"][i]

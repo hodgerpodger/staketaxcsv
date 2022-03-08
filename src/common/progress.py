@@ -16,6 +16,7 @@ class Stage:
 
 
 class Progress:
+
     def __init__(self, localconfig):
         self.time_start = time.time()
         self.stages = {}
