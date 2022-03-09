@@ -2,6 +2,9 @@
 usage: python3 report_juno.py <walletaddress> [--format all|cointracking|koinly|..]
 
 Prints transactions and writes CSV(s) to _reports/JUNO*.csv
+
+TODO: JUNO CSVs are only in experimental state.  All "execute contract" transactions are still treated as
+      unknown transactions.
 """
 
 import logging
