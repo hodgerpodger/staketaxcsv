@@ -3,6 +3,7 @@ from terra import util_terra
 from terra.make_tx import make_deposit_collateral_tx, make_withdraw_collateral_tx, make_liquidate_tx
 from terra.constants import CUR_UST
 
+
 def handle_deposit_borrow(exporter, elem, txinfo):
     # Query
     data = elem
@@ -30,6 +31,7 @@ def handle_deposit_borrow(exporter, elem, txinfo):
             exporter.ingest_row(row)
     except Exception:
         pass
+
 
 def handle_repay_withdraw(exporter, elem, txinfo):
     # Query

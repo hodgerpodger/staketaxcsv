@@ -64,6 +64,7 @@ def _execute_msg(elem, index=0):
 
     return msg
 
+
 def _multi_transfers(elem, wallet_address, txid):
     transfers_in = []
     transfers_out = []
@@ -85,12 +86,13 @@ def _multi_transfers(elem, wallet_address, txid):
                     amount_string = attributes[i + 1]["value"]
 
                     if recipient == wallet_address:
-                            amount, currency = _amount(amount_string)
-                            transfers_in.append([amount, currency])
+                        amount, currency = _amount(amount_string)
+                        transfers_in.append([amount, currency])
                     elif sender == wallet_address:
-                            amount, currency = _amount(amount_string)
-                            transfers_out.append([amount, currency])
+                        amount, currency = _amount(amount_string)
+                        transfers_out.append([amount, currency])
     return transfers_in, transfers_out
+
 
 def _transfers(elem, wallet_address, txid, multicurrency=False):
     transfers_in = []

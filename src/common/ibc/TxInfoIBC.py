@@ -18,6 +18,3 @@ class TxInfoIBC(TxInfo):
             print("\ttransfers_in: {}".format(msg.transfers[0]))
             print("\ttransfers_out: {}".format(msg.transfers[1]))
         print("\n")
-
-
-

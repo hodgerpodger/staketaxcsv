@@ -31,6 +31,7 @@ def handle_transfer(exporter, elem, txinfo):
             else:
                 continue
 
+
 def handle_multi_transfer(exporter, elem, txinfo):
     wallet_address = txinfo.wallet_address
     txid = txinfo.txid

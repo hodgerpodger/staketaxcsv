@@ -82,8 +82,9 @@ def make_withdraw_collateral_tx(txinfo, received_amount, received_currency, empt
     return _make_tx_received(
         txinfo, received_amount, received_currency, TX_TYPE_WITHDRAW_COLLATERAL, empty_fee=empty_fee, z_index=z_index)
 
+
 def make_liquidate_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
-                       txid=None, empty_fee=False):
+                      txid=None, empty_fee=False):
     return _make_tx_exchange(
         txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_TRADE)
 
