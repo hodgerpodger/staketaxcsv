@@ -75,7 +75,7 @@ def txhistory(wallet_address, options):
     _read_options(options)
 
     progress = ProgressIotex()
-    exporter = Exporter(wallet_address, localconfig)
+    exporter = Exporter(wallet_address, localconfig, TICKER_IOTEX)
 
     # Retrieve data
     elems = _get_txs(wallet_address, progress)

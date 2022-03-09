@@ -13,7 +13,7 @@ def process_txs(wallet_address, elems, exporter):
 
 
 def process_tx(wallet_address, elem, exporter):
-    txinfo = common.ibc.processor.parse_txinfo(
+    txinfo = common.ibc.processor.txinfo(
         wallet_address, elem, co.MINTSCAN_LABEL_JUNO, co.EXCHANGE_JUNO, localconfig.ibc_addresses, JUNO_NODE)
 
     for msginfo in txinfo.msgs:

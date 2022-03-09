@@ -52,7 +52,7 @@ def handle_transfer(exporter, txinfo, msginfo):
 
 
 def _handle_transfer(exporter, txinfo, msginfo):
-    transfers_in, transfers_out = msginfo.transfer_event
+    transfers_in, transfers_out = msginfo.transfers_event
 
     if len(transfers_in) == 1 and len(transfers_out) == 0:
         amount, currency, _, _ = transfers_in[0]

@@ -20,12 +20,4 @@ class TxInfoIBC(TxInfo):
         print("\n")
 
 
-class MsgInfoIBC:
-    """ Single message info for index <i> """
 
-    def __init__(self, msg_index, message, log, transfers, transfer_event):
-        self.msg_index = msg_index
-        self.message = message
-        self.log = log
-        self.transfers = transfers
-        self.transfer_event = transfer_event

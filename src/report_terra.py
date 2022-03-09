@@ -66,7 +66,7 @@ def txone(wallet_address, txid):
     pprint.pprint(data)
     print("")
 
-    exporter = Exporter(wallet_address, localconfig)
+    exporter = Exporter(wallet_address, localconfig, TICKER_LUNA)
     terra.processor.process_tx(wallet_address, data, exporter)
     print("")
     return exporter
@@ -107,7 +107,7 @@ def txhistory(wallet_address, options):
         _cache_load(cache)
 
     progress = ProgressTerra()
-    exporter = Exporter(wallet_address, localconfig)
+    exporter = Exporter(wallet_address, localconfig, TICKER_LUNA)
 
     if TERRA_FIGMENT_KEY:
         # Optional: Fetch count of transactions to estimate progress more accurately later

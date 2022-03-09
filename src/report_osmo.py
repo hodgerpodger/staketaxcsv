@@ -57,7 +57,7 @@ def txone(wallet_address, txid):
     pprint.pprint(data)
     print("\n")
 
-    exporter = Exporter(wallet_address, localconfig)
+    exporter = Exporter(wallet_address, localconfig, TICKER_OSMO)
     txinfo = osmo.processor.process_tx(wallet_address, data, exporter)
     txinfo.print()
 
@@ -87,7 +87,7 @@ def txhistory(wallet_address, options):
         logging.info("Loaded ibc_addresses from cache ...")
 
     progress = ProgressOsmo()
-    exporter = Exporter(wallet_address, localconfig)
+    exporter = Exporter(wallet_address, localconfig, TICKER_OSMO)
 
     # Set time estimate to estimate progress later
     reward_tokens = osmo.api_data.get_lp_tokens(wallet_address)

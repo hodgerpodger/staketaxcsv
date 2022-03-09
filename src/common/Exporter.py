@@ -83,10 +83,11 @@ class Row:
 
 class Exporter:
 
-    def __init__(self, wallet_address, localconfig=None):
+    def __init__(self, wallet_address, localconfig=None, ticker=""):
         self.wallet_address = wallet_address
         self.rows = []
         self.is_reverse = None  # last sorted direction
+        self.ticker = ticker
 
         self.lp_treatment = et.LP_TREATMENT_DEFAULT
         self.use_cache = False
@@ -761,6 +762,9 @@ class Exporter:
             et.TX_TYPE_REPAY: "Transfer Unknown"
         }
         rows = self._rows_export(et.FORMAT_TAXBIT)
+        if not self.ticker:
+            logging.error("Unable to identify tx_source.  Missing ticker")
+        tx_source = "{} WALLET".format(self.ticker.upper())
 
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
@@ -769,25 +773,6 @@ class Exporter:
             mywriter.writerow(et.TAXBIT_FIELDS)
 
             # data rows
-
-            if self.wallet_address.startswith("cosmo"):
-                tx_source = "ATOM WALLET"
-            elif self.wallet_address.startswith("terra"):
-                tx_source = "LUNA WALLET"
-            elif self.wallet_address.startswith("osmo"):
-                tx_source = "OSMO WALLET"
-            elif self.wallet_address.startswith("chihuahua"):
-                tx_source = "HUAHUA WALLET"
-            else:
-                exchange = self.rows[0].exchange if len(self.rows) else ""
-                if exchange == EXCHANGE_SOLANA_BLOCKCHAIN:
-                    tx_source = "SOL WALLET"
-                elif exchange == EXCHANGE_ALGORAND_BLOCKCHAIN:
-                    tx_source = "ALGO WALLET"
-                else:
-                    tx_source = ""
-                    logging.critical("Bad condition: unable to identify tx_source in export_taxbit_csv()")
-
             for row in rows:
                 # Determine Transaction Type
                 tb_type = TAXBIT_TYPES[row.tx_type]

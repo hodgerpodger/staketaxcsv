@@ -89,7 +89,7 @@ def txone(wallet_address, txid):
     print(s)
     print("\n")
 
-    exporter = Exporter(wallet_address, localconfig)
+    exporter = Exporter(wallet_address, localconfig, TICKER_SOL)
     txinfo = sol.processor.process_tx(WalletInfo(wallet_address), exporter, txid, data)
     txinfo.print()
     return exporter
@@ -117,7 +117,7 @@ def txhistory(wallet_address, options):
     logging.info("Using SOLANA_URL=%s...", SOL_NODE)
 
     progress = ProgressSol()
-    exporter = Exporter(wallet_address, localconfig)
+    exporter = Exporter(wallet_address, localconfig, TICKER_SOL)
     wallet_info = WalletInfo(wallet_address)
 
     # Fetch data to so that job progress can be estimated ##########

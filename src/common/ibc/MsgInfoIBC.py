@@ -2,30 +2,42 @@ import common.ibc.api_lcd
 import common.ibc.constants as co
 
 
-class UtilTransfers:
+class MsgInfoIBC:
+    """ Single message info for index <i> """
 
-    def __init__(self, ibc_addresses, lcd_node):
-        self.ibc_addresses = ibc_addresses
-        self.lcd_node = lcd_node
+    lcd_node = None
+    ibc_addresses = None
 
-    def transfers(self, log, wallet_address):
+    def __init__(self, wallet_address, msg_index, message, log, lcd_node, ibc_addresses):
+        if lcd_node is None:
+            MsgInfoIBC.lcd_node = lcd_node
+            MsgInfoIBC.ibc_addresses = ibc_addresses
+
+        self.wallet_address = wallet_address
+        self.msg_index = msg_index
+        self.message = message
+        self.log = log
+        self.transfers = self._transfers()
+        self.transfers_event = self._transfers_transfer_event(show_addrs=True)
+
+    def _transfers(self):
         """
         Parses log element and returns (list of inbound transfers, list of outbound transfers),
         relative to wallet_address.
         """
-        transfers_in = self._transfers_coin_received(log, wallet_address)
-        transfers_out = self._transfers_coin_spent(log, wallet_address)
+        transfers_in = self._transfers_coin_received()
+        transfers_out = self._transfers_coin_spent()
 
         if len(transfers_in) == 0 and len(transfers_out) == 0:
             # Only add "transfer" event if "coin_received"/"coin_spent" events do not exist
-            transfers_in, transfers_out = self.transfer_event(log, wallet_address, show_addrs=False)
+            transfers_in, transfers_out = self._transfers_transfer_event()
 
         return transfers_in, transfers_out
 
-    def _transfers_coin_received(self, log, wallet_address):
+    def _transfers_coin_received(self):
         transfers_in = []
 
-        events = log["events"]
+        events = self.log["events"]
         for event in events:
             event_type, attributes = event["type"], event["attributes"]
 
@@ -33,16 +45,16 @@ class UtilTransfers:
                 for i in range(0, len(attributes), 2):
                     receiver = attributes[i]["value"]
                     amount_string = attributes[i + 1]["value"]
-                    if receiver == wallet_address:
-                        for amount, currency in self._amount_currency(amount_string):
+                    if receiver == self.wallet_address:
+                        for amount, currency in MsgInfoIBC.amount_currency(amount_string):
                             transfers_in.append((amount, currency))
 
         return transfers_in
 
-    def _transfers_coin_spent(self, log, wallet_address):
+    def _transfers_coin_spent(self):
         transfers_out = []
 
-        events = log["events"]
+        events = self.log["events"]
         for event in events:
             event_type, attributes = event["type"], event["attributes"]
 
@@ -51,18 +63,18 @@ class UtilTransfers:
                     spender = attributes[i]["value"]
                     amount_string = attributes[i + 1]["value"]
 
-                    if spender == wallet_address:
-                        for amount, currency in self._amount_currency(amount_string):
+                    if spender == self.wallet_address:
+                        for amount, currency in MsgInfoIBC.amount_currency(amount_string):
                             transfers_out.append((amount, currency))
 
         return transfers_out
 
-    def transfer_event(self, log, wallet_address, show_addrs=False):
+    def _transfers_transfer_event(self, show_addrs=False):
         """ Returns (list of inbound transfers, list of outbound transfers), relative to wallet_address
             using transfer event element only. """
         transfers_in, transfers_out = [], []
 
-        events = log["events"]
+        events = self.log["events"]
         for event in events:
             event_type, attributes = event["type"], event["attributes"]
 
@@ -72,21 +84,22 @@ class UtilTransfers:
                     sender = attributes[i + 1]["value"]
                     amount_string = attributes[i + 2]["value"]
 
-                    if recipient == wallet_address:
-                        for amount, currency in self._amount_currency(amount_string):
+                    if recipient == self.wallet_address:
+                        for amount, currency in MsgInfoIBC.amount_currency(amount_string):
                             if show_addrs:
                                 transfers_in.append((amount, currency, sender, recipient))
                             else:
                                 transfers_in.append((amount, currency))
-                    elif sender == wallet_address:
-                        for amount, currency in self._amount_currency(amount_string):
+                    elif sender == self.wallet_address:
+                        for amount, currency in MsgInfoIBC.amount_currency(amount_string):
                             if show_addrs:
                                 transfers_out.append((amount, currency, sender, recipient))
                             else:
                                 transfers_out.append((amount, currency))
         return transfers_in, transfers_out
 
-    def _amount_currency(self, amount_string):
+    @classmethod
+    def amount_currency(cls, amount_string):
         # i.e. "5000000uosmo",
         # i.e. "16939122ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4",
         # i.e. "899999999ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2,\
@@ -97,17 +110,17 @@ class UtilTransfers:
                 uamount, ibc_address = amt_string.split("ibc/")
 
                 ibc_address = "ibc/" + ibc_address
-                currency = self._ibc_symbol(ibc_address)
-                amount = self._amount(uamount, currency)
+                currency = cls.ibc_symbol(ibc_address)
+                amount = cls.amount(uamount, currency)
             elif "u" in amt_string:
                 uamount, ucurrency = amt_string.split("u", 1)
 
                 currency = ucurrency.upper()
-                amount = self._amount(uamount, currency)
+                amount = cls.amount(uamount, currency)
             elif "afet" in amt_string:
                 uamount, ucurrency = amt_string.split("afet", 1)
                 currency = "FET"
-                amount = self._amount(uamount, currency)
+                amount = cls.amount(uamount, currency)
             else:
                 raise Exception("Unexpected amount_string: {}".format(amount_string))
 
@@ -115,7 +128,8 @@ class UtilTransfers:
 
         return out
 
-    def _amount(self, uamount, currency):
+    @classmethod
+    def amount(cls, uamount, currency):
         if currency == co.CUR_CRO:
             return float(uamount) / co.MILLION / 100
         elif currency == co.CUR_FET:
@@ -123,15 +137,16 @@ class UtilTransfers:
         else:
             return float(uamount) / co.MILLION
 
-    def _ibc_symbol(self, ibc_address):
+    @classmethod
+    def ibc_symbol(cls, ibc_address):
         # i.e. "ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4" -> "IKT"
-        if not self.lcd_node:
+        if not cls.lcd_node:
             return ibc_address
-        if ibc_address in self.ibc_addresses:
-            return self.ibc_addresses[ibc_address]
+        if ibc_address in cls.ibc_addresses:
+            return cls.ibc_addresses[ibc_address]
 
-        result = common.ibc.api_lcd.get_ibc_ticker(self.lcd_node, ibc_address, self.ibc_addresses)
+        result = common.ibc.api_lcd.get_ibc_ticker(cls.lcd_node, ibc_address, cls.ibc_addresses)
         val = result if result else ibc_address
 
-        self.ibc_addresses[ibc_address] = val
+        cls.ibc_addresses[ibc_address] = val
         return val

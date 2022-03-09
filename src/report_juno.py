@@ -47,7 +47,7 @@ def txone(wallet_address, txid):
     print("Transaction data:")
     pprint.pprint(elem)
 
-    exporter = Exporter(wallet_address, localconfig)
+    exporter = Exporter(wallet_address, localconfig, TICKER_JUNO)
     txinfo = juno.processor.process_tx(wallet_address, elem, exporter)
     txinfo.print()
     return exporter
@@ -67,7 +67,7 @@ def txhistory(wallet_address, options):
 
     max_txs = localconfig.limit
     progress = ProgressJuno()
-    exporter = Exporter(wallet_address, localconfig)
+    exporter = Exporter(wallet_address, localconfig, TICKER_JUNO)
 
     # Fetch count of transactions to estimate progress more accurately
     count_pages = common.ibc.api_lcd.get_txs_pages_count(JUNO_NODE, wallet_address, max_txs, debug=localconfig.debug)

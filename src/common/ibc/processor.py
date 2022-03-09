@@ -10,14 +10,14 @@ import logging
 from datetime import datetime
 from common.ibc import constants as co
 from common.ibc import util_ibc
-from common.ibc.TxInfoIBC import TxInfoIBC, MsgInfoIBC
+from common.ibc.TxInfoIBC import TxInfoIBC
+from common.ibc.MsgInfoIBC import MsgInfoIBC
 from common.ibc import handle
-from common.ibc.util_transfers import UtilTransfers
 
 MILLION = 1000000.0
 
 
-def parse_txinfo(wallet_address, elem, mintscan_label, exchange, ibc_addresses, lcd_node):
+def txinfo(wallet_address, elem, mintscan_label, exchange, ibc_addresses, lcd_node):
     """ Parses transaction data to return TxInfo object """
     txid = elem["txhash"]
 
@@ -30,11 +30,7 @@ def parse_txinfo(wallet_address, elem, mintscan_label, exchange, ibc_addresses, 
         message = elem["tx"]["body"]["messages"][i]
         log = elem["logs"][i]
 
-        util = UtilTransfers(ibc_addresses, lcd_node)
-        transfers = util.transfers(log, wallet_address)
-        transfer_event = util.transfer_event(log, wallet_address, show_addrs=True)
-        msginfo = MsgInfoIBC(i, message, log, transfers, transfer_event)
-
+        msginfo = MsgInfoIBC(wallet_address, i, message, log, lcd_node, ibc_addresses)
         msgs.append(msginfo)
 
     txinfo = TxInfoIBC(txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, exchange)
