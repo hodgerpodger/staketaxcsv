@@ -6,7 +6,7 @@ import base64
 
 from algo import constants as co
 from algo.asset import Algo, Asset
-from algo.handle_simple import handle_participation_rewards
+from algo.handle_simple import handle_participation_rewards, handle_unknown
 from common.make_tx import make_reward_tx, make_transfer_in_tx, make_transfer_out_tx
 
 # Algostake escrow wallet: https://algostake.org/litepaper
@@ -63,11 +63,31 @@ def handle_asa_transaction(wallet_address, transaction, exporter, txinfo):
     _handle_transfer(wallet_address, transaction, transfer_details, exporter, txinfo, asset_id)
 
 
+def has_only_transfer_transactions(transactions):
+    return len([tx for tx in transactions
+        if (tx["tx-type"] == co.TRANSACTION_TYPE_PAYMENT
+            or tx["tx-type"] == co.TRANSACTION_TYPE_ASSET_TRANSFER)]) == len(transactions)
+
+
+def handle_transfer_transactions(wallet_address, transactions, exporter, txinfo):
+    for transaction in transactions:
+        txtype = transaction["tx-type"]
+        if txtype == co.TRANSACTION_TYPE_PAYMENT:
+            handle_payment_transaction(wallet_address, transaction, exporter, txinfo)
+        elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
+            handle_asa_transaction(wallet_address, transaction, exporter, txinfo)
+        else:
+            handle_unknown(exporter, txinfo)
+
+
 def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, asset_id):
     txsender = transaction["sender"]
     txreceiver = details["receiver"]
     close_to = details.get("close-to", details.get("close-remainder-to", None))
     rewards_amount = 0
+
+    if wallet_address not in [txsender, txreceiver, close_to]:
+        return handle_unknown(exporter, txinfo)
 
     if txreceiver == wallet_address or close_to == wallet_address:
         receive_amount = 0
