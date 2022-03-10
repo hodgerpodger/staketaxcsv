@@ -40,7 +40,13 @@ def _handle_message(exporter, txinfo, msginfo):
         if msg_type in [co.MSG_TYPE_VOTE, co.MSG_TYPE_SET_WITHDRAW_ADDRESS]:
             # 0 transfers
             osmo.handle_general.handle_simple(exporter, txinfo, msginfo)
-        elif msg_type in [co.MSG_TYPE_SUBMIT_PROPOSAL, co.MSG_TYPE_DEPOSIT]:
+        elif msg_type == co.MSG_TYPE_SUBMIT_PROPOSAL:
+            transfers_in, transfers_out = msginfo.transfers
+            if len(transfers_in) == 0 and len(transfers_out) == 1:
+                osmo.handle_general.handle_simple_outbound(exporter, txinfo, msginfo)
+            else:
+                osmo.handle_general.handle_simple(exporter, txinfo, msginfo)
+        elif msg_type in [co.MSG_TYPE_DEPOSIT]:
             # 1 outbound transfer
             osmo.handle_general.handle_simple_outbound(exporter, txinfo, msginfo)
         elif msg_type in [co.MSG_TYPE_UPDATE_CLIENT, co.MSG_TYPE_ACKNOWLEDGMENT]:

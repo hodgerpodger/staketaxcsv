@@ -68,6 +68,9 @@ def _transfers_event(log, wallet_address):
                 recipient = attributes[i]["value"]
                 sender = attributes[i + 1]["value"]
                 amount_string = attributes[i + 2]["value"]
+                if not amount_string:
+                    # Handle rare case for empty string
+                    continue
 
                 if recipient == wallet_address:
                     for amount, currency in _amount_currency(amount_string):
