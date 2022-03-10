@@ -233,6 +233,8 @@ class Exporter:
             self.export_zenledger_csv(csvpath)
         elif format == et.FORMAT_TAXBIT:
             self.export_taxbit_csv(csvpath)
+        elif format == et.FORMAT_COINLEDGER:
+            self.export_coinledger_csv(csvpath)
         return csvpath
 
     def export_default_csv(self, csvpath=None, truncate=0):
@@ -455,6 +457,61 @@ class Exporter:
                 mywriter.writerow(line)
 
         logging.info("Wrote to %s", csvpath)
+
+    def export_coinledger_csv(self, csvpath):
+        """ Write CSV, suitable for import into CoinLedger (cryptotrader.tax) """
+        tags = {
+            et.TX_TYPE_AIRDROP: "Airdrop",
+            et.TX_TYPE_STAKING: "Staking",
+            et.TX_TYPE_TRADE: "",
+            et.TX_TYPE_TRANSFER: "Transfer",
+            et.TX_TYPE_INCOME: "Income",
+            et.TX_TYPE_SPEND: "Gift Sent",
+            et.TX_TYPE_BORROW: "Transfer",
+            et.TX_TYPE_REPAY: "Transfer",
+        }
+        rows = self._rows_export(et.FORMAT_COINLEDGER)
+
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
+            mywriter = csv.writer(f)
+
+            # header row
+            mywriter.writerow(et.CL_FIELDS)
+
+            # data rows
+            for row in rows:
+                tag = tags[row.tx_type]
+                if tag == "Transfer":
+                    if row.received_amount and not row.sent_amount:
+                        tag = "Deposit"
+                    if row.sent_amount and not row.received_amount:
+                        tag = "Withdrawal"
+
+                line = [
+                    self._coinledger_timestamp(row.timestamp),           # Date (UTC)
+                    "{}_blockchain".format(self.ticker.lower()),         # Platform (Optional)
+                    self._coinledger_code(row.sent_currency),            # Asset Sent
+                    row.sent_amount,                                     # Amount Sent
+                    self._coinledger_code(row.received_currency),        # Asset Received
+                    row.received_amount,                                 # Amount Received
+                    self._coinledger_code(row.fee_currency),             # Fee Currency (Optional)"
+                    row.fee,                                             # Fee Amount (Optional)"
+                    tag,                                                 # Type
+                    row.comment,                                         # Description (Optional)
+                    row.txid                                             # TxHash (Optional)
+                ]
+                mywriter.writerow(line)
+
+        logging.info("Wrote to %s", csvpath)
+
+    def _coinledger_timestamp(self, ts):
+        # Convert "2021-08-04 15:25:43" to "08/14/2021 15:25:43"
+        dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
+
+        return dt.strftime("%m/%d/%Y %H:%M:%S")
+
+    def _coinledger_code(self, currency):
+        return currency
 
     def export_koinly_csv(self, csvpath):
         """ Write CSV, suitable for import into Koinly """
