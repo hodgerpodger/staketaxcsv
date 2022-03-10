@@ -18,6 +18,8 @@ def handle_airdrop(exporter, elem, txinfo):
     for index, msg in enumerate(msgs):
         msg_type = msg["type"]
 
+        from_contract = elem["logs"][index]["events_by_type"]["from_contract"]
+
         if msg_type == "wasm/MsgExecuteContract":
             _handle_airdrop(exporter, elem, txinfo, index)
         elif msg_type == "distribution/MsgWithdrawDelegationReward":
@@ -87,14 +89,16 @@ def _extract_amount(elem, index, currency):
         pass
 
     try:
-        from_contract = util_terra._event_with_action(elem, "from_contract", "claim")
+        from_contract = util_terra._event_with_action(elem, "from_contract", "claim") or util_terra._event_with_action(elem, "from_contract", "claim phase 1")
+
+        print(from_contract)
         amounts = from_contract["amount"]
         actions = from_contract["action"]
         for i in range(len(amounts)):
             action = actions[i]
             amount = amounts[i]
 
-            if action == "claim":
+            if action == "claim" or action == "claim phase 1":
                 return util_terra._float_amount(amount, currency)
     except Exception:
         pass
