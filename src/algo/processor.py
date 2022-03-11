@@ -14,6 +14,8 @@ from algo.handle_transfer import (
     handle_asa_transaction,
     handle_governance_reward_transaction,
     handle_payment_transaction,
+    handle_transfer_transactions,
+    has_only_transfer_transactions,
     is_governance_reward_transaction,
 )
 from algo.handle_simple import handle_unknown
@@ -31,7 +33,7 @@ def process_txs(wallet_address, elems, exporter, progress):
         txid = elem["id"]
 
         try:
-            groupid = elem.get("group", None)
+            groupid = elem.get("group")
             if not groupid:
                 txinfo = _txinfo(wallet_address, elem)
                 txtype = elem["tx-type"]
@@ -40,7 +42,9 @@ def process_txs(wallet_address, elems, exporter, progress):
                 elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
                     handle_asa_transaction(wallet_address, elem, exporter, txinfo)
                 elif txtype == co.TRANSACTION_TYPE_APP_CALL:
-                    pass
+                    txns = elem.get("inner-txns")
+                    if txns and has_only_transfer_transactions(txns):
+                        handle_transfer_transactions(wallet_address, txns, exporter, txinfo)
                 elif txtype == co.TRANSACTION_TYPE_ASSET_CONFIG:
                     pass
                 elif txtype == co.TRANSACTION_TYPE_KEY_REGISTRATION:
@@ -121,5 +125,7 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
         handle_algodex_transaction(group, exporter, txinfo)
     elif is_akita_swap_transaction(group):
         handle_akita_swap_transaction(group, exporter, txinfo)
+    elif has_only_transfer_transactions(group):
+        handle_transfer_transactions(wallet_address, group, exporter, txinfo)
     else:
         handle_unknown(exporter, txinfo)
