@@ -20,7 +20,6 @@ MILLION = 1000000.0
 def txinfo(wallet_address, elem, mintscan_label, exchange, ibc_addresses, lcd_node):
     """ Parses transaction data to return TxInfo object """
     txid = elem["txhash"]
-
     timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
     fee, fee_currency = _get_fee(elem)
 
@@ -61,7 +60,7 @@ def _get_fee(elem):
 def handle_message(exporter, txinfo, msginfo, debug=False):
     """ Parses message denoted by msginfo (for common ibc ecosystem types).  Returns True/False if handler found. """
     try:
-        msg_type = util_ibc._msg_type(msginfo)
+        msg_type = msginfo.msg_type
 
         # simple transactions, that are typically ignored
         if msg_type in [co.MSG_TYPE_VOTE, co.MSG_TYPE_SET_WITHDRAW_ADDRESS]:
@@ -81,6 +80,8 @@ def handle_message(exporter, txinfo, msginfo, debug=False):
         # transfers
         elif msg_type == co.MSG_TYPE_SEND:
             handle.handle_transfer(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_MULTI_SEND:
+            handle.handle_multisend(exporter, txinfo, msginfo)
         elif msg_type in [co.MSG_TYPE_IBC_TRANSFER, co.MSG_TYPE_MSGRECVPACKET]:
             handle.handle_transfer_ibc(exporter, txinfo, msginfo)
         elif msg_type == co.MSG_TYPE_TIMEOUT:

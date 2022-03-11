@@ -6,18 +6,13 @@ from common.ibc import util_ibc
 
 def _make_tx(txinfo, msginfo, sent_amount, sent_currency, received_amount, received_currency, tx_type=None):
     if not tx_type:
-        tx_type = _tx_type(msginfo)
+        tx_type = "_" + msginfo.msg_type
     txid = "{}-{}".format(txinfo.txid, msginfo.msg_index)
     empty_fee = msginfo.msg_index > 0
 
     return common.make_tx._make_tx_exchange(
         txinfo, sent_amount, sent_currency, received_amount, received_currency, tx_type, txid=txid,
         empty_fee=empty_fee)
-
-
-def _tx_type(msginfo):
-    msg_type = util_ibc._msg_type(msginfo)
-    return "_" + msg_type
 
 
 def make_simple_tx_with_transfers(txinfo, msginfo, sent_amount, sent_currency, received_amount, received_currency):

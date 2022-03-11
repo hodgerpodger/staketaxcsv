@@ -35,7 +35,7 @@ def handle_staking(exporter, txinfo, msginfo):
 
     if total > 0:
         row = make_tx.make_reward_tx(txinfo, msginfo, total, currency)
-        row.comment = "claim reward in {}".format(util_ibc._msg_type(msginfo))
+        row.comment = "claim reward in {}".format(msginfo.msg_type)
         exporter.ingest_row(row)
     else:
         # No reward: add non-income delegation transaction just so transaction doesn't appear "missing"
@@ -44,16 +44,17 @@ def handle_staking(exporter, txinfo, msginfo):
 
 
 def handle_transfer_ibc(exporter, txinfo, msginfo):
-    _handle_transfer(exporter, txinfo, msginfo)
+    transfers_in, transfers_out = msginfo.transfers_event
+    _handle_transfer(exporter, txinfo, msginfo, transfers_in, transfers_out)
 
 
 def handle_transfer(exporter, txinfo, msginfo):
-    _handle_transfer(exporter, txinfo, msginfo)
-
-
-def _handle_transfer(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers_event
+    _handle_transfer(exporter, txinfo, msginfo, transfers_in, transfers_out)
 
+
+
+def _handle_transfer(exporter, txinfo, msginfo, transfers_in, transfers_out):
     if len(transfers_in) == 1 and len(transfers_out) == 0:
         amount, currency, _, _ = transfers_in[0]
         row = make_tx.make_transfer_in_tx(txinfo, msginfo, amount, currency)
@@ -70,6 +71,25 @@ def _handle_transfer(exporter, txinfo, msginfo):
         return
     else:
         handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+
+
+def handle_multisend(exporter, txinfo, msginfo):
+    transfers_in, transfers_out = msginfo.transfers
+
+    i = 0
+    for amount, currency in transfers_in:
+        row = make_tx.make_transfer_in_tx(txinfo, msginfo, amount, currency)
+        row.txid = row.txid + "-" + str(i)
+        row.fee = "" if i > 0 else row.fee
+        exporter.ingest_row(row)
+        i += 1
+
+    for amount, currency in transfers_out:
+        row = make_tx.make_transfer_out_tx(txinfo, msginfo, amount, currency)
+        row.txid = row.txid + "-" + str(i)
+        row.fee = "" if i > 0 else row.fee
+        exporter.ingest_row(row)
+        i += 1
 
 
 def handle_unknown_detect_transfers(exporter, txinfo, msginfo):

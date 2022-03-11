@@ -1,5 +1,9 @@
 import common.ibc.api_lcd
 import common.ibc.constants as co
+import common.ibc.util_ibc
+
+COIN_RECEIVED = "coin_received"
+COIN_SPENT = "coin_spent"
 
 
 class MsgInfoIBC:
@@ -16,9 +20,18 @@ class MsgInfoIBC:
         self.wallet_address = wallet_address
         self.msg_index = msg_index
         self.message = message
+        self.msg_type = self._msg_type(message)
         self.log = log
         self.transfers = self._transfers()
         self.transfers_event = self._transfers_transfer_event(show_addrs=True)
+
+    def _msg_type(self, message):
+        # i.e. /osmosis.lockup.MsgBeginUnlocking -> _MsgBeginUnlocking
+        last_field = message["@type"].split(".")[-1]
+        return last_field
+
+    def _has_coin_spent_received(self):
+        return self._has_event_type(COIN_SPENT) and self._has_event_type(COIN_SPENT)
 
     def _transfers(self):
         """
@@ -28,11 +41,19 @@ class MsgInfoIBC:
         transfers_in = self._transfers_coin_received()
         transfers_out = self._transfers_coin_spent()
 
-        if len(transfers_in) == 0 and len(transfers_out) == 0:
+        if not self._has_coin_spent_received():
             # Only add "transfer" event if "coin_received"/"coin_spent" events do not exist
             transfers_in, transfers_out = self._transfers_transfer_event()
 
         return transfers_in, transfers_out
+
+    def _has_event_type(self, target_event_type):
+        events = self.log["events"]
+        for event in events:
+            event_type, attributes = event["type"], event["attributes"]
+            if event_type == target_event_type:
+                return True
+        return False
 
     def _transfers_coin_received(self):
         transfers_in = []
@@ -41,7 +62,7 @@ class MsgInfoIBC:
         for event in events:
             event_type, attributes = event["type"], event["attributes"]
 
-            if event_type == "coin_received":
+            if event_type == COIN_RECEIVED:
                 for i in range(0, len(attributes), 2):
                     receiver = attributes[i]["value"]
                     amount_string = attributes[i + 1]["value"]
@@ -58,7 +79,7 @@ class MsgInfoIBC:
         for event in events:
             event_type, attributes = event["type"], event["attributes"]
 
-            if event_type == "coin_spent":
+            if event_type == COIN_SPENT:
                 for i in range(0, len(attributes), 2):
                     spender = attributes[i]["value"]
                     amount_string = attributes[i + 1]["value"]
@@ -79,6 +100,11 @@ class MsgInfoIBC:
             event_type, attributes = event["type"], event["attributes"]
 
             if event_type == "transfer":
+                # ignore MsgMultiSend case (uses different format)
+                if self.msg_type == co.MSG_TYPE_MULTI_SEND:
+                    continue
+
+                # Handle all other cases
                 for i in range(0, len(attributes), 3):
                     recipient = attributes[i]["value"]
                     sender = attributes[i + 1]["value"]

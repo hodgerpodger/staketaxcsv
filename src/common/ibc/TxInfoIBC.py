@@ -15,6 +15,7 @@ class TxInfoIBC(TxInfo):
         for i, msg in enumerate(self.msgs):
             print("\nmsg{}:".format(i))
             pprint.pprint(msg.message)
+            print("\tmsg_type: {}".format(msg.msg_type))
             print("\ttransfers_in: {}".format(msg.transfers[0]))
             print("\ttransfers_out: {}".format(msg.transfers[1]))
         print("\n")

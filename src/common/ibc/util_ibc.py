@@ -1,11 +1,5 @@
 
 
-def _msg_type(msginfo):
-    # i.e. /osmosis.lockup.MsgBeginUnlocking -> _MsgBeginUnlocking
-    last_field = msginfo.message["@type"].split(".")[-1]
-    return last_field
-
-
 def _ingest_rows(exporter, txinfo, msginfo, rows, comment):
     for i, row in enumerate(rows):
         row.comment = comment
