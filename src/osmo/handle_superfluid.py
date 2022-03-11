@@ -26,3 +26,17 @@ def handle_lp_stake(exporter, txinfo, msginfo):
         return
 
     handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+
+
+def handle_undelegate_or_unbond(exporter, txinfo, msginfo):
+    transfers_in, transfers_out = msginfo.transfers
+
+    if len(transfers_out) == 0 and len(transfers_in) == 0:
+        period_lock_id = msginfo.message["lock_id"]
+
+        row = make_osmo_simple_tx(txinfo, msginfo)
+        row.comment = "(period_lock_id={})".format(period_lock_id)
+        exporter.ingest_row(row)
+        return
+
+    handle_unknown_detect_transfers(exporter, txinfo, msginfo)

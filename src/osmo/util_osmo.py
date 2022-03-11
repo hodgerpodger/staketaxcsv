@@ -168,23 +168,13 @@ def _ingest_rows(exporter, rows, comment):
 def _period_lock_id(msginfo):
     msg_index = msginfo.msg_index
     log = msginfo.log
-    msg_type = _msg_type(msginfo)
-
-    # Determine type to lookup when parsing events
-    if msg_type in (co.MSG_TYPE_LOCK_TOKENS, co.MSG_TYPE_LOCK_AND_SUPERFLUID_DELEGATE):
-        event_type_target = "lock_tokens"
-    elif msg_type == co.MSG_TYPE_BEGIN_UNLOCKING:
-        event_type_target = "begin_unlock"
-    else:
-        logging.critical("_period_lock_id(): Unexpected msg_type=%s", msg_type)
-        return ""
 
     # Extract period_lock_id value from events
     for event in log["events"]:
         event_type = event["type"]
         attributes = event["attributes"]
 
-        if event_type == event_type_target:
+        if event_type in ["lock_tokens", "begin_unlock", "add_tokens_to_lock"]:
             for kv in attributes:
                 k, v = kv["key"], kv["value"]
                 if k == "period_lock_id":
