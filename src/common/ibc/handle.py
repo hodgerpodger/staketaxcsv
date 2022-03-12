@@ -53,7 +53,6 @@ def handle_transfer(exporter, txinfo, msginfo):
     _handle_transfer(exporter, txinfo, msginfo, transfers_in, transfers_out)
 
 
-
 def _handle_transfer(exporter, txinfo, msginfo, transfers_in, transfers_out):
     if len(transfers_in) == 1 and len(transfers_out) == 0:
         amount, currency, _, _ = transfers_in[0]
