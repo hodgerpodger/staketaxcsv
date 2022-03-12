@@ -12,7 +12,7 @@ class AlgoIndexerAPI:
 
     @classmethod
     def account_exists(cls, address):
-        url = "{}/v2/accounts/{}".format(ALGO_INDEXER_NODE, address)
+        url = "{}/v2/accounts/{}/transactions?limit={}".format(ALGO_INDEXER_NODE, address, 1)
         _, status_code = cls._query(url)
 
         return status_code == 200
