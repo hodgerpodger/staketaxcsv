@@ -7,10 +7,15 @@ CONTRACTS_LOTA = [
     "terra1ez46kxtulsdv07538fh5ra5xj8l68mu8eg24vr"   # bond stake contract
 ]
 
+CONTRACTS_APOLLO = [
+    "terra1878h54yx347vxnlx8e0la9ngdnqu4uw9u2ppma"   # community farming event contract
+]
+
 CONTRACTS_SPEC = [
     "terra1fxwelge6mf5l6z0rjpylzcfq9w9tw2q7tewaf5",  # staking contract
     "terra1dpe4fmcz2jqk6t50plw0gqa2q3he2tj6wex5cl",  # governance contract
-    "terra1xt4ugaxds6wjehjckqchzg4e99n3cjd2rtfw4f"   # valkyrie farm
+    "terra1xt4ugaxds6wjehjckqchzg4e99n3cjd2rtfw4f",  # valkyrie farm
+    "terra1kehar0l76kzuvrrcwj5um72u3pjq2uvp62aruf"   # mirror farm
 ]
 
 CONTRACTS_ASTROPORT = [

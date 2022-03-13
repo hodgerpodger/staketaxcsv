@@ -15,7 +15,8 @@ from terra.constants import (
     CONTRACTS_SPEC,
     CONTRACTS_ASTROPORT,
     CONTRACTS_PYLON,
-    CONTRACTS_VALKYRIE
+    CONTRACTS_VALKYRIE,
+    CONTRACTS_APOLLO
 )
 
 from terra.handle_anchor_bond import (
@@ -125,6 +126,10 @@ def process_tx(wallet_address, elem, exporter):
             elif util_terra._any_contracts(CONTRACTS_SPEC, elem):
                 if execute_type == ex.EXECUTE_TYPE_MINT_COLLATERAL:
                     return handle_spec_withdraw(exporter, elem, txinfo)
+                elif execute_type == ex.EXECUTE_TYPE_BOND:
+                    return handle_lp_deposit(exporter, elem, txinfo)
+                elif execute_type == ex.EXECUTE_TYPE_UNBOND:
+                    return handle_lp_withdraw(exporter, elem, txinfo)
                 else:
                     return handle_simple(exporter, txinfo, TX_TYPE_SPEC_UNKNOWN)
             elif util_terra._any_contracts(CONTRACTS_ASTROPORT, elem):
@@ -136,6 +141,8 @@ def process_tx(wallet_address, elem, exporter):
                     return handle_unknown_detect_transfers(exporter, txinfo, elem)
             elif contract == CONTRACT_RANDOMEARTH:
                 return handle_randomearth(exporter, elem, txinfo)
+            elif util_terra._any_contracts(CONTRACTS_APOLLO, elem):
+                return handle_airdrop(exporter, elem, txinfo)
 
             # ########## Handle by execute_msg data keys ######################################
 

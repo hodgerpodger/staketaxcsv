@@ -87,22 +87,19 @@ def _extract_amount(elem, index, currency):
         pass
 
     try:
-        from_contract = util_terra._event_with_action(elem, "from_contract", "claim")
-        amounts = from_contract["amount"]
+        from_contract = (
+            util_terra._event_with_action(elem, "from_contract", "claim") or
+            util_terra._event_with_action(elem, "from_contract", "claim phase 1"))
+
+        amounts = (from_contract.get("amount", None) or
+                   from_contract.get("claim_amount", None))
         actions = from_contract["action"]
         for i in range(len(amounts)):
             action = actions[i]
             amount = amounts[i]
 
-            if action == "claim":
+            if action in ["claim", "claim phase 1"]:
                 return util_terra._float_amount(amount, currency)
-    except Exception:
-        pass
-
-    try:
-        from_contract = util_terra._event_with_action(elem, "from_contract", "claim")
-        amounts = from_contract["claim_amount"]
-        return util_terra._float_amount(amount, currency)
     except Exception:
         pass
 
