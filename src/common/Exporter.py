@@ -895,29 +895,29 @@ class Exporter:
             mywriter = csv.writer(f)
 
             # header row
-            mywriter.writerow(RECAP_FIELDS)
+            mywriter.writerow(et.RECAP_FIELDS)
 
             # data rows
             for row in rows:
                 # Determine type field
-                if row.tx_type == TX_TYPE_STAKING:
+                if row.tx_type == et.TX_TYPE_STAKING:
                     type = "StakingReward"
-                elif row.tx_type == TX_TYPE_AIRDROP:
+                elif row.tx_type == et.TX_TYPE_AIRDROP:
                     type = "Airdrop"
-                elif row.tx_type == TX_TYPE_TRADE:
+                elif row.tx_type == et.TX_TYPE_TRADE:
                     type = "Trade"
-                elif row.tx_type == TX_TYPE_TRANSFER:
+                elif row.tx_type == et.TX_TYPE_TRANSFER:
                     if row.received_amount:
                         type = "Deposit"
                     elif row.sent_amount:
                         type = "Withdrawal"
-                elif row.tx_type == TX_TYPE_INCOME:
+                elif row.tx_type == et.TX_TYPE_INCOME:
                     type = "Income"
-                elif row.tx_type == TX_TYPE_SPEND:
+                elif row.tx_type == et.TX_TYPE_SPEND:
                     type = "Purchase"
-                elif row.tx_type == TX_TYPE_BORROW:
+                elif row.tx_type == et.TX_TYPE_BORROW:
                     type = ""
-                elif row.tx_type == TX_TYPE_REPAY:
+                elif row.tx_type == et.TX_TYPE_REPAY:
                     type = ""
                 else:
                     type = ""
