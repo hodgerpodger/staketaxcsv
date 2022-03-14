@@ -237,6 +237,8 @@ class Exporter:
             self.export_coinledger_csv(csvpath)
         elif format == et.FORMAT_CRYPTOCOM:
             self.export_cryptocom_csv(csvpath)
+        elif format == et.FORMAT_RECAP:
+            self.export_recap_csv(csvpath)
         return csvpath
 
     def export_default_csv(self, csvpath=None, truncate=0):
@@ -881,6 +883,60 @@ class Exporter:
                     ""                      # US Based
                 ]
                 mywriter.writerow(line)
+        logging.info("Wrote to %s", csvpath)
+
+    def export_recap_csv(self, csvpath):
+        """ Write CSV, suitable for import into Recap """
+        
+        self.sort_rows(reverse=True)
+        rows = self._rows_export()
+
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
+            mywriter = csv.writer(f)
+
+            # header row
+            mywriter.writerow(RECAP_FIELDS)
+
+            # data rows
+            for row in rows:
+                # Determine type field
+                if row.tx_type == TX_TYPE_STAKING:
+                    type = "StakingReward"
+                elif row.tx_type == TX_TYPE_AIRDROP:
+                    type = "Airdrop"
+                elif row.tx_type == TX_TYPE_TRADE:
+                    type = "Trade"
+                elif row.tx_type == TX_TYPE_TRANSFER:
+                    if row.received_amount:
+                        type = "Deposit"
+                    elif row.sent_amount:
+                        type = "Withdrawal"
+                elif row.tx_type == TX_TYPE_INCOME:
+                    type = "Income"
+                elif row.tx_type == TX_TYPE_SPEND:
+                    type = "Purchase"
+                elif row.tx_type == TX_TYPE_BORROW:
+                    type = ""
+                elif row.tx_type == TX_TYPE_REPAY:
+                    type = ""
+                else:
+                    type = ""
+                    logging.critical("No type determined for tx_type=%s", row.tx_type)
+
+                line = [
+                    type,                                       # Type
+                    row.timestamp,                              # Date
+                    row.received_amount,                        # InOrBuyAmount
+                    row.received_currency,                      # InOrBuyCurrency
+                    row.sent_amount,                            # OutOrSellAmount
+                    row.sent_currency,                          # OutOrSellCurrency
+                    row.fee,                                    # FeeAmount                    
+                    row.fee_currency,                           # FeeCurrency
+                    row.comment,                                # Description
+                    row.txid,                                   # ID
+                ]
+                mywriter.writerow(line)
+
         logging.info("Wrote to %s", csvpath)
 
     def export_taxbit_csv(self, csvpath):
