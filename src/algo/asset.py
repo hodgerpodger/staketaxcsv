@@ -12,6 +12,11 @@ known_assets = {
         "unit-name": "USDt",
         "decimals": 6,
     },
+    27165954: {
+        "name": "PLANET",
+        "unit-name": "Planets",
+        "decimals": 6,
+    },
     31566704: {
         "name": "USDC",
         "unit-name": "USDC",
@@ -30,6 +35,11 @@ known_assets = {
     226701642: {
         "name": "Yieldly",
         "unit-name": "YLDY",
+        "decimals": 6,
+    },
+    230946361: {
+        "name": "AlgoGems",
+        "unit-name": "GEMS",
         "decimals": 6,
     },
     287867876: {
@@ -56,6 +66,21 @@ known_assets = {
         "name": "goETH",
         "unit-name": "goETH",
         "decimals": 8,
+    },
+    388592191: {
+        "name": "Chips",
+        "unit-name": "chip",
+        "decimals": 1,
+    },
+    511484048: {
+        "name": "AlgoStake",
+        "unit-name": "STKE",
+        "decimals": 2,
+    },
+    552647097: {
+        "name": "TinymanPool1.1 USDC-ALGO",
+        "unit-name": "TMPOOL11",
+        "decimals": 6,
     },
     552655440: {
         "name": "TinymanPool1.1 YLDY-ALGO",
@@ -92,12 +117,13 @@ class Asset:
         if int(amount) < 0:
             raise ValueError("Asset amount cannot be negative")
 
+        self._indexer = AlgoIndexerAPI()
         self._id = id
         params = None
         if id in known_assets:
             params = known_assets[id]
         else:
-            params = AlgoIndexerAPI.get_asset(id)
+            params = self._indexer.get_asset(id)
             known_assets[id] = {key: params[key] for key in ["name", "unit-name", "decimals"]}
         if params is None:
             raise ValueError("invalid asset id")
