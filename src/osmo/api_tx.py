@@ -1,12 +1,12 @@
 import time
 
-from osmo.api_util import _query_get
+from osmo.api_util import APIUtil
 
 OSMO_TX_API_NETLOC = "api-osmosis.cosmostation.io"
 
 
 def _query(uri_path, query_params):
-    result = _query_get(OSMO_TX_API_NETLOC, uri_path, query_params)
+    result = APIUtil.query_get(OSMO_TX_API_NETLOC, uri_path, query_params)
     time.sleep(1)
     return result
 
