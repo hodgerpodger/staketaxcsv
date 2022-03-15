@@ -1,13 +1,13 @@
 import time
 from urllib.parse import quote
 
-from osmo.api_util import _query_get
+from osmo.api_util import APIUtil
 
 OSMO_HISTORICAL_API_NETLOC = "api-osmosis.imperator.co"
 
 
 def _query(uri_path, query_params):
-    result = _query_get(OSMO_HISTORICAL_API_NETLOC, uri_path, query_params)
+    result = APIUtil.query_get(OSMO_HISTORICAL_API_NETLOC, uri_path, query_params)
     time.sleep(1)
     return result
 

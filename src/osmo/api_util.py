@@ -6,17 +6,21 @@ import requests
 SCHEME = "https"
 
 
-def _query_get(netloc, uri_path, query_params):
-    url = urlunparse((
-        SCHEME,
-        netloc,
-        uri_path,
-        None,
-        urlencode(query_params),
-        None,
-    ))
+class APIUtil:
+    session = requests.Session()
 
-    logging.info("Querying url=%s...", url)
-    response = requests.get(url)
+    @classmethod
+    def query_get(cls, netloc, uri_path, query_params):
+        url = urlunparse((
+            SCHEME,
+            netloc,
+            uri_path,
+            None,
+            urlencode(query_params),
+            None,
+        ))
 
-    return response.json()
+        logging.info("Querying url=%s...", url)
+        response = cls.session.get(url)
+
+        return response.json()
