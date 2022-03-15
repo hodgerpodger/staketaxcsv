@@ -10,6 +10,8 @@ from common.make_tx import _make_tx_exchange, make_borrow_tx, make_repay_tx, mak
 
 APPLICATION_ID_ALGOFI_AMM = 605753404
 
+ALGOFI_AMM_SYMBOL = "AF"
+
 ALGOFI_TRANSACTION_SWAP_EXACT_FOR = "c2Vm"          # "sef"
 ALGOFI_TRANSACTION_SWAP_FOR_EXACT = "c2Zl"          # "sfe"
 ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL = "cnNy"    # "rsr"
@@ -218,18 +220,20 @@ def _handle_algofi_lp_add(group, exporter, txinfo):
         redeem_asset_2 = _get_transfer_asset(inner_transactions[0])
         send_asset_2 -= redeem_asset_2
 
+    lp_asset_currency = f"LP_{ALGOFI_AMM_SYMBOL}_{send_asset_1.ticker}_{send_asset_2.ticker}"
+
     fee = Algo(fee_amount / 2)
     txinfo.comment = "AlgoFi"
 
     row = _make_tx_exchange(
         txinfo, send_asset_1.amount, send_asset_1.ticker,
-        lp_asset.amount / 2, lp_asset.ticker, TX_TYPE_LP_DEPOSIT)
+        lp_asset.amount / 2, lp_asset_currency, TX_TYPE_LP_DEPOSIT)
     row.fee = fee.amount
     exporter.ingest_row(row)
 
     row = _make_tx_exchange(
         txinfo, send_asset_2.amount, send_asset_2.ticker,
-        lp_asset.amount / 2, lp_asset.ticker, TX_TYPE_LP_DEPOSIT)
+        lp_asset.amount / 2, lp_asset_currency, TX_TYPE_LP_DEPOSIT)
     row.fee = fee.amount
     exporter.ingest_row(row)
 
@@ -250,18 +254,20 @@ def _handle_algofi_lp_remove(group, exporter, txinfo):
     receive_transaction = app_transaction["inner-txns"][0]
     receive_asset_2 = _get_transfer_asset(receive_transaction)
 
+    lp_asset_currency = f"LP_{ALGOFI_AMM_SYMBOL}_{receive_asset_1.ticker}_{receive_asset_2.ticker}"
+
     fee = Algo(fee_amount / 2)
     txinfo.comment = "AlgoFi"
 
     row = _make_tx_exchange(
-        txinfo, lp_asset.amount / 2, lp_asset.ticker,
+        txinfo, lp_asset.amount / 2, lp_asset_currency,
         receive_asset_1.amount, receive_asset_1.ticker,
         TX_TYPE_LP_WITHDRAW)
     row.fee = fee.amount
     exporter.ingest_row(row)
 
     row = _make_tx_exchange(
-        txinfo, lp_asset.amount / 2, lp_asset.ticker,
+        txinfo, lp_asset.amount / 2, lp_asset_currency,
         receive_asset_2.amount, receive_asset_2.ticker,
         TX_TYPE_LP_WITHDRAW)
     row.fee = fee.amount
