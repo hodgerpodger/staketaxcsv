@@ -65,7 +65,7 @@ def handle_swap(group, exporter, txinfo):
     exporter.ingest_row(row)
 
 
-def handle_lp_add(group, exporter, txinfo):
+def handle_lp_add(amm, group, exporter, txinfo):
     i = 0
     send_transaction = group[i]
     fee_amount = send_transaction["fee"]
@@ -98,23 +98,25 @@ def handle_lp_add(group, exporter, txinfo):
             lp_asset = asset
 
     if lp_asset is not None:
+        lp_asset_currency = f"LP_{amm}_{send_asset_1.ticker}_{send_asset_2.ticker}"
+
         fee = Algo(fee_amount / 2)
         row = _make_tx_exchange(
             txinfo, send_asset_1.amount, send_asset_1.ticker,
-            lp_asset.amount / 2, lp_asset.ticker, TX_TYPE_LP_DEPOSIT)
+            lp_asset.amount / 2, lp_asset_currency, TX_TYPE_LP_DEPOSIT)
         row.fee = fee.amount
         exporter.ingest_row(row)
 
         row = _make_tx_exchange(
             txinfo, send_asset_2.amount, send_asset_2.ticker,
-            lp_asset.amount / 2, lp_asset.ticker, TX_TYPE_LP_DEPOSIT)
+            lp_asset.amount / 2, lp_asset_currency, TX_TYPE_LP_DEPOSIT)
         row.fee = fee.amount
         exporter.ingest_row(row)
     else:
         handle_unknown(exporter, txinfo)
 
 
-def handle_lp_remove(group, exporter, txinfo):
+def handle_lp_remove(amm, group, exporter, txinfo):
     send_transaction = group[0]
     fee_amount = send_transaction["fee"]
     lp_asset = get_transfer_asset(send_transaction)
@@ -129,17 +131,19 @@ def handle_lp_remove(group, exporter, txinfo):
         receive_transaction = inner_transactions[1]
         receive_asset_2 = get_transfer_asset(receive_transaction)
 
+        lp_asset_currency = f"LP_{amm}_{receive_asset_1.ticker}_{receive_asset_2.ticker}"
+
         fee = Algo(fee_amount / 2)
 
         row = _make_tx_exchange(
-            txinfo, lp_asset.amount / 2, lp_asset.ticker,
+            txinfo, lp_asset.amount / 2, lp_asset_currency,
             receive_asset_1.amount, receive_asset_1.ticker,
             TX_TYPE_LP_WITHDRAW)
         row.fee = fee.amount
         exporter.ingest_row(row)
 
         row = _make_tx_exchange(
-            txinfo, lp_asset.amount / 2, lp_asset.ticker,
+            txinfo, lp_asset.amount / 2, lp_asset_currency,
             receive_asset_2.amount, receive_asset_2.ticker,
             TX_TYPE_LP_WITHDRAW)
         row.fee = fee.amount

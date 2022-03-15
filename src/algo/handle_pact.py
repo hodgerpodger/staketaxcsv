@@ -7,6 +7,8 @@ from algo.handle_simple import (
     handle_swap, handle_unknown
 )
 
+PACT_AMM_SYMBOL = "P"
+
 PACT_TRANSACTION_SWAP = "U1dBUA=="           # "SWAP"
 PACT_TRANSACTION_LP_ADD = "QURETElR"         # "ADDLIQ"
 PACT_TRANSACTION_LP_REMOVE = "UkVNTElR"      # "REMLIQ"
@@ -43,8 +45,8 @@ def handle_pact_transaction(group, exporter, txinfo):
     if PACT_TRANSACTION_SWAP in appl_args:
         handle_swap(group, exporter, txinfo)
     elif PACT_TRANSACTION_LP_ADD in appl_args:
-        handle_lp_add(group, exporter, txinfo)
+        handle_lp_add(PACT_AMM_SYMBOL, group, exporter, txinfo)
     elif PACT_TRANSACTION_LP_REMOVE in appl_args:
-        handle_lp_remove(group, exporter, txinfo)
+        handle_lp_remove(PACT_AMM_SYMBOL, group, exporter, txinfo)
     else:
         handle_unknown(exporter, txinfo)
