@@ -11,10 +11,11 @@ from terra.make_tx import (
 
 
 def handle_lp_deposit(exporter, elem, txinfo):
-    from_contract = util_terra._event_with_action(elem, "from_contract", "provide_liquidity")
+    from_contracts = util_terra._events_with_action(elem, "from_contract", "provide_liquidity")
 
-    rows = _handle_lp_deposit(txinfo, from_contract)
-    util_terra._ingest_rows(exporter, rows)
+    for from_contract in from_contracts:
+        rows = _handle_lp_deposit(txinfo, from_contract)
+        util_terra._ingest_rows(exporter, rows)
 
 
 def _handle_lp_deposit(txinfo, from_contract):
@@ -42,13 +43,14 @@ def _handle_lp_deposit(txinfo, from_contract):
 
 
 def handle_lp_withdraw(exporter, elem, txinfo):
-    from_contract = util_terra._event_with_action(elem, "from_contract", "withdraw_liquidity")
+    from_contracts = util_terra._events_with_action(elem, "from_contract", "withdraw_liquidity")
 
-    rows = _handle_lp_withdraw(elem, txinfo, from_contract)
-    util_terra._ingest_rows(exporter, rows)
+    for i, from_contract in enumerate(from_contracts):
+        rows = _handle_lp_withdraw(elem, txinfo, from_contract, i)
+        util_terra._ingest_rows(exporter, rows)
 
 
-def _handle_lp_withdraw(elem, txinfo, from_contract):
+def _handle_lp_withdraw(elem, txinfo, from_contract, i=0):
     txid = txinfo.txid
 
     # Determine LP currenecy
@@ -60,7 +62,7 @@ def _handle_lp_withdraw(elem, txinfo, from_contract):
     lp_amount = util_terra._float_amount(lp_amount_string, lp_currency)
 
     # Create _LP_WITHDRAW rows
-    rows = _handle_withdraw_collaterals(txinfo, lp_amount, lp_currency, elem, from_contract)
+    rows = _handle_withdraw_collaterals(txinfo, lp_amount, lp_currency, elem, from_contract, i)
     return rows
 
 
@@ -84,7 +86,7 @@ def handle_lp_deposit_idx(exporter, elem, txinfo):
     exporter.ingest_row(row)
 
 
-def _handle_withdraw_collaterals(txinfo, lp_amount, lp_currency, data, from_contract):
+def _handle_withdraw_collaterals(txinfo, lp_amount, lp_currency, data, from_contract, i=0):
     rows = []
     txid = txinfo.txid
     wallet_address = txinfo.wallet_address
@@ -92,9 +94,9 @@ def _handle_withdraw_collaterals(txinfo, lp_amount, lp_currency, data, from_cont
     # Determine received collateral
     withdraws = _extract_collateral_amounts(txid, from_contract, "refund_assets")
     currency1, amount1 = withdraws[0]
-    amount1, currency1 = _check_ust_adjustment(amount1, currency1, data, wallet_address, txid)
+    amount1, currency1 = _check_ust_adjustment(amount1, currency1, data, wallet_address, txid, i)
     currency2, amount2 = withdraws[1]
-    amount2, currency2 = _check_ust_adjustment(amount2, currency2, data, wallet_address, txid)
+    amount2, currency2 = _check_ust_adjustment(amount2, currency2, data, wallet_address, txid, i)
 
     rows.append(make_lp_withdraw_tx(
         txinfo, lp_amount / 2, lp_currency, amount1, currency1, txid, empty_fee=False))
@@ -104,16 +106,16 @@ def _handle_withdraw_collaterals(txinfo, lp_amount, lp_currency, data, from_cont
     return rows
 
 
-def _check_ust_adjustment(amount, currency, data, wallet_address, txid):
+def _check_ust_adjustment(amount, currency, data, wallet_address, txid, i):
     """ Adjusts UST inbound transfer amount if UST fee """
     if currency != CUR_UST:
         return amount, currency
 
     transfers_in, transfers_out = util_terra._transfers(data, wallet_address, txid)
     if transfers_in:
-        for amt, cur in transfers_in:
-            if cur == CUR_UST:
-                return amt, cur
+        amt, cur = transfers_in[i]
+        if cur == CUR_UST:
+            return amt, cur
 
     return amount, currency
 

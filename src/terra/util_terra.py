@@ -337,6 +337,9 @@ def _lookup_lp_address(addr, txid):
     elif "mint" in init_msg:
         address_for_pair = init_msg["mint"]["minter"]
         currency1, currency2 = _query_lp_address(address_for_pair, txid)
+    elif "mirror_token" in init_msg:
+        currency1 = "UST"
+        currency2 = "MIR"
     else:
         raise Exception("Unable to determine lp currency for addr={}, txid={}".format(addr, txid))
 
@@ -409,6 +412,15 @@ def _event_with_action(elem, event_type, action):
                 return event
     return None
 
+def _events_with_action(elem, event_type, action):
+    events = []
+    logs = elem["logs"]
+    for log in logs:
+        event = log["events_by_type"].get(event_type, None)
+        if event:
+            if action in event["action"]:
+                events.append(event)
+    return events
 
 def _ingest_rows(exporter, rows, comment=None):
     for i, row in enumerate(rows):
