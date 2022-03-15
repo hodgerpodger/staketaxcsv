@@ -887,7 +887,6 @@ class Exporter:
 
     def export_recap_csv(self, csvpath):
         """ Write CSV, suitable for import into Recap """
-        
         self.sort_rows(reverse=True)
         rows = self._rows_export(et.FORMAT_RECAP)
 
@@ -901,36 +900,36 @@ class Exporter:
             for row in rows:
                 # Determine type field
                 if row.tx_type == et.TX_TYPE_STAKING:
-                    type = "StakingReward"
+                    cur_type = "StakingReward"
                 elif row.tx_type == et.TX_TYPE_AIRDROP:
-                    type = "Airdrop"
+                    cur_type = "Airdrop"
                 elif row.tx_type == et.TX_TYPE_TRADE:
-                    type = "Trade"
+                    cur_type = "Trade"
                 elif row.tx_type == et.TX_TYPE_TRANSFER:
                     if row.received_amount:
-                        type = "Deposit"
+                        cur_type = "Deposit"
                     elif row.sent_amount:
-                        type = "Withdrawal"
+                        cur_type = "Withdrawal"
                 elif row.tx_type == et.TX_TYPE_INCOME:
-                    type = "Income"
+                    cur_type = "Income"
                 elif row.tx_type == et.TX_TYPE_SPEND:
-                    type = "Purchase"
+                    cur_type = "Purchase"
                 elif row.tx_type == et.TX_TYPE_BORROW:
-                    type = ""
+                    cur_type = ""
                 elif row.tx_type == et.TX_TYPE_REPAY:
-                    type = ""
+                    cur_type = ""
                 else:
-                    type = ""
+                    cur_type = ""
                     logging.critical("No type determined for tx_type=%s", row.tx_type)
 
                 line = [
-                    type,                                       # Type
+                    cur_type,                                   # Type
                     row.timestamp,                              # Date
                     row.received_amount,                        # InOrBuyAmount
                     row.received_currency,                      # InOrBuyCurrency
                     row.sent_amount,                            # OutOrSellAmount
                     row.sent_currency,                          # OutOrSellCurrency
-                    row.fee,                                    # FeeAmount                    
+                    row.fee,                                    # FeeAmount
                     row.fee_currency,                           # FeeCurrency
                     row.comment,                                # Description
                     row.txid,                                   # ID
