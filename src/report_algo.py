@@ -20,6 +20,8 @@ from common.Exporter import Exporter
 from common.ExporterTypes import FORMAT_DEFAULT, LP_TREATMENT_TRANSFERS
 from settings_csv import TICKER_ALGO
 
+indexer = AlgoIndexerAPI()
+
 
 def main():
     wallet_address, export_format, txid_or_groupid, options = report_util.parse_args(TICKER_ALGO)
@@ -46,17 +48,17 @@ def _read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return AlgoIndexerAPI.account_exists(wallet_address)
+    return indexer.account_exists(wallet_address)
 
 
 def txone(wallet_address, txid_or_groupid):
     progress = ProgressAlgo()
 
-    data = AlgoIndexerAPI.get_transaction(txid_or_groupid)
+    data = indexer.get_transaction(txid_or_groupid)
     if data:
         elems = [data]
     else:
-        elems = AlgoIndexerAPI.get_transactions_by_group(txid_or_groupid)
+        elems = indexer.get_transactions_by_group(txid_or_groupid)
 
     print("\ndebug data:")
     pprint.pprint(elems)
@@ -107,7 +109,7 @@ def _get_txs(wallet_address, progress):
     next = None
     out = []
     for i in range(_max_queries()):
-        transactions, next = AlgoIndexerAPI.get_transactions(
+        transactions, next = indexer.get_transactions(
             wallet_address, localconfig.after_date, localconfig.before_date, next)
         out.extend(transactions)
 
