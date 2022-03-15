@@ -889,7 +889,7 @@ class Exporter:
         """ Write CSV, suitable for import into Recap """
         
         self.sort_rows(reverse=True)
-        rows = self._rows_export()
+        rows = self._rows_export(et.FORMAT_RECAP)
 
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
