@@ -3,7 +3,7 @@ from common.make_tx import make_airdrop_tx, make_reward_tx, make_unknown_tx
 from terra import util_terra
 from terra.config_terra import localconfig
 from terra.constants import CUR_ANC, CUR_MINE, CUR_MIR
-from terra.handle_reward import REWARD_CURRENCIES
+from terra.col4.handle_reward import REWARD_CURRENCIES
 
 CONTRACTS_AIRDROP = {
     "terra1kalp2knjm4cs3f59ukr4hdhuuncp648eqrgshw": CUR_MIR,

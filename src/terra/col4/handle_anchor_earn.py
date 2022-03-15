@@ -1,6 +1,6 @@
 from terra import util_terra
 from terra.constants import CUR_AUST, CUR_UST
-from terra.handle_simple import handle_unknown, handle_unknown_detect_transfers
+from terra.col4.handle_simple import handle_unknown
 from terra.make_tx import make_swap_tx_terra
 
 

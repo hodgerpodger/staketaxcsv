@@ -52,6 +52,13 @@ def _execute_msgs_keys(elem):
 
 
 def _execute_msg(elem, index=0):
+    msg = _execute_msg_field(elem, index)
+    if "ledger_proxy" in msg and "msg" in msg["ledger_proxy"]:
+        return msg["ledger_proxy"]["msg"]
+    return msg
+
+
+def _execute_msg_field(elem, index=0):
     msg_base64 = elem["tx"]["value"]["msg"][index]["value"]["execute_msg"]
     if type(msg_base64) is dict:
         return msg_base64
@@ -100,32 +107,45 @@ def _transfers(elem, wallet_address, txid, multicurrency=False):
     is_columbus_3 = (elem.get("chainId", None) == "columbus-3")
     if is_columbus_3:
         return _transfers_columbus_3(elem, wallet_address, txid, multicurrency)
+    logs = elem["logs"]
 
-    for log_index, log in enumerate(elem["logs"]):
-        events = elem["logs"][log_index].get("events", [])
-        for event in events:
-            if event["type"] == "transfer":
-                attributes = event["attributes"]
+    for log in logs:
+        cur_transfers_in, cur_transfers_out = _transfers_log(log, wallet_address, multicurrency)
 
-                for i in range(0, len(attributes), 3):
-                    recipient = attributes[i]["value"]
-                    sender = attributes[i + 1]["value"]
-                    amount_string = attributes[i + 2]["value"]
+        transfers_in.extend(cur_transfers_in)
+        transfers_out.extend(cur_transfers_out)
 
-                    if recipient == wallet_address:
-                        if multicurrency:
-                            for amount, currency in _amounts(amount_string):
-                                transfers_in.append([amount, currency])
-                        else:
-                            amount, currency = _amount(amount_string)
+    return transfers_in, transfers_out
+
+
+def _transfers_log(log, wallet_address, multicurrency=False):
+    transfers_in = []
+    transfers_out = []
+    events = log.get("events", [])
+
+    for event in events:
+        if event["type"] == "transfer":
+            attributes = event["attributes"]
+
+            for i in range(0, len(attributes), 3):
+                recipient = attributes[i]["value"]
+                sender = attributes[i + 1]["value"]
+                amount_string = attributes[i + 2]["value"]
+
+                if recipient == wallet_address:
+                    if multicurrency:
+                        for amount, currency in _amounts(amount_string):
                             transfers_in.append([amount, currency])
-                    elif sender == wallet_address:
-                        if multicurrency:
-                            for amount, currency in _amounts(amount_string):
-                                transfers_out.append([amount, currency])
-                        else:
-                            amount, currency = _amount(amount_string)
+                    else:
+                        amount, currency = _amount(amount_string)
+                        transfers_in.append([amount, currency])
+                elif sender == wallet_address:
+                    if multicurrency:
+                        for amount, currency in _amounts(amount_string):
                             transfers_out.append([amount, currency])
+                    else:
+                        amount, currency = _amount(amount_string)
+                        transfers_out.append([amount, currency])
 
     return transfers_in, transfers_out
 

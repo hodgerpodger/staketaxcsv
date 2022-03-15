@@ -2,7 +2,7 @@ from common.ErrorCounter import ErrorCounter
 from common.ExporterTypes import TX_TYPE_NFT_WHITELIST, TX_TYPE_NFT_CANCEL_ORDER
 from terra import util_terra
 from terra.api_lcd import LcdAPI
-from terra.handle_simple import handle_simple, handle_unknown
+from terra.col4.handle_simple import handle_simple, handle_unknown
 from terra.make_tx import (
     make_nft_buy_tx,
     make_nft_deposit,

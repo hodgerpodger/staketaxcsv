@@ -67,8 +67,10 @@ def txone(wallet_address, txid):
     print("")
 
     exporter = Exporter(wallet_address, localconfig, TICKER_LUNA)
-    terra.processor.process_tx(wallet_address, data, exporter)
+    txinfo = terra.processor.process_tx(wallet_address, data, exporter)
+    txinfo.print()
     print("")
+
     return exporter
 
 
