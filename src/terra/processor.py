@@ -16,7 +16,8 @@ from terra.constants import (
     CONTRACTS_ASTROPORT,
     CONTRACTS_PYLON,
     CONTRACTS_VALKYRIE,
-    CONTRACTS_APOLLO
+    CONTRACTS_APOLLO,
+    CONTRACTS_LOOP
 )
 from terra.handle_failed_tx import handle_failed_tx
 from terra.handle_simple import handle_simple, handle_unknown, handle_unknown_detect_transfers
@@ -27,6 +28,7 @@ from terra import handle_anchor_liquidate
 from terra import handle_anchor_earn
 from terra import handle_governance
 from terra import handle_lp
+from terra import handle_loop
 from terra import handle_mirror_borrow
 from terra import handle_randomearth
 from terra import handle_reward
@@ -104,6 +106,8 @@ def process_tx(wallet_address, elem, exporter):
                 return handle_randomearth.handle_randomearth(exporter, elem, txinfo)
             elif util_terra._any_contracts(CONTRACTS_APOLLO, elem):
                 return handle_reward_contract.handle_airdrop(exporter, elem, txinfo)
+            elif util_terra._any_contracts(CONTRACTS_LOOP, elem):
+                return handle_loop.handle_unstake_and_claim(exporter, elem, txinfo)
 
             # ########## Handle by execute_msg data keys ######################################
 

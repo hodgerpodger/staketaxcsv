@@ -409,3 +409,16 @@ def _add_anchor_fees(elem, txid, row):
         row.fee += fee_amount
 
     return row
+
+def _align_amounts_to_actions(actions, amounts):
+    new_amounts = []
+    i = 0
+
+    for action in actions:
+        if action in ["Unstake"]:
+            new_amounts.append('0')
+        else:
+            new_amounts.append(amounts[i])
+            i += 1
+
+    return new_amounts

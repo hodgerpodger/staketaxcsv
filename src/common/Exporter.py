@@ -666,6 +666,7 @@ class Exporter:
             "ASTRO": "ID:48993",
             "PSI": "ID:106376",
             "STARS": "ID:36899",
+            "LOOP": "ID:10933"
         }
 
         if self._is_koinly_lp(currency):
