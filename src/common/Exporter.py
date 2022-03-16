@@ -210,31 +210,34 @@ class Exporter:
             self.export_default_csv(csvpath)
         elif format == et.FORMAT_BALANCES:
             self.export_balances_csv(csvpath)
-        elif format == et.FORMAT_COINTRACKING:
-            self.export_cointracking_csv(csvpath)
-        elif format == et.FORMAT_COINTRACKER:
-            self.export_cointracker_csv(csvpath)
-        elif format == et.FORMAT_KOINLY:
-            self.export_koinly_csv(csvpath)
-        elif format == et.FORMAT_CRYPTOTAXCALCULATOR:
-            self.export_calculator_csv(csvpath)
         elif format == et.FORMAT_ACCOINTING:
             self.export_accointing_csv(csvpath)
             xlsxpath = csvpath.replace(".csv", ".xlsx")
             self.convert_csv_to_xlsx(csvpath, xlsxpath)
             return xlsxpath
+        elif format == et.FORMAT_BITCOINTAX:
+            self.export_bitcointax_csv(csvpath)
+        elif format == et.FORMAT_COINLEDGER:
+            self.export_coinledger_csv(csvpath)
+        elif format == et.FORMAT_COINTRACKING:
+            self.export_cointracking_csv(csvpath)
+        elif format == et.FORMAT_COINTRACKER:
+            self.export_cointracker_csv(csvpath)
+        elif format == et.FORMAT_CRYPTOCOM:
+            self.export_cryptocom_csv(csvpath)
+        elif format == et.FORMAT_CRYPTOTAXCALCULATOR:
+            self.export_calculator_csv(csvpath)
+        elif format == et.FORMAT_KOINLY:
+            self.export_koinly_csv(csvpath)
+        elif format == et.FORMAT_RECAP:
+            self.export_recap_csv(csvpath)
+        elif format == et.FORMAT_TAXBIT:
+            self.export_taxbit_csv(csvpath)
         elif format == et.FORMAT_TOKENTAX:
             self.export_tokentax_csv(csvpath)
         elif format == et.FORMAT_ZENLEDGER:
             self.export_zenledger_csv(csvpath)
-        elif format == et.FORMAT_TAXBIT:
-            self.export_taxbit_csv(csvpath)
-        elif format == et.FORMAT_COINLEDGER:
-            self.export_coinledger_csv(csvpath)
-        elif format == et.FORMAT_CRYPTOCOM:
-            self.export_cryptocom_csv(csvpath)
-        elif format == et.FORMAT_RECAP:
-            self.export_recap_csv(csvpath)
+
         return csvpath
 
     def export_default_csv(self, csvpath=None, truncate=0):
@@ -882,6 +885,64 @@ class Exporter:
                 mywriter.writerow(line)
         logging.info("Wrote to %s", csvpath)
 
+    def export_bitcointax_csv(self, csvpath):
+        """ Writes CSV, suitable for import into bitcoin.tax """
+        actions = {
+            et.TX_TYPE_AIRDROP: "INCOME",
+            et.TX_TYPE_STAKING: "INCOME",
+            et.TX_TYPE_TRADE: "BUY",
+            et.TX_TYPE_TRANSFER: None,
+            et.TX_TYPE_INCOME: "INCOME",
+            et.TX_TYPE_SPEND: "SPEND",
+            et.TX_TYPE_BORROW: None,
+            et.TX_TYPE_REPAY: None,
+        }
+        rows = self._rows_export(et.FORMAT_BITCOINTAX)
+
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
+            mywriter = csv.writer(f)
+
+            # header row
+            mywriter.writerow(et.BTAX_FIELDS)
+
+            # data rows
+            for row in rows:
+                action = actions[row.tx_type]
+                if action is None:
+                    continue
+
+                if action == "INCOME":
+                    symbol = row.received_currency
+                    volume = row.received_amount
+                    currency = ""
+                    total = ""
+                elif action == "SPEND":
+                    symbol = row.sent_currency
+                    volume = row.sent_amount
+                    currency = ""
+                    total = ""
+                elif action == "BUY":
+                    symbol = row.received_currency
+                    volume = row.received_amount
+                    currency = row.sent_currency
+                    total = row.sent_amount
+                else:
+                    raise Exception("export_bitcointax_csv(): Bad condition for action={}".format(action))
+
+                line = [
+                    self._bitcointax_timestamp(row.timestamp),  # Date
+                    action,                                     # Action
+                    symbol,                                     # Symbol
+                    volume,                                     # Volume
+                    currency,                                   # Currency
+                    total,                                      # Total
+                    row.fee,                                    # Fee
+                    row.fee_currency,                           # FeeCurrency
+                    row.txid,                                   # Memo
+                ]
+                mywriter.writerow(line)
+        logging.info("Wrote to %s", csvpath)
+
     def export_recap_csv(self, csvpath):
         """ Write CSV, suitable for import into Recap """
         self.sort_rows(reverse=True)
@@ -1009,6 +1070,10 @@ class Exporter:
                 mywriter.writerow(line)
 
         logging.info("Wrote to %s", csvpath)
+
+    def _bitcointax_timestamp(self, ts):
+        # Convert "2021-08-04 15:25:43" to "2021-08-04 15:25:43 -0000"
+        return ts + " -0000"
 
     def _taxbit_timestamp(self, ts):
         # Convert "2021-08-04 15:25:43" to "2021-08-04T15:25:43Z"
