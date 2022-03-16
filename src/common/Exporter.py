@@ -6,12 +6,8 @@ import pandas as pd
 import pytz
 from pytz import timezone
 from tabulate import tabulate
-import re
-import json
 
-from algo.constants import EXCHANGE_ALGORAND_BLOCKCHAIN
 from common import ExporterTypes as et
-from sol.constants import EXCHANGE_SOLANA_BLOCKCHAIN
 from common.exporter_koinly import NullMap
 
 
