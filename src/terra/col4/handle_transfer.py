@@ -59,28 +59,29 @@ def handle_multi_transfer(exporter, elem, txinfo):
 def handle_transfer_contract(exporter, elem, txinfo):
     txid = txinfo.txid
     wallet_address = txinfo.wallet_address
-    execute_msg = util_terra._execute_msg(elem)
+    execute_msgs = util_terra._execute_msgs(elem)
 
-    recipient = execute_msg["transfer"].get("recipient", None)
-    if recipient:
-        # Extract amount
-        amount = util_terra._float_amount(execute_msg["transfer"]["amount"], None)
+    for i, execute_msg in enumerate(execute_msgs):
+        recipient = execute_msg["transfer"].get("recipient", None)
+        if recipient:
+            # Extract amount
+            amount = util_terra._float_amount(execute_msg["transfer"]["amount"], None)
 
-        # Extract currency
-        msg_value = elem["tx"]["value"]["msg"][0]["value"]
-        contract = msg_value.get("contract")
-        sender = msg_value.get("sender")
-        currency = util_terra._lookup_address(contract, txid)
+            # Extract currency
+            msg_value = elem["tx"]["value"]["msg"][i]["value"]
+            contract = msg_value.get("contract")
+            sender = msg_value.get("sender")
+            currency = util_terra._lookup_address(contract, txid)
 
-        if sender == wallet_address:
-            row = make_transfer_out_tx(txinfo, amount, currency, recipient)
-            exporter.ingest_row(row)
-        elif recipient == wallet_address:
-            row = make_transfer_in_tx(txinfo, amount, currency)
-            exporter.ingest_row(row)
-    else:
-        handle_unknown(exporter, txinfo)
-        ErrorCounter.increment("unknown_transfer_contract", txid)
+            if sender == wallet_address:
+                row = make_transfer_out_tx(txinfo, amount, currency, recipient)
+                exporter.ingest_row(row)
+            elif recipient == wallet_address:
+                row = make_transfer_in_tx(txinfo, amount, currency)
+                exporter.ingest_row(row)
+        else:
+            handle_unknown(exporter, txinfo)
+            ErrorCounter.increment("unknown_transfer_contract", txid)
 
 
 def handle_transfer_bridge_wormhole(exporter, elem, txinfo):
