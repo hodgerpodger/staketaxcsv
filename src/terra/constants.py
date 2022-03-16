@@ -33,6 +33,11 @@ CONTRACTS_VALKYRIE = [
     "terra10ng0k6wp40tpxlsyxczqgqr0uqsytzqyh702tj"   # Campaign Launch Event
 ]
 
+CONTRACTS_LOOP = [
+    "terra1z54jyhqeaxnc2ag736644cnrl7saxchuuah5u7",  # loop farm
+    "terra10s8g4nph6xy77wj26yxdudtxqzec4dk2mhlmua"   # staking
+]
+
 CONTRACT_RANDOMEARTH = "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t"
 
 CHAIN_ID = "columbus-5"

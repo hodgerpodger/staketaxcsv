@@ -4,7 +4,7 @@ from terra.make_tx import (
     make_submit_bid_tx,
     make_retract_bid_tx
 )
-
+from common.make_tx import make_repay_tx
 
 def handle_liquidate(exporter, elem, txinfo):
     wallet_address = txinfo.wallet_address
@@ -23,10 +23,12 @@ def handle_liquidate(exporter, elem, txinfo):
 
     if wallet_address in from_contract["liquidator"]:
         row = make_liquidate_tx(txinfo, repay_amount, repay_currency, collateral_amount, collateral_currency)
+        exporter.ingest_row(row)
     else:
         row = make_liquidate_tx(txinfo, collateral_amount, collateral_currency, repay_amount, repay_currency)
-
-    exporter.ingest_row(row)
+        exporter.ingest_row(row)
+        row = make_repay_tx(txinfo, repay_amount, repay_currency)
+        exporter.ingest_row(row)
 
 
 def handle_submit_bid(exporter, elem, txinfo):
