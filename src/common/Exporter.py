@@ -1040,6 +1040,7 @@ class Exporter:
         remap = {
             "ANC": "ANC2",
             "ASTRO": "ASTRO5",
+            "ATOM": "ATOM2",
             "GLOW": "GLOW3",
             "BETH": "BETH3",
             "LUNA": "LUNA2",
