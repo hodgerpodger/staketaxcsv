@@ -429,3 +429,4 @@ def _add_anchor_fees(elem, txid, row):
         row.fee += fee_amount
 
     return row
+

@@ -71,6 +71,7 @@ EXECUTE_TYPE_MINT_COLLATERAL = "mint_collateral"
 EXECUTE_TYPE_BURN_COLLATERAL = "burn_collateral"
 EXECUTE_TYPE_DISTRIBUTE = "distribute"
 EXECUTE_TYPE_INCREASE_LOCKUP = "increase_lockup"
+EXECUTE_TYPE_UNSTAKE_AND_CLAIM = "unstake_and_claim"
 
 
 def _execute_type(elem, txinfo, index=0):
@@ -117,6 +118,8 @@ def _execute_type(elem, txinfo, index=0):
                 return EXECUTE_TYPE_STAKE_VOTING_TOKENS
             if "increase_lockup" in msg:
                 return EXECUTE_TYPE_INCREASE_LOCKUP
+            if "unstake_and_claim" in msg:
+                return EXECUTE_TYPE_UNSTAKE_AND_CLAIM
 
     elif "claim" in execute_msg:
         return EXECUTE_TYPE_CLAIM

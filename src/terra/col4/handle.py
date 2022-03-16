@@ -13,13 +13,28 @@ from terra.constants import (
     CONTRACTS_SPEC,
     CONTRACTS_ASTROPORT,
     CONTRACTS_PYLON,
-    CONTRACTS_APOLLO
+    CONTRACTS_APOLLO,
+    CONTRACTS_LOOP,
 )
 from terra.col4.handle_simple import handle_simple, handle_unknown_detect_transfers
 
-from terra.col4 import handle_anchor_bond, handle_anchor_borrow, handle_anchor_earn, handle_anchor_liquidate, \
-    handle_governance, handle_mirror_borrow, handle_lp, handle_randomearth, handle_reward_contract, handle_reward_pylon, \
-    handle_spec, handle_zap, handle_swap, handle_transfer
+from terra.col4 import (
+    handle_anchor_bond,
+    handle_anchor_borrow,
+    handle_anchor_earn,
+    handle_anchor_liquidate,
+    handle_governance,
+    handle_loop,
+    handle_mirror_borrow,
+    handle_lp,
+    handle_randomearth,
+    handle_reward_contract,
+    handle_reward_pylon,
+    handle_spec,
+    handle_swap,
+    handle_transfer,
+    handle_zap,
+)
 
 # execute_type -> tx_type mapping for generic transactions with no tax details
 EXECUTE_TYPES_SIMPLE = {
@@ -58,6 +73,8 @@ def handle(exporter, elem, txinfo):
         return handle_randomearth.handle_randomearth(exporter, elem, txinfo)
     elif util_terra._any_contracts(CONTRACTS_APOLLO, elem):
         return handle_reward_contract.handle_airdrop(exporter, elem, txinfo)
+    elif util_terra._any_contracts(CONTRACTS_LOOP, elem):
+        return handle_loop.handle_unstake_and_claim(exporter, elem, txinfo)
 
     # ########## Handle by execute_msg data keys ######################################
 

@@ -9,7 +9,6 @@ from common.make_tx import make_just_fee_tx
 from terra.TxInfoTerra import TxInfoTerra, MsgInfo
 from terra import util_terra
 from terra.config_terra import localconfig
-from terra.constants import EXCHANGE_TERRA_BLOCKCHAIN
 from terra.col4.handle_failed_tx import handle_failed_tx
 from terra.col4.handle_simple import handle_simple, handle_unknown, handle_unknown_detect_transfers
 from terra.col4 import handle_swap, handle_reward, handle_transfer
@@ -59,7 +58,6 @@ def process_tx(wallet_address, elem, exporter):
         elif msgtype == "wasm/MsgExecuteContract":
             if terra.col5.handle.can_handle(exporter, elem, txinfo):
                 # THIS SHOULD BE FIRST CHOICE TO ADD NEW HANDLERS
-
                 terra.col5.handle.handle(exporter, elem, txinfo)
                 logging.debug("Used col5 handler")
             else:
