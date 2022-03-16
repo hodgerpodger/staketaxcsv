@@ -110,7 +110,12 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
                 row = make_reward_tx(txinfo, amount, amount.ticker)
                 row.comment = "Algostake"
             else:
-                row = make_transfer_in_tx(txinfo, amount, amount.ticker)
+                note = get_transaction_note(transaction)
+                if note is not None and "tinymanStaking/v1" in note:
+                    row = make_reward_tx(txinfo, amount, amount.ticker)
+                    row.comment = "Tinyman"
+                else:
+                    row = make_transfer_in_tx(txinfo, amount, amount.ticker)
                 fee = Algo(fee_amount)
                 row.fee = fee.amount
             exporter.ingest_row(row)
