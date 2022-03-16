@@ -912,9 +912,9 @@ class Exporter:
                 elif row.tx_type == et.TX_TYPE_SPEND:
                     cur_type = "Purchase"
                 elif row.tx_type == et.TX_TYPE_BORROW:
-                    cur_type = ""
+                    cur_type = "Deposit"
                 elif row.tx_type == et.TX_TYPE_REPAY:
-                    cur_type = ""
+                    cur_type = "Withdrawal"
                 else:
                     cur_type = ""
                     logging.critical("No type determined for tx_type=%s", row.tx_type)
