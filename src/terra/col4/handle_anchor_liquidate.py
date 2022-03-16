@@ -6,6 +6,7 @@ from terra.make_tx import (
 )
 from common.make_tx import make_repay_tx
 
+
 def handle_liquidate(exporter, elem, txinfo):
     wallet_address = txinfo.wallet_address
     txid = txinfo.txid

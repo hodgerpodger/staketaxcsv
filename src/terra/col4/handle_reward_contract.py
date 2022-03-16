@@ -88,11 +88,11 @@ def _extract_amount(elem, index, currency):
 
     try:
         from_contract = (
-            util_terra._event_with_action(elem, "from_contract", "claim") or
-            util_terra._event_with_action(elem, "from_contract", "claim phase 1"))
+            util_terra._event_with_action(elem, "from_contract", "claim")
+            or util_terra._event_with_action(elem, "from_contract", "claim phase 1"))
 
-        amounts = (from_contract.get("amount", None) or
-                   from_contract.get("claim_amount", None))
+        amounts = (from_contract.get("amount", None)
+                   or from_contract.get("claim_amount", None))
         actions = from_contract["action"]
         for i in range(len(amounts)):
             action = actions[i]

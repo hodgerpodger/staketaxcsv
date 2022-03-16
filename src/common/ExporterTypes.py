@@ -411,8 +411,8 @@ RECAP_FIELD_OUTORSELLAMOUNT = "OutOrSellAmount"
 RECAP_FIELD_OUTORSELLCURRENCY = "OutOrSellCurrency"
 RECAP_FIELD_FEEAMOUNT = "FeeAmount"
 RECAP_FIELD_FEECURRENCY = "FeeCurrency"
-RECAP_FIELD_DESCRIPTION = "Description" # Not an importable field.
-RECAP_FIELD_TXID = "Transaction ID" # Not an importable field.
+RECAP_FIELD_DESCRIPTION = "Description"  # Not an importable field.
+RECAP_FIELD_TXID = "Transaction ID"      # Not an importable field.
 RECAP_FIELDS = [
     RECAP_FIELD_TYPE,
     RECAP_FIELD_DATE,

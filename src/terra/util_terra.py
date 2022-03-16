@@ -412,6 +412,7 @@ def _event_with_action(elem, event_type, action):
                 return event
     return None
 
+
 def _events_with_action(elem, event_type, action):
     events = []
     logs = elem["logs"]
@@ -421,6 +422,7 @@ def _events_with_action(elem, event_type, action):
             if action in event["action"]:
                 events.append(event)
     return events
+
 
 def _ingest_rows(exporter, rows, comment=None):
     for i, row in enumerate(rows):
@@ -441,4 +443,3 @@ def _add_anchor_fees(elem, txid, row):
         row.fee += fee_amount
 
     return row
-
