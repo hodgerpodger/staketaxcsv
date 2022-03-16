@@ -1,6 +1,7 @@
 from algo import constants as co
 from algo.asset import Algo, Asset
-from algo.handle_simple import get_transfer_asset, handle_participation_rewards
+from algo.handle_simple import handle_participation_rewards
+from algo.util_algo import get_transfer_asset
 from common.make_tx import make_reward_tx
 
 APPLICATION_ID_YIELDLY = 233725848

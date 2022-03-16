@@ -7,6 +7,7 @@ import base64
 from algo import constants as co
 from algo.asset import Algo, Asset
 from algo.handle_simple import handle_participation_rewards, handle_unknown
+from algo.util_algo import get_transaction_note
 from common.make_tx import make_reward_tx, make_transfer_in_tx, make_transfer_out_tx
 
 # Algostake escrow wallet: https://algostake.org/litepaper
@@ -24,12 +25,8 @@ def is_governance_reward_transaction(wallet_address, group):
     if transaction[co.TRANSACTION_KEY_PAYMENT]["receiver"] != wallet_address:
         return False
 
-    if "note" not in transaction:
-        return False
-
-    try:
-        note = base64.b64decode(transaction["note"]).decode("utf-8")
-    except Exception:
+    note = get_transaction_note(transaction)
+    if note is None:
         return False
 
     if "af/gov" not in note:
@@ -113,7 +110,12 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
                 row = make_reward_tx(txinfo, amount, amount.ticker)
                 row.comment = "Algostake"
             else:
-                row = make_transfer_in_tx(txinfo, amount, amount.ticker)
+                note = get_transaction_note(transaction)
+                if note is not None and "tinymanStaking/v1" in note:
+                    row = make_reward_tx(txinfo, amount, amount.ticker)
+                    row.comment = "Tinyman"
+                else:
+                    row = make_transfer_in_tx(txinfo, amount, amount.ticker)
                 fee = Algo(fee_amount)
                 row.fee = fee.amount
             exporter.ingest_row(row)

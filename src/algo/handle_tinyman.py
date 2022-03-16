@@ -1,6 +1,7 @@
 from algo import constants as co
 from algo.asset import Algo, Asset
 from algo.handle_simple import handle_participation_rewards, handle_unknown
+from algo.util_algo import get_transfer_asset
 from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW
 from common.make_tx import _make_tx_exchange, make_income_tx, make_swap_tx
 
@@ -51,10 +52,10 @@ def _handle_tinyman_swap(group, exporter, txinfo):
 
     send_transaction = group[2]
     fee_amount += send_transaction["fee"]
-    send_asset = _get_transfer_asset(send_transaction)
+    send_asset = get_transfer_asset(send_transaction)
 
     receive_transaction = group[3]
-    receive_asset = _get_transfer_asset(receive_transaction)
+    receive_asset = get_transfer_asset(receive_transaction)
 
     fee = Algo(fee_amount)
     txinfo.fee = fee.amount
@@ -64,25 +65,12 @@ def _handle_tinyman_swap(group, exporter, txinfo):
     exporter.ingest_row(row)
 
 
-def _get_transfer_asset(transaction):
-    amount = 0
-    asset_id = 0
-    txtype = transaction["tx-type"]
-    if txtype == "pay":
-        amount = transaction[co.TRANSACTION_KEY_PAYMENT]["amount"]
-    elif txtype == "axfer":
-        amount = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"]
-        asset_id = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
-
-    return Asset(asset_id, amount)
-
-
 def _handle_tinyman_redeem(group, exporter, txinfo):
     fee_transaction = group[0]
     fee_amount = fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
 
     receive_transaction = group[2]
-    receive_asset = _get_transfer_asset(receive_transaction)
+    receive_asset = get_transfer_asset(receive_transaction)
 
     fee = Algo(fee_amount)
     txinfo.fee = fee.amount
@@ -98,14 +86,14 @@ def _handle_tinyman_lp_add(group, exporter, txinfo):
 
     send_transaction = group[2]
     fee_amount += send_transaction["fee"]
-    send_asset_1 = _get_transfer_asset(send_transaction)
+    send_asset_1 = get_transfer_asset(send_transaction)
 
     send_transaction = group[3]
     fee_amount += send_transaction["fee"]
-    send_asset_2 = _get_transfer_asset(send_transaction)
+    send_asset_2 = get_transfer_asset(send_transaction)
 
     receive_transaction = group[4]
-    lp_asset = _get_transfer_asset(receive_transaction)
+    lp_asset = get_transfer_asset(receive_transaction)
     lp_asset_currency = f"LP_{TINYMAN_AMM_SYMBOL}_{send_asset_1.ticker}_{send_asset_2.ticker}"
 
     fee = Algo(fee_amount / 2)
@@ -128,14 +116,14 @@ def _handle_tinyman_lp_remove(group, exporter, txinfo):
     fee_amount = fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
 
     receive_transaction = group[2]
-    receive_asset_1 = _get_transfer_asset(receive_transaction)
+    receive_asset_1 = get_transfer_asset(receive_transaction)
 
     receive_transaction = group[3]
-    receive_asset_2 = _get_transfer_asset(receive_transaction)
+    receive_asset_2 = get_transfer_asset(receive_transaction)
 
     send_transaction = group[4]
     fee_amount += send_transaction["fee"]
-    lp_asset = _get_transfer_asset(send_transaction)
+    lp_asset = get_transfer_asset(send_transaction)
     lp_asset_currency = f"LP_{TINYMAN_AMM_SYMBOL}_{receive_asset_1.ticker}_{receive_asset_2.ticker}"
 
     fee = Algo(fee_amount / 2)
