@@ -72,7 +72,7 @@ EXECUTE_TYPE_BURN_COLLATERAL = "burn_collateral"
 EXECUTE_TYPE_DISTRIBUTE = "distribute"
 EXECUTE_TYPE_INCREASE_LOCKUP = "increase_lockup"
 EXECUTE_TYPE_UNSTAKE_AND_CLAIM = "unstake_and_claim"
-
+EXECUTE_TYPE_SUBMIT_ORDER = "submit_order"
 
 def _execute_type(elem, txinfo, index=0):
     txid = txinfo.txid
@@ -229,6 +229,8 @@ def _execute_type(elem, txinfo, index=0):
         return EXECUTE_TYPE_MINT_COLLATERAL
     elif "distribute" in execute_msg:
         return EXECUTE_TYPE_DISTRIBUTE
+    elif "submit_order" in execute_msg:
+        return EXECUTE_TYPE_SUBMIT_ORDER
 
     logging.error("Unable to determine execute type for txid=%s", txid, extra={
         "txid": txid,
