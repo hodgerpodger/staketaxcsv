@@ -1,6 +1,7 @@
 from algo import constants as co
 from algo.asset import Algo, Asset
 from algo.handle_simple import handle_participation_rewards, handle_unknown
+from algo.util_algo import get_transfer_asset
 from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW
 from common.make_tx import _make_tx_exchange, make_borrow_tx, make_repay_tx, make_reward_tx, make_swap_tx
 
@@ -138,13 +139,13 @@ def _handle_algofi_swap(group, exporter, txinfo):
         i += 1
         send_transaction = group[i]
         fee_amount += send_transaction["fee"]
-    send_asset = _get_transfer_asset(send_transaction)
+    send_asset = get_transfer_asset(send_transaction)
 
     i += 1
     app_transaction = group[i]
     fee_amount += app_transaction["fee"]
     receive_transaction = app_transaction["inner-txns"][0]
-    receive_asset = _get_transfer_asset(receive_transaction)
+    receive_asset = get_transfer_asset(receive_transaction)
 
     if i + 1 < len(group):
         app_transaction = group[i + 1]
@@ -154,7 +155,7 @@ def _handle_algofi_swap(group, exporter, txinfo):
             if ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL in appl_args:
                 i += 1
                 redeem_transaction = app_transaction["inner-txns"][0]
-                redeem_asset = _get_transfer_asset(redeem_transaction)
+                redeem_asset = get_transfer_asset(redeem_transaction)
                 send_asset -= redeem_asset
 
     txinfo.comment = "AlgoFi"
@@ -191,25 +192,25 @@ def _handle_algofi_lp_add(group, exporter, txinfo):
         i += 1
         send_transaction = group[i]
         fee_amount += send_transaction["fee"]
-    send_asset_1 = _get_transfer_asset(send_transaction)
+    send_asset_1 = get_transfer_asset(send_transaction)
 
     i += 1
     send_transaction = group[i]
     fee_amount += send_transaction["fee"]
-    send_asset_2 = _get_transfer_asset(send_transaction)
+    send_asset_2 = get_transfer_asset(send_transaction)
 
     i += 1
     app_transaction = group[i]
     fee_amount += app_transaction["fee"]
     receive_transaction = app_transaction["inner-txns"][0]
-    lp_asset = _get_transfer_asset(receive_transaction)
+    lp_asset = get_transfer_asset(receive_transaction)
 
     i += 1
     app_transaction = group[i]
     fee_amount += app_transaction["fee"]
     inner_transactions = app_transaction.get("inner-txns", [])
     if len(inner_transactions) > 0:
-        redeem_asset_1 = _get_transfer_asset(inner_transactions[0])
+        redeem_asset_1 = get_transfer_asset(inner_transactions[0])
         send_asset_1 -= redeem_asset_1
 
     i += 1
@@ -217,7 +218,7 @@ def _handle_algofi_lp_add(group, exporter, txinfo):
     fee_amount += app_transaction["fee"]
     inner_transactions = app_transaction.get("inner-txns", [])
     if len(inner_transactions) > 0:
-        redeem_asset_2 = _get_transfer_asset(inner_transactions[0])
+        redeem_asset_2 = get_transfer_asset(inner_transactions[0])
         send_asset_2 -= redeem_asset_2
 
     lp_asset_currency = f"LP_{ALGOFI_AMM_SYMBOL}_{send_asset_1.ticker}_{send_asset_2.ticker}"
@@ -242,17 +243,17 @@ def _handle_algofi_lp_remove(group, exporter, txinfo):
     send_transaction = group[0]
 
     fee_amount = send_transaction["fee"]
-    lp_asset = _get_transfer_asset(send_transaction)
+    lp_asset = get_transfer_asset(send_transaction)
 
     app_transaction = group[1]
     fee_amount += app_transaction["fee"]
     receive_transaction = app_transaction["inner-txns"][0]
-    receive_asset_1 = _get_transfer_asset(receive_transaction)
+    receive_asset_1 = get_transfer_asset(receive_transaction)
 
     app_transaction = group[2]
     fee_amount += app_transaction["fee"]
     receive_transaction = app_transaction["inner-txns"][0]
-    receive_asset_2 = _get_transfer_asset(receive_transaction)
+    receive_asset_2 = get_transfer_asset(receive_transaction)
 
     lp_asset_currency = f"LP_{ALGOFI_AMM_SYMBOL}_{receive_asset_1.ticker}_{receive_asset_2.ticker}"
 
@@ -288,7 +289,7 @@ def _handle_algofi_claim_rewards(group, exporter, txinfo):
         txinfo.comment = "AlgoFi"
 
         for transaction in inner_transactions:
-            reward = _get_transfer_asset(transaction)
+            reward = get_transfer_asset(transaction)
             if not reward.zero():
                 row = make_reward_tx(txinfo, reward, reward.ticker)
                 row.fee = fee.amount
@@ -302,7 +303,7 @@ def _handle_algofi_borrow(group, exporter, txinfo):
 
     app_transaction = group[-1]
     receive_transaction = app_transaction["inner-txns"][0]
-    receive_asset = _get_transfer_asset(receive_transaction)
+    receive_asset = get_transfer_asset(receive_transaction)
 
     fee = Algo(fee_amount)
     txinfo.comment = "AlgoFi"
@@ -318,7 +319,7 @@ def _handle_algofi_repay_borrow(group, exporter, txinfo):
         fee_amount += transaction["fee"]
 
     send_transaction = group[-1]
-    send_asset = _get_transfer_asset(send_transaction)
+    send_asset = get_transfer_asset(send_transaction)
 
     fee = Algo(fee_amount)
     txinfo.comment = "AlgoFi"
@@ -337,11 +338,11 @@ def _handle_algofi_liquidate(group, exporter, txinfo):
         fee_amount += transaction["fee"]
 
     send_transaction = group[-2]
-    send_asset = _get_transfer_asset(send_transaction)
+    send_asset = get_transfer_asset(send_transaction)
 
     app_transaction = group[-1]
     receive_transaction = app_transaction["inner-txns"][0]
-    receive_asset = _get_transfer_asset(receive_transaction)
+    receive_asset = get_transfer_asset(receive_transaction, UNDERLYING_ASSETS)
 
     fee = Algo(fee_amount)
     txinfo.comment = "AlgoFi liquidation"

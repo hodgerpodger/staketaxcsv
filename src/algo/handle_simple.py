@@ -1,5 +1,6 @@
 from algo import constants as co
-from algo.asset import Algo, Asset
+from algo.asset import Algo
+from algo.util_algo import get_transfer_asset
 from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW
 from common.make_tx import _make_tx_exchange, make_reward_tx, make_swap_tx, make_unknown_tx
 
@@ -15,19 +16,6 @@ def handle_participation_rewards(reward, exporter, txinfo):
         row.fee = 0
         row.comment = "Participation Rewards"
         exporter.ingest_row(row)
-
-
-def get_transfer_asset(transaction):
-    amount = 0
-    asset_id = 0
-    txtype = transaction["tx-type"]
-    if txtype == "pay":
-        amount = transaction[co.TRANSACTION_KEY_PAYMENT]["amount"]
-    elif txtype == "axfer":
-        amount = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"]
-        asset_id = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
-
-    return Asset(asset_id, amount)
 
 
 def handle_swap(group, exporter, txinfo):

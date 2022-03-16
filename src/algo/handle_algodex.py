@@ -4,6 +4,7 @@ import re
 
 from algo import constants as co
 from algo.asset import Algo, Asset
+from algo.util_algo import get_transaction_note
 from common.make_tx import make_swap_tx
 
 # For reference check the whitepaper appendix:
@@ -43,17 +44,18 @@ def is_algodex_transaction(wallet_address, group):
         if app_id != APPLICATION_ID_ALGODEX_BUY and app_id != APPLICATION_ID_ALGODEX_SELL:
             return False
 
-    if "note" not in transaction:
+    note = get_transaction_note(transaction)
+    if note is None:
         return False
 
-    if len(transaction["note"]) < len(wallet_address):
+    if len(note) < len(wallet_address):
         return False
 
     try:
-        note = json.loads(base64.b64decode(transaction["note"]))
+        order = json.loads(note)
     except Exception:
         return False
-    key = next(iter(note))
+    key = next(iter(order))
 
     match = order_pattern.match(key)
     if not match:
