@@ -14,6 +14,7 @@ from common.ExporterTypes import (
     TX_TYPE_NFT_WITHDRAW,
     TX_TYPE_RETRACT_BID,
     TX_TYPE_SUBMIT_BID,
+    TX_TYPE_SUBMIT_LIMIT_ORDER,
     TX_TYPE_TRADE,
     TX_TYPE_TRANSFER,
     TX_TYPE_UNBOND,
@@ -96,6 +97,10 @@ def make_retract_bid_tx(txinfo, bid_amount, bid_currency):
 def make_submit_bid_tx(txinfo, bid_amount, bid_currency):
     return _make_tx_sent(txinfo, bid_amount, bid_currency, TX_TYPE_SUBMIT_BID)
 
+def make_submit_limit_order(txinfo, ask_amount, ask_currency, offer_asset, offer_currency):
+    row = make_simple_tx(txinfo, TX_TYPE_SUBMIT_LIMIT_ORDER)
+    row.comment = "Submitting limit order. Asking {} {} and offering {} {}".format(ask_amount, ask_currency, offer_asset, offer_currency)
+    return row
 
 def make_gov_stake_tx(txinfo, sent_amount, sent_currency):
     return _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_GOV_STAKE)

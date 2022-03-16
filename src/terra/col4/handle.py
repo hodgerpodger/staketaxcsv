@@ -15,6 +15,7 @@ from terra.constants import (
     CONTRACTS_PYLON,
     CONTRACTS_APOLLO,
     CONTRACTS_LOOP,
+    CONTRACTS_MIRROR,
 )
 from terra.col4.handle_simple import handle_simple, handle_unknown_detect_transfers
 
@@ -34,6 +35,7 @@ from terra.col4 import (
     handle_swap,
     handle_transfer,
     handle_zap,
+    handle_mirror,
 )
 
 # execute_type -> tx_type mapping for generic transactions with no tax details
@@ -75,6 +77,10 @@ def handle(exporter, elem, txinfo):
         return handle_reward_contract.handle_airdrop(exporter, elem, txinfo)
     elif util_terra._any_contracts(CONTRACTS_LOOP, elem):
         return handle_loop.handle_unstake_and_claim(exporter, elem, txinfo)
+    elif util_terra._any_contracts(CONTRACTS_MIRROR, elem):
+        if execute_type == ex.EXECUTE_TYPE_SUBMIT_ORDER:
+            return handle_mirror.handle_submit_limit_order(exporter, elem, txinfo)
+
 
     # ########## Handle by execute_msg data keys ######################################
 

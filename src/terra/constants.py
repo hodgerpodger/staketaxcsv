@@ -39,6 +39,10 @@ CONTRACTS_LOOP = [
     "terra10s8g4nph6xy77wj26yxdudtxqzec4dk2mhlmua"   # staking
 ]
 
+CONTRACTS_MIRROR = [
+    "terra1zpr8tq3ts96mthcdkukmqq4y9lhw0ycevsnw89"  # limit order
+]
+
 CONTRACT_RANDOMEARTH = "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t"
 
 CHAIN_ID = "columbus-5"
