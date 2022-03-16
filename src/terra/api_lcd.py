@@ -26,7 +26,7 @@ class LcdAPI:
     def _query(cls, uri_path, query_params, sleep_seconds=1):
         url = f"{TERRA_LCD_NODE}{uri_path}"
         logging.info("Requesting url %s?%s", url, urlencode(query_params))
-        response = cls.session.get(url, query_params)
+        response = cls.session.get(url, params=query_params)
 
         time.sleep(sleep_seconds)
         return response.json()
