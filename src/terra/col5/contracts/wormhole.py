@@ -3,10 +3,10 @@
 from terra.col5.contracts.config import CONTRACTS
 from terra import util_terra
 from common.make_tx import make_transfer_in_tx, make_unknown_tx, make_transfer_out_tx
+from terra.col5.actions.complete_transfer_wrapped import handle_action_complete_transfer_wrapped
 
 
 def handle_wormhole(exporter, elem, txinfo):
-    txid = txinfo.txid
     COMMENT = "bridge wormhole"
 
     for msg in txinfo.msgs:
@@ -27,14 +27,8 @@ def handle_wormhole(exporter, elem, txinfo):
         # Check other coins
         for action in msg.actions:
             if action["action"] == "complete_transfer_wrapped":
-                amount_string = action["amount"]
-                currency_address = action["contract"]
-
-                currency = util_terra._lookup_address(currency_address, txid)
-                amount = util_terra._float_amount(amount_string, currency)
-                row = make_transfer_in_tx(txinfo, amount, currency)
-                row.comment = COMMENT
-                return [row]
+                rows = handle_action_complete_transfer_wrapped(txinfo, action, COMMENT)
+                return rows
 
     row = make_unknown_tx(txinfo)
     return [row]

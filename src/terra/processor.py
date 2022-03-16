@@ -5,17 +5,16 @@ import terra.execute_type as ex
 from common.ErrorCounter import ErrorCounter
 from common.ExporterTypes import TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN, TX_TYPE_VOTE
 from common.make_tx import make_just_fee_tx
-#from common.TxInfo import TxInfo
 from terra.TxInfoTerra import TxInfoTerra, MsgInfo
 from terra import util_terra
 from terra.config_terra import localconfig
 from terra.col4.handle_failed_tx import handle_failed_tx
 from terra.col4.handle_simple import handle_simple, handle_unknown, handle_unknown_detect_transfers
-from terra.col4 import handle_swap, handle_reward, handle_transfer
+from terra.col4.handle_swap import handle_swap_msgswap
+from terra.col4.handle_reward import handle_reward
+from terra.col4.handle_transfer import handle_transfer, handle_multi_transfer, handle_ibc_transfer
 import terra.col4.handle
 import terra.col5.handle
-COIN_RECEIVED = "coin_received"
-COIN_SPENT = "coin_spent"
 
 # execute_type -> tx_type mapping for generic transactions with no tax details
 EXECUTE_TYPES_SIMPLE = {
@@ -42,19 +41,19 @@ def process_tx(wallet_address, elem, exporter):
 
     try:
         if msgtype == "bank/MsgSend":
-            handle_transfer.handle_transfer(exporter, elem, txinfo)
+            handle_transfer(exporter, elem, txinfo)
         elif msgtype == "bank/MsgMultiSend":
-            handle_transfer.handle_multi_transfer(exporter, elem, txinfo)
+            handle_multi_transfer(exporter, elem, txinfo)
         elif msgtype == "ibc/MsgUpdateClient":
-            handle_transfer.handle_ibc_transfer(exporter, elem, txinfo)
+            handle_ibc_transfer(exporter, elem, txinfo)
         elif msgtype in ["gov/MsgVote", "gov/MsgDeposit", "gov/MsgSubmitProposal"]:
             handle_simple(exporter, txinfo, TX_TYPE_GOV)
         elif msgtype == "market/MsgSwap":
-            handle_swap.handle_swap_msgswap(exporter, elem, txinfo)
+            handle_swap_msgswap(exporter, elem, txinfo)
         elif msgtype in ["staking/MsgDelegate", "distribution/MsgWithdrawDelegationReward",
                          "staking/MsgBeginRedelegate", "staking/MsgUndelegate"]:
             # LUNA staking reward
-            handle_reward.handle_reward(exporter, elem, txinfo, msgtype)
+            handle_reward(exporter, elem, txinfo, msgtype)
         elif msgtype == "wasm/MsgExecuteContract":
             if terra.col5.handle.can_handle(exporter, elem, txinfo):
                 # THIS SHOULD BE FIRST CHOICE TO ADD NEW HANDLERS
@@ -86,9 +85,9 @@ def _txinfo(exporter, elem, wallet_address):
     fee, fee_currency, more_fees = _get_fee(elem)
     msgs = _msgs(elem, wallet_address)
     txinfo = TxInfoTerra(txid, timestamp, fee, fee_currency, wallet_address, msgs)
+    msgtype = _get_first_msgtype(elem)
 
     # Handle transaction with multi-currency fee (treat as "spend" transactions)
-    msgtype = _get_first_msgtype(elem)
     if more_fees:
         if msgtype == "bank/MsgSend" and elem["tx"]["value"]["msg"][0]["value"]["to_address"] == wallet_address:
             # This is a inbound transfer.  No fees
@@ -98,7 +97,6 @@ def _txinfo(exporter, elem, wallet_address):
                 row = make_just_fee_tx(txinfo, cur_fee, cur_currency)
                 row.comment = "multicurrency fee"
                 exporter.ingest_row(row)
-
 
     return msgtype, txinfo
 
@@ -173,7 +171,6 @@ def _msgs(elem, wallet_address):
         out.append(msginfo)
 
     return out
-
 
 
 def _actions(log):
