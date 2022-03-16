@@ -1,7 +1,4 @@
-
-
 from terra.col5.contracts.config import CONTRACTS
-from terra import util_terra
 from common.make_tx import make_transfer_in_tx, make_unknown_tx, make_transfer_out_tx
 from terra.col5.actions.complete_transfer_wrapped import handle_action_complete_transfer_wrapped
 
