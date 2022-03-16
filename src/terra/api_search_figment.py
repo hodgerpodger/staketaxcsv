@@ -9,6 +9,7 @@ LIMIT_FIGMENT = 1000
 
 
 class SearchAPIFigment:
+    session = requests.Session()
 
     @classmethod
     def get_txs(cls, address, offset=None, limit=None):
@@ -24,7 +25,7 @@ class SearchAPIFigment:
         if offset:
             data["offset"] = offset
 
-        response = requests.post(url, json=data)
+        response = cls.session.post(url, json=data)
         response_data = response.json()
 
         time.sleep(0.2)

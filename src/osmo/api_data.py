@@ -1,13 +1,13 @@
 import time
 
-from osmo.api_util import _query_get
+from osmo.api_util import APIUtil
 
 OSMO_DATA_API_NETLOC = "api-osmosis-chain.imperator.co"
 LIMIT_PER_QUERY = 25
 
 
 def _query(uri_path, query_params, sleep_seconds=1):
-    result = _query_get(OSMO_DATA_API_NETLOC, uri_path, query_params)
+    result = APIUtil.query_get(OSMO_DATA_API_NETLOC, uri_path, query_params)
     time.sleep(sleep_seconds)
     return result
 
