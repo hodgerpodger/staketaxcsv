@@ -1,8 +1,8 @@
 from algo import constants as co
-from algo.asset import Algo, Asset
+from algo.asset import Algo
 from algo.handle_simple import handle_participation_rewards, handle_unknown
 from algo.util_algo import get_transfer_asset
-from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW
+from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW, TX_TYPE_TRADE
 from common.make_tx import _make_tx_exchange, make_borrow_tx, make_repay_tx, make_reward_tx, make_swap_tx
 
 # For reference
@@ -28,6 +28,8 @@ ALGOFI_TRANSACTION_BORROW = "Yg=="                  # "b"
 ALGOFI_TRANSACTION_REPAY_BORROW = "cmI="            # "rb"
 ALGOFI_TRANSACTION_LIQUIDATE = "bA=="               # "l"
 
+ALGOFI_TRANSACTION_FLASH_LOAN = "Zmw="              # "fl"
+
 UNDERLYING_ASSETS = {
     # bALGO -> ALGO
     465818547: 0,
@@ -47,41 +49,46 @@ def is_algofi_transaction(group):
     if length < 2 or length > 16:
         return False
 
-    last_tx = group[-1]
-    if last_tx["tx-type"] != "appl":
-        last_tx = group[-2]
-        if last_tx["tx-type"] != "appl":
-            return False
+    app_transaction = group[-1]
+    if app_transaction["tx-type"] == "appl":
+        appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+        # Swap Exact For
+        if ALGOFI_TRANSACTION_SWAP_EXACT_FOR in appl_args:
+            return True
 
-    appl_args = last_tx[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-    # Swap Exact For
-    if ALGOFI_TRANSACTION_SWAP_EXACT_FOR in appl_args:
-        return True
+        # Swap For Exact
+        if ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL in appl_args:
+            return True
 
-    # Swap For Exact
-    if ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL in appl_args:
-        return True
+        # Lending/staking rewards
+        if ALGOFI_TRANSACTION_CLAIM_REWARDS in appl_args:
+            return True
 
-    # Lending/staking rewards
-    if ALGOFI_TRANSACTION_CLAIM_REWARDS in appl_args:
-        return True
+        # LP mint
+        if ALGOFI_TRANSACTION_REDEEM_POOL_ASSET2_RESIDUAL in appl_args:
+            return True
 
-    # LP mint
-    if ALGOFI_TRANSACTION_REDEEM_POOL_ASSET2_RESIDUAL in appl_args:
-        return True
+        # LP burn
+        if ALGOFI_TRANSACTION_BURN_ASSET2_OUT in appl_args:
+            return True
 
-    # LP burn
-    if ALGOFI_TRANSACTION_BURN_ASSET2_OUT in appl_args:
-        return True
+        if ALGOFI_TRANSACTION_BORROW in appl_args:
+            return True
 
-    if ALGOFI_TRANSACTION_BORROW in appl_args:
-        return True
+        if ALGOFI_TRANSACTION_LIQUIDATE in appl_args:
+            return True
 
-    if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
-        return True
+    app_transaction = group[0]
+    if app_transaction["tx-type"] == "appl":
+        appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+        if ALGOFI_TRANSACTION_FLASH_LOAN in appl_args:
+            return True
 
-    if ALGOFI_TRANSACTION_LIQUIDATE in appl_args:
-        return True
+    app_transaction = group[-2]
+    if app_transaction["tx-type"] == "appl":
+        appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+        if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
+            return True
 
     return False
 
@@ -105,30 +112,23 @@ def handle_algofi_transaction(group, exporter, txinfo):
             return _handle_algofi_borrow(group, exporter, txinfo)
         elif ALGOFI_TRANSACTION_LIQUIDATE in appl_args:
             return _handle_algofi_liquidate(group, exporter, txinfo)
-    else:
-        txtype = group[-2]["tx-type"]
-        if txtype == "appl":
-            appl_args = group[-2][co.TRANSACTION_KEY_APP_CALL]["application-args"]
-            if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
-                return _handle_algofi_repay_borrow(group, exporter, txinfo)
+
+    txtype = group[0]["tx-type"]
+    if txtype == "appl":
+        appl_args = group[0][co.TRANSACTION_KEY_APP_CALL]["application-args"]
+        if ALGOFI_TRANSACTION_FLASH_LOAN in appl_args:
+            return _handle_algofi_flash_loan(group, exporter, txinfo)
+
+    txtype = group[-2]["tx-type"]
+    if txtype == "appl":
+        appl_args = group[-2][co.TRANSACTION_KEY_APP_CALL]["application-args"]
+        if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
+            return _handle_algofi_repay_borrow(group, exporter, txinfo)
 
     return handle_unknown(exporter, txinfo)
 
 
-def _get_transfer_asset(transaction):
-    amount = 0
-    asset_id = 0
-    txtype = transaction["tx-type"]
-    if txtype == "pay":
-        amount = transaction[co.TRANSACTION_KEY_PAYMENT]["amount"]
-    elif txtype == "axfer":
-        amount = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"]
-        asset_id = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
-
-    return Asset(UNDERLYING_ASSETS.get(asset_id, asset_id), amount)
-
-
-def _handle_algofi_swap(group, exporter, txinfo):
+def _handle_algofi_swap(group, exporter, txinfo, z_index=0):
     i = 0
     send_transaction = group[i]
     fee_amount = send_transaction["fee"]
@@ -160,7 +160,10 @@ def _handle_algofi_swap(group, exporter, txinfo):
 
     txinfo.comment = "AlgoFi"
 
-    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
+    row = _make_tx_exchange(
+        txinfo, send_asset.amount, send_asset.ticker,
+        receive_asset.amount, receive_asset.ticker,
+        TX_TYPE_TRADE, z_index=z_index)
     fee = Algo(fee_amount)
     row.fee = fee.amount
     exporter.ingest_row(row)
@@ -296,7 +299,7 @@ def _handle_algofi_claim_rewards(group, exporter, txinfo):
                 exporter.ingest_row(row)
 
 
-def _handle_algofi_borrow(group, exporter, txinfo):
+def _handle_algofi_borrow(group, exporter, txinfo, z_index=0):
     fee_amount = 0
     for transaction in group:
         fee_amount += transaction["fee"]
@@ -308,12 +311,12 @@ def _handle_algofi_borrow(group, exporter, txinfo):
     fee = Algo(fee_amount)
     txinfo.comment = "AlgoFi"
 
-    row = make_borrow_tx(txinfo, receive_asset.amount, receive_asset.ticker)
+    row = make_borrow_tx(txinfo, receive_asset.amount, receive_asset.ticker, z_index=z_index)
     row.fee = fee.amount
     exporter.ingest_row(row)
 
 
-def _handle_algofi_repay_borrow(group, exporter, txinfo):
+def _handle_algofi_repay_borrow(group, exporter, txinfo, z_index=0):
     fee_amount = 0
     for transaction in group:
         fee_amount += transaction["fee"]
@@ -324,7 +327,7 @@ def _handle_algofi_repay_borrow(group, exporter, txinfo):
     fee = Algo(fee_amount)
     txinfo.comment = "AlgoFi"
 
-    row = make_repay_tx(txinfo, send_asset.amount, send_asset.ticker)
+    row = make_repay_tx(txinfo, send_asset.amount, send_asset.ticker, z_index)
     row.fee = fee.amount
     exporter.ingest_row(row)
 
@@ -350,3 +353,9 @@ def _handle_algofi_liquidate(group, exporter, txinfo):
     row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
     row.fee = fee.amount
     exporter.ingest_row(row)
+
+
+def _handle_algofi_flash_loan(group, exporter, txinfo):
+    _handle_algofi_borrow(group[:1], exporter, txinfo, 0)
+    _handle_algofi_swap(group[1:-1], exporter, txinfo, 1)
+    _handle_algofi_repay_borrow(group[-1:], exporter, txinfo, 2)
