@@ -12,6 +12,11 @@ CONTRACTS_AIRDROP = {
     "terra1za627n8zc8wqg06n9h7khpmjcnlkdkt38rkl3u": CUR_MINE
 }
 
+CONTRACTS_WITHDRAW_REWARD = {
+    "terra1897an2xux840p9lrh6py3ryankc6mspw49xse3",  # Anchor Staking Contract
+    "terra17f7zu97865jmknk7p2glqvxzhduk78772ezac5",   # Mirror Staking Contract
+}
+
 
 def handle_airdrop(exporter, elem, txinfo):
     msgs = elem["tx"]["value"]["msg"]

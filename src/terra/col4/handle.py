@@ -205,7 +205,9 @@ def handle(exporter, elem, txinfo):
         return handle_anchor_earn.handle_anchor_earn_withdraw(exporter, elem, txinfo)
 
     # Contract reward transactions
-    elif execute_type in (ex.EXECUTE_TYPE_CLAIM_REWARDS, ex.EXECUTE_TYPE_WITHDRAW):
+    elif execute_type == ex.EXECUTE_TYPE_CLAIM_REWARDS:
+        return handle_reward_contract.handle_reward_contract(exporter, elem, txinfo)
+    elif execute_type == ex.EXECUTE_TYPE_WITHDRAW and contract in handle_reward_contract.CONTRACTS_WITHDRAW_REWARD:
         return handle_reward_contract.handle_reward_contract(exporter, elem, txinfo)
     elif execute_type == ex.EXECUTE_TYPE_AIRDROP:
         return handle_reward_pylon.handle_airdrop_pylon(exporter, elem, txinfo)
