@@ -57,6 +57,7 @@ TX_TYPE_BORROW = "BORROW"
 TX_TYPE_REPAY = "REPAY"
 TX_TYPE_LP_DEPOSIT = "LP_DEPOSIT"    # note: only koinly has export; others treat as transfer
 TX_TYPE_LP_WITHDRAW = "LP_WITHDRAW"  # note: only koinly has export; others treat as transfer
+TX_TYPE_MARGIN_TRADE_FEE = "MARGIN_TRADE_FEE"
 
 # Common non-exportable transactions
 TX_TYPE_UNKNOWN = "_UNKNOWN"
@@ -166,6 +167,7 @@ TX_TYPES_CSVEXPORT = [
     TX_TYPE_REPAY,
     TX_TYPE_LP_DEPOSIT,
     TX_TYPE_LP_WITHDRAW,
+    TX_TYPE_MARGIN_TRADE_FEE,
 ]
 
 # stake.tax csv format

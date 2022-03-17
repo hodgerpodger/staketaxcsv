@@ -443,3 +443,13 @@ def _add_anchor_fees(elem, txid, row):
         row.fee += fee_amount
 
     return row
+
+def _get_mirror_fees(elem, txid):
+    # Extract fee, if any, paid by mirror market contract to fee collector
+    fee_collector_address = "terra1s4fllut0e6vw0k3fxsg4fs6fm2ad6hn0prqp3s"
+    fee_transfers_in, _ = _transfers(elem, fee_collector_address, txid)
+
+    if len(fee_transfers_in) > 0:
+        return fee_transfers_in[0]
+
+    return None
