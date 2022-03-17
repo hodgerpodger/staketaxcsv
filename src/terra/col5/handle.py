@@ -1,7 +1,9 @@
 from terra import util_terra
 from common.make_tx import make_spend_tx
 from terra.col5.contracts.config import CONTRACTS
+import terra.col5.contracts.astroport
 import terra.col5.contracts.wormhole
+
 
 
 def can_handle(exporter, elem, txinfo):
@@ -21,7 +23,7 @@ def handle(exporter, elem, txinfo):
     contract = util_terra._contract(elem, 0)
     handler_func = CONTRACTS[contract]
 
-    result_rows = handler_func(exporter, elem, txinfo)
+    result_rows = handler_func(elem, txinfo)
     rows.extend(result_rows)
 
     _ingest_rows(exporter, txinfo, rows)

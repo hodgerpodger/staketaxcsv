@@ -162,12 +162,14 @@ def _msgs(elem, wallet_address):
             execute_msg = util_terra._execute_msg(elem, i)
             transfers = util_terra._transfers_log(log, wallet_address)
             actions = _actions(log)
+            contract = util_terra._contract(elem, i)
         else:
             execute_msg = None
             transfers = None
             actions = None
+            contract = None
 
-        msginfo = MsgInfo(i, execute_msg, transfers, log, actions)
+        msginfo = MsgInfo(i, execute_msg, transfers, log, actions, contract)
         out.append(msginfo)
 
     return out
