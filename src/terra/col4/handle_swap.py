@@ -1,6 +1,7 @@
 from terra import util_terra
 from terra.make_tx import make_swap_tx_terra
 from terra.util_terra import _asset_to_currency, _float_amount
+from terra.col4.handle_simple import handle_unknown_detect_transfers
 
 
 def handle_swap_msgswap(exporter, elem, txinfo):
@@ -22,37 +23,78 @@ def handle_swap(exporter, elem, txinfo):
     logs = elem["logs"]
 
     if "coin_received" in logs[0]["events_by_type"]:
-        for log in logs:
-            _parse_log(exporter, txinfo, log)
+        _handle_swap(exporter, elem, txinfo)
     else:
         # older version of data
         from_contract = util_terra._event_with_action(elem, "from_contract", "swap")
-        _parse_from_contract(exporter, txinfo, from_contract)
+        _parse_from_contract_for_swap(exporter, txinfo, from_contract)
 
 
 def handle_execute_swap_operations(exporter, elem, txinfo):
     logs = elem["logs"]
 
     if "coin_received" in logs[0]["events_by_type"]:
-        for log in logs:
-            _parse_log(exporter, txinfo, log)
+        _handle_swap(exporter, elem, txinfo)
     else:
         # older version of data
         _parse_swap_operations(exporter, elem, txinfo)
 
 
-def _parse_log(exporter, txinfo, log):
+def _handle_swap(exporter, elem, txinfo):
+    txid = txinfo.txid
+    logs = elem["logs"]
+
+    # Handle message with 'execute_order' action (execution of preceding limit order message) if exists
+    for log in logs:
+        if _has_execute_order_action(log):
+            return _parse_execute_order(exporter, txinfo, log)
+
+    # Handle message with 'swap' action (multiswap possible)
+    count = 0
+    for log in logs:
+        count += _parse_swap(exporter, txinfo, log)
+
+    if count == 0:
+        raise Exception("_handle_swap(): unable to handle txid={}".format(txid))
+
+
+def _has_execute_order_action(log):
+    from_contract = log["events_by_type"].get("from_contract", None)
+    if from_contract and "execute_order" in from_contract["action"]:
+        return True
+    else:
+        return False
+
+
+def _parse_execute_order(exporter, txinfo, log):
+    """ Parses log element with 'execute_order' action, which is execution of a pre-existing limit order. """
+    from_contract = log["events_by_type"]["from_contract"]
+
+    bidder_receive = from_contract["bidder_receive"][0]
+    executor_receive = from_contract["executor_receive"][0]
+
+    sent_amount, sent_currency = util_terra._amount(bidder_receive)
+    received_amount, received_currency = util_terra._amount(executor_receive)
+
+    row = make_swap_tx_terra(txinfo, sent_amount, sent_currency, received_amount, received_currency)
+    exporter.ingest_row(row)
+
+
+def _parse_swap(exporter, txinfo, log):
+    """ Parses log element with 'swap' action. """
+
     # Parse using from_contract field if exists
-    result = _parse_from_contract_if_exists(exporter, txinfo, log)
-    if result:
-        return
+    from_contract = log["events_by_type"].get("from_contract", None)
+    if from_contract:
+        _parse_from_contract_for_swap(exporter, txinfo, from_contract)
+        return True
 
     # Parse using coin_received, coin_spent fields if right info available
     result = _parse_coins(exporter, txinfo, log)
     if result:
-        return
+        return True
 
-    raise Exception("Bad condition in _parse_log()")
+    return False
 
 
 def _parse_coins(exporter, txinfo, log):
@@ -106,16 +148,7 @@ def _parse_swap_operations(exporter, elem, txinfo):
     exporter.ingest_row(row)
 
 
-def _parse_from_contract_if_exists(exporter, txinfo, log):
-    from_contract = log["events_by_type"].get("from_contract", None)
-    if from_contract:
-        _parse_from_contract(exporter, txinfo, from_contract)
-        return True
-    else:
-        return False
-
-
-def _parse_from_contract(exporter, txinfo, from_contract):
+def _parse_from_contract_for_swap(exporter, txinfo, from_contract):
     txid = txinfo.txid
 
     sent_amount, sent_currency = _sent(from_contract, txid)

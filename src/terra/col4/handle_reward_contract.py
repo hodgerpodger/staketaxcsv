@@ -14,7 +14,7 @@ CONTRACTS_AIRDROP = {
 
 CONTRACTS_WITHDRAW_REWARD = {
     "terra1897an2xux840p9lrh6py3ryankc6mspw49xse3",  # Anchor Staking Contract
-    "terra17f7zu97865jmknk7p2glqvxzhduk78772ezac5",   # Mirror Staking Contract
+    "terra17f7zu97865jmknk7p2glqvxzhduk78772ezac5",  # Mirror Staking Contract
 }
 
 
