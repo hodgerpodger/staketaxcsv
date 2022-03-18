@@ -2,26 +2,38 @@ import logging
 import urllib.parse
 
 import requests
-from common.Singleton import Singleton
 from settings_csv import ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE
 
 LIMIT_ALGOINDEXER = 1000
 
 
 # API documentation: https://algoexplorer.io/api-dev/indexer-v2
-class AlgoIndexerAPI(metaclass=Singleton):
-    def __init__(self):
-        self._session = requests.Session()
+class AlgoIndexerAPI:
+    session = requests.Session()
 
     def account_exists(self, address):
-        url = "{}/v2/accounts/{}/transactions?limit={}".format(ALGO_INDEXER_NODE, address, 1)
-        _, status_code = self._query(url)
+        endpoint = f"v2/accounts/{address}/transactions"
+        params = {"limit": 1}
+
+        _, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
 
         return status_code == 200
 
+    def get_account(self, address):
+        endpoint = f"v2/accounts/{address}"
+        params = {"include-all": True}
+
+        data, status_code = self._query(ALGO_HIST_INDEXER_NODE, endpoint, params)
+
+        if status_code == 200:
+            return data["account"]
+        else:
+            return None
+
     def get_transaction(self, txhash):
-        url = "{}/v2/transactions/{}".format(ALGO_INDEXER_NODE, txhash)
-        data, status_code = self._query(url)
+        endpoint = f"v2/transactions/{txhash}"
+
+        data, status_code = self._query(ALGO_INDEXER_NODE, endpoint)
 
         if status_code == 200:
             return data["transaction"]
@@ -29,23 +41,27 @@ class AlgoIndexerAPI(metaclass=Singleton):
             return None
 
     def get_transactions(self, address, after_date=None, before_date=None, next=None):
-        url = "{}/v2/accounts/{}/transactions?limit={}".format(ALGO_INDEXER_NODE, address, LIMIT_ALGOINDEXER)
+        endpoint = f"v2/accounts/{address}/transactions"
+        params = {"limit": LIMIT_ALGOINDEXER}
         if after_date:
-            url += "&after-time={}".format(after_date.isoformat())
+            params["after-time"] = after_date.isoformat()
         if before_date:
-            url += "&before-time={}".format(before_date.isoformat())
+            params["before-time"] = before_date.isoformat()
         if next:
-            url += "&next={}".format(next)
-        data, status_code = self._query(url)
+            params["next"] = next
+
+        data, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
 
         if status_code == 200:
-            return data["transactions"], data["next-token"] if "next-token" in data else None
+            return data["transactions"], data.get("next-token")
         else:
             return None
 
     def get_transactions_by_group(self, group_id):
-        url = "{}/v2/transactions?group-id={}".format(ALGO_HIST_INDEXER_NODE, urllib.parse.quote(group_id))
-        data, status_code = self._query(url)
+        endpoint = "v2/transactions"
+        params = {"group-id": urllib.parse.quote(group_id)}
+
+        data, status_code = self._query(ALGO_HIST_INDEXER_NODE, endpoint, params)
 
         if status_code == 200:
             return data["transactions"]
@@ -53,15 +69,17 @@ class AlgoIndexerAPI(metaclass=Singleton):
             return None
 
     def get_asset(self, id):
-        url = "{}/v2/assets/{}".format(ALGO_INDEXER_NODE, id)
-        data, status_code = self._query(url)
+        endpoint = f"v2/assets/{id}"
+
+        data, status_code = self._query(ALGO_INDEXER_NODE, endpoint)
 
         if status_code == 200:
             return data["asset"]["params"]
         else:
             return None
 
-    def _query(self, url):
-        logging.info("Querying Algo Indexer url=%s...", url)
-        response = self._session.get(url)
+    def _query(self, base_url, endpoint, params=None):
+        logging.info("Querying Algo Indexer endpoint %s...", endpoint)
+        url = f"{base_url}/{endpoint}"
+        response = self.session.get(url, params=params)
         return response.json(), response.status_code
