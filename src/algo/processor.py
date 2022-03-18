@@ -122,7 +122,7 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
     elif is_wagmiswap_transaction(group):
         handle_wagmiswap_transaction(group, exporter, txinfo)
     elif is_algodex_transaction(wallet_address, group):
-        handle_algodex_transaction(group, exporter, txinfo)
+        handle_algodex_transaction(wallet_address, group, exporter, txinfo)
     elif is_akita_swap_transaction(group):
         handle_akita_swap_transaction(group, exporter, txinfo)
     elif has_only_transfer_transactions(group):

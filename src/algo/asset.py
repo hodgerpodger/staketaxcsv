@@ -45,6 +45,10 @@ class Asset:
         return float(self._uint_amount) / float(10 ** self._decimals)
 
     @property
+    def uint_amount(self):
+        return self._uint_amount
+
+    @property
     def ticker(self):
         return self._ticker
 
