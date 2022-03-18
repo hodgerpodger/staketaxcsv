@@ -67,7 +67,10 @@ def _execute_msg_field(elem, index=0):
 
     for k, v in msg.items():
         if "msg" in v:
-            msg[k]["msg"] = json.loads(base64.b64decode(v["msg"]))
+            try:
+                msg[k]["msg"] = json.loads(base64.b64decode(v["msg"]))
+            except UnicodeDecodeError as e:
+                msg[k]["msg"] = {"error_decoding": {}}
 
     return msg
 
