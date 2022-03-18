@@ -9,6 +9,7 @@ import logging
 import math
 import os
 import pprint
+from algo.asset import Asset
 
 import algo.processor
 from algo.api_algoindexer import LIMIT_ALGOINDEXER, AlgoIndexerAPI
@@ -85,6 +86,9 @@ def txhistory(wallet_address, options):
 
     progress = ProgressAlgo()
     exporter = Exporter(wallet_address, localconfig, TICKER_ALGO)
+
+    account = indexer.get_account(wallet_address)
+    Asset.load_assets(account.get("assets", []))
 
     # Retrieve data
     elems = _get_txs(wallet_address, progress)
