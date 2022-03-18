@@ -5,7 +5,7 @@ from terra.make_tx import (
     make_retract_bid_tx
 )
 from common.make_tx import make_repay_tx
-
+from terra.constants import CUR_UST
 
 def handle_liquidate(exporter, elem, txinfo):
     wallet_address = txinfo.wallet_address
@@ -13,8 +13,11 @@ def handle_liquidate(exporter, elem, txinfo):
     from_contract = elem["logs"][0]["events_by_type"]["from_contract"]
 
     # Extract repay amount
-    repay_amount_string = from_contract["repay_amount"][1]
+    repay_amount_string = from_contract["repay_amount"][0]
     repay_currency_string = from_contract["stable_denom"][0]
+    repay_amount, repay_currency = util_terra._amount(repay_amount_string + repay_currency_string)
+
+    bid_fee = util_terra._float_amount(from_contract["bid_fee"][0], CUR_UST)
     repay_amount, repay_currency = util_terra._amount(repay_amount_string + repay_currency_string)
 
     # Extract liquidated collateral
@@ -23,6 +26,9 @@ def handle_liquidate(exporter, elem, txinfo):
     collateral_amount, collateral_currency = util_terra._amount(collateral_amount_string + collateral_currency_string)
 
     if wallet_address in from_contract["liquidator"]:
+        # Combine bid fee into repay amount to adjust cost basis.
+        repay_amount += bid_fee
+
         row = make_liquidate_tx(txinfo, repay_amount, repay_currency, collateral_amount, collateral_currency)
         exporter.ingest_row(row)
     else:
