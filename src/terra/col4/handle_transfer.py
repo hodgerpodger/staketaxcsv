@@ -64,14 +64,14 @@ def handle_transfer_contract(exporter, elem, txinfo):
     for i, execute_msg in enumerate(execute_msgs):
         recipient = execute_msg["transfer"].get("recipient", None)
         if recipient:
-            # Extract amount
-            amount = util_terra._float_amount(execute_msg["transfer"]["amount"], None)
-
             # Extract currency
             msg_value = elem["tx"]["value"]["msg"][i]["value"]
             contract = msg_value.get("contract")
             sender = msg_value.get("sender")
             currency = util_terra._lookup_address(contract, txid)
+
+            # Extract amount
+            amount = util_terra._float_amount(execute_msg["transfer"]["amount"], currency)
 
             if sender == wallet_address:
                 row = make_transfer_out_tx(txinfo, amount, currency, recipient)
