@@ -46,8 +46,9 @@ def handle_repay_withdraw(exporter, elem, txinfo):
     exporter.ingest_row(row)
 
     margin_fee_amount, margin_fee_currency = util_terra._get_mirror_fees(elem, txinfo.txid)
-    row = make_margin_fee_tx(txinfo, margin_fee_amount, margin_fee_currency)
-    exporter.ingest_row(row)
+    if margin_fee_amount > 0:
+        row = make_margin_fee_tx(txinfo, margin_fee_amount, margin_fee_currency)
+        exporter.ingest_row(row)
 
     if len(data["logs"]) > 1:
         # Extract withdraw

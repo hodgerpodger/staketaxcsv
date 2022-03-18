@@ -8,7 +8,7 @@ from settings_csv import TERRA_LCD_NODE
 from terra.api_lcd import LcdAPI
 from terra.config_terra import localconfig
 import common.ibc.api_lcd
-
+from terra.constants import CUR_UST
 
 def _contracts(elem):
     out = []
@@ -452,4 +452,4 @@ def _get_mirror_fees(elem, txid):
     if len(fee_transfers_in) > 0:
         return fee_transfers_in[0]
 
-    return None
+    return [0, CUR_UST]
