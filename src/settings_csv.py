@@ -5,6 +5,7 @@ import os
 ALGO_HIST_INDEXER_NODE = os.environ.get("ALGO_HIST_INDEXER_NODE", "https://indexer.algoexplorerapi.io")
 ALGO_INDEXER_NODE = os.environ.get("ALGO_INDEXER_NODE", "https://algoindexer.algoexplorerapi.io")
 ATOM_NODE = os.environ.get("ATOM_NODE", "")
+COVALENT_NODE = os.environ.get("COVALENT_NODE", "https://api.covalenthq.com")
 FET_NODE = os.environ.get("FET_NODE", "https://rest-fetchhub.fetch.ai")
 HUAHUA_NODE = os.environ.get("HUAHUA_NODE", "")
 JUNO_NODE = os.environ.get("JUNO_NODE", "")
@@ -12,6 +13,7 @@ SOL_NODE = os.environ.get("SOL_NODE", "")
 TERRA_LCD_NODE = os.environ.get("TERRA_LCD_NODE", "")
 
 # Optional environment variables
+COVALENT_API_KEY = os.environ.get("COVALENT_API_KEY", "")
 TERRA_FIGMENT_KEY = os.environ.get("TERRA_FIGMENT_KEY", "")
 
 # #############################################################################
