@@ -108,7 +108,6 @@ def _get_transaction_group(groupid, i, elems):
 
 
 def _handle_transaction_group(wallet_address, group, exporter, txinfo):
-    # TODO handle algofi and algomint transactions
     if is_governance_reward_transaction(wallet_address, group):
         handle_governance_reward_transaction(group, exporter, txinfo)
     elif is_tinyman_transaction(group):
@@ -116,13 +115,13 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
     elif is_yieldly_transaction(group):
         handle_yieldly_transaction(group, exporter, txinfo)
     elif is_algofi_transaction(group):
-        handle_algofi_transaction(group, exporter, txinfo)
+        handle_algofi_transaction(wallet_address, group, exporter, txinfo)
     elif is_pact_transaction(group):
         handle_pact_transaction(group, exporter, txinfo)
     elif is_wagmiswap_transaction(group):
         handle_wagmiswap_transaction(group, exporter, txinfo)
     elif is_algodex_transaction(wallet_address, group):
-        handle_algodex_transaction(group, exporter, txinfo)
+        handle_algodex_transaction(wallet_address, group, exporter, txinfo)
     elif is_akita_swap_transaction(group):
         handle_akita_swap_transaction(group, exporter, txinfo)
     elif has_only_transfer_transactions(group):

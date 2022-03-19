@@ -1,136 +1,40 @@
 from algo.api_algoindexer import AlgoIndexerAPI
 
-# TODO Strong candidate for dynamodb cache
-known_assets = {
-    0: {
-        "name": "Algorand",
-        "unit-name": "ALGO",
-        "decimals": 6,
-    },
-    312769: {
-        "name": "Tether USDt",
-        "unit-name": "USDt",
-        "decimals": 6,
-    },
-    27165954: {
-        "name": "PLANET",
-        "unit-name": "Planets",
-        "decimals": 6,
-    },
-    31566704: {
-        "name": "USDC",
-        "unit-name": "USDC",
-        "decimals": 6,
-    },
-    465865291: {
-        "name": "STBL",
-        "unit-name": "STBL",
-        "decimals": 6,
-    },
-    27165954: {
-        "name": "Planets",
-        "unit-name": "PLANET",
-        "decimals": 6,
-    },
-    226701642: {
-        "name": "Yieldly",
-        "unit-name": "YLDY",
-        "decimals": 6,
-    },
-    230946361: {
-        "name": "AlgoGems",
-        "unit-name": "GEMS",
-        "decimals": 6,
-    },
-    287867876: {
-        "name": "Opulous",
-        "unit-name": "OPUL",
-        "decimals": 10,
-    },
-    359342000: {
-        "name": "Tinyman Pool YLDY-ALGO",
-        "unit-name": "TM1POOL",
-        "decimals": 6,
-    },
-    384303832: {
-        "name": "AKITA INU TOKEN",
-        "unit-name": "AKITA",
-        "decimals": 0,
-    },
-    386192725: {
-        "name": "goBTC",
-        "unit-name": "goBTC",
-        "decimals": 8,
-    },
-    386195940: {
-        "name": "goETH",
-        "unit-name": "goETH",
-        "decimals": 8,
-    },
-    388592191: {
-        "name": "Chips",
-        "unit-name": "chip",
-        "decimals": 1,
-    },
-    511484048: {
-        "name": "AlgoStake",
-        "unit-name": "STKE",
-        "decimals": 2,
-    },
-    552647097: {
-        "name": "TinymanPool1.1 USDC-ALGO",
-        "unit-name": "TMPOOL11",
-        "decimals": 6,
-    },
-    552655440: {
-        "name": "TinymanPool1.1 YLDY-ALGO",
-        "unit-name": "TMPOOL11",
-        "decimals": 6,
-    },
-    523683256: {
-        "name": "AKITA INU",
-        "unit-name": "AKTA",
-        "decimals": 6,
-    },
-    470842789: {
-        "name": "Defly Token",
-        "unit-name": "DEFLY",
-        "decimals": 6,
-    },
-    378382099: {
-        "name": "Tinychart Token",
-        "unit-name": "TINY",
-        "decimals": 4,
-    },
-    137594422: {
-        "name": "HEADLINE",
-        "unit-name": "HDL",
-        "decimals": 6,
-    },
-}
-
 
 class Asset:
+    asset_list = {
+        0: {
+            "name": "Algorand",
+            "unit-name": "ALGO",
+            "decimals": 6,
+        }
+    }
+    indexer = AlgoIndexerAPI()
+
     def __init__(self, id, amount=0):
         if id < 0:
             raise ValueError("Asset id must be greater than zero")
         if int(amount) < 0:
             raise ValueError("Asset amount cannot be negative")
 
-        self._indexer = AlgoIndexerAPI()
         self._id = id
-        params = None
-        if id in known_assets:
-            params = known_assets[id]
+        if id in self.asset_list:
+            params = self.asset_list[id]
         else:
-            params = self._indexer.get_asset(id)
-            known_assets[id] = {key: params[key] for key in ["name", "unit-name", "decimals"]}
+            params = self.indexer.get_asset(id)
+            self.asset_list[id] = {key: params[key] for key in ["name", "unit-name", "decimals"]}
         if params is None:
             raise ValueError("invalid asset id")
         self._decimals = params["decimals"]
         # Remove non-ascii characters from the name
         self._ticker = params["unit-name"].encode('ascii', 'ignore').decode('ascii')
         self._uint_amount = int(amount)
+
+    @classmethod
+    def load_assets(cls, assets):
+        for asset in assets:
+            id = asset["asset-id"]
+            cls.asset_list[id] = {key: asset[key] for key in ["name", "unit-name", "decimals"]}
 
     @property
     def id(self):
@@ -139,6 +43,10 @@ class Asset:
     @property
     def amount(self):
         return float(self._uint_amount) / float(10 ** self._decimals)
+
+    @property
+    def uint_amount(self):
+        return self._uint_amount
 
     @property
     def ticker(self):
