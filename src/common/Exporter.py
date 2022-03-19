@@ -96,6 +96,30 @@ class Exporter:
     def ingest_row(self, row):
         self.rows.append(row)
 
+    def ingest_csv(self, default_csv):
+        """ Loads default csv file into self.rows """
+        with open(default_csv, 'r') as f:
+            reader = csv.DictReader(f)
+            for i, row in enumerate(reader):
+                cur_row = Row(
+                    timestamp=row["timestamp"],
+                    tx_type=row["tx_type"],
+                    received_amount=row["received_amount"],
+                    received_currency=row["received_currency"],
+                    sent_amount=row["sent_amount"],
+                    sent_currency=row["sent_currency"],
+                    fee=row["fee"],
+                    fee_currency=row["fee_currency"],
+                    exchange=row["exchange"],
+                    wallet_address=row["wallet_address"],
+                    txid=row["txid"],
+                    url=row["url"],
+                    z_index=i,
+                    comment=row["comment"],
+                )
+                self.ingest_row(cur_row)
+
+
     def sort_rows(self, reverse=True):
         if self.is_reverse != reverse:
             self.rows.sort(key=lambda row: (row.timestamp, row.z_index), reverse=reverse)
