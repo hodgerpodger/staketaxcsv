@@ -55,7 +55,7 @@ class AlgoIndexerAPI:
         if status_code == 200:
             return data["transactions"], data.get("next-token")
         else:
-            return None
+            return [], None
 
     def get_transactions_by_group(self, group_id):
         endpoint = "v2/transactions"
