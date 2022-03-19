@@ -1,3 +1,6 @@
+import base64
+from algosdk import encoding
+
 from algo import constants as co
 from algo.asset import Algo
 from algo.handle_simple import handle_participation_rewards, handle_unknown
@@ -10,6 +13,7 @@ from common.make_tx import _make_tx_exchange, make_borrow_tx, make_repay_tx, mak
 # https://github.com/Algofiorg/algofi-py-sdk
 
 APPLICATION_ID_ALGOFI_AMM = 605753404
+APPLICATION_ID_ALGOFI_LENDING_MANAGER = 465818260
 
 ALGOFI_AMM_SYMBOL = "AF"
 
@@ -30,6 +34,8 @@ ALGOFI_TRANSACTION_LIQUIDATE = "bA=="               # "l"
 
 ALGOFI_TRANSACTION_FLASH_LOAN = "Zmw="              # "fl"
 
+ALGOFI_MANAGER_USER_STORAGE_ACCOUNT = "dXNh"        # "usa"
+
 UNDERLYING_ASSETS = {
     # bALGO -> ALGO
     465818547: 0,
@@ -44,9 +50,21 @@ UNDERLYING_ASSETS = {
 }
 
 
+def get_algofi_storage_address(account):
+    app_local_state = account.get("apps-local-state", [])
+    for app in app_local_state:
+        if app["id"] == APPLICATION_ID_ALGOFI_LENDING_MANAGER:
+            for keyvalue in app["key-value"]:
+                if keyvalue["key"] == ALGOFI_MANAGER_USER_STORAGE_ACCOUNT:
+                    raw_address = keyvalue["value"]["bytes"]
+                    return encoding.encode_address(base64.b64decode(raw_address.strip()))
+
+    return None
+
+
 def is_algofi_transaction(group):
     length = len(group)
-    if length < 2 or length > 16:
+    if length > 16:
         return False
 
     app_transaction = group[-1]
@@ -78,6 +96,10 @@ def is_algofi_transaction(group):
         if ALGOFI_TRANSACTION_LIQUIDATE in appl_args:
             return True
 
+    # The group size will only be 1 for liquidatee transactions
+    if length < 2:
+        return False
+
     app_transaction = group[0]
     if app_transaction["tx-type"] == "appl":
         appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
@@ -93,7 +115,7 @@ def is_algofi_transaction(group):
     return False
 
 
-def handle_algofi_transaction(group, exporter, txinfo):
+def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
     reward = Algo(group[0]["sender-rewards"])
     handle_participation_rewards(reward, exporter, txinfo)
 
@@ -111,7 +133,7 @@ def handle_algofi_transaction(group, exporter, txinfo):
         elif ALGOFI_TRANSACTION_BORROW in appl_args:
             return _handle_algofi_borrow(group, exporter, txinfo)
         elif ALGOFI_TRANSACTION_LIQUIDATE in appl_args:
-            return _handle_algofi_liquidate(group, exporter, txinfo)
+            return _handle_algofi_liquidate(wallet_address, group, exporter, txinfo)
 
     txtype = group[0]["tx-type"]
     if txtype == "appl":
@@ -332,25 +354,27 @@ def _handle_algofi_repay_borrow(group, exporter, txinfo, z_index=0):
     exporter.ingest_row(row)
 
 
-def _handle_algofi_liquidate(group, exporter, txinfo):
-    # TODO only handle transactions where we are the liquidator for now.
-    # For the liquidatee side we'll need to lookup transactions
-    # for the corresponding user storage address.
+def _handle_algofi_liquidate(wallet_address, group, exporter, txinfo):
     fee_amount = 0
-    for transaction in group:
-        fee_amount += transaction["fee"]
-
-    send_transaction = group[-2]
-    send_asset = get_transfer_asset(send_transaction)
-
     app_transaction = group[-1]
-    receive_transaction = app_transaction["inner-txns"][0]
-    receive_asset = get_transfer_asset(receive_transaction, UNDERLYING_ASSETS)
+    sender = app_transaction["sender"]
+    if sender == wallet_address:
+        for transaction in group:
+            fee_amount += transaction["fee"]
 
-    fee = Algo(fee_amount)
+        send_transaction = group[-2]
+        send_asset = get_transfer_asset(send_transaction)
+
+        receive_transaction = app_transaction["inner-txns"][0]
+        receive_asset = get_transfer_asset(receive_transaction, UNDERLYING_ASSETS)
+        row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
+    else:
+        repay_transaction = app_transaction["inner-txns"][0]
+        repay_asset = get_transfer_asset(repay_transaction, UNDERLYING_ASSETS)
+        row = make_repay_tx(txinfo, repay_asset.amount, repay_asset.ticker)
+
     txinfo.comment = "AlgoFi liquidation"
-
-    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
+    fee = Algo(fee_amount)
     row.fee = fee.amount
     exporter.ingest_row(row)
 
