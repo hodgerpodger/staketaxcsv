@@ -114,7 +114,7 @@ class Exporter:
                     wallet_address=row["wallet_address"],
                     txid=row["txid"],
                     url=row["url"],
-                    z_index=i,
+                    z_index=-i,
                     comment=row["comment"],
                 )
                 self.ingest_row(cur_row)
