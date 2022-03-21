@@ -4,6 +4,7 @@ usage: python3 report_algo.py <walletaddress> [--format all|cointracking|koinly|
 Prints transactions and writes CSV(s) to _reports/ALGO.<walletaddress>.<format>.csv
 """
 
+import datetime
 import json
 import logging
 import math
@@ -42,8 +43,8 @@ def main():
 def _read_options(options):
     report_util.read_common_options(localconfig, options)
 
-    localconfig.after_date = options.get("after_date", None)
-    localconfig.before_date = options.get("before_date", None)
+    localconfig.start_date = options.get("start_date", None)
+    localconfig.end_date = options.get("end_date", None)
     localconfig.lp_treatment = options.get("lp_treatment", LP_TREATMENT_TRANSFERS)
 
     logging.info("localconfig: %s", localconfig.__dict__)
@@ -138,9 +139,17 @@ def _get_txs(wallet_address, account, progress):
 def _get_address_transactions(address):
     next = None
     out = []
+
+    after_date = None
+    before_date = None
+    if localconfig.start_date:
+        after_date = datetime.date.fromisoformat(localconfig.start_date)
+    if localconfig.end_date:
+        before_date = datetime.date.fromisoformat(localconfig.end_date) + datetime.timedelta(days=1)
+
     for i in range(_max_queries()):
         transactions, next = indexer.get_transactions(
-            address, localconfig.after_date, localconfig.before_date, next)
+            address, after_date, before_date, next)
         out.extend(transactions)
 
         if not next:
