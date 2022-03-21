@@ -2,7 +2,10 @@ from common.Exporter import Row
 from common.ExporterTypes import (
     TX_TYPE_AIRDROP,
     TX_TYPE_BORROW,
+    TX_TYPE_DEPOSIT_COLLATERAL,
     TX_TYPE_INCOME,
+    TX_TYPE_LP_STAKE,
+    TX_TYPE_LP_UNSTAKE,
     TX_TYPE_REPAY,
     TX_TYPE_SOL_TRANSFER_SELF,
     TX_TYPE_SPEND,
@@ -12,6 +15,7 @@ from common.ExporterTypes import (
     TX_TYPE_UNKNOWN,
     TX_TYPE_LP_DEPOSIT,
     TX_TYPE_LP_WITHDRAW,
+    TX_TYPE_WITHDRAW_COLLATERAL,
 )
 from settings_csv import DONATION_WALLETS
 
@@ -65,6 +69,46 @@ def make_transfer_in_tx(txinfo, received_amount, received_currency):
 
 def make_transfer_self(txinfo):
     return make_simple_tx(txinfo, TX_TYPE_SOL_TRANSFER_SELF)
+
+
+def make_lp_deposit_tx(txinfo, sent_amount, sent_currency, lp_amount, lp_currency, txid=None, empty_fee=False,
+                       z_index=0):
+    row = _make_tx_exchange(
+        txinfo, sent_amount, sent_currency, lp_amount, lp_currency, TX_TYPE_LP_DEPOSIT, txid, empty_fee,
+        z_index=z_index)
+    row.comment = "lp_deposit " + txinfo.comment
+    return row
+
+
+def make_lp_withdraw_tx(txinfo, lp_amount, lp_currency, received_amount, received_currency, txid=None,
+                        empty_fee=False):
+    row = _make_tx_exchange(
+        txinfo, lp_amount, lp_currency, received_amount, received_currency, TX_TYPE_LP_WITHDRAW, txid, empty_fee)
+    row.comment = "lp_withdraw " + txinfo.comment
+    return row
+
+
+def make_lp_stake_tx(txinfo, lp_amount, lp_currency, empty_fee=False, z_index=0):
+    return _make_tx_sent(txinfo, lp_amount, lp_currency, TX_TYPE_LP_STAKE, empty_fee=empty_fee, z_index=z_index)
+
+
+def make_lp_unstake_tx(txinfo, lp_amount, lp_currency):
+    return _make_tx_received(txinfo, lp_amount, lp_currency, TX_TYPE_LP_UNSTAKE)
+
+
+def make_deposit_collateral_tx(txinfo, sent_amount, sent_currency, z_index=0):
+    return _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_DEPOSIT_COLLATERAL, z_index=z_index)
+
+
+def make_withdraw_collateral_tx(txinfo, received_amount, received_currency, empty_fee=False, z_index=0):
+    return _make_tx_received(
+        txinfo, received_amount, received_currency, TX_TYPE_WITHDRAW_COLLATERAL, empty_fee=empty_fee, z_index=z_index)
+
+
+def make_liquidate_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
+                      txid=None, empty_fee=False, z_index=0):
+    return _make_tx_exchange(
+        txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_TRADE, txid, empty_fee, z_index)
 
 
 def make_borrow_tx(txinfo, received_amount, received_currency, empty_fee=False, z_index=0):

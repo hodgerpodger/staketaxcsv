@@ -1,13 +1,13 @@
-from terra import util_terra
-from terra.constants import CUR_UST
-from terra.make_tx import (
+from common.make_tx import (
     make_deposit_collateral_tx,
     make_lp_deposit_tx,
     make_lp_stake_tx,
     make_lp_unstake_tx,
     make_lp_withdraw_tx,
-    make_withdraw_collateral_tx,
+    make_withdraw_collateral_tx
 )
+from terra import util_terra
+from terra.constants import CUR_UST
 
 
 def handle_lp_deposit(exporter, elem, txinfo):

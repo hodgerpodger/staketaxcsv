@@ -1,10 +1,10 @@
-from common.make_tx import make_borrow_tx, make_repay_tx
-from terra import util_terra
-from terra.constants import CUR_UST, MILLION
-from terra.make_tx import (
+from common.make_tx import (
+    make_borrow_tx,
     make_deposit_collateral_tx,
+    make_repay_tx,
     make_withdraw_collateral_tx
 )
+from terra import util_terra
 
 
 def handle_deposit_collateral(exporter, elem, txinfo):
