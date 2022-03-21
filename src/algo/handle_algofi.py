@@ -13,6 +13,7 @@ from common.make_tx import (
     make_lp_withdraw_tx,
     make_repay_tx,
     make_reward_tx,
+    make_spend_tx,
     make_swap_tx,
     make_withdraw_collateral_tx,
 )
@@ -369,7 +370,15 @@ def _handle_algofi_repay_borrow(group, exporter, txinfo, z_index=0):
     fee = Algo(fee_amount)
     txinfo.comment = "AlgoFi"
 
-    row = make_repay_tx(txinfo, send_asset.amount, send_asset.ticker, z_index)
+    app_transaction = group[-2]
+    if "inner-txns" in app_transaction:
+        interest_transaction = app_transaction["inner-txns"][0]
+        interest_asset = get_transfer_asset(interest_transaction)
+        row = make_spend_tx(txinfo, interest_asset.amount, interest_asset.ticker, z_index=z_index)
+        row.comment = "AlgoFi interest payment"
+        exporter.ingest_row(row)
+
+    row = make_repay_tx(txinfo, send_asset.amount, send_asset.ticker, z_index + 1)
     row.fee = fee.amount
     exporter.ingest_row(row)
 

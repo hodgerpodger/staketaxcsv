@@ -39,8 +39,8 @@ def make_reward_tx(txinfo, reward_amount, reward_currency, txid=None, empty_fee=
     return _make_tx_received(txinfo, reward_amount, reward_currency, TX_TYPE_STAKING, txid, empty_fee, z_index=z_index)
 
 
-def make_spend_tx(txinfo, sent_amount, sent_currency):
-    return _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_SPEND)
+def make_spend_tx(txinfo, sent_amount, sent_currency, z_index=0):
+    return _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_SPEND, z_index=z_index)
 
 
 def make_just_fee_tx(txinfo, fee_amount, fee_currency):
@@ -112,14 +112,16 @@ def make_liquidate_tx(txinfo, sent_amount, sent_currency, received_amount, recei
 
 
 def make_borrow_tx(txinfo, received_amount, received_currency, empty_fee=False, z_index=0):
-    txinfo.comment = "borrow " + txinfo.comment
-    return _make_tx_received(
+    row = _make_tx_received(
         txinfo, received_amount, received_currency, TX_TYPE_BORROW, empty_fee=empty_fee, z_index=z_index)
+    row.comment = "borrow " + txinfo.comment
+    return row
 
 
 def make_repay_tx(txinfo, sent_amount, sent_currency, z_index=0):
-    txinfo.comment = "repay " + txinfo.comment
-    return _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_REPAY, z_index=z_index)
+    row = _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_REPAY, z_index=z_index)
+    row.comment = "repay " + txinfo.comment
+    return row
 
 
 def make_simple_tx(txinfo, tx_type, z_index=0):
