@@ -5,8 +5,17 @@ from algo import constants as co
 from algo.asset import Algo
 from algo.handle_simple import handle_participation_rewards, handle_unknown
 from algo.util_algo import get_transfer_asset
-from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW, TX_TYPE_TRADE
-from common.make_tx import _make_tx_exchange, make_borrow_tx, make_repay_tx, make_reward_tx, make_swap_tx
+from common.make_tx import (
+    make_borrow_tx,
+    make_deposit_collateral_tx,
+    make_liquidate_tx,
+    make_lp_deposit_tx,
+    make_lp_withdraw_tx,
+    make_repay_tx,
+    make_reward_tx,
+    make_swap_tx,
+    make_withdraw_collateral_tx,
+)
 
 # For reference
 # https://github.com/Algofiorg/algofi-amm-py-sdk
@@ -28,6 +37,9 @@ ALGOFI_TRANSACTION_REDEEM_POOL_ASSET2_RESIDUAL = "cnBhMnI="   # "rpa2r"
 ALGOFI_TRANSACTION_BURN_ASSET1_OUT = "YmExbw=="     # "ba1o"
 ALGOFI_TRANSACTION_BURN_ASSET2_OUT = "YmEybw=="     # "ba2o"
 
+
+ALGOFI_TRANSACTION_MINT_TO_COLLATERAL = "bXQ="      # "mt"
+ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING = "cmN1"      # "rcu"
 ALGOFI_TRANSACTION_BORROW = "Yg=="                  # "b"
 ALGOFI_TRANSACTION_REPAY_BORROW = "cmI="            # "rb"
 ALGOFI_TRANSACTION_LIQUIDATE = "bA=="               # "l"
@@ -96,6 +108,9 @@ def is_algofi_transaction(group):
         if ALGOFI_TRANSACTION_LIQUIDATE in appl_args:
             return True
 
+        if ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING in appl_args:
+            return True
+
     # The group size will only be 1 for liquidatee transactions
     if length < 2:
         return False
@@ -110,6 +125,9 @@ def is_algofi_transaction(group):
     if app_transaction["tx-type"] == "appl":
         appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
         if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
+            return True
+
+        if ALGOFI_TRANSACTION_MINT_TO_COLLATERAL in appl_args:
             return True
 
     return False
@@ -134,6 +152,8 @@ def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
             return _handle_algofi_borrow(group, exporter, txinfo)
         elif ALGOFI_TRANSACTION_LIQUIDATE in appl_args:
             return _handle_algofi_liquidate(wallet_address, group, exporter, txinfo)
+        elif ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING in appl_args:
+            return _handle_algofi_withdraw_collateral(group, exporter, txinfo)
 
     txtype = group[0]["tx-type"]
     if txtype == "appl":
@@ -146,6 +166,8 @@ def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
         appl_args = group[-2][co.TRANSACTION_KEY_APP_CALL]["application-args"]
         if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
             return _handle_algofi_repay_borrow(group, exporter, txinfo)
+        elif ALGOFI_TRANSACTION_MINT_TO_COLLATERAL in appl_args:
+            return _handle_algofi_deposit_collateral(group, exporter, txinfo)
 
     return handle_unknown(exporter, txinfo)
 
@@ -182,10 +204,10 @@ def _handle_algofi_swap(group, exporter, txinfo, z_index=0):
 
     txinfo.comment = "AlgoFi"
 
-    row = _make_tx_exchange(
+    row = make_swap_tx(
         txinfo, send_asset.amount, send_asset.ticker,
         receive_asset.amount, receive_asset.ticker,
-        TX_TYPE_TRADE, z_index=z_index)
+        z_index=z_index)
     fee = Algo(fee_amount)
     row.fee = fee.amount
     exporter.ingest_row(row)
@@ -251,15 +273,15 @@ def _handle_algofi_lp_add(group, exporter, txinfo):
     fee = Algo(fee_amount / 2)
     txinfo.comment = "AlgoFi"
 
-    row = _make_tx_exchange(
+    row = make_lp_deposit_tx(
         txinfo, send_asset_1.amount, send_asset_1.ticker,
-        lp_asset.amount / 2, lp_asset_currency, TX_TYPE_LP_DEPOSIT)
+        lp_asset.amount / 2, lp_asset_currency)
     row.fee = fee.amount
     exporter.ingest_row(row)
 
-    row = _make_tx_exchange(
+    row = make_lp_deposit_tx(
         txinfo, send_asset_2.amount, send_asset_2.ticker,
-        lp_asset.amount / 2, lp_asset_currency, TX_TYPE_LP_DEPOSIT)
+        lp_asset.amount / 2, lp_asset_currency)
     row.fee = fee.amount
     exporter.ingest_row(row)
 
@@ -285,17 +307,15 @@ def _handle_algofi_lp_remove(group, exporter, txinfo):
     fee = Algo(fee_amount / 2)
     txinfo.comment = "AlgoFi"
 
-    row = _make_tx_exchange(
+    row = make_lp_withdraw_tx(
         txinfo, lp_asset.amount / 2, lp_asset_currency,
-        receive_asset_1.amount, receive_asset_1.ticker,
-        TX_TYPE_LP_WITHDRAW)
+        receive_asset_1.amount, receive_asset_1.ticker)
     row.fee = fee.amount
     exporter.ingest_row(row)
 
-    row = _make_tx_exchange(
+    row = make_lp_withdraw_tx(
         txinfo, lp_asset.amount / 2, lp_asset_currency,
-        receive_asset_2.amount, receive_asset_2.ticker,
-        TX_TYPE_LP_WITHDRAW)
+        receive_asset_2.amount, receive_asset_2.ticker)
     row.fee = fee.amount
     exporter.ingest_row(row)
 
@@ -367,7 +387,7 @@ def _handle_algofi_liquidate(wallet_address, group, exporter, txinfo):
 
         receive_transaction = app_transaction["inner-txns"][0]
         receive_asset = get_transfer_asset(receive_transaction, UNDERLYING_ASSETS)
-        row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
+        row = make_liquidate_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
     else:
         repay_transaction = app_transaction["inner-txns"][0]
         repay_asset = get_transfer_asset(repay_transaction, UNDERLYING_ASSETS)
@@ -383,3 +403,36 @@ def _handle_algofi_flash_loan(group, exporter, txinfo):
     _handle_algofi_borrow(group[:1], exporter, txinfo, 0)
     _handle_algofi_swap(group[1:-1], exporter, txinfo, 1)
     _handle_algofi_repay_borrow(group[-1:], exporter, txinfo, 2)
+
+
+def _handle_algofi_deposit_collateral(group, exporter, txinfo):
+    fee_amount = 0
+    for transaction in group:
+        fee_amount += transaction["fee"]
+
+    send_transaction = group[-1]
+    send_asset = get_transfer_asset(send_transaction)
+
+    fee = Algo(fee_amount)
+    txinfo.comment = "AlgoFi"
+
+    row = make_deposit_collateral_tx(txinfo, send_asset.amount, send_asset.ticker)
+    row.fee = fee.amount
+    exporter.ingest_row(row)
+
+
+def _handle_algofi_withdraw_collateral(group, exporter, txinfo):
+    fee_amount = 0
+    for transaction in group:
+        fee_amount += transaction["fee"]
+
+    app_transaction = group[-1]
+    receive_transaction = app_transaction["inner-txns"][0]
+    receive_asset = get_transfer_asset(receive_transaction)
+
+    fee = Algo(fee_amount)
+    txinfo.comment = "AlgoFi"
+
+    row = make_withdraw_collateral_tx(txinfo, receive_asset.amount, receive_asset.ticker)
+    row.fee = fee.amount
+    exporter.ingest_row(row)

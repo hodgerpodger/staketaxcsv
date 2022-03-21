@@ -21,9 +21,9 @@ from settings_csv import DONATION_WALLETS
 
 
 def make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
-                 txid=None, empty_fee=False):
+                 txid=None, empty_fee=False, z_index=0):
     return _make_tx_exchange(txinfo, sent_amount, sent_currency, received_amount, received_currency,
-                             TX_TYPE_TRADE, txid, empty_fee)
+                             TX_TYPE_TRADE, txid, empty_fee, z_index)
 
 
 def make_airdrop_tx(txinfo, reward_amount, reward_currency, txid=None, empty_fee=False):
