@@ -1,6 +1,5 @@
-from common.make_tx import make_airdrop_tx
+from common.make_tx import make_airdrop_tx, make_lp_unstake_tx
 from terra import util_terra
-from terra.make_tx import make_lp_unstake_tx
 
 
 def handle_unstake_and_claim(exporter, elem, txinfo):
