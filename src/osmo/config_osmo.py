@@ -9,4 +9,6 @@ class localconfig:
     # Treat LP deposits/withdrawals as "transfers"/"omit"/"trades" (ignored for koinly)
     lp_treatment = et.LP_TREATMENT_DEFAULT
     cache = False
+
     ibc_addresses = {}
+    exponents = {}

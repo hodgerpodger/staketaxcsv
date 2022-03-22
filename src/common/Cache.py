@@ -11,6 +11,7 @@ FIELD_TERRA_DECIMALS = "terra_decimals"
 FIELD_TERRA_LP_CURRENCY_ADDRESSES = "terra_lp_currency_addresses"
 FIELD_IBC_ADDRESSES = "ibc_addresses"
 FIELD_KOINLY_NULL_MAP = "koinly_null_map"
+FIELD_OSMO_EXPONENTS = "osmo_exponents"
 
 
 class Cache:
@@ -94,3 +95,9 @@ class Cache:
             return val
         else:
             return []
+
+    def set_osmo_exponents(self, data):
+        return self._set_merge(FIELD_OSMO_EXPONENTS, data)
+
+    def get_osmo_exponents(self):
+        return self._get(FIELD_OSMO_EXPONENTS)

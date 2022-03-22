@@ -79,12 +79,14 @@ def _pages(wallet_address):
     return pages
 
 
+
+
 def txhistory(wallet_address, options):
     # Configure localconfig based on options
     _read_options(options)
     if localconfig.cache:
-        localconfig.ibc_addresses = Cache().get_ibc_addresses()
-        logging.info("Loaded ibc_addresses from cache ...")
+        cache = Cache()
+        _cache_load(cache)
 
     progress = ProgressOsmo()
     exporter = Exporter(wallet_address, localconfig, TICKER_OSMO)
@@ -105,8 +107,23 @@ def txhistory(wallet_address, options):
     ErrorCounter.log(TICKER_OSMO, wallet_address)
 
     if localconfig.cache:
-        Cache().set_ibc_addresses(localconfig.ibc_addresses)
+        _cache_push(cache)
     return exporter
+
+
+def _cache_load(cache):
+    localconfig.ibc_addresses = cache.get_ibc_addresses()
+    localconfig.exponents = cache.get_osmo_exponents()
+
+    logging.info("_cache_load(): downloaded data from cache ...")
+
+
+def _cache_push(cache):
+    cache.set_ibc_addresses(localconfig.ibc_addresses)
+    cache.set_osmo_exponents(localconfig.exponents)
+
+    logging.info("_cache_push(): push data to cache")
+
 
 
 def _remove_dups(elems, txids_seen):
