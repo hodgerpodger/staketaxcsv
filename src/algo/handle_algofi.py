@@ -10,6 +10,8 @@ from common.make_tx import (
     make_deposit_collateral_tx,
     make_liquidate_tx,
     make_lp_deposit_tx,
+    make_lp_stake_tx,
+    make_lp_unstake_tx,
     make_lp_withdraw_tx,
     make_repay_tx,
     make_reward_tx,
@@ -60,6 +62,35 @@ UNDERLYING_ASSETS = {
     465818555: 386195940,
     # bSTBL -> STBL
     465818563: 465865291,
+}
+
+ALGOFI_STAKING_CONTRACTS = {
+    # Manager App ID
+    482625868: "STBL",
+    553869413: "Tinyman STBL-USDC",
+    611804624: "STBL-ALGO",
+    611869320: "STBL-USDC",
+    635813909: "STBL-XET",
+    635863793: "STBL-GOBTC",
+    635866213: "STBL-GOETH",
+    637795072: "STBL-OPUL",
+    639747739: "STBL-DEFLY",
+    647785804: "STBL-ZONE",
+    # Market App ID
+    482608867: "STBL",
+    553866305: "Tinyman STBL-USDC",
+    611801333: "STBL-ALGO",
+    611867642: "STBL-USDC",
+    635812850: "STBL-XET",
+    635860537: "STBL-GOBTC",
+    635864509: "STBL-GOETH",
+    637793356: "STBL-OPUL",
+    639747119: "STBL-DEFLY",
+    647785158: "STBL-ZONE",
+    # Nano Swap
+    658337046: "USDC-STBL",
+    659677335: "USDT-STBL",
+    659678644: "USDT-USDC",
 }
 
 
@@ -422,10 +453,16 @@ def _handle_algofi_deposit_collateral(group, exporter, txinfo):
     send_transaction = group[-1]
     send_asset = get_transfer_asset(send_transaction)
 
-    fee = Algo(fee_amount)
-    txinfo.comment = "AlgoFi"
+    app_transaction = group[-2]
+    app_id = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    if app_id in ALGOFI_STAKING_CONTRACTS:
+        row = make_lp_stake_tx(txinfo, send_asset.amount, send_asset.ticker)
+        row.comment = "AlgoFi " + ALGOFI_STAKING_CONTRACTS[app_id] + " staking"
+    else:
+        row = make_deposit_collateral_tx(txinfo, send_asset.amount, send_asset.ticker)
+        row.comment = "AlgoFi"
 
-    row = make_deposit_collateral_tx(txinfo, send_asset.amount, send_asset.ticker)
+    fee = Algo(fee_amount)
     row.fee = fee.amount
     exporter.ingest_row(row)
 
@@ -439,9 +476,15 @@ def _handle_algofi_withdraw_collateral(group, exporter, txinfo):
     receive_transaction = app_transaction["inner-txns"][0]
     receive_asset = get_transfer_asset(receive_transaction)
 
-    fee = Algo(fee_amount)
-    txinfo.comment = "AlgoFi"
+    app_transaction = group[-2]
+    app_id = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    if app_id in ALGOFI_STAKING_CONTRACTS:
+        row = make_lp_unstake_tx(txinfo, receive_asset.amount, receive_asset.ticker)
+        row.comment = "AlgoFi " + ALGOFI_STAKING_CONTRACTS[app_id] + " unstaking"
+    else:
+        row = make_withdraw_collateral_tx(txinfo, receive_asset.amount, receive_asset.ticker)
+        row.comment = "AlgoFi"
 
-    row = make_withdraw_collateral_tx(txinfo, receive_asset.amount, receive_asset.ticker)
+    fee = Algo(fee_amount)
     row.fee = fee.amount
     exporter.ingest_row(row)
