@@ -26,18 +26,20 @@ class TxInfoTerra(TxInfo):
 
 class MsgInfo:
 
-    def __init__(self, msg_index, execute_msg, transfers, log, actions):
+    def __init__(self, msg_index, execute_msg, transfers, log, actions, contract):
         self.msg_index = msg_index
         self.execute_msg = execute_msg
         self.transfers = transfers
         self.log = log
         self.actions = actions
+        self.contract = contract
 
     def print(self):
         print("\nmsg{}:".format(self.msg_index))
-        print("\texecute_msg: ")
-        pprint.pprint(self.execute_msg)
+        print("\tcontract: {}".format(self.contract))
         print("\ttransfers_in: {}".format(self.transfers[0]))
         print("\ttransfers_out: {}".format(self.transfers[1]))
+        print("\texecute_msg: ")
+        pprint.pprint(self.execute_msg)
         print("\tactions:")
         pprint.pprint(self.actions)

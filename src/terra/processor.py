@@ -44,6 +44,8 @@ def process_tx(wallet_address, elem, exporter):
             handle_transfer(exporter, elem, txinfo)
         elif msgtype == "bank/MsgMultiSend":
             handle_multi_transfer(exporter, elem, txinfo)
+        elif msgtype == "cosmos-sdk/MsgTransfer":
+            handle_ibc_transfer(exporter, elem, txinfo)
         elif msgtype == "ibc/MsgUpdateClient":
             handle_ibc_transfer(exporter, elem, txinfo)
         elif msgtype in ["gov/MsgVote", "gov/MsgDeposit", "gov/MsgSubmitProposal"]:
@@ -162,12 +164,14 @@ def _msgs(elem, wallet_address):
             execute_msg = util_terra._execute_msg(elem, i)
             transfers = util_terra._transfers_log(log, wallet_address)
             actions = _actions(log)
+            contract = util_terra._contract(elem, i)
         else:
             execute_msg = None
-            transfers = None
-            actions = None
+            transfers = [[], []]
+            actions = []
+            contract = None
 
-        msginfo = MsgInfo(i, execute_msg, transfers, log, actions)
+        msginfo = MsgInfo(i, execute_msg, transfers, log, actions, contract)
         out.append(msginfo)
 
     return out

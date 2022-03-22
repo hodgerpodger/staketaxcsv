@@ -67,7 +67,10 @@ def _execute_msg_field(elem, index=0):
 
     for k, v in msg.items():
         if "msg" in v:
-            msg[k]["msg"] = json.loads(base64.b64decode(v["msg"]))
+            try:
+                msg[k]["msg"] = json.loads(base64.b64decode(v["msg"]))
+            except UnicodeDecodeError as e:
+                msg[k]["msg"] = {"error_decoding": {}}
 
     return msg
 
@@ -272,13 +275,13 @@ def _denom_to_currency(denom):
 
 
 def _decimals(currency):
-    # default is 6 decimals
-    if currency == "LUNA":
-        # temporary fix
+    if currency in ["LUNA", "UST"]:
+        # temporary override fix (symbol clash cases)
         return 6
     elif currency in localconfig.decimals and localconfig.decimals[currency]:
         return int(localconfig.decimals[currency])
     else:
+        # default is 6 decimals
         return 6
 
 

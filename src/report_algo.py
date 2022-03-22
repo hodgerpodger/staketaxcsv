@@ -4,11 +4,14 @@ usage: python3 report_algo.py <walletaddress> [--format all|cointracking|koinly|
 Prints transactions and writes CSV(s) to _reports/ALGO.<walletaddress>.<format>.csv
 """
 
+import datetime
 import json
 import logging
 import math
 import os
 import pprint
+from algo.asset import Asset
+from algo.handle_algofi import get_algofi_storage_address
 
 import algo.processor
 from algo.api_algoindexer import LIMIT_ALGOINDEXER, AlgoIndexerAPI
@@ -40,8 +43,8 @@ def main():
 def _read_options(options):
     report_util.read_common_options(localconfig, options)
 
-    localconfig.after_date = options.get("after_date", None)
-    localconfig.before_date = options.get("before_date", None)
+    localconfig.start_date = options.get("start_date", None)
+    localconfig.end_date = options.get("end_date", None)
     localconfig.lp_treatment = options.get("lp_treatment", LP_TREATMENT_TRANSFERS)
 
     logging.info("localconfig: %s", localconfig.__dict__)
@@ -86,8 +89,11 @@ def txhistory(wallet_address, options):
     progress = ProgressAlgo()
     exporter = Exporter(wallet_address, localconfig, TICKER_ALGO)
 
+    account = indexer.get_account(wallet_address)
+    Asset.load_assets(account.get("assets", []))
+
     # Retrieve data
-    elems = _get_txs(wallet_address, progress)
+    elems = _get_txs(wallet_address, account, progress)
 
     # Create rows for CSV
     algo.processor.process_txs(wallet_address, elems, exporter, progress)
@@ -98,7 +104,7 @@ def txhistory(wallet_address, options):
     return exporter
 
 
-def _get_txs(wallet_address, progress):
+def _get_txs(wallet_address, account, progress):
     # Debugging only: when --debug flag set, read from cache file
     DEBUG_FILE = "_reports/debugalgo.{}.json".format(wallet_address)
     if localconfig.debug and os.path.exists(DEBUG_FILE):
@@ -106,29 +112,48 @@ def _get_txs(wallet_address, progress):
             out = json.load(f)
             return out
 
-    next = None
-    out = []
-    for i in range(_max_queries()):
-        transactions, next = indexer.get_transactions(
-            wallet_address, localconfig.after_date, localconfig.before_date, next)
-        out.extend(transactions)
+    out = _get_address_transactions(wallet_address)
+    # Reverse the list so transactions are in chronological order
+    out.reverse()
 
-        if not next:
-            break
+    storage_address = get_algofi_storage_address(account)
+    logging.debug("AlgoFi storage address: %s", storage_address)
+    storage_txs = _get_address_transactions(storage_address)
+    out.extend([tx for tx in storage_txs if "inner-txns" in tx])
 
     num_tx = len(out)
+
     progress.set_estimate(num_tx)
     message = "Retrieved total {} txids...".format(num_tx)
     progress.report_message(message)
-
-    # Reverse the list so transactions are in chronological order
-    out.reverse()
 
     # Debugging only: when --debug flat set, write to cache file
     if localconfig.debug:
         with open(DEBUG_FILE, 'w') as f:
             json.dump(out, f, indent=4)
         logging.info("Wrote to %s for debugging", DEBUG_FILE)
+
+    return out
+
+
+def _get_address_transactions(address):
+    next = None
+    out = []
+
+    after_date = None
+    before_date = None
+    if localconfig.start_date:
+        after_date = datetime.date.fromisoformat(localconfig.start_date)
+    if localconfig.end_date:
+        before_date = datetime.date.fromisoformat(localconfig.end_date) + datetime.timedelta(days=1)
+
+    for i in range(_max_queries()):
+        transactions, next = indexer.get_transactions(
+            address, after_date, before_date, next)
+        out.extend(transactions)
+
+        if not next:
+            break
 
     return out
 

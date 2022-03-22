@@ -43,16 +43,17 @@ def parse_args(ticker):
         type=int,
         help="change to non-default max transactions limit",
     )
-    parser.add_argument(
-        "--after_date",
-        type=datetime.date.fromisoformat,
-        help="Include transactions after the given date",
-    )
-    parser.add_argument(
-        "--before_date",
-        type=datetime.date.fromisoformat,
-        help="Include transactions before the given date",
-    )
+    if ticker in (TICKER_ALGO):
+        parser.add_argument(
+            "--start_date",
+            type=str,
+            help="(YYYY-MM-DD) Include transactions after start date (inclusive)",
+        )
+        parser.add_argument(
+            "--end_date",
+            type=str,
+            help="(YYYY-MM-DD) Include transactions before end date (inclusive)",
+        )
     if ticker == TICKER_LUNA:
         parser.add_argument(
             "--minor_rewards",
@@ -87,10 +88,10 @@ def parse_args(ticker):
         options["cache"] = True
     if args.limit:
         options["limit"] = args.limit
-    if args.after_date:
-        options["after_date"] = args.after_date
-    if args.before_date:
-        options["before_date"] = args.before_date
+    if "start_date" in args and args.start_date:
+        options["start_date"] = args.start_date
+    if "end_date" in args and args.end_date:
+        options["end_date"] = args.end_date
     if "minor_rewards" in args and args.minor_rewards:
         options["minor_rewards"] = True
     if "lp_treatment" in args and args.lp_treatment:

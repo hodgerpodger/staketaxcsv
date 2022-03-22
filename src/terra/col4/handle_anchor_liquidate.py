@@ -1,11 +1,10 @@
 from terra import util_terra
 from terra.make_tx import (
-    make_liquidate_tx,
     make_submit_bid_tx,
     make_retract_bid_tx
 )
-from common.make_tx import make_repay_tx
 from terra.constants import CUR_UST
+from common.make_tx import make_liquidate_tx, make_repay_tx
 
 def handle_liquidate(exporter, elem, txinfo):
     wallet_address = txinfo.wallet_address

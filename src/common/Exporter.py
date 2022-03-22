@@ -96,6 +96,30 @@ class Exporter:
     def ingest_row(self, row):
         self.rows.append(row)
 
+    def ingest_csv(self, default_csv):
+        """ Loads default csv file into self.rows """
+        with open(default_csv, 'r') as f:
+            reader = csv.DictReader(f)
+            for i, row in enumerate(reader):
+                cur_row = Row(
+                    timestamp=row["timestamp"],
+                    tx_type=row["tx_type"],
+                    received_amount=row["received_amount"],
+                    received_currency=row["received_currency"],
+                    sent_amount=row["sent_amount"],
+                    sent_currency=row["sent_currency"],
+                    fee=row["fee"],
+                    fee_currency=row["fee_currency"],
+                    exchange=row["exchange"],
+                    wallet_address=row["wallet_address"],
+                    txid=row["txid"],
+                    url=row["url"],
+                    z_index=-i,
+                    comment=row["comment"],
+                )
+                self.ingest_row(cur_row)
+
+
     def sort_rows(self, reverse=True):
         if self.is_reverse != reverse:
             self.rows.sort(key=lambda row: (row.timestamp, row.z_index), reverse=reverse)
@@ -105,7 +129,7 @@ class Exporter:
         self.sort_rows(reverse=True)
         rows = filter(lambda row: row.tx_type in et.TX_TYPES_CSVEXPORT, self.rows)
 
-        if format == et.FORMAT_KOINLY:
+        if format in [et.FORMAT_KOINLY, et.FORMAT_COINPANDA]:
             return rows
 
         # For non-koinly CSVs, convert LP_DEPOSIT/LP_WITHDRAW into transfers/omit/trades
@@ -219,6 +243,8 @@ class Exporter:
             self.export_bitcointax_csv(csvpath)
         elif format == et.FORMAT_COINLEDGER:
             self.export_coinledger_csv(csvpath)
+        elif format == et.FORMAT_COINPANDA:
+            self.export_coinpanda_csv(csvpath)
         elif format == et.FORMAT_COINTRACKING:
             self.export_cointracking_csv(csvpath)
         elif format == et.FORMAT_COINTRACKER:
@@ -995,6 +1021,63 @@ class Exporter:
                 ]
                 mywriter.writerow(line)
 
+        logging.info("Wrote to %s", csvpath)
+
+    def export_coinpanda_csv(self, csvpath):
+        """ Writes CSV, suitable for import into bitcoin.tax """
+        labels = {
+            et.TX_TYPE_AIRDROP: "Airdrop",
+            et.TX_TYPE_STAKING: "Staking",
+            et.TX_TYPE_TRADE: "Swap",
+            et.TX_TYPE_TRANSFER: "",
+            et.TX_TYPE_INCOME: "Income",
+            et.TX_TYPE_SPEND: "Cost",
+            et.TX_TYPE_BORROW: "Receive Loan",
+            et.TX_TYPE_REPAY: "Repay Loan",
+            et.TX_TYPE_LP_DEPOSIT: "Liquidity in",
+            et.TX_TYPE_LP_WITHDRAW: "Liquidity out",
+        }
+
+        rows = self._rows_export(et.FORMAT_COINPANDA)
+
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
+            mywriter = csv.writer(f)
+
+            # header row
+            mywriter.writerow(et.CP_FIELDS)
+
+            # data rows
+            for row in rows:
+                # Determine Type
+                if row.sent_amount and row.received_amount:
+                    row_type = "Trade"
+                elif row.sent_amount:
+                    row_type = "Send"
+                elif row.received_amount:
+                    row_type = "Receive"
+                else:
+                    logging.critical("exporter_coinpanda_csv(): bad condition for row type %s", row.as_array())
+                    row_type = ""
+
+                # Determine Label
+                label = labels[row.tx_type]
+                if "nft" in row.comment:
+                    label = "NFT"
+
+                line = [
+                    row.timestamp,          # Date
+                    row_type,               # Type
+                    row.sent_amount,        # Sent Amount
+                    row.sent_currency,      # Sent Currency
+                    row.received_amount,    # Received Amount
+                    row.received_currency,  # Received Currency
+                    row.fee,                # Fee Amount
+                    row.fee_currency,       # Fee Currency
+                    label,                  # Label
+                    row.comment,            # Description
+                    row.txid,               # TxHash
+                ]
+                mywriter.writerow(line)
         logging.info("Wrote to %s", csvpath)
 
     def export_taxbit_csv(self, csvpath):
