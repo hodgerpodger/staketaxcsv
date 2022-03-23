@@ -9,6 +9,7 @@ COVALENT_NODE = os.environ.get("COVALENT_NODE", "https://api.covalenthq.com")
 FET_NODE = os.environ.get("FET_NODE", "https://rest-fetchhub.fetch.ai")
 HUAHUA_NODE = os.environ.get("HUAHUA_NODE", "")
 JUNO_NODE = os.environ.get("JUNO_NODE", "")
+STARS_NODE = os.environ.get("STARS_NODE", "")
 SOL_NODE = os.environ.get("SOL_NODE", "")
 TERRA_LCD_NODE = os.environ.get("TERRA_LCD_NODE", "")
 
@@ -24,6 +25,7 @@ TICKER_FET = "FET"
 TICKER_HUAHUA = "HUAHUA"
 TICKER_IOTEX = "IOTX"
 TICKER_JUNO = "JUNO"
+TICKER_STARS = "STARS"
 TICKER_LUNA = "LUNA"
 TICKER_OSMO = "OSMO"
 TICKER_SOL = "SOL"
@@ -35,6 +37,7 @@ DONATION_WALLETS = set([
     os.environ.get("DONATION_WALLET_HUAHUA", ""),
     os.environ.get("DONATION_WALLET_IOTX", ""),
     os.environ.get("DONATION_WALLET_JUNO", ""),
+    os.environ.get("DONATION_WALLET_STARS", ""),
     os.environ.get("DONATION_WALLET_LUNA", ""),
     os.environ.get("DONATION_WALLET_OSMO", ""),
     os.environ.get("DONATION_WALLET_SOL", ""),
