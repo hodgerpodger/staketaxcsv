@@ -4,7 +4,7 @@ from algosdk import encoding
 from algo import constants as co
 from algo.asset import Algo
 from algo.handle_simple import handle_participation_rewards, handle_unknown
-from algo.util_algo import get_transfer_asset
+from algo.util_algo import get_inner_transfer_asset, get_transfer_asset
 from common.make_tx import (
     make_borrow_tx,
     make_deposit_collateral_tx,
@@ -112,7 +112,7 @@ def is_algofi_transaction(group):
         return False
 
     app_transaction = group[-1]
-    if app_transaction["tx-type"] == "appl":
+    if app_transaction["tx-type"] == co.TRANSACTION_TYPE_APP_CALL:
         appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
         # Swap Exact For
         if ALGOFI_TRANSACTION_SWAP_EXACT_FOR in appl_args:
@@ -148,13 +148,13 @@ def is_algofi_transaction(group):
         return False
 
     app_transaction = group[0]
-    if app_transaction["tx-type"] == "appl":
+    if app_transaction["tx-type"] == co.TRANSACTION_TYPE_APP_CALL:
         appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
         if ALGOFI_TRANSACTION_FLASH_LOAN in appl_args:
             return True
 
     app_transaction = group[-2]
-    if app_transaction["tx-type"] == "appl":
+    if app_transaction["tx-type"] == co.TRANSACTION_TYPE_APP_CALL:
         appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
         if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
             return True
@@ -170,7 +170,7 @@ def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
     handle_participation_rewards(reward, exporter, txinfo)
 
     txtype = group[-1]["tx-type"]
-    if txtype == "appl":
+    if txtype == co.TRANSACTION_TYPE_APP_CALL:
         appl_args = group[-1][co.TRANSACTION_KEY_APP_CALL]["application-args"]
         if ALGOFI_TRANSACTION_SWAP_EXACT_FOR in appl_args or ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL in appl_args:
             return _handle_algofi_swap(group, exporter, txinfo)
@@ -188,13 +188,13 @@ def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
             return _handle_algofi_withdraw_collateral(group, exporter, txinfo)
 
     txtype = group[0]["tx-type"]
-    if txtype == "appl":
+    if txtype == co.TRANSACTION_TYPE_APP_CALL:
         appl_args = group[0][co.TRANSACTION_KEY_APP_CALL]["application-args"]
         if ALGOFI_TRANSACTION_FLASH_LOAN in appl_args:
             return _handle_algofi_flash_loan(group, exporter, txinfo)
 
     txtype = group[-2]["tx-type"]
-    if txtype == "appl":
+    if txtype == co.TRANSACTION_TYPE_APP_CALL:
         appl_args = group[-2][co.TRANSACTION_KEY_APP_CALL]["application-args"]
         if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
             return _handle_algofi_repay_borrow(group, exporter, txinfo)
@@ -205,44 +205,57 @@ def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
 
 
 def _handle_algofi_swap(group, exporter, txinfo, z_index=0):
+    txinfo.comment = "AlgoFi"
+    fee_amount = 0
     i = 0
     send_transaction = group[i]
-    fee_amount = send_transaction["fee"]
     txtype = send_transaction["tx-type"]
     # Opt-in transaction
     if (txtype == "axfer"
             and send_transaction["sender"] == send_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
-        i += 1
-        send_transaction = group[i]
         fee_amount += send_transaction["fee"]
-    send_asset = get_transfer_asset(send_transaction)
+        i += 1
 
-    i += 1
-    app_transaction = group[i]
-    fee_amount += app_transaction["fee"]
-    receive_transaction = app_transaction["inner-txns"][0]
-    receive_asset = get_transfer_asset(receive_transaction)
+    z_offset = 0
+    # Handle multiple swaps within the group (usual in triangular arbitrage)
+    length = len(group)
+    while i < length:
+        send_transaction = group[i]
+        txtype = send_transaction["tx-type"]
+        if txtype != co.TRANSACTION_TYPE_PAYMENT and txtype != co.TRANSACTION_TYPE_ASSET_TRANSFER:
+            break
 
-    if i + 1 < len(group):
         app_transaction = group[i + 1]
         txtype = app_transaction["tx-type"]
-        if txtype == "appl":
-            appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-            if ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL in appl_args:
-                i += 1
-                redeem_transaction = app_transaction["inner-txns"][0]
-                redeem_asset = get_transfer_asset(redeem_transaction)
+        if txtype != co.TRANSACTION_TYPE_APP_CALL:
+            break
+        appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+        if (ALGOFI_TRANSACTION_SWAP_EXACT_FOR not in appl_args
+                and ALGOFI_TRANSACTION_SWAP_FOR_EXACT not in appl_args):
+            break
+        fee_amount += send_transaction["fee"] + app_transaction["fee"]
+        send_asset = get_transfer_asset(send_transaction)
+        receive_asset = get_inner_transfer_asset(app_transaction)
+
+        if ALGOFI_TRANSACTION_SWAP_FOR_EXACT in appl_args:
+            app_transaction = group[i + 2]
+            fee_amount += app_transaction["fee"]
+            redeem_asset = get_inner_transfer_asset(app_transaction)
+            if redeem_asset is not None:
                 send_asset -= redeem_asset
+            i += 3
+        else:
+            i += 2
 
-    txinfo.comment = "AlgoFi"
-
-    row = make_swap_tx(
-        txinfo, send_asset.amount, send_asset.ticker,
-        receive_asset.amount, receive_asset.ticker,
-        z_index=z_index)
-    fee = Algo(fee_amount)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
+        row = make_swap_tx(
+            txinfo, send_asset.amount, send_asset.ticker,
+            receive_asset.amount, receive_asset.ticker,
+            z_index=z_index + z_offset)
+        z_offset += 1
+        fee = Algo(fee_amount)
+        row.fee = fee.amount
+        exporter.ingest_row(row)
+        fee_amount = 0
 
     return i
 
@@ -251,10 +264,12 @@ def _is_zap_transaction(group):
     i = 0
     txtype = group[i]["tx-type"]
     # Skip opt-in transaction
-    if txtype == "axfer" and group[i]["sender"] == group[i][co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]:
+    if (txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
+            and group[i]["sender"] == group[i][co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
         i += 1
 
-    return group[i]["tx-type"] == "axfer" and group[i + 1]["tx-type"] == "appl"
+    return (group[i]["tx-type"] == co.TRANSACTION_TYPE_ASSET_TRANSFER
+            and group[i + 1]["tx-type"] == co.TRANSACTION_TYPE_APP_CALL)
 
 
 def _handle_algofi_lp_add(group, exporter, txinfo):
@@ -281,23 +296,20 @@ def _handle_algofi_lp_add(group, exporter, txinfo):
     i += 1
     app_transaction = group[i]
     fee_amount += app_transaction["fee"]
-    receive_transaction = app_transaction["inner-txns"][0]
-    lp_asset = get_transfer_asset(receive_transaction)
+    lp_asset = get_inner_transfer_asset(app_transaction)
 
     i += 1
     app_transaction = group[i]
     fee_amount += app_transaction["fee"]
-    inner_transactions = app_transaction.get("inner-txns", [])
-    if len(inner_transactions) > 0:
-        redeem_asset_1 = get_transfer_asset(inner_transactions[0])
+    redeem_asset_1 = get_inner_transfer_asset(app_transaction)
+    if redeem_asset_1 is not None:
         send_asset_1 -= redeem_asset_1
 
     i += 1
     app_transaction = group[i]
     fee_amount += app_transaction["fee"]
-    inner_transactions = app_transaction.get("inner-txns", [])
-    if len(inner_transactions) > 0:
-        redeem_asset_2 = get_transfer_asset(inner_transactions[0])
+    redeem_asset_2 = get_inner_transfer_asset(app_transaction)
+    if redeem_asset_2 is not None:
         send_asset_2 -= redeem_asset_2
 
     lp_asset_currency = f"LP_{ALGOFI_AMM_SYMBOL}_{send_asset_1.ticker}_{send_asset_2.ticker}"
@@ -326,13 +338,11 @@ def _handle_algofi_lp_remove(group, exporter, txinfo):
 
     app_transaction = group[1]
     fee_amount += app_transaction["fee"]
-    receive_transaction = app_transaction["inner-txns"][0]
-    receive_asset_1 = get_transfer_asset(receive_transaction)
+    receive_asset_1 = get_inner_transfer_asset(app_transaction)
 
     app_transaction = group[2]
     fee_amount += app_transaction["fee"]
-    receive_transaction = app_transaction["inner-txns"][0]
-    receive_asset_2 = get_transfer_asset(receive_transaction)
+    receive_asset_2 = get_inner_transfer_asset(app_transaction)
 
     lp_asset_currency = f"LP_{ALGOFI_AMM_SYMBOL}_{receive_asset_1.ticker}_{receive_asset_2.ticker}"
 
@@ -379,8 +389,7 @@ def _handle_algofi_borrow(group, exporter, txinfo, z_index=0):
         fee_amount += transaction["fee"]
 
     app_transaction = group[-1]
-    receive_transaction = app_transaction["inner-txns"][0]
-    receive_asset = get_transfer_asset(receive_transaction)
+    receive_asset = get_inner_transfer_asset(app_transaction)
 
     fee = Algo(fee_amount)
     txinfo.comment = "AlgoFi"
@@ -401,15 +410,20 @@ def _handle_algofi_repay_borrow(group, exporter, txinfo, z_index=0):
     fee = Algo(fee_amount)
     txinfo.comment = "AlgoFi"
 
+    z_offset = 0
     app_transaction = group[-2]
-    if "inner-txns" in app_transaction:
-        interest_transaction = app_transaction["inner-txns"][0]
-        interest_asset = get_transfer_asset(interest_transaction)
-        row = make_spend_tx(txinfo, interest_asset.amount, interest_asset.ticker, z_index=z_index)
-        row.comment = "AlgoFi interest payment"
-        exporter.ingest_row(row)
+    txtype = app_transaction["tx-type"]
+    if txtype == co.TRANSACTION_TYPE_APP_CALL:
+        appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+        if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
+            interest_asset = get_inner_transfer_asset(app_transaction)
+            if interest_asset is not None:
+                row = make_spend_tx(txinfo, interest_asset.amount, interest_asset.ticker, z_index=z_index)
+                row.comment = "AlgoFi interest payment"
+                exporter.ingest_row(row)
+                z_offset = 1
 
-    row = make_repay_tx(txinfo, send_asset.amount, send_asset.ticker, z_index + 1)
+    row = make_repay_tx(txinfo, send_asset.amount, send_asset.ticker, z_index + z_offset)
     row.fee = fee.amount
     exporter.ingest_row(row)
 
@@ -425,12 +439,10 @@ def _handle_algofi_liquidate(wallet_address, group, exporter, txinfo):
         send_transaction = group[-2]
         send_asset = get_transfer_asset(send_transaction)
 
-        receive_transaction = app_transaction["inner-txns"][0]
-        receive_asset = get_transfer_asset(receive_transaction, UNDERLYING_ASSETS)
+        receive_asset = get_inner_transfer_asset(app_transaction, UNDERLYING_ASSETS)
         row = make_liquidate_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
     else:
-        repay_transaction = app_transaction["inner-txns"][0]
-        repay_asset = get_transfer_asset(repay_transaction, UNDERLYING_ASSETS)
+        repay_asset = get_inner_transfer_asset(app_transaction, UNDERLYING_ASSETS)
         row = make_repay_tx(txinfo, repay_asset.amount, repay_asset.ticker)
 
     txinfo.comment = "AlgoFi liquidation"
@@ -473,8 +485,7 @@ def _handle_algofi_withdraw_collateral(group, exporter, txinfo):
         fee_amount += transaction["fee"]
 
     app_transaction = group[-1]
-    receive_transaction = app_transaction["inner-txns"][0]
-    receive_asset = get_transfer_asset(receive_transaction)
+    receive_asset = get_inner_transfer_asset(app_transaction)
 
     app_transaction = group[-2]
     app_id = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
