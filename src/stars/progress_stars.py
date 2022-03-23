@@ -1,10 +1,10 @@
-from stargaze.config_stargaze import localconfig
+from stars.config_stars import localconfig
 from common.progress import Progress
 
 SECONDS_PER_PAGE = 4
 
 
-class ProgressStargaze(Progress):
+class ProgressStars(Progress):
 
     def __init__(self):
         super().__init__(localconfig)

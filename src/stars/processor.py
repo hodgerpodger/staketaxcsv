@@ -1,11 +1,11 @@
 import logging
 import common.ibc.processor
-import stargaze.constants as co
+import stars.constants as co
 import common.ibc.processor
 import common.ibc.handle
-from stargaze.config_stargaze import localconfig
-from settings_csv import STARGAZE_NODE
-from stargaze.handle import handle_airdrop
+from stars.config_stars import localconfig
+from settings_csv import STARS_NODE
+from stars.handle import handle_airdrop
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -15,7 +15,7 @@ def process_txs(wallet_address, elems, exporter):
 
 def process_tx(wallet_address, elem, exporter):
     txinfo = common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_STARGAZE, co.EXCHANGE_STARGAZE, localconfig.ibc_addresses, STARGAZE_NODE)
+        wallet_address, elem, co.MINTSCAN_LABEL_STARS, co.EXCHANGE_STARS, localconfig.ibc_addresses, STARS_NODE)
 
     for msginfo in txinfo.msgs:
         result = common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)
