@@ -31,13 +31,7 @@ def handle_swap(exporter, elem, txinfo):
 
 
 def handle_execute_swap_operations(exporter, elem, txinfo):
-    logs = elem["logs"]
-
-    if "coin_received" in logs[0]["events_by_type"]:
-        _handle_swap(exporter, elem, txinfo)
-    else:
-        # older version of data
-        _parse_swap_operations(exporter, elem, txinfo)
+    _parse_swap_operations(exporter, elem, txinfo)
 
 
 def _handle_swap(exporter, elem, txinfo):
