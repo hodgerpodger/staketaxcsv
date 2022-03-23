@@ -31,8 +31,12 @@ def handle_swap(exporter, elem, txinfo):
 
 
 def handle_execute_swap_operations(exporter, elem, txinfo):
-    _parse_swap_operations(exporter, elem, txinfo)
-
+    try:
+        # Use older version if data available
+        _parse_swap_operations(exporter, elem, txinfo)
+    except Exception as e:
+        # Fallback to using newer version
+        _handle_swap(exporter, elem, txinfo)
 
 def _handle_swap(exporter, elem, txinfo):
     txid = txinfo.txid
