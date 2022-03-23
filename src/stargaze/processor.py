@@ -5,6 +5,7 @@ import common.ibc.processor
 import common.ibc.handle
 from stargaze.config_stargaze import localconfig
 from settings_csv import STARGAZE_NODE
+from stargaze.handle import handle_airdrop
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -20,6 +21,11 @@ def process_tx(wallet_address, elem, exporter):
         result = common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)
         if result:
             continue
+
+        if msginfo.msg_type == 'MsgInitialClaim':
+            result_airdrop = handle_airdrop(exporter, txinfo, msginfo)
+            if result_airdrop:
+                continue
 
         common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
