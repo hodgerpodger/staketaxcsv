@@ -14,11 +14,11 @@ WAGMISWAP_TRANSACTION_LP_REMOVE = "d2l0aGRyYXc="         # "withdraw"
 
 def is_wagmiswap_transaction(group):
     length = len(group)
-    if length < 2 or length > 4:
+    if length < 2:
         return False
 
     last_tx = group[-1]
-    if last_tx["tx-type"] != "appl":
+    if last_tx["tx-type"] != co.TRANSACTION_TYPE_APP_CALL:
         return False
 
     appl_args = last_tx[co.TRANSACTION_KEY_APP_CALL]["application-args"]
