@@ -316,6 +316,19 @@ def _lookup_address(addr, txid):
     elif "terraswap_factory" in init_msg:
         localconfig.currency_addresses[addr] = None
         return None
+    elif "pool" in init_msg:
+        pool_addr = init_msg["pool"]
+
+        if pool_addr == "terra1fmnedmd3732gwyyj47r5p03055mygce98dpte2":
+            currency = 'bPSI-DP-24m'
+            decimals = 6
+            localconfig.currency_addresses[addr] = currency
+            localconfig.decimals[currency] = decimals
+
+            logging.info("Found symbol=%s decimals=%s", currency, decimals)
+            return currency
+        else:
+            raise Exception("Unable to determine currency/swap pair for addr=%s, txid=%s", addr, txid)
     else:
         localconfig.currency_addresses[addr] = ""
         raise Exception("Unable to determine currency/swap pair for addr=%s, txid=%s", addr, txid)
