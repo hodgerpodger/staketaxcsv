@@ -13,6 +13,8 @@ from common.make_tx import make_reward_tx, make_transfer_in_tx, make_transfer_ou
 # Algostake escrow wallet: https://algostake.org/litepaper
 ADDRESS_ALGOSTAKE_ESCROW = "4ZK3UPFRJ643ETWSWZ4YJXH3LQTL2FUEI6CIT7HEOVZL6JOECVRMPP34CY"
 
+ADDRESS_ALGOMINT = "ETGSQKACKC56JWGMDAEP5S2JVQWRKTQUVKCZTMPNUGZLDVCWPY63LSI3H4"
+
 
 def is_governance_reward_transaction(wallet_address, group):
     if len(group) != 1:
@@ -116,6 +118,8 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
                     row.comment = "Tinyman"
                 else:
                     row = make_transfer_in_tx(txinfo, amount, amount.ticker)
+                    if txsender == ADDRESS_ALGOMINT:
+                        row.comment = "Algomint"
                 fee = Algo(fee_amount)
                 row.fee = fee.amount
             exporter.ingest_row(row)
@@ -140,6 +144,8 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
 
             if not send_amount.zero():
                 row = make_transfer_out_tx(txinfo, send_amount, send_amount.ticker, txreceiver)
+                if txreceiver == ADDRESS_ALGOMINT:
+                    row.comment = "Algomint"
                 fee = Algo(transaction["fee"])
                 row.fee = fee.amount
                 exporter.ingest_row(row)
