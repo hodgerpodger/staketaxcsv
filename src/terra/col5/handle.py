@@ -3,6 +3,7 @@ from common.make_tx import make_spend_tx
 from terra.col5.contracts.config import CONTRACTS
 import terra.col5.contracts.astroport
 import terra.col5.contracts.wormhole
+import terra.col5.contracts.terraswap_route_swap
 
 
 
