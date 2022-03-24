@@ -439,6 +439,7 @@ def _events_with_action(elem, event_type, action):
                 events.append(event)
     return events
 
+
 def _event_from_log(elem, event_type):
     logs = elem["logs"]
     for log in logs:
@@ -447,6 +448,7 @@ def _event_from_log(elem, event_type):
             return event
 
     return None
+
 
 def _ingest_rows(exporter, rows, comment=None):
     for i, row in enumerate(rows):

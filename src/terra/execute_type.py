@@ -74,6 +74,7 @@ EXECUTE_TYPE_INCREASE_LOCKUP = "increase_lockup"
 EXECUTE_TYPE_UNSTAKE_AND_CLAIM = "unstake_and_claim"
 EXECUTE_TYPE_SUBMIT_ORDER = "submit_order"
 
+
 def _execute_type(elem, txinfo, index=0):
     txid = txinfo.txid
     execute_msg = util_terra._execute_msg(elem, index)

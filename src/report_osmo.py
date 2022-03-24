@@ -79,8 +79,6 @@ def _pages(wallet_address):
     return pages
 
 
-
-
 def txhistory(wallet_address, options):
     # Configure localconfig based on options
     _read_options(options)
@@ -123,7 +121,6 @@ def _cache_push(cache):
     cache.set_osmo_exponents(localconfig.exponents)
 
     logging.info("_cache_push(): push data to cache")
-
 
 
 def _remove_dups(elems, txids_seen):

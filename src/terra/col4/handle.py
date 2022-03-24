@@ -81,7 +81,6 @@ def handle(exporter, elem, txinfo):
         if execute_type == ex.EXECUTE_TYPE_SUBMIT_ORDER:
             return handle_mirror.handle_submit_limit_order(exporter, elem, txinfo)
 
-
     # ########## Handle by execute_msg data keys ######################################
 
     # General

@@ -38,6 +38,7 @@ def handle_execute_swap_operations(exporter, elem, txinfo):
         # Fallback to using newer version
         _handle_swap(exporter, elem, txinfo)
 
+
 def _handle_swap(exporter, elem, txinfo):
     txid = txinfo.txid
     logs = elem["logs"]
