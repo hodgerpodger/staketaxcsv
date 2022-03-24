@@ -5,8 +5,6 @@ from common.ExporterTypes import (
     TX_TYPE_SOL_LP_WITHDRAW,
     TX_TYPE_SOL_REWARD_ZERO,
     TX_TYPE_SOL_SERUM_DEX,
-    TX_TYPE_SOL_STAKE,
-    TX_TYPE_SOL_UNSTAKE,
     TX_TYPE_STAKING,
 )
 from common.make_tx import _make_tx_exchange, _make_tx_received, _make_tx_sent, make_simple_tx
@@ -47,14 +45,6 @@ def make_lp_farm_tx(txinfo, lp_amount, lp_currency, received_amount, received_cu
                     z_index=0):
     return _make_tx_exchange(txinfo, lp_amount, lp_currency, received_amount, received_currency, TX_TYPE_SOL_LP_FARM,
                              txid, empty_fee, z_index=z_index)
-
-
-def make_stake_tx(txinfo, lp_amount, lp_currency, empty_fee=False, z_index=0):
-    return _make_tx_sent(txinfo, lp_amount, lp_currency, TX_TYPE_SOL_STAKE, empty_fee=empty_fee, z_index=z_index)
-
-
-def make_unstake_tx(txinfo, lp_amount, lp_currency, empty_fee=False, z_index=0):
-    return _make_tx_received(txinfo, lp_amount, lp_currency, TX_TYPE_SOL_UNSTAKE, empty_fee=empty_fee, z_index=z_index)
 
 
 def make_reward_zero_tx(txinfo):
