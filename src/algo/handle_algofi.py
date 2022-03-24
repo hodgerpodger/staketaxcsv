@@ -98,7 +98,7 @@ def get_algofi_storage_address(account):
     app_local_state = account.get("apps-local-state", [])
     for app in app_local_state:
         if app["id"] == APPLICATION_ID_ALGOFI_LENDING_MANAGER:
-            for keyvalue in app["key-value"]:
+            for keyvalue in app.get("key-value", []):
                 if keyvalue["key"] == ALGOFI_MANAGER_USER_STORAGE_ACCOUNT:
                     raw_address = keyvalue["value"]["bytes"]
                     return encoding.encode_address(base64.b64decode(raw_address.strip()))
