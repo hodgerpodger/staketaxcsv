@@ -27,3 +27,13 @@ def get_transfer_asset(transaction, asset_map={}):
         asset_id = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
 
     return Asset(asset_map.get(asset_id, asset_id), amount)
+
+
+def get_inner_transfer_asset(transaction, asset_map={}):
+    inner_transactions = transaction.get("inner-txns", [])
+    for transaction in inner_transactions:
+        txtype = transaction["tx-type"]
+        if txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER or txtype == co.TRANSACTION_TYPE_PAYMENT:
+            return get_transfer_asset(transaction, asset_map)
+
+    return None

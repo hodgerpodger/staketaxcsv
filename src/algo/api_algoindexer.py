@@ -59,7 +59,7 @@ class AlgoIndexerAPI:
 
     def get_transactions_by_group(self, group_id):
         endpoint = "v2/transactions"
-        params = {"group-id": urllib.parse.quote(group_id)}
+        params = {"group-id": group_id}
 
         data, status_code = self._query(ALGO_HIST_INDEXER_NODE, endpoint, params)
 
