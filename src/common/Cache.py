@@ -60,12 +60,18 @@ class Cache:
         return self._get(FIELD_SOL_BLOCKS)
 
     def set_terra_currency_addresses(self, data):
+        # Remove entries where no symbol was found
+        data = {k: v for k, v in data.items() if v}
+
         return self._set_merge(FIELD_TERRA_CURRENCY_ADDRESSES, data)
 
     def get_terra_currency_addresses(self):
         return self._get(FIELD_TERRA_CURRENCY_ADDRESSES)
 
     def set_terra_lp_currency_addresses(self, data):
+        # Remove entries where no symbol was found
+        data = {k: v for k, v in data.items() if v}
+
         return self._set_merge(FIELD_TERRA_LP_CURRENCY_ADDRESSES, data)
 
     def get_terra_lp_currency_addresses(self):
