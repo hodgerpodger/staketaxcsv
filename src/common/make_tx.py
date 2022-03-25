@@ -9,12 +9,14 @@ from common.ExporterTypes import (
     TX_TYPE_REPAY,
     TX_TYPE_SOL_TRANSFER_SELF,
     TX_TYPE_SPEND,
+    TX_TYPE_STAKE,
     TX_TYPE_STAKING,
     TX_TYPE_TRADE,
     TX_TYPE_TRANSFER,
     TX_TYPE_UNKNOWN,
     TX_TYPE_LP_DEPOSIT,
     TX_TYPE_LP_WITHDRAW,
+    TX_TYPE_UNSTAKE,
     TX_TYPE_WITHDRAW_COLLATERAL,
 )
 from settings_csv import DONATION_WALLETS
@@ -94,6 +96,14 @@ def make_lp_stake_tx(txinfo, lp_amount, lp_currency, empty_fee=False, z_index=0)
 
 def make_lp_unstake_tx(txinfo, lp_amount, lp_currency):
     return _make_tx_received(txinfo, lp_amount, lp_currency, TX_TYPE_LP_UNSTAKE)
+
+
+def make_stake_tx(txinfo, lp_amount, lp_currency, empty_fee=False, z_index=0):
+    return _make_tx_sent(txinfo, lp_amount, lp_currency, TX_TYPE_STAKE, empty_fee=empty_fee, z_index=z_index)
+
+
+def make_unstake_tx(txinfo, lp_amount, lp_currency, empty_fee=False, z_index=0):
+    return _make_tx_received(txinfo, lp_amount, lp_currency, TX_TYPE_UNSTAKE, empty_fee=empty_fee, z_index=z_index)
 
 
 def make_deposit_collateral_tx(txinfo, sent_amount, sent_currency, z_index=0):

@@ -1,8 +1,8 @@
 from algo import constants as co
 from algo.asset import Algo, Asset
-from algo.handle_simple import handle_participation_rewards
-from algo.util_algo import get_transfer_asset
-from common.make_tx import make_reward_tx
+from algo.handle_simple import handle_participation_rewards, handle_unknown
+from algo.util_algo import get_inner_transfer_asset, get_transfer_asset
+from common.make_tx import make_reward_tx, make_stake_tx, make_unstake_tx
 
 APPLICATION_ID_YIELDLY = 233725848
 APPLICATION_ID_YIELDLY_NLL = 233725844
@@ -126,6 +126,10 @@ YIELDLY_TRANSACTION_POOL_CLAIM = "Q0E="         # "CA"
 YIELDLY_TRANSACTION_POOL_CLOSE = "Q0FX"         # "CAW"
 YIELDLY_TRANSACTION_POOL_BAIL = "YmFpbA=="      # "bail"
 YIELDLY_TRANSACTION_POOL_CLAIM_T5 = "Y2xhaW0="  # "claim"
+YIELDLY_TRANSACTION_POOL_STAKE_T5 = "c3Rha2U="  # "stake"
+YIELDLY_TRANSACTION_POOL_WITHDRAW_T5 = "d2l0aGRyYXc="  # "withdraw"
+YIELDLY_TRANSACTION_POOL_STAKE = "Uw=="         # "S"
+YIELDLY_TRANSACTION_POOL_WITHDRAW = "Vw=="      # "W"
 
 
 def is_yieldly_transaction(group):
@@ -133,10 +137,10 @@ def is_yieldly_transaction(group):
     if length < 2 or length > 6:
         return False
 
-    if group[0]["tx-type"] != "appl":
+    if group[0]["tx-type"] != co.TRANSACTION_TYPE_APP_CALL:
         return False
 
-    if group[1]["tx-type"] == "appl":
+    if group[1]["tx-type"] == co.TRANSACTION_TYPE_APP_CALL:
         app_id = group[1][co.TRANSACTION_KEY_APP_CALL]["application-id"]
     else:
         app_id = group[0][co.TRANSACTION_KEY_APP_CALL]["application-id"]
@@ -152,15 +156,15 @@ def handle_yieldly_transaction(group, exporter, txinfo):
     app_transaction = group[1]
     txtype = app_transaction["tx-type"]
     if txtype == co.TRANSACTION_TYPE_APP_CALL:
-        app_id = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
         appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
         if YIELDLY_TRANSACTION_POOL_CLAIM in appl_args:
+            app_id = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
             if app_id == APPLICATION_ID_YIELDLY_NLL:
-                _handle_yieldly_nll(group, exporter, txinfo)
+                return _handle_yieldly_nll(group, exporter, txinfo)
             elif app_id == APPLICATION_ID_YIELDLY_YLDY_ALGO_POOL:
-                _handle_yieldly_algo_pool_claim(group, exporter, txinfo)
+                return _handle_yieldly_algo_pool_claim(group, exporter, txinfo)
             elif app_id in YIELDLY_APPLICATIONS:
-                _handle_yieldly_asa_pool_claim(group, exporter, txinfo)
+                return _handle_yieldly_asa_pool_claim(group, exporter, txinfo)
         elif YIELDLY_TRANSACTION_POOL_CLOSE in appl_args:
             # Claims and legacy closeouts are handled the same way
             _handle_yieldly_asa_pool_claim(group, exporter, txinfo)
@@ -170,12 +174,24 @@ def handle_yieldly_transaction(group, exporter, txinfo):
             if (app_transaction[co.TRANSACTION_KEY_APP_CALL]["on-completion"] == "closeout"
                     and "inner-txns" in app_transaction
                     and len(app_transaction["inner-txns"]) == 2):
-                _handle_yieldly_asa_pool_close(group, exporter, txinfo)
+                return _handle_yieldly_asa_pool_close(group, exporter, txinfo)
             elif YIELDLY_TRANSACTION_POOL_CLAIM_T5 in appl_args:
-                _handle_yieldly_teal5_pool_claim(group, exporter, txinfo)
-    else:
-        # Ignore stake transactions
-        pass
+                return _handle_yieldly_t5_pool_claim(group, exporter, txinfo)
+            elif YIELDLY_TRANSACTION_POOL_WITHDRAW_T5 in appl_args:
+                return _handle_yieldly_t5_pool_withdraw(group, exporter, txinfo)
+        elif YIELDLY_TRANSACTION_POOL_STAKE in appl_args:
+            return _handle_yieldly_pool_stake(group, exporter, txinfo)
+        elif YIELDLY_TRANSACTION_POOL_WITHDRAW in appl_args:
+            return _handle_yieldly_pool_withdraw(group, exporter, txinfo)
+
+    app_transaction = group[0]
+    txtype = app_transaction["tx-type"]
+    if txtype == co.TRANSACTION_TYPE_APP_CALL:
+        appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+        if YIELDLY_TRANSACTION_POOL_STAKE_T5 in appl_args:
+            return _handle_yieldly_t5_pool_stake(group, exporter, txinfo)
+
+    return handle_unknown(exporter, txinfo)
 
 
 def _handle_yieldly_nll(group, exporter, txinfo):
@@ -183,9 +199,8 @@ def _handle_yieldly_nll(group, exporter, txinfo):
     app_transaction = group[1]
     fee_amount = init_transaction["fee"] + app_transaction["fee"]
 
-    asset_transaction = group[2]
-    transfer_details = asset_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]
-    reward = Asset(transfer_details["asset-id"], transfer_details["amount"])
+    receive_transaction = group[2]
+    reward = get_transfer_asset(receive_transaction)
 
     fee_transaction = group[3]
     fee_amount += fee_transaction["fee"] + fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"]
@@ -207,12 +222,10 @@ def _handle_yieldly_algo_pool_claim(group, exporter, txinfo):
     fee_amount += app_transaction["fee"]
 
     axfer_transaction = group[3]
-    transfer_details = axfer_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]
-    yldy_reward = Asset(transfer_details["asset-id"], transfer_details["amount"])
+    yldy_reward = get_transfer_asset(axfer_transaction)
 
     pay_transaction = group[4]
-    transfer_details = pay_transaction[co.TRANSACTION_KEY_PAYMENT]
-    algo_reward = Algo(transfer_details["amount"])
+    algo_reward = get_transfer_asset(pay_transaction)
 
     fee_transaction = group[5]
     fee_amount = fee_transaction["fee"] + fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"]
@@ -235,9 +248,8 @@ def _handle_yieldly_asa_pool_claim(group, exporter, txinfo):
     app_transaction = group[1]
     fee_amount = init_transaction["fee"] + app_transaction["fee"]
 
-    asset_transaction = group[2]
-    transfer_details = asset_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]
-    reward = Asset(transfer_details["asset-id"], transfer_details["amount"])
+    receive_transaction = group[2]
+    reward = get_transfer_asset(receive_transaction)
 
     if not reward.zero():
         fee = Algo(fee_amount)
@@ -259,9 +271,8 @@ def _handle_yieldly_asa_pool_close(group, exporter, txinfo):
 
     # First inner transaction is a deposit withdraw
     # Second inner transaction is pending rewards claim
-    asset_transaction = app_transaction["inner-txns"][1]
-    transfer_details = asset_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]
-    reward = Asset(transfer_details["asset-id"], transfer_details["amount"])
+    rewards_transaction = app_transaction["inner-txns"][1]
+    reward = get_transfer_asset(rewards_transaction)
 
     if not reward.zero():
         fee = Algo(fee_amount)
@@ -272,7 +283,7 @@ def _handle_yieldly_asa_pool_close(group, exporter, txinfo):
         exporter.ingest_row(row)
 
 
-def _handle_yieldly_teal5_pool_claim(group, exporter, txinfo):
+def _handle_yieldly_t5_pool_claim(group, exporter, txinfo):
     fee_amount = 0
     for transaction in group:
         fee_amount += transaction["fee"]
@@ -290,3 +301,67 @@ def _handle_yieldly_teal5_pool_claim(group, exporter, txinfo):
                 row = make_reward_tx(txinfo, reward, reward.ticker)
                 row.fee = fee.amount
                 exporter.ingest_row(row)
+
+
+def _handle_yieldly_pool_stake(group, exporter, txinfo):
+    fee_amount = 0
+    for transaction in group:
+        fee_amount += transaction["fee"]
+
+    send_transaction = group[2]
+    send_asset = get_transfer_asset(send_transaction)
+
+    fee = Algo(fee_amount)
+    txinfo.comment = "Yieldly Stake"
+
+    row = make_stake_tx(txinfo, send_asset.amount, send_asset.ticker)
+    row.fee = fee.amount
+    exporter.ingest_row(row)
+
+
+def _handle_yieldly_pool_withdraw(group, exporter, txinfo):
+    init_transaction = group[0]
+    app_transaction = group[1]
+    fee_amount = init_transaction["fee"] + app_transaction["fee"]
+
+    receive_transaction = group[2]
+    receive_asset = get_transfer_asset(receive_transaction)
+
+    fee = Algo(fee_amount)
+    txinfo.comment = "Yieldly Withdraw"
+
+    row = make_unstake_tx(txinfo, receive_asset.amount, receive_asset.ticker)
+    row.fee = fee.amount
+    exporter.ingest_row(row)
+
+
+def _handle_yieldly_t5_pool_stake(group, exporter, txinfo):
+    fee_amount = 0
+    for transaction in group:
+        fee_amount += transaction["fee"]
+
+    send_transaction = group[1]
+    send_asset = get_transfer_asset(send_transaction)
+
+    fee = Algo(fee_amount)
+    txinfo.comment = "Yieldly Stake"
+
+    row = make_stake_tx(txinfo, send_asset.amount, send_asset.ticker)
+    row.fee = fee.amount
+    exporter.ingest_row(row)
+
+
+def _handle_yieldly_t5_pool_withdraw(group, exporter, txinfo):
+    fee_amount = 0
+    for transaction in group:
+        fee_amount += transaction["fee"]
+
+    app_transaction = group[0]
+    receive_asset = get_inner_transfer_asset(app_transaction)
+
+    fee = Algo(fee_amount)
+    txinfo.comment = "Yieldly Withdraw"
+
+    row = make_unstake_tx(txinfo, receive_asset.amount, receive_asset.ticker)
+    row.fee = fee.amount
+    exporter.ingest_row(row)
