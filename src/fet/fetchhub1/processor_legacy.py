@@ -49,7 +49,7 @@ def _decode(elem):
 
 
 def _decode_tx(tx):
-    """ naive way to decode tendermint tx without correct codec """
+    """ Naive way to decode tendermint tx without correct codec. """
     s = base64.b64decode(tx)
     return s
 

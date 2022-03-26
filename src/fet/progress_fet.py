@@ -2,7 +2,7 @@ from fet.config_fet import localconfig
 from common.progress import Progress
 
 SECONDS_PER_PAGE = 3
-SECONDS_PER_TX_RPC = 0.3
+SECONDS_PER_TX_RPC = 0.55
 
 
 class ProgressFet(Progress):
