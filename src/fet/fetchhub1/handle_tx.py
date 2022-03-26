@@ -19,7 +19,8 @@ def handle_tx(exporter, txinfo):
 
         # staking rewards
         elif msg_type in (co2.ACTION_TYPE_DELEGATE, co2.ACTION_TYPE_WITHDRAW_DELEGATOR_REWARD,
-                          co2.ACTION_TYPE_UNDELEGATE, co2.ACTION_TYPE_WITHDRAW_VALIDATOR_COMMISSION):
+                          co2.ACTION_TYPE_UNDELEGATE, co2.ACTION_TYPE_WITHDRAW_VALIDATOR_COMMISSION,
+                          co2.ACTION_TYPE_REDELEGATE):
             result = _handle_staking(exporter, txinfo, msginfo)
 
         # transfers
