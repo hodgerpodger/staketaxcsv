@@ -98,7 +98,7 @@ def _handle_message(exporter, txinfo, msginfo):
         osmo.handle_unknown.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
         if localconfig.debug:
-            raise(e)
+            raise e
 
     return txinfo
 

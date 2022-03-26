@@ -245,7 +245,6 @@ def _amounts(amounts_string):
 
 def _amount(amount_string):
     # Example input: '50674299uusd'
-
     amounts = _extract_amounts(amount_string)
 
     currency = list(amounts.keys())[0]

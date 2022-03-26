@@ -7,6 +7,7 @@ ALGO_INDEXER_NODE = os.environ.get("ALGO_INDEXER_NODE", "https://algoindexer.alg
 ATOM_NODE = os.environ.get("ATOM_NODE", "")
 COVALENT_NODE = os.environ.get("COVALENT_NODE", "https://api.covalenthq.com")
 FET_NODE = os.environ.get("FET_NODE", "https://rest-fetchhub.fetch.ai")
+
 HUAHUA_NODE = os.environ.get("HUAHUA_NODE", "")
 JUNO_NODE = os.environ.get("JUNO_NODE", "")
 STARS_NODE = os.environ.get("STARS_NODE", "")

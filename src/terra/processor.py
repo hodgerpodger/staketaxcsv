@@ -4,7 +4,7 @@ from datetime import datetime
 import terra.execute_type as ex
 from common.ErrorCounter import ErrorCounter
 from common.ExporterTypes import TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN, TX_TYPE_VOTE
-from common.make_tx import make_just_fee_tx
+from common.make_tx import make_spend_fee_tx
 from terra.TxInfoTerra import TxInfoTerra, MsgInfo
 from terra import util_terra
 from terra.config_terra import localconfig
@@ -15,6 +15,7 @@ from terra.col4.handle_reward import handle_reward
 from terra.col4.handle_transfer import handle_transfer, handle_multi_transfer, handle_ibc_transfer
 import terra.col4.handle
 import terra.col5.handle
+from common.ibc.MsgInfoIBC import MsgInfoIBC
 
 # execute_type -> tx_type mapping for generic transactions with no tax details
 EXECUTE_TYPES_SIMPLE = {
@@ -96,7 +97,7 @@ def _txinfo(exporter, elem, wallet_address):
             pass
         else:
             for cur_fee, cur_currency in more_fees:
-                row = make_just_fee_tx(txinfo, cur_fee, cur_currency)
+                row = make_spend_fee_tx(txinfo, cur_fee, cur_currency)
                 row.comment = "multicurrency fee"
                 exporter.ingest_row(row)
 
@@ -178,32 +179,4 @@ def _msgs(elem, wallet_address):
 
 
 def _actions(log):
-    events = log["events"]
-    for event in events:
-        attributes, event_type = event["attributes"], event["type"]
-
-        if event_type == "wasm":
-            actions = []
-            action = {}
-
-            for kv in attributes:
-                k, v = kv["key"], kv["value"]
-
-                if k == "contract_address":
-                    # reached beginning of next action
-
-                    # add previous action to list
-                    if len(action):
-                        actions.append(action)
-
-                    # start new action
-                    action = {}
-                    action["contract_address"] = v
-                else:
-                    action[k] = v
-
-            if len(action):
-                actions.append(action)
-            return actions
-
-    return []
+    return MsgInfoIBC.wasm(log)

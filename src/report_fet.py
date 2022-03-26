@@ -1,10 +1,7 @@
 """
 usage: python3 report_fet.py <walletaddress> [--format all|cointracking|koinly|..]
 
-Prints transactions and writes CSV(s) to _reports/HUAHUA*.csv
-
-TODO: fetchhub-2 transactions
-  * requires significant work with querying/parsing legacy rpc api data.
+Prints transactions and writes CSV(s) to _reports/FET*.csv
 """
 
 import logging
@@ -17,8 +14,11 @@ from common.Cache import Cache
 from common.Exporter import Exporter
 from common.ExporterTypes import FORMAT_DEFAULT
 from settings_csv import TICKER_FET, FET_NODE
-import fet.processor
 import common.ibc.api_lcd
+from fet.fetchhub1.api_rpc import RpcAPI
+from fet.fetchhub1 import constants as co2
+import fet.processor
+import fet.fetchhub1.processor_legacy
 
 
 def main():
@@ -45,15 +45,42 @@ def wallet_exists(wallet_address):
 
 
 def txone(wallet_address, txid):
-    elem = common.ibc.api_lcd.LcdAPI(FET_NODE).get_tx(txid)
+    exporter = Exporter(wallet_address, localconfig, TICKER_FET)
+
+    elem, node = _query_tx(txid)
+    if not elem:
+        print("txone(): Unable to find txid={}".format(txid))
+        return exporter
+
+    txinfo = fet.processor.process_tx(wallet_address, elem, exporter, node)
 
     print("Transaction data:")
     pprint.pprint(elem)
-
-    exporter = Exporter(wallet_address, localconfig, TICKER_FET)
-    txinfo = fet.processor.process_tx(wallet_address, elem, exporter)
     txinfo.print()
+
     return exporter
+
+
+def _query_tx(txid):
+    # fetchhub-3
+    node = FET_NODE
+    elem = common.ibc.api_lcd.LcdAPI(node).get_tx(txid)
+    if elem:
+        return elem, node
+
+    # fetchhub-2
+    node = co2.FET_FETCHUB2_NODE
+    elem = common.ibc.api_lcd.LcdAPI(node).get_tx(txid)
+    if elem:
+        return elem, node
+
+    # fetchhub-1
+    node = co2.FET_FETCHUB1_NODE
+    elem = RpcAPI(node).tx(txid)
+    if elem:
+        return elem, node
+
+    return None, None
 
 
 def estimate_duration(wallet_address):
@@ -72,15 +99,38 @@ def txhistory(wallet_address, options):
     progress = ProgressFet()
     exporter = Exporter(wallet_address, localconfig, TICKER_FET)
 
-    # Fetch count of transactions to estimate progress more accurately
-    count_pages = common.ibc.api_lcd.get_txs_pages_count(FET_NODE, wallet_address, max_txs, debug=localconfig.debug)
-    progress.set_estimate(count_pages)
+    # Fetch count of pages/transactions to estimate progress more accurately
+    pages_fet1, txs_fet1 = fet.fetchhub1.api_rpc.get_txs_pages_count(
+        co2.FET_FETCHUB1_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    pages_fet2 = common.ibc.api_lcd.get_txs_pages_count(
+        co2.FET_FETCHUB2_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    pages_fet3 = common.ibc.api_lcd.get_txs_pages_count(
+        FET_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    progress.set_estimate_fet1(pages_fet1, txs_fet1)
+    progress.set_estimate_fet2(pages_fet2)
+    progress.set_estimate_fet3(pages_fet3)
 
-    # Fetch transactions
-    elems = common.ibc.api_lcd.get_txs_all(FET_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
+    # fetchhub1
+    elems_1 = fet.fetchhub1.api_rpc.get_txs_all(
+        co2.FET_FETCHUB1_NODE, wallet_address, progress, max_txs, debug=localconfig.debug,
+        stage_name=progress.STAGE_FET1_PAGES)
+    # Update to more accurate estimate after removing duplicates
+    progress.stages[progress.STAGE_FET1_TXS].total_tasks = len(elems_1)
+    progress.report_message(f"Processing {len(elems_1)} transactions for fetchhub-1... ")
+    fet.processor.process_txs(wallet_address, elems_1, exporter, co2.FET_FETCHUB1_NODE, progress)
 
-    progress.report_message(f"Processing {len(elems)} transactions... ")
-    fet.processor.process_txs(wallet_address, elems, exporter)
+    # fetchhub2
+    elems_2 = common.ibc.api_lcd.get_txs_all(
+        co2.FET_FETCHUB2_NODE, wallet_address, progress, max_txs, debug=localconfig.debug,
+        stage_name=progress.STAGE_FET2)
+    progress.report_message(f"Processing {len(elems_2)} transactions for fetchhub-2... ")
+    fet.processor.process_txs(wallet_address, elems_2, exporter, co2.FET_FETCHUB2_NODE)
+
+    # fetchhub3
+    elems_3 = common.ibc.api_lcd.get_txs_all(
+        FET_NODE, wallet_address, progress, max_txs, debug=localconfig.debug, stage_name=progress.STAGE_FET3)
+    progress.report_message(f"Processing {len(elems_3)} transactions for fetchhub-3... ")
+    fet.processor.process_txs(wallet_address, elems_3, exporter, FET_NODE)
 
     if localconfig.cache:
         Cache().set_ibc_addresses(localconfig.ibc_addresses)

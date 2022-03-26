@@ -1,6 +1,6 @@
 import logging
 
-from common.make_tx import make_reward_tx, make_spend_tx
+from common.make_tx import make_reward_tx, make_spend_fee_tx
 from terra import util_terra
 from terra.config_terra import localconfig
 from terra.constants import CUR_KRT, CUR_LUNA, CUR_UST
@@ -40,7 +40,7 @@ def handle_reward(exporter, elem, txinfo, msgtype):
         i += 1
 
     # Create row for spend fee
-    row = make_spend_tx(txinfo, txinfo.fee, txinfo.fee_currency)
+    row = make_spend_fee_tx(txinfo, txinfo.fee, txinfo.fee_currency)
     row.fee, row.fee_currency = "", ""
     row.z_index = -1
     if msgtype == "staking/MsgDelegate":

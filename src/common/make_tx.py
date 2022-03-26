@@ -45,8 +45,8 @@ def make_spend_tx(txinfo, sent_amount, sent_currency, z_index=0):
     return _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_SPEND, z_index=z_index)
 
 
-def make_just_fee_tx(txinfo, fee_amount, fee_currency):
-    return _make_tx_sent(txinfo, fee_amount, fee_currency, TX_TYPE_SPEND, empty_fee=True)
+def make_spend_fee_tx(txinfo, fee_amount, fee_currency, z_index=0):
+    return _make_tx_sent(txinfo, fee_amount, fee_currency, TX_TYPE_SPEND, z_index=z_index, empty_fee=True)
 
 
 def make_transfer_out_tx(txinfo, sent_amount, sent_currency, dest_address=None):
@@ -238,3 +238,24 @@ def _make_tx_exchange(txinfo, sent_amount, sent_currency, received_amount, recei
         comment=txinfo.comment
     )
     return row
+
+
+def ingest_rows(exporter, txinfo, rows):
+    """ Utility function to add multiple rows to CSV for single transaction. """
+    if len(rows) == 0:
+        # No transactions.  Just make a "spend fee" row.
+        if txinfo.fee:
+            row = make_spend_fee_tx(txinfo, txinfo.fee, txinfo.fee_currency)
+            row.comment = "tx fee"
+            rows.append(rows)
+    else:
+        for i, row in enumerate(rows):
+            # Apply transaction fee to first row's fee column only
+            if i == 0:
+                row.fee = txinfo.fee
+                row.fee_currency = txinfo.fee_currency
+            else:
+                row.fee = ""
+                row.fee_currency = ""
+
+            exporter.ingest_row(row)

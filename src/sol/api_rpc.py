@@ -231,7 +231,7 @@ class RpcAPI(object):
     def get_txids(cls, wallet_address, limit=None, before=None):
         data = cls._get_txids(wallet_address, limit, before)
 
-        if "result" not in data:
+        if "result" not in data or data["result"] is None:
             return [], None
 
         # Extract txids

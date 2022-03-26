@@ -5,7 +5,7 @@ from common.ExporterTypes import (
     TX_TYPE_SOL_STAKING_WITHDRAW,
     TX_TYPE_STAKING_DELEGATE,
 )
-from common.make_tx import make_simple_tx, make_unknown_tx, make_unknown_tx_with_transfer, make_spend_tx
+from common.make_tx import make_simple_tx, make_unknown_tx, make_unknown_tx_with_transfer, make_spend_fee_tx
 from sol.constants import (
     INSTRUCTION_TYPE_CREATE_ACCOUNT_WITH_SEED,
     INSTRUCTION_TYPE_DEACTIVATE,
@@ -58,7 +58,7 @@ def handle_unknown(exporter, txinfo):
 def _handle_generic(exporter, txinfo, tx_type):
     txinfo.fee = sol.util_sol.calculate_fee(txinfo)
 
-    row = make_spend_tx(txinfo, txinfo.fee, txinfo.fee_currency)
+    row = make_spend_fee_tx(txinfo, txinfo.fee, txinfo.fee_currency)
     row.fee = ""
     row.fee_currency = ""
     row.comment = "fee for {}".format(tx_type)
