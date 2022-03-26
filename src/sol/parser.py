@@ -45,7 +45,7 @@ def parse_tx(txid, data, wallet_info):
     ts = result["blockTime"]
     timestamp = datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S") if ts else ""
     fee = ""
-    instructions = data["result"]["transaction"]["message"]["instructions"]
+    instructions = data["result"]["transaction"]["message"].get("instructions", [])
 
     txinfo = TxInfoSol(txid, timestamp, fee, wallet_address)
 
@@ -56,7 +56,7 @@ def parse_tx(txid, data, wallet_info):
     txinfo.input_accounts = _input_accounts(instructions)
 
     txinfo.inner = _extract_inner_instructions(data)
-    txinfo.inner_parsed = _parsed(txinfo.inner)
+    txinfo.inner_parsed = _inner_parsed(txinfo.inner)
 
     txinfo.log_instructions, txinfo.log, txinfo.log_string = _log_messages(txid, data)
 
@@ -280,10 +280,10 @@ def _mints(data, wallet_address):
 
 def _extract_inner_instructions(data):
     if "innerInstructions" not in data["result"]["meta"]:
-        return None
+        return []
     inner_instructions = data["result"]["meta"]["innerInstructions"]
     if inner_instructions is None:
-        return None
+        return []
 
     out = []
     for instructions_dict in inner_instructions:
@@ -293,8 +293,10 @@ def _extract_inner_instructions(data):
     return out
 
 
-def _parsed(inner_instructions):
+def _inner_parsed(inner_instructions):
     out = {}
+    if not inner_instructions:
+        return out
 
     for elem in inner_instructions:
         if "parsed" in elem:
@@ -499,8 +501,10 @@ def _get_source_destination(currency, is_transfer_in, transfers_in, transfers_ou
 def _log_messages(txid, data):
     log_instructions = []
     log = []
-
     log_messages = data["result"]["meta"]["logMessages"]
+    if log_messages is None:
+        log_messages = []
+
     for line in log_messages:
         match = re.search("^Program log: Instruction: (.*)", line)
         if match:
