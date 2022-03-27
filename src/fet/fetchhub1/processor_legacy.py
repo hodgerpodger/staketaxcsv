@@ -9,6 +9,7 @@ from fet.fetchhub1.handle_tx import handle_tx
 import fet.handle_contract
 import common.ibc.handle
 from fet.config_fet import localconfig
+from fet.fetchhub1.get_fee import get_fee
 
 
 def process_tx_legacy(wallet_address, elem, exporter, node):
@@ -35,7 +36,6 @@ def process_tx_legacy(wallet_address, elem, exporter, node):
 def _decode(elem):
     """ Modifies transaction data with decoded version """
     elem["tx_result"]["log"] = eval(elem["tx_result"]["log"])
-    elem["tx"] = _decode_tx(elem["tx"])
 
     events = elem["tx_result"]["events"]
     for event in events:
@@ -48,17 +48,11 @@ def _decode(elem):
     return elem
 
 
-def _decode_tx(tx):
-    """ Naive way to decode tendermint tx without correct codec. """
-    s = base64.b64decode(tx)
-    return s
-
-
 def _txinfo(wallet_address, elem, node):
     txid = elem["hash"]
     height = elem["height"]
     timestamp = FetRpcAPI(node).block_time(height)
-    fee, fee_currency = _get_fee(elem)
+    fee = get_fee(elem)
 
     # Construct msgs: list of MsgInfoIBC objects
     msgs = []
@@ -72,10 +66,6 @@ def _txinfo(wallet_address, elem, node):
 
     txinfo = TxInfoFet(txid, timestamp, fee, wallet_address, msgs)
     return txinfo
-
-
-def _get_fee(elem):
-    return "", ""
 
 
 def _message(log):
