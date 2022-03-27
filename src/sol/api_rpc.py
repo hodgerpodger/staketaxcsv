@@ -237,7 +237,7 @@ class RpcAPI(object):
         # Extract txids
         out = []
         for info in data["result"]:
-            if info["err"] is not None:
+            if "signature" not in info:
                 continue
             if info["confirmationStatus"] != "finalized":
                 continue
