@@ -11,6 +11,11 @@ from common.debug_util import use_debug_files
 TXS_LIMIT_PER_QUERY = 50
 EVENTS_TYPE_SENDER = "sender"
 EVENTS_TYPE_RECIPIENT = "recipient"
+EVENTS_TYPE_SIGNER = "signer"
+EVENTS_TYPE_LIST_DEFAULT = [
+    EVENTS_TYPE_SENDER,
+    EVENTS_TYPE_RECIPIENT,
+]
 
 
 class LcdAPI:
@@ -59,6 +64,8 @@ class LcdAPI:
             query_params["events"] = f"message.sender='{wallet_address}'"
         elif events_type == EVENTS_TYPE_RECIPIENT:
             query_params["events"] = f"transfer.recipient='{wallet_address}'"
+        elif events_type == EVENTS_TYPE_SIGNER:
+            query_params["events"] = f"message.signer='{wallet_address}'"
         else:
             raise Exception("Add case for events_type: {}".format(events_type))
 
@@ -95,18 +102,19 @@ class LcdAPI:
 
 
 def get_txs_all(node, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, sleep_seconds=1,
-                debug=False, stage_name="default"):
+                debug=False, stage_name="default", events_types=None):
     LcdAPI.debug = debug
     api = LcdAPI(node)
+    events_types = events_types if events_types else EVENTS_TYPE_LIST_DEFAULT
     max_pages = math.ceil(max_txs / limit)
 
     out = []
     page_for_progress = 1
-    for events_type in (EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT):
+    for events_type in events_types:
         offset = 0
 
         for _ in range(0, max_pages):
-            message = f"Fetching page {page_for_progress} ..."
+            message = f"Fetching page {page_for_progress} for {events_type} ..."
             progress.report(page_for_progress, message, stage_name)
             page_for_progress += 1
 
@@ -135,24 +143,23 @@ def _remove_duplicates(elems):
     return out
 
 
-def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY, debug=False):
+def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY, debug=False,
+                        events_types=None):
     LcdAPI.debug = debug
     api = LcdAPI(node)
+    events_types = events_types if events_types else EVENTS_TYPE_LIST_DEFAULT
 
-    # Number of queries for events message.sender
-    _, _, txs_sender = api.get_txs(address, EVENTS_TYPE_SENDER, offset=0, limit=limit, sleep_seconds=0)
-    txs_sender = min(txs_sender, max_txs)
-    pages_sender = math.ceil(txs_sender / limit) if txs_sender else 1
+    total_pages = 0
+    for event_type in events_types:
+        # Number of queries for events message.sender
+        _, _, num_txs = api.get_txs(address, event_type, offset=0, limit=limit, sleep_seconds=0)
+        num_txs = min(num_txs, max_txs)
+        num_pages = math.ceil(num_txs / limit) if num_txs else 1
 
-    # Number of queries for events transfer.recipient
-    _, _, txs_receiver = api.get_txs(address, EVENTS_TYPE_RECIPIENT, offset=0, limit=limit, sleep_seconds=0)
-    txs_receiver = min(txs_receiver, max_txs)
-    pages_receiver = math.ceil(txs_receiver / limit) if txs_receiver else 1
+        logging.info("event_type: %s, num_txs: %s, num_pages: %s", event_type, num_txs, num_pages)
+        total_pages += num_pages
 
-    logging.info("pages_sender: %s pages_receiver: %s, count_sender_txs: %s, count_receiver_txs: %s",
-                 pages_sender, pages_receiver, txs_sender, txs_receiver)
-
-    return pages_sender + pages_receiver
+    return total_pages
 
 
 def get_ibc_ticker(node, ibc_address, cache_ibc_addresses=None):

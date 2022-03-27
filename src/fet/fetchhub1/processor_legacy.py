@@ -3,7 +3,7 @@
 import logging
 import base64
 from fet.fetchhub1 import constants as co2
-from fet.fetchhub1.api_rpc import RpcAPI
+from fet.fetchhub1.api_rpc import FetRpcAPI
 from fet.fetchhub1.TxInfoFet import TxInfoFet, MsgInfo
 from fet.fetchhub1.handle_tx import handle_tx
 import fet.handle_contract
@@ -57,7 +57,7 @@ def _decode_tx(tx):
 def _txinfo(wallet_address, elem, node):
     txid = elem["hash"]
     height = elem["height"]
-    timestamp = RpcAPI(node).block_time(height)
+    timestamp = FetRpcAPI(node).block_time(height)
     fee, fee_currency = _get_fee(elem)
 
     # Construct msgs: list of MsgInfoIBC objects

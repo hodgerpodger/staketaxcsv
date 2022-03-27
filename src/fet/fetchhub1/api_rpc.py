@@ -9,14 +9,13 @@ from urllib.parse import urlencode
 from settings_csv import REPORTS_DIR
 from common.debug_util import use_debug_files
 from fet.config_fet import localconfig
-
-
+from common.ibc.api_lcd import (
+    EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SIGNER, EVENTS_TYPE_LIST_DEFAULT
+)
 TXS_LIMIT_PER_QUERY = 50
-EVENTS_TYPE_SENDER = "sender"
-EVENTS_TYPE_RECIPIENT = "recipient"
 
 
-class RpcAPI:
+class FetRpcAPI:
     session = requests.Session()
 
     def __init__(self, node):
@@ -40,6 +39,8 @@ class RpcAPI:
             query_params["query"] = "\"message.sender='{}'\"".format(wallet_address)
         elif events_type == EVENTS_TYPE_RECIPIENT:
             query_params["query"] = "\"transfer.recipient='{}'\"".format(wallet_address)
+        elif events_type == EVENTS_TYPE_SIGNER:
+            query_params["query"] = "\"message.signer='{}'\"".format(wallet_address)
         else:
             raise Exception("Add case for events_type: {}".format(events_type))
 
@@ -92,14 +93,15 @@ class RpcAPI:
 
 
 def get_txs_all(node, wallet_address, progress, max_txs, per_page=TXS_LIMIT_PER_QUERY, debug=False,
-                stage_name="default"):
-    api = RpcAPI(node)
+                stage_name="default", events_types=None):
+    api = FetRpcAPI(node)
     api.debug = debug
+    events_types = events_types if events_types else EVENTS_TYPE_LIST_DEFAULT
     max_pages = math.ceil(max_txs / per_page)
 
     out = []
     page_for_progress = 1
-    for events_type in (EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT):
+    for events_type in events_types:
         for page in range(1, max_pages+1):
             message = f"Fetching page {page_for_progress} ..."
             progress.report(page_for_progress, message, stage_name)
@@ -129,20 +131,22 @@ def _remove_duplicates(elems):
     return out
 
 
-def get_txs_pages_count(node, address, max_txs, per_page=TXS_LIMIT_PER_QUERY, debug=False):
-    api = RpcAPI(node)
+def get_txs_pages_count(node, address, max_txs, per_page=TXS_LIMIT_PER_QUERY, debug=False,
+                        events_types=None):
+    api = FetRpcAPI(node)
     api.debug = debug
+    events_types = events_types if events_types else EVENTS_TYPE_LIST_DEFAULT
 
-    # Number of pages/txs for events message.sender
-    _, _, pages_sender, txs_sender = api.txs_search(address, EVENTS_TYPE_SENDER, 1, per_page)
-    txs_sender = min(txs_sender, max_txs)
-    pages_sender = math.ceil(txs_sender / per_page) if txs_sender else 1
+    total_pages = 0
+    total_txs = 0
+    for event_type in events_types:
+        # Number of pages/txs for events message.sender
+        _, _, num_pages, num_txs = api.txs_search(address, EVENTS_TYPE_SENDER, 1, per_page)
+        num_txs = min(num_txs, max_txs)
+        num_pages = math.ceil(num_txs / per_page) if num_txs else 1
 
-    # Number of queries/txs for events transfer.recipient
-    _, _, pages_receiver, txs_receiver = api.txs_search(address, EVENTS_TYPE_RECIPIENT, 1, per_page)
-    txs_receiver = min(txs_receiver, max_txs)
-    pages_receiver = math.ceil(txs_receiver / per_page) if txs_receiver else 1
+        logging.info("event_type: %s, num_txs: %s, num_pages: %s", event_type, num_txs, num_pages)
+        total_pages += num_pages
+        total_txs += num_txs
 
-    logging.info("pages_sender: %s pages_receiver: %s, count_sender_txs: %s, count_receiver_txs: %s",
-                 pages_sender, pages_receiver, txs_sender, txs_receiver)
-    return pages_sender + pages_receiver, txs_sender + txs_receiver
+    return total_pages, total_txs

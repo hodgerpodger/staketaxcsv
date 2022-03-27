@@ -15,10 +15,12 @@ from common.Exporter import Exporter
 from common.ExporterTypes import FORMAT_DEFAULT
 from settings_csv import TICKER_FET, FET_NODE
 import common.ibc.api_lcd
-from fet.fetchhub1.api_rpc import RpcAPI
+from fet.fetchhub1.api_rpc import FetRpcAPI
 from fet.fetchhub1 import constants as co2
 import fet.processor
 import fet.fetchhub1.processor_legacy
+from common.ibc.api_lcd import EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SIGNER
+EVENTS_TYPES_FET = (EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT)
 
 
 def main():
@@ -76,7 +78,7 @@ def _query_tx(txid):
 
     # fetchhub-1
     node = co2.FET_FETCHUB1_NODE
-    elem = RpcAPI(node).tx(txid)
+    elem = FetRpcAPI(node).tx(txid)
     if elem:
         return elem, node
 
@@ -101,11 +103,11 @@ def txhistory(wallet_address, options):
 
     # Fetch count of pages/transactions to estimate progress more accurately
     pages_fet1, txs_fet1 = fet.fetchhub1.api_rpc.get_txs_pages_count(
-        co2.FET_FETCHUB1_NODE, wallet_address, max_txs, debug=localconfig.debug)
+        co2.FET_FETCHUB1_NODE, wallet_address, max_txs, debug=localconfig.debug, events_types=EVENTS_TYPES_FET)
     pages_fet2 = common.ibc.api_lcd.get_txs_pages_count(
-        co2.FET_FETCHUB2_NODE, wallet_address, max_txs, debug=localconfig.debug)
+        co2.FET_FETCHUB2_NODE, wallet_address, max_txs, debug=localconfig.debug, events_types=EVENTS_TYPES_FET)
     pages_fet3 = common.ibc.api_lcd.get_txs_pages_count(
-        FET_NODE, wallet_address, max_txs, debug=localconfig.debug)
+        FET_NODE, wallet_address, max_txs, debug=localconfig.debug, events_types=EVENTS_TYPES_FET)
     progress.set_estimate_fet1(pages_fet1, txs_fet1)
     progress.set_estimate_fet2(pages_fet2)
     progress.set_estimate_fet3(pages_fet3)
@@ -113,7 +115,7 @@ def txhistory(wallet_address, options):
     # fetchhub1
     elems_1 = fet.fetchhub1.api_rpc.get_txs_all(
         co2.FET_FETCHUB1_NODE, wallet_address, progress, max_txs, debug=localconfig.debug,
-        stage_name=progress.STAGE_FET1_PAGES)
+        stage_name=progress.STAGE_FET1_PAGES, events_types=EVENTS_TYPES_FET)
     # Update to more accurate estimate after removing duplicates
     progress.stages[progress.STAGE_FET1_TXS].total_tasks = len(elems_1)
     progress.report_message(f"Processing {len(elems_1)} transactions for fetchhub-1... ")
@@ -122,13 +124,15 @@ def txhistory(wallet_address, options):
     # fetchhub2
     elems_2 = common.ibc.api_lcd.get_txs_all(
         co2.FET_FETCHUB2_NODE, wallet_address, progress, max_txs, debug=localconfig.debug,
-        stage_name=progress.STAGE_FET2)
+        stage_name=progress.STAGE_FET2, events_types=EVENTS_TYPES_FET)
     progress.report_message(f"Processing {len(elems_2)} transactions for fetchhub-2... ")
     fet.processor.process_txs(wallet_address, elems_2, exporter, co2.FET_FETCHUB2_NODE)
 
     # fetchhub3
     elems_3 = common.ibc.api_lcd.get_txs_all(
-        FET_NODE, wallet_address, progress, max_txs, debug=localconfig.debug, stage_name=progress.STAGE_FET3)
+        FET_NODE, wallet_address, progress, max_txs, debug=localconfig.debug, stage_name=progress.STAGE_FET3,
+        events_types=EVENTS_TYPES_FET
+    )
     progress.report_message(f"Processing {len(elems_3)} transactions for fetchhub-3... ")
     fet.processor.process_txs(wallet_address, elems_3, exporter, FET_NODE)
 
