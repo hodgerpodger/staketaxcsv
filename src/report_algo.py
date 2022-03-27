@@ -57,10 +57,15 @@ def wallet_exists(wallet_address):
 def txone(wallet_address, txid_or_groupid):
     progress = ProgressAlgo()
 
+    elems = None
     data = indexer.get_transaction(txid_or_groupid)
     if data:
-        elems = [data]
-    else:
+        if "group" in data:
+            txid_or_groupid = data["group"]
+        else:
+            elems = [data]
+
+    if elems is None:
         elems = indexer.get_transactions_by_group(txid_or_groupid)
 
     print("\ndebug data:")
