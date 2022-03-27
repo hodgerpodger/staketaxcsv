@@ -106,6 +106,21 @@ def get_algofi_storage_address(account):
     return None
 
 
+def get_algofi_liquidate_transactions(transactions):
+    out = []
+
+    for transaction in transactions:
+        txtype = transaction["tx-type"]
+        if txtype != co.TRANSACTION_TYPE_APP_CALL:
+            continue
+        appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+        if ALGOFI_TRANSACTION_LIQUIDATE not in appl_args:
+            continue
+        out.append(transaction)
+
+    return out
+
+
 def is_algofi_transaction(group):
     length = len(group)
     if length > 16:
