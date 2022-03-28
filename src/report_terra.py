@@ -22,7 +22,7 @@ from common.Cache import Cache
 from common.ErrorCounter import ErrorCounter
 from common.Exporter import Exporter
 from common.ExporterTypes import FORMAT_DEFAULT, LP_TREATMENT_TRANSFERS
-from settings_csv import TERRA_FIGMENT_KEY, TICKER_LUNA
+from settings_csv import TERRA_FIGMENT_KEY, TICKER_LUNA, REPORTS_DIR
 from terra.api_fcd import LIMIT_FCD, FcdAPI
 from terra.api_search_figment import LIMIT_FIGMENT, SearchAPIFigment
 from terra.config_terra import localconfig
@@ -151,14 +151,6 @@ def _cache_push(cache):
 
 
 def _get_txs(wallet_address, progress):
-    # Debugging only: when --debug flag set, read from cache file
-    if localconfig.debug:
-        debug_file = f"_reports/debugterra.{wallet_address}.json"
-        if os.path.exists(debug_file):
-            with open(debug_file, "r") as f:
-                out = json.load(f)
-                return out
-
     offset = 0
     out = []
     for _ in range(_max_queries()):
@@ -176,12 +168,6 @@ def _get_txs(wallet_address, progress):
 
     message = f"Retrieved total {len(out)} txids..."
     progress.report_message(message)
-
-    # Debugging only: when --debug flat set, write to cache file
-    if localconfig.debug:
-        with open(debug_file, "w") as f:
-            json.dump(out, f, indent=4)
-        logging.info("Wrote to %s for debugging", debug_file)
 
     return out
 

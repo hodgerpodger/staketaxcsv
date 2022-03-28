@@ -9,6 +9,7 @@ def use_debug_files(localconfig, file_dir):
     def inner(func):
 
         def wrapper(*args, **kwargs):
+            # ### Move past this section only when a debug variable is True #####################
             if localconfig is None:
                 # Workaround when localconfig not available, can use localconfig=None such that:
                 # Assumes class/instance method with self.debug or cls.debug is available.
@@ -21,6 +22,7 @@ def use_debug_files(localconfig, file_dir):
                     pass
                 else:
                     return func(*args, **kwargs)
+            # ####################################################################################
 
             debug_file = _debug_file_path(file_dir, args, func)
 
