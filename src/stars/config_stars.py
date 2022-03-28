@@ -2,6 +2,6 @@ class localconfig:
 
     job = None
     debug = False
-    limit = 10000
+    limit = 20000
     ibc_addresses = {}
     cache = False
