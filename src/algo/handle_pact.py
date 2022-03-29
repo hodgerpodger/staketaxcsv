@@ -1,11 +1,7 @@
 from algo import constants as co
 from algo.asset import Algo
-from algo.handle_simple import (
-    handle_lp_add,
-    handle_lp_remove,
-    handle_participation_rewards,
-    handle_swap, handle_unknown
-)
+from algo.handle_amm import handle_lp_add, handle_lp_remove, handle_swap
+from algo.handle_simple import handle_participation_rewards, handle_unknown
 
 PACT_AMM_SYMBOL = "P"
 

@@ -16,6 +16,16 @@ def get_transaction_note(transaction):
     return note
 
 
+def get_transfer_receiver(transaction):
+    txtype = transaction["tx-type"]
+    if txtype == "pay":
+        return transaction[co.TRANSACTION_KEY_PAYMENT]["receiver"]
+    elif txtype == "axfer":
+        return transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]
+
+    return None
+
+
 def get_transfer_asset(transaction, asset_map={}):
     amount = 0
     asset_id = 0
