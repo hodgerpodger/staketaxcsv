@@ -8,6 +8,7 @@ from algo.config_algo import localconfig
 from algo.handle_akita import handle_akita_swap_transaction, is_akita_swap_transaction
 from algo.handle_algodex import handle_algodex_transaction, is_algodex_transaction
 from algo.handle_algofi import handle_algofi_transaction, is_algofi_transaction
+from algo.handle_humbleswap import handle_humbleswap_transaction, is_humbleswap_transaction
 from algo.handle_pact import handle_pact_transaction, is_pact_transaction
 from algo.handle_tinyman import handle_tinyman_transaction, is_tinyman_transaction
 from algo.handle_transfer import (
@@ -118,6 +119,8 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
         handle_algofi_transaction(wallet_address, group, exporter, txinfo)
     elif is_pact_transaction(group):
         handle_pact_transaction(group, exporter, txinfo)
+    elif is_humbleswap_transaction(group):
+        handle_humbleswap_transaction(wallet_address, group, exporter, txinfo)
     elif is_wagmiswap_transaction(group):
         handle_wagmiswap_transaction(group, exporter, txinfo)
     elif is_algodex_transaction(wallet_address, group):
