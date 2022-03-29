@@ -5,3 +5,4 @@ class localconfig:
     cache = False
     blocks = {}
     limit = 5000  # max txs
+    start_date = None
