@@ -97,11 +97,15 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def estimate_duration(wallet_address):
+def estimate_duration(wallet_address, options):
+    _read_options(options)
+
     logging.info("Fetching staking addresses...")
     num_staking_addresses = len(RpcAPI.fetch_staking_addresses(wallet_address))
+
     logging.info("Fetching txids...")
     num_txids = _num_txids(wallet_address)
+
     return SECONDS_PER_STAKING_ADDRESS * num_staking_addresses + SECONDS_PER_TX * num_txids
 
 
@@ -155,7 +159,7 @@ def txhistory(wallet_address, options):
 
 
 def _query_txids(addresses, progress):
-    """Returns transactions txid's across all token account addresses"""
+    """ Returns transactions txid's across all token account addresses """
     max_txs = localconfig.limit
     min_date = localconfig.start_date
 

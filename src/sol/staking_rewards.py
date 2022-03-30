@@ -1,4 +1,5 @@
 import csv
+import glob
 import logging
 import os
 import subprocess
@@ -40,38 +41,33 @@ def _reward_txs(wallet_address, exporter, staking_address):
 
 
 def _get_reward(epoch, staking_address):
-    """Returns single reward (timestamp_of_reward, float_reward_amount) for staking_address at this epoch."""
+    """ Returns single reward (timestamp_of_reward, float_reward_amount) for staking_address at this epoch. """
     flush = localconfig.job is None
 
-    filename = f"{DATADIR}/{epoch}.csv"
-    if os.path.exists(filename):
-        # Reward data in epoch file.
-        result = _cmd2(f"head -n 1 {filename}")
-        _, slot = result.split(",")
+    epoch_file_path = EpochFile.path(epoch)
+    if epoch_file_path:
+        # Found epoch rewards file.  Find user's reward in this epoch.
 
-        result = _cmd2(f"grep {staking_address} {filename}")
-        if not result:
+        slot = EpochFile.slot(epoch_file_path)
+        amount = EpochFile.read_rewards(staking_address, epoch_file_path)
+        if amount is None:
             return None, None
-        _, amount = result.split(",")
     else:
         logging.info("Fetching inflation reward for staking_address=%s, epoch=%s ...", staking_address, epoch)
         amount, slot = RpcAPI.get_inflation_reward(staking_address, epoch)
 
         if flush and slot:
-            # Fetch rewards for all users at epoch.  Write to epoch file.
-            logging.info("Retrieving and flushing rewards to file for epoch=%s...", epoch)
+            logging.info("Retrieving rewards for all users in epoch=%s...", epoch)
             block_rewards = RpcAPI.get_block_rewards(slot)
             if not block_rewards:
                 return None, None
-            with open(filename, "w") as f:
-                mywriter = csv.writer(f)
-                mywriter.writerow(["slot", slot])
-                mywriter.writerows(block_rewards)
-            logging.info("Wrote to %s", filename)
+            EpochFile.write_rewards(epoch, slot, block_rewards)
 
+    # Get timestamp of the reward
     if not amount or not slot:
         return None, None
-    timestamp = _get_timestamp(slot)
+    timestamp = _block_datetime(slot)
+
     return timestamp, amount
 
 
@@ -79,7 +75,7 @@ def _cmd2(s):
     return subprocess.getoutput(s)
 
 
-def _get_timestamp(block):
+def _block_datetime(block):
     block = str(block)
 
     if block in localconfig.blocks:
@@ -89,3 +85,50 @@ def _get_timestamp(block):
     timestamp = RpcAPI.get_block_time(block)
     localconfig.blocks[block] = timestamp
     return timestamp
+
+
+class EpochFile:
+    # epoch.<epoch>.<date>.<slot>.csv
+
+    @classmethod
+    def _epoch_path(cls, epoch, date, slot):
+        return "{}/epoch.{}.{}.{}.csv".format(DATADIR, epoch, date, slot)
+
+    @classmethod
+    def path(cls, epoch):
+        """ Returns path of epoch file if exists, else None """
+        glob_expr = "{}/epoch.{}.*.csv".format(DATADIR, epoch)
+        result = glob.glob(glob_expr)
+        if result and len(result) == 1:
+            mypath = result[0]
+            return mypath
+        else:
+            return None
+
+    @classmethod
+    def slot(cls, path):
+        filename = os.path.basename(path)
+        _, epoch, date, slot, _ = filename.split(".")
+        return slot
+
+    @classmethod
+    def read_rewards(cls, staking_address, path):
+        result = _cmd2(f"grep {staking_address} {path}")
+        if not result:
+            return None
+        _, amount = result.split(",")
+        return amount
+
+    @classmethod
+    def write_rewards(cls, epoch, slot, block_rewards):
+        """ Writes rewards for all users in this epoch to a csv file """
+        # Determine path for epoch file
+        dt = _block_datetime(slot)
+        date = dt.split(" ")[0]
+        path = cls._epoch_path(epoch, date, slot)
+
+        with open(path, "w") as f:
+            mywriter = csv.writer(f)
+
+            mywriter.writerows(block_rewards)
+        logging.info("Wrote to %s", path)

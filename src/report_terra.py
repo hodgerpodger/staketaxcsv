@@ -74,7 +74,7 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def estimate_duration(wallet_address):
+def estimate_duration(wallet_address, options):
     return SECONDS_PER_TX * _num_txs(wallet_address)
 
 

@@ -89,7 +89,7 @@ def txhistory(wallet_address, options):
     return exporter
 
 
-def estimate_duration(wallet_address):
+def estimate_duration(wallet_address, options):
     _, _, num_txs = _num_txs(wallet_address)
     return SECONDS_PER_TX * num_txs
 

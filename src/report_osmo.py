@@ -64,7 +64,7 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def estimate_duration(wallet_address):
+def estimate_duration(wallet_address, options):
     num_pages = len(_pages(wallet_address))
     return num_pages * SECONDS_PER_PAGE
 

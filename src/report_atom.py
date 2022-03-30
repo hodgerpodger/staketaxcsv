@@ -69,7 +69,7 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def estimate_duration(wallet_address):
+def estimate_duration(wallet_address, options):
     return SECONDS_PER_PAGE * atom.api_lcd.get_txs_count_pages(wallet_address)
 
 
