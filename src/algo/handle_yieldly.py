@@ -130,6 +130,7 @@ YIELDLY_TRANSACTION_POOL_STAKE_T5 = "c3Rha2U="  # "stake"
 YIELDLY_TRANSACTION_POOL_WITHDRAW_T5 = "d2l0aGRyYXc="  # "withdraw"
 YIELDLY_TRANSACTION_POOL_STAKE = "Uw=="         # "S"
 YIELDLY_TRANSACTION_POOL_WITHDRAW = "Vw=="      # "W"
+YIELDLY_TRANSACTION_POOL_DEPOSIT = "RA=="       # "D"
 
 
 def is_yieldly_transaction(group):
@@ -183,6 +184,8 @@ def handle_yieldly_transaction(group, exporter, txinfo):
             return _handle_yieldly_pool_stake(group, exporter, txinfo)
         elif YIELDLY_TRANSACTION_POOL_WITHDRAW in appl_args:
             return _handle_yieldly_pool_withdraw(group, exporter, txinfo)
+        elif YIELDLY_TRANSACTION_POOL_DEPOSIT in appl_args:
+            return _handle_yieldly_pool_stake(group, exporter, txinfo)
 
     app_transaction = group[0]
     txtype = app_transaction["tx-type"]
