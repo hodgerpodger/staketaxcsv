@@ -9,6 +9,7 @@ from common.ExporterTypes import (
     TX_TYPE_REPAY,
     TX_TYPE_SOL_TRANSFER_SELF,
     TX_TYPE_SPEND,
+    TX_TYPE_STAKE,
     TX_TYPE_STAKING,
     TX_TYPE_TRADE,
     TX_TYPE_TRANSFER,
@@ -16,6 +17,7 @@ from common.ExporterTypes import (
     TX_TYPE_LP_DEPOSIT,
     TX_TYPE_LP_WITHDRAW,
     TX_TYPE_MARGIN_TRADE_FEE,
+    TX_TYPE_UNSTAKE,
     TX_TYPE_WITHDRAW_COLLATERAL,
 )
 from settings_csv import DONATION_WALLETS
@@ -44,8 +46,8 @@ def make_spend_tx(txinfo, sent_amount, sent_currency, z_index=0):
     return _make_tx_sent(txinfo, sent_amount, sent_currency, TX_TYPE_SPEND, z_index=z_index)
 
 
-def make_just_fee_tx(txinfo, fee_amount, fee_currency):
-    return _make_tx_sent(txinfo, fee_amount, fee_currency, TX_TYPE_SPEND, empty_fee=True)
+def make_spend_fee_tx(txinfo, fee_amount, fee_currency, z_index=0):
+    return _make_tx_sent(txinfo, fee_amount, fee_currency, TX_TYPE_SPEND, z_index=z_index, empty_fee=True)
 
 def make_margin_fee_tx(txinfo, fee_amount, fee_currency):
     row = _make_tx_sent(txinfo, fee_amount, fee_currency, TX_TYPE_MARGIN_TRADE_FEE, empty_fee=True)
@@ -99,6 +101,14 @@ def make_lp_stake_tx(txinfo, lp_amount, lp_currency, empty_fee=False, z_index=0)
 
 def make_lp_unstake_tx(txinfo, lp_amount, lp_currency):
     return _make_tx_received(txinfo, lp_amount, lp_currency, TX_TYPE_LP_UNSTAKE)
+
+
+def make_stake_tx(txinfo, lp_amount, lp_currency, empty_fee=False, z_index=0):
+    return _make_tx_sent(txinfo, lp_amount, lp_currency, TX_TYPE_STAKE, empty_fee=empty_fee, z_index=z_index)
+
+
+def make_unstake_tx(txinfo, lp_amount, lp_currency, empty_fee=False, z_index=0):
+    return _make_tx_received(txinfo, lp_amount, lp_currency, TX_TYPE_UNSTAKE, empty_fee=empty_fee, z_index=z_index)
 
 
 def make_deposit_collateral_tx(txinfo, sent_amount, sent_currency, z_index=0):
@@ -233,3 +243,24 @@ def _make_tx_exchange(txinfo, sent_amount, sent_currency, received_amount, recei
         comment=txinfo.comment
     )
     return row
+
+
+def ingest_rows(exporter, txinfo, rows):
+    """ Utility function to add multiple rows to CSV for single transaction. """
+    if len(rows) == 0:
+        # No transactions.  Just make a "spend fee" row.
+        if txinfo.fee:
+            row = make_spend_fee_tx(txinfo, txinfo.fee, txinfo.fee_currency)
+            row.comment = "tx fee"
+            rows.append(rows)
+    else:
+        for i, row in enumerate(rows):
+            # Apply transaction fee to first row's fee column only
+            if i == 0:
+                row.fee = txinfo.fee
+                row.fee_currency = txinfo.fee_currency
+            else:
+                row.fee = ""
+                row.fee_currency = ""
+
+            exporter.ingest_row(row)

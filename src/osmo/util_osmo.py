@@ -120,7 +120,19 @@ def _amount(uamount, currency):
     elif currency == co.CUR_CRO:
         return float(uamount) / co.MILLION / 100
     else:
-        return float(uamount) / co.MILLION
+        return float(uamount) / float(10 ** _exponent(currency))
+
+
+def _exponent(currency):
+    if currency in localconfig.exponents:
+        return int(localconfig.exponents[currency])
+
+    exponent = osmo.api_historical.get_exponent(currency)
+    if exponent is None:
+        exponent = 6
+
+    localconfig.exponents[currency] = exponent
+    return int(localconfig.exponents[currency])
 
 
 def _denom_to_currency(denom):

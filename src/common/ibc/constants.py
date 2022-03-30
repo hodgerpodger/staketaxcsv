@@ -1,13 +1,16 @@
 
 MILLION = 1000000.0
 EXP18 = 10**18
+EXP9 = 10**9
 CUR_CRO = "CRO"
 CUR_FET = "FET"
+CUR_MOBX = "MOBX"
 
 MSG_TYPE_ACKNOWLEDGMENT = "MsgAcknowledgement"
 MSG_TYPE_BEGIN_UNLOCKING = "MsgBeginUnlocking"
 MSG_TYPE_DELEGATE = "MsgDelegate"
 MSG_TYPE_DEPOSIT = "MsgDeposit"
+MSG_TYPE_EXECUTE_CONTRACT = "MsgExecuteContract"
 MSG_TYPE_EXIT_POOL = "MsgExitPool"
 MSG_TYPE_IBC_TRANSFER = "MsgTransfer"
 MSG_TYPE_JOIN_POOL = "MsgJoinPool"
@@ -26,3 +29,4 @@ MSG_TYPE_WITHDRAW_COMMISSION = "MsgWithdrawValidatorCommission"
 MSG_TYPE_WITHDRAW_REWARD = "MsgWithdrawDelegatorReward"
 MSG_TYPE_TIMEOUT = "MsgTimeout"
 MSG_TYPE_MULTI_SEND = "MsgMultiSend"
+

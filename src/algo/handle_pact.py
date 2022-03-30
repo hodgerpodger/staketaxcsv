@@ -1,11 +1,7 @@
 from algo import constants as co
 from algo.asset import Algo
-from algo.handle_simple import (
-    handle_lp_add,
-    handle_lp_remove,
-    handle_participation_rewards,
-    handle_swap, handle_unknown
-)
+from algo.handle_amm import handle_lp_add, handle_lp_remove, handle_swap
+from algo.handle_simple import handle_participation_rewards, handle_unknown
 
 PACT_AMM_SYMBOL = "P"
 
@@ -16,11 +12,11 @@ PACT_TRANSACTION_LP_REMOVE = "UkVNTElR"      # "REMLIQ"
 
 def is_pact_transaction(group):
     length = len(group)
-    if length < 2 or length > 4:
+    if length < 2:
         return False
 
     last_tx = group[-1]
-    if last_tx["tx-type"] != "appl":
+    if last_tx["tx-type"] != co.TRANSACTION_TYPE_APP_CALL:
         return False
 
     appl_args = last_tx[co.TRANSACTION_KEY_APP_CALL]["application-args"]

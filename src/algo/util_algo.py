@@ -16,6 +16,16 @@ def get_transaction_note(transaction):
     return note
 
 
+def get_transfer_receiver(transaction):
+    txtype = transaction["tx-type"]
+    if txtype == "pay":
+        return transaction[co.TRANSACTION_KEY_PAYMENT]["receiver"]
+    elif txtype == "axfer":
+        return transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]
+
+    return None
+
+
 def get_transfer_asset(transaction, asset_map={}):
     amount = 0
     asset_id = 0
@@ -27,3 +37,13 @@ def get_transfer_asset(transaction, asset_map={}):
         asset_id = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
 
     return Asset(asset_map.get(asset_id, asset_id), amount)
+
+
+def get_inner_transfer_asset(transaction, asset_map={}):
+    inner_transactions = transaction.get("inner-txns", [])
+    for transaction in inner_transactions:
+        txtype = transaction["tx-type"]
+        if txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER or txtype == co.TRANSACTION_TYPE_PAYMENT:
+            return get_transfer_asset(transaction, asset_map)
+
+    return None

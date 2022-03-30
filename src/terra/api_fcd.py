@@ -1,7 +1,9 @@
 import logging
 import time
-
 import requests
+from settings_csv import REPORTS_DIR
+from common.debug_util import use_debug_files
+from terra.config_terra import localconfig
 
 FCD_URL = "https://fcd.terra.dev"
 LIMIT_FCD = 100
@@ -19,6 +21,7 @@ class FcdAPI:
         return data
 
     @classmethod
+    @use_debug_files(localconfig, REPORTS_DIR)
     def get_txs(cls, address, offset=None):
         url = "{}/v1/txs?account={}&limit={}".format(FCD_URL, address, LIMIT_FCD)
         if offset:

@@ -1,4 +1,4 @@
-from common.make_tx import make_spend_tx
+from common.make_tx import make_spend_fee_tx
 from terra import util_terra
 
 
@@ -18,7 +18,7 @@ def handle_failed_tx(exporter, elem, txinfo):
             txinfo.fee_currency = ""
             txinfo.comment = "failed tx transaction fee"
 
-            row = make_spend_tx(txinfo, fee_amount, fee_currency)
+            row = make_spend_fee_tx(txinfo, fee_amount, fee_currency)
             exporter.ingest_row(row)
             return
     except Exception:

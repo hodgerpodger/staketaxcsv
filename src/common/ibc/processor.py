@@ -23,7 +23,7 @@ def txinfo(wallet_address, elem, mintscan_label, exchange, ibc_addresses, lcd_no
     timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
     fee, fee_currency = _get_fee(elem)
 
-    # Parse elem data into list of MsgInfoIBC objects
+    # Construct msgs: list of MsgInfoIBC objects
     msgs = []
     for i in range(len(elem["logs"])):
         message = elem["tx"]["body"]["messages"][i]
@@ -41,20 +41,18 @@ def _get_fee(elem):
     if len(amount_list) == 0:
         return 0, ""
 
-    # Get fee amount
-    amount_string = amount_list[0]["amount"]
-    fee = float(amount_string) / MILLION
-    if fee == 0:
-        return 0, ""
-
     # Get fee currency
     denom = amount_list[0]["denom"]
-    if denom.startswith("u"):
-        fee_currency = denom[1:].upper()
-    else:
-        raise Exception("Unexpected denom={}".format(denom))
+    fee_currency = MsgInfoIBC.denom_to_currency(denom)
 
-    return fee, fee_currency
+    # Get fee amount
+    amount_string = amount_list[0]["amount"]
+    fee = MsgInfoIBC.amount(amount_string, fee_currency)
+
+    if fee == 0:
+        return 0, ""
+    else:
+        return fee, fee_currency
 
 
 def handle_message(exporter, txinfo, msginfo, debug=False):
@@ -95,7 +93,7 @@ def handle_message(exporter, txinfo, msginfo, debug=False):
 
     except Exception as e:
         if debug:
-            raise(e)
+            raise e
 
         logging.error(
             "Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))

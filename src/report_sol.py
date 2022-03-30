@@ -22,6 +22,7 @@ from sol.config_sol import localconfig
 from sol.constants import PROGRAMID_STAKE
 from sol.progress_sol import SECONDS_PER_STAKING_ADDRESS, SECONDS_PER_TX, ProgressSol
 from sol.TxInfoSol import WalletInfo
+from sol.config_sol import localconfig
 
 LIMIT_PER_QUERY = 1000
 RPC_TIMEOUT = 600  # seconds
@@ -44,6 +45,7 @@ def main():
 
 def _read_options(options):
     report_util.read_common_options(localconfig, options)
+    localconfig.start_date = options.get("start_date", None)
     logging.info("localconfig: %s", localconfig.__dict__)
 
 
@@ -155,6 +157,7 @@ def txhistory(wallet_address, options):
 def _query_txids(addresses, progress):
     """Returns transactions txid's across all token account addresses"""
     max_txs = localconfig.limit
+    min_date = localconfig.start_date
 
     out = []
     txids_seen = set()
@@ -168,7 +171,7 @@ def _query_txids(addresses, progress):
         for j in range(ABSOLUTE_MAX_QUERIES):
             logging.info("query %s for address=%s", j, address)
 
-            txids, before = RpcAPI.get_txids(address, limit=LIMIT_PER_QUERY, before=before)
+            txids, before = RpcAPI.get_txids(address, limit=LIMIT_PER_QUERY, before=before, min_date=min_date)
 
             for txid in txids:
                 # Remove duplicate txids

@@ -11,7 +11,7 @@ import math
 import os
 import pprint
 from algo.asset import Asset
-from algo.handle_algofi import get_algofi_storage_address
+from algo.handle_algofi import get_algofi_liquidate_transactions, get_algofi_storage_address
 
 import algo.processor
 from algo.api_algoindexer import LIMIT_ALGOINDEXER, AlgoIndexerAPI
@@ -57,10 +57,15 @@ def wallet_exists(wallet_address):
 def txone(wallet_address, txid_or_groupid):
     progress = ProgressAlgo()
 
+    elems = None
     data = indexer.get_transaction(txid_or_groupid)
     if data:
-        elems = [data]
-    else:
+        if "group" in data:
+            txid_or_groupid = data["group"]
+        else:
+            elems = [data]
+
+    if elems is None:
         elems = indexer.get_transactions_by_group(txid_or_groupid)
 
     print("\ndebug data:")
@@ -119,7 +124,7 @@ def _get_txs(wallet_address, account, progress):
     storage_address = get_algofi_storage_address(account)
     logging.debug("AlgoFi storage address: %s", storage_address)
     storage_txs = _get_address_transactions(storage_address)
-    out.extend([tx for tx in storage_txs if "inner-txns" in tx])
+    out.extend(get_algofi_liquidate_transactions(storage_txs))
 
     num_tx = len(out)
 

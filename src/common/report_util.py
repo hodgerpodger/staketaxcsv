@@ -4,7 +4,7 @@ import logging
 import os
 
 from common.ExporterTypes import FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS
-from settings_csv import REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA, TICKER_OSMO
+from settings_csv import REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA, TICKER_OSMO, TICKER_SOL
 
 ALL = "all"
 
@@ -43,16 +43,17 @@ def parse_args(ticker):
         type=int,
         help="change to non-default max transactions limit",
     )
-    if ticker in (TICKER_ALGO):
+    if ticker in (TICKER_ALGO, TICKER_SOL):
         parser.add_argument(
             "--start_date",
             type=str,
-            help="(YYYY-MM-DD) Include transactions after start date (inclusive)",
+            help="(YYYY-MM-DD) Only include transactions after start_date (inclusive)",
         )
+    if ticker in (TICKER_ALGO):
         parser.add_argument(
             "--end_date",
             type=str,
-            help="(YYYY-MM-DD) Include transactions before end date (inclusive)",
+            help="(YYYY-MM-DD) Only include transactions before end_date (inclusive)",
         )
     if ticker == TICKER_LUNA:
         parser.add_argument(

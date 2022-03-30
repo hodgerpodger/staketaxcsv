@@ -1,11 +1,12 @@
 import logging
 import random
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 import requests
 from settings_csv import SOL_NODE
 from sol.constants import BILLION, PROGRAMID_STAKE, PROGRAMID_TOKEN_ACCOUNTS
+from sol.config_sol import localconfig
 
 TOKEN_ACCOUNTS = {}
 
@@ -228,27 +229,40 @@ class RpcAPI(object):
         return cls._fetch("getProgramAccounts", params_list)
 
     @classmethod
-    def get_txids(cls, wallet_address, limit=None, before=None):
+    def _unix_timestamp(cls, thedate):
+        y, m, d = thedate.split("-")
+        dt = datetime(int(y), int(m), int(d))
+        return dt.replace(tzinfo=timezone.utc).timestamp()
+
+    @classmethod
+    def get_txids(cls, wallet_address, limit=None, before=None, min_date=None):
+        min_date_ts = cls._unix_timestamp(min_date) if min_date else None
+
         data = cls._get_txids(wallet_address, limit, before)
 
-        if "result" not in data:
+        if "result" not in data or data["result"] is None:
             return [], None
 
         # Extract txids
         out = []
         for info in data["result"]:
-            if info["err"] is not None:
+            if "signature" not in info:
                 continue
             if info["confirmationStatus"] != "finalized":
                 continue
 
             txid = info["signature"]
+
+            # Restrict to range (min_date, today) if min_date specified
+            if min_date_ts:
+                unix_timestamp = info["blockTime"]
+                if unix_timestamp < min_date_ts:
+                    return out, None
+
             out.append(txid)
 
-        # Extract last txid to use as "before" argument in subsequent query
-        result_length = len(data["result"])
-
-        if result_length:
+        # Determine "before" argument in subsequent query: use last txid of this query
+        if data["result"]:
             last_txid = data["result"][-1]["signature"]
         else:
             last_txid = None

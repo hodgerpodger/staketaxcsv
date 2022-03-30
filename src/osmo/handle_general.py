@@ -1,14 +1,33 @@
 from osmo.handle_unknown import handle_unknown_detect_transfers
 from osmo.make_tx import make_osmo_simple_tx, make_osmo_transfer_in_tx, make_osmo_transfer_out_tx, make_osmo_tx
+from common.make_tx import make_spend_fee_tx
+from osmo import util_osmo
 
 
 def handle_failed_tx(exporter, txinfo):
-    pass
+    if txinfo.fee:
+        # Make a spend fee csv row
+        row = make_spend_fee_tx(txinfo, txinfo.fee, txinfo.fee_currency)
+        row.comment = "fee for failed transaction"
+        row.fee = ""
+        row.fee_currency = ""
+        exporter.ingest_row(row)
+    else:
+        pass
 
 
 def handle_simple(exporter, txinfo, msginfo):
     """ Handles tx with 0 transfers """
-    row = make_osmo_simple_tx(txinfo, msginfo)
+    if txinfo.fee and msginfo.msg_index == 0:
+        # Make a spend fee csv row
+        tx_type = util_osmo._msg_type(msginfo)
+        row = make_spend_fee_tx(txinfo, txinfo.fee, txinfo.fee_currency)
+        row.comment = "fee for {}".format(tx_type)
+        row.fee = ""
+        row.fee_currency = ""
+    else:
+        # Make a custom tx for info purposes only; doesn't affect ledger
+        row = make_osmo_simple_tx(txinfo, msginfo)
     exporter.ingest_row(row)
 
 

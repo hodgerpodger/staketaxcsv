@@ -19,3 +19,12 @@ def get_symbol(ibc_address) -> str or None:
     data = _query(uri_path, query_params)
 
     return data["symbol"] if "symbol" in data else None
+
+
+def get_exponent(currency):
+    uri_path = "/search/v1/exponent"
+    query_params = {"symbol": currency}
+
+    data = _query(uri_path, query_params)
+
+    return data["exponent"] if "exponent" in data else None

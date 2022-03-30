@@ -29,14 +29,17 @@ def handle_simple_outbound(exporter, txinfo, msginfo):
 def handle_staking(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
 
-    total = 0
+    totals = {}
     for amount, currency in transfers_in:
-        total += amount
+        if currency not in totals:
+            totals[currency] = 0
+        totals[currency] += amount
 
-    if total > 0:
-        row = make_tx.make_reward_tx(txinfo, msginfo, total, currency)
-        row.comment = "claim reward in {}".format(msginfo.msg_type)
-        exporter.ingest_row(row)
+    if sum(totals.values()) > 0:
+        for currency, total in totals.items():
+            row = make_tx.make_reward_tx(txinfo, msginfo, total, currency)
+            row.comment = "claim reward in {}".format(msginfo.msg_type)
+            exporter.ingest_row(row)
     else:
         # No reward: add non-income delegation transaction just so transaction doesn't appear "missing"
         row = make_tx.make_simple_tx(txinfo, msginfo)
@@ -115,3 +118,8 @@ def handle_unknown_detect_transfers(exporter, txinfo, msginfo):
             rows.append(
                 make_tx.make_unknown_tx_with_transfer(txinfo, msginfo, "", "", received_amount, received_currency))
         util_ibc._ingest_rows(exporter, txinfo, msginfo, rows, "")
+
+
+def handle_unknown_detect_transfers_tx(exporter, txinfo):
+    for msginfo in txinfo.msgs:
+        handle_unknown_detect_transfers(exporter, txinfo, msginfo)

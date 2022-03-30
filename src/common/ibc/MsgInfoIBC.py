@@ -24,6 +24,8 @@ class MsgInfoIBC:
         self.log = log
         self.transfers = self._transfers()
         self.transfers_event = self._transfers_transfer_event(show_addrs=True)
+        self.wasm = MsgInfoIBC.wasm(log)
+        self.contract = self._contract(message)
 
     def _msg_type(self, message):
         # i.e. /osmosis.lockup.MsgBeginUnlocking -> _MsgBeginUnlocking
@@ -134,18 +136,21 @@ class MsgInfoIBC:
         for amt_string in amount_string.split(","):
             if "ibc/" in amt_string:
                 uamount, ibc_address = amt_string.split("ibc/")
-
                 ibc_address = "ibc/" + ibc_address
-                currency = cls.ibc_symbol(ibc_address)
-                amount = cls.amount(uamount, currency)
-            elif "u" in amt_string:
-                uamount, ucurrency = amt_string.split("u", 1)
 
-                currency = ucurrency.upper()
+                currency = cls.ibc_symbol(ibc_address)
                 amount = cls.amount(uamount, currency)
             elif "afet" in amt_string:
                 uamount, ucurrency = amt_string.split("afet", 1)
                 currency = "FET"
+                amount = cls.amount(uamount, currency)
+            elif "nanomobx" in amt_string:
+                uamount, ucurrency = amt_string.split("nanomobx", 1)
+                currency = "MOBX"
+                amount = cls.amount(uamount, currency)
+            elif "u" in amt_string:
+                uamount, ucurrency = amt_string.split("u", 1)
+                currency = ucurrency.upper()
                 amount = cls.amount(uamount, currency)
             else:
                 raise Exception("Unexpected amount_string: {}".format(amount_string))
@@ -155,13 +160,25 @@ class MsgInfoIBC:
         return out
 
     @classmethod
-    def amount(cls, uamount, currency):
+    def amount(cls, amount_string, currency):
         if currency == co.CUR_CRO:
-            return float(uamount) / co.MILLION / 100
+            return float(amount_string) / co.MILLION / 100
         elif currency == co.CUR_FET:
-            return float(uamount) / co.EXP18
+            return float(amount_string) / co.EXP18
+        elif currency == co.CUR_MOBX:
+            return float(amount_string) / co.EXP9
         else:
-            return float(uamount) / co.MILLION
+            return float(amount_string) / co.MILLION
+
+    @classmethod
+    def denom_to_currency(cls, denom):
+        # Example: 'uluna' -> 'LUNA'
+        if denom == "afet":
+            return co.CUR_FET
+        elif denom.startswith("u"):
+            return denom[1:].upper()
+        else:
+            raise Exception("Unexpected denom={}".format(denom))
 
     @classmethod
     def ibc_symbol(cls, ibc_address):
@@ -176,3 +193,43 @@ class MsgInfoIBC:
 
         cls.ibc_addresses[ibc_address] = val
         return val
+
+    @classmethod
+    def wasm(cls, log):
+        """ Parses wasm in log to return list of action dictionaries. """
+
+        events = log["events"]
+        for event in events:
+            attributes, event_type = event["attributes"], event["type"]
+
+            if event_type == "wasm":
+                actions = []
+                action = {}
+
+                for kv in attributes:
+                    k, v = kv["key"], kv["value"]
+
+                    if k == "contract_address":
+                        # reached beginning of next action
+
+                        # add previous action to list
+                        if len(action):
+                            actions.append(action)
+
+                        # start new action
+                        action = {}
+                        action["contract_address"] = v
+                    else:
+                        action[k] = v
+
+                if len(action):
+                    actions.append(action)
+                return actions
+
+        return []
+
+    def _contract(self, message):
+        if message and "contract" in message:
+            return message["contract"]
+        else:
+            return None
