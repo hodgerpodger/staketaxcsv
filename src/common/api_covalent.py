@@ -22,7 +22,6 @@ class CovalentAPI(metaclass=Singleton):
         This endpoint does a deep-crawl of the blockchain to retrieve all kinds
         of transactions that references the address.
 
-        :param str chain_id: Chain ID of the blockchain being queried.
         :param str address: Passing in an ENS resolves automatically.
         :param bool block_signed_at_asc: Sort the transactions in chronological
             ascending order. By default it's set to false and returns transactions
@@ -32,12 +31,35 @@ class CovalentAPI(metaclass=Singleton):
         :param int page_number: The specific page to be returned.
         :param int page_size: The number of results per page.
         """
-        endpoint = f"v1/{self._chain_id}/{address}/transactions_v2"
+        endpoint = f"v1/{self._chain_id}/address/{address}/transactions_v2"
         params = {
             "block-signed-at-asc": block_signed_at_asc,
             "no-logs": no_logs,
             "page-number": page_number,
             "page-size": page_size,
+        }
+
+        data, status_code = self._query(endpoint, params)
+
+        if status_code == 200:
+            data_obj = data.get("data", {})
+            has_more = (data_obj["pagination"].get("has_more", False)
+                if "pagination" in data_obj and data_obj["pagination"] else False)
+            return data_obj.get("items", []), has_more
+        else:
+            return None
+
+    def get_transaction(self, txhash, no_logs=False):
+        """
+        Retrieve the transaction data with their decoded event logs.
+
+        :param str txhash: Transaction hash.
+        :param bool no_logs: Setting this to true will omit decoded event logs,
+            resulting in lighter and faster responses. By default it's set to false.
+        """
+        endpoint = f"v1/{self._chain_id}/transaction_v2/{txhash}"
+        params = {
+            "no-logs": no_logs,
         }
 
         data, status_code = self._query(endpoint, params)
@@ -51,4 +73,8 @@ class CovalentAPI(metaclass=Singleton):
         url = f"{COVALENT_NODE}/{endpoint}"
         logging.info("Querying Covalent endpoint %s...", url)
         response = self._session.get(url, params=params)
-        return response.json(), response.status_code
+        response_json = response.json()
+        if not response.ok:
+            logging.error("Error querying Covalent endpoint %s: %s",
+                url, response_json.get("error_message", "unknown"))
+        return response_json, response.status_code
