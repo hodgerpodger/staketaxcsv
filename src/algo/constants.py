@@ -17,10 +17,12 @@ PACT_TRANSACTION_SWAP = "U1dBUA=="           # "SWAP"
 WAGMISWAP_TRANSACTION_SWAP = "c3dhcA=="      # "swap"
 # TODO find a better solution when they release their SDK
 HUMBLESWAP_TRANSACTION = "Aw=="
+UNKNOWN_TRANSACTION = ""
 
 APPL_ARGS_SWAP = {
     ALGOFI_TRANSACTION_SWAP_EXACT_FOR: "AlgoFi",
     PACT_TRANSACTION_SWAP: "Pact",
     WAGMISWAP_TRANSACTION_SWAP: "WagmiSwap",
     HUMBLESWAP_TRANSACTION: "HumbleSwap",
+    UNKNOWN_TRANSACTION: "Unknown"
 }

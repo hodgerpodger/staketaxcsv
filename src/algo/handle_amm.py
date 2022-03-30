@@ -11,6 +11,9 @@ def _get_swap_arg(transaction):
         return False
 
     appl_args = set(transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"])
+    if not appl_args:
+        return co.UNKNOWN_TRANSACTION
+
     swap_args = set(co.APPL_ARGS_SWAP.keys())
     intersection = swap_args & appl_args
     if intersection:
