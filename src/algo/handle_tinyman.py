@@ -1,9 +1,8 @@
 from algo import constants as co
-from algo.asset import Algo, Asset
+from algo.asset import Algo
 from algo.handle_simple import handle_participation_rewards, handle_unknown
 from algo.util_algo import get_transfer_asset
-from common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW
-from common.make_tx import _make_tx_exchange, make_income_tx, make_swap_tx
+from common.make_tx import make_income_tx, make_lp_deposit_tx, make_lp_withdraw_tx, make_swap_tx
 
 APPLICATION_ID_TINYMAN_v10 = 350338509
 APPLICATION_ID_TINYMAN_v11 = 552635992
@@ -14,6 +13,8 @@ TINYMAN_TRANSACTION_SWAP = "c3dhcA=="           # "swap"
 TINYMAN_TRANSACTION_REDEEM = "cmVkZWVt"         # "redeem"
 TINYMAN_TRANSACTION_LP_ADD = "bWludA=="         # "mint"
 TINYMAN_TRANSACTION_LP_REMOVE = "YnVybg=="      # "burn"
+
+lp_tickers = {}
 
 
 def is_tinyman_transaction(group):
@@ -71,12 +72,13 @@ def _handle_tinyman_redeem(group, exporter, txinfo):
 
     receive_transaction = group[2]
     receive_asset = get_transfer_asset(receive_transaction)
+    receive_asset_currency = lp_tickers.get(receive_asset.id, receive_asset.ticker)
 
     fee = Algo(fee_amount)
     txinfo.fee = fee.amount
     txinfo.comment = "Tinyman"
 
-    row = make_income_tx(txinfo, receive_asset.amount, receive_asset.ticker)
+    row = make_income_tx(txinfo, receive_asset.amount, receive_asset_currency)
     exporter.ingest_row(row)
 
 
@@ -95,19 +97,20 @@ def _handle_tinyman_lp_add(group, exporter, txinfo):
     receive_transaction = group[4]
     lp_asset = get_transfer_asset(receive_transaction)
     lp_asset_currency = f"LP_{TINYMAN_AMM_SYMBOL}_{send_asset_1.ticker}_{send_asset_2.ticker}"
+    lp_tickers[lp_asset.id] = lp_asset_currency
 
     fee = Algo(fee_amount / 2)
     txinfo.fee = fee.amount
     txinfo.comment = "Tinyman"
 
-    row = _make_tx_exchange(
+    row = make_lp_deposit_tx(
         txinfo, send_asset_1.amount, send_asset_1.ticker,
-        lp_asset.amount / 2, lp_asset_currency, TX_TYPE_LP_DEPOSIT)
+        lp_asset.amount / 2, lp_asset_currency)
     exporter.ingest_row(row)
 
-    row = _make_tx_exchange(
+    row = make_lp_deposit_tx(
         txinfo, send_asset_2.amount, send_asset_2.ticker,
-        lp_asset.amount / 2, lp_asset_currency, TX_TYPE_LP_DEPOSIT)
+        lp_asset.amount / 2, lp_asset_currency)
     exporter.ingest_row(row)
 
 
@@ -125,19 +128,18 @@ def _handle_tinyman_lp_remove(group, exporter, txinfo):
     fee_amount += send_transaction["fee"]
     lp_asset = get_transfer_asset(send_transaction)
     lp_asset_currency = f"LP_{TINYMAN_AMM_SYMBOL}_{receive_asset_1.ticker}_{receive_asset_2.ticker}"
+    lp_tickers[lp_asset.id] = lp_asset_currency
 
     fee = Algo(fee_amount / 2)
     txinfo.fee = fee.amount
     txinfo.comment = "Tinyman"
 
-    row = _make_tx_exchange(
+    row = make_lp_withdraw_tx(
         txinfo, lp_asset.amount / 2, lp_asset_currency,
-        receive_asset_1.amount, receive_asset_1.ticker,
-        TX_TYPE_LP_WITHDRAW)
+        receive_asset_1.amount, receive_asset_1.ticker)
     exporter.ingest_row(row)
 
-    row = _make_tx_exchange(
+    row = make_lp_withdraw_tx(
         txinfo, lp_asset.amount / 2, lp_asset_currency,
-        receive_asset_2.amount, receive_asset_2.ticker,
-        TX_TYPE_LP_WITHDRAW)
+        receive_asset_2.amount, receive_asset_2.ticker)
     exporter.ingest_row(row)
