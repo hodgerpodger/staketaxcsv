@@ -1,6 +1,7 @@
 from algo import constants as co
+from algo.export_tx import export_reward_tx
 from algo.util_algo import get_transfer_asset, get_transfer_receiver
-from common.make_tx import make_reward_tx, make_unknown_tx, make_unknown_tx_with_transfer
+from common.make_tx import make_unknown_tx, make_unknown_tx_with_transfer
 
 
 def handle_unknown(exporter, txinfo):
@@ -27,8 +28,4 @@ def handle_unknown_transactions(transactions, wallet_address, exporter, txinfo):
 
 
 def handle_participation_rewards(reward, exporter, txinfo):
-    if not reward.zero():
-        row = make_reward_tx(txinfo, reward, reward.ticker)
-        row.fee = 0
-        row.comment = "Participation Rewards"
-        exporter.ingest_row(row)
+    export_reward_tx(exporter, txinfo, reward, comment="Participation Rewards")
