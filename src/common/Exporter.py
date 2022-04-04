@@ -128,7 +128,7 @@ class Exporter:
         self.sort_rows(reverse=True)
         rows = filter(lambda row: row.tx_type in et.TX_TYPES_CSVEXPORT, self.rows)
 
-        if format in [et.FORMAT_KOINLY, et.FORMAT_COINPANDA]:
+        if format in [et.FORMAT_KOINLY, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI]:
             return rows
 
         # For non-koinly CSVs, convert LP_DEPOSIT/LP_WITHDRAW into transfers/omit/trades
@@ -262,6 +262,8 @@ class Exporter:
             self.export_tokentax_csv(csvpath)
         elif format == et.FORMAT_ZENLEDGER:
             self.export_zenledger_csv(csvpath)
+        elif format == et.FORMAT_COINTELLI:
+            self.export_cointelli_csv(csvpath)    
 
         return csvpath
 
@@ -1153,6 +1155,66 @@ class Exporter:
 
         logging.info("Wrote to %s", csvpath)
 
+
+    def export_cointelli_csv(self, csvpath):
+        rows = self._rows_export(et.FORMAT_COINTELLI)
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
+            mywriter = csv.writer(f)
+
+            # header row
+            mywriter.writerow(et.COINTELLI_FIELDS)
+
+
+            # data rows
+            for row in rows:
+                # Determine transaction_type, classification
+                if row.tx_type == et.TX_TYPE_STAKING:
+                    transaction_type = "Staking Reward"
+                elif row.tx_type == et.TX_TYPE_AIRDROP:
+                    transaction_type = "Airdrop"
+                elif row.tx_type == et.TX_TYPE_TRADE:
+                    transaction_type = "Trade"
+                elif row.tx_type == et.TX_TYPE_SPEND:
+                    transaction_type = "Payment Sent"
+                elif row.tx_type == et.TX_TYPE_TRANSFER:
+                    if row.sent_amount:
+                        transaction_type = "Uncategorized Outgoing"
+                    elif row.received_amount:
+                        transaction_type = "Uncategorized Incoming"
+                    else:
+                        transaction_type = ""
+                        logging.error("Bad condition for transfer")
+                elif row.tx_type == et.TX_TYPE_INCOME:
+                    transaction_type = "Income"
+                elif row.tx_type == et.TX_TYPE_BORROW:
+                    transaction_type = "Borrowing"
+                elif row.tx_type == et.TX_TYPE_REPAY:
+                    transaction_type = "Repayment"
+                elif row.tx_type == et.TX_TYPE_LP_DEPOSIT:
+                    transaction_type = "Trade"
+                elif row.tx_type == et.TX_TYPE_LP_WITHDRAW:
+                    transaction_type = "Trade"
+                else:
+                    transaction_type = ""
+                    logging.critical("Transaction not handled correctly.  Fix this!")
+
+                line = [
+                    self._cointelli_timestamp(row.timestamp),   # Timestamp
+                    transaction_type,                           # Type
+                    row.sent_currency,                          # Out Currency
+                    row.sent_amount,                            # Out Quantity
+                    row.received_currency,                      # In Currency
+                    row.received_amount,                        # In Quantity
+                    row.fee_currency,                           # Fee Currency
+                    row.fee,                                    # Fee Quantity
+                    row.comment,                                # Comments
+                ]
+                mywriter.writerow(line)
+
+        logging.info("Wrote to %s", csvpath)
+
+
+
     def _bitcointax_timestamp(self, ts):
         # Convert "2021-08-04 15:25:43" to "2021-08-04 15:25:43 -0000"
         return ts + " -0000"
@@ -1173,6 +1235,13 @@ class Exporter:
         dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
 
         return dt.strftime("%m/%d/%Y %H:%M:%S")
+
+    def _cointelli_timestamp(self, ts):
+        # Convert "2021-08-04 15:25:43" to "08/14/2021 15:25:43"
+        dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
+
+        return dt.strftime("%m/%d/%Y %H:%M:%S")
+
 
     def _utc_to_local(self, date_string, timezone_string):
         dt = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
