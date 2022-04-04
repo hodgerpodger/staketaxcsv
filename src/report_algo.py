@@ -46,6 +46,8 @@ def _read_options(options):
     localconfig.start_date = options.get("start_date", None)
     localconfig.end_date = options.get("end_date", None)
     localconfig.lp_treatment = options.get("lp_treatment", LP_TREATMENT_TRANSFERS)
+    if "exclude_asas" in options:
+        localconfig.exclude_asas = [asa.strip().lower() for asa in options["exclude_asas"].split(",")]
 
     logging.info("localconfig: %s", localconfig.__dict__)
 

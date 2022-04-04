@@ -3,6 +3,7 @@ from common.ExporterTypes import (
     TX_TYPE_AIRDROP,
     TX_TYPE_BORROW,
     TX_TYPE_DEPOSIT_COLLATERAL,
+    TX_TYPE_EXCLUDED,
     TX_TYPE_INCOME,
     TX_TYPE_LP_STAKE,
     TX_TYPE_LP_UNSTAKE,
@@ -166,6 +167,18 @@ def make_unknown_tx_with_transfer(txinfo, sent_amount, sent_currency, received_a
                                   received_currency, empty_fee=False, z_index=0):
     return _make_tx_exchange(
         txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_UNKNOWN,
+        empty_fee=empty_fee, z_index=z_index
+    )
+
+
+def make_excluded_tx(txinfo):
+    return make_simple_tx(txinfo, TX_TYPE_EXCLUDED)
+
+
+def make_excluded_tx_with_transfer(txinfo, sent_amount, sent_currency, received_amount,
+                                  received_currency, empty_fee=False, z_index=0):
+    return _make_tx_exchange(
+        txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_EXCLUDED,
         empty_fee=empty_fee, z_index=z_index
     )
 

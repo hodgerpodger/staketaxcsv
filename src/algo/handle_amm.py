@@ -1,9 +1,7 @@
 from algo import constants as co
-from algo.asset import Algo
 from algo.export_tx import export_lp_deposit_tx, export_lp_withdraw_tx, export_swap_tx
 from algo.handle_simple import handle_unknown
 from algo.util_algo import get_transfer_asset, get_transfer_receiver
-from common.make_tx import make_lp_deposit_tx, make_lp_withdraw_tx, make_swap_tx, make_unknown_tx
 
 
 def _get_swap_arg(transaction):
