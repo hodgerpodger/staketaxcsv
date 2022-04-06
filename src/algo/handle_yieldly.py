@@ -1,8 +1,8 @@
 from algo import constants as co
 from algo.asset import Algo, Asset
+from algo.export_tx import export_reward_tx, export_stake_tx, export_unstake_tx
 from algo.handle_simple import handle_participation_rewards, handle_unknown
 from algo.util_algo import get_inner_transfer_asset, get_transfer_asset
-from common.make_tx import make_reward_tx, make_stake_tx, make_unstake_tx
 
 APPLICATION_ID_YIELDLY = 233725848
 APPLICATION_ID_YIELDLY_NLL = 233725844
@@ -208,12 +208,7 @@ def _handle_yieldly_nll(group, exporter, txinfo):
     fee_transaction = group[3]
     fee_amount += fee_transaction["fee"] + fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"]
 
-    fee = Algo(fee_amount)
-    txinfo.comment = "Yieldly NLL"
-
-    row = make_reward_tx(txinfo, reward, reward.ticker)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
+    export_reward_tx(exporter, txinfo, reward, fee_amount, "Yieldly NLL")
 
 
 def _handle_yieldly_algo_pool_claim(group, exporter, txinfo):
@@ -234,16 +229,8 @@ def _handle_yieldly_algo_pool_claim(group, exporter, txinfo):
     fee_amount = fee_transaction["fee"] + fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"]
 
     # Distribute fee over the two transactions
-    fee = Algo(fee_amount / 2)
-    txinfo.comment = "Yieldly Staking Pool"
-
-    row = make_reward_tx(txinfo, yldy_reward, yldy_reward.ticker)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
-
-    row = make_reward_tx(txinfo, algo_reward, algo_reward.ticker)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
+    export_reward_tx(exporter, txinfo, yldy_reward, fee_amount / 2, "Yieldly")
+    export_reward_tx(exporter, txinfo, algo_reward, fee_amount / 2, "Yieldly")
 
 
 def _handle_yieldly_asa_pool_claim(group, exporter, txinfo):
@@ -254,17 +241,7 @@ def _handle_yieldly_asa_pool_claim(group, exporter, txinfo):
     receive_transaction = group[2]
     reward = get_transfer_asset(receive_transaction)
 
-    if not reward.zero():
-        fee = Algo(fee_amount)
-        appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-        if YIELDLY_TRANSACTION_POOL_CLOSE in appl_args:
-            txinfo.comment = "Yieldly Staking Pool Close"
-        else:
-            txinfo.comment = "Yieldly Staking Pool"
-
-        row = make_reward_tx(txinfo, reward, reward.ticker)
-        row.fee = fee.amount
-        exporter.ingest_row(row)
+    export_reward_tx(exporter, txinfo, reward, fee_amount, "Yieldly")
 
 
 def _handle_yieldly_asa_pool_close(group, exporter, txinfo):
@@ -277,13 +254,7 @@ def _handle_yieldly_asa_pool_close(group, exporter, txinfo):
     rewards_transaction = app_transaction["inner-txns"][1]
     reward = get_transfer_asset(rewards_transaction)
 
-    if not reward.zero():
-        fee = Algo(fee_amount)
-        txinfo.comment = "Yieldly Staking Pool Close"
-
-        row = make_reward_tx(txinfo, reward, reward.ticker)
-        row.fee = fee.amount
-        exporter.ingest_row(row)
+    export_reward_tx(exporter, txinfo, reward, fee_amount, "Yieldly")
 
 
 def _handle_yieldly_t5_pool_claim(group, exporter, txinfo):
@@ -294,16 +265,9 @@ def _handle_yieldly_t5_pool_claim(group, exporter, txinfo):
     app_transaction = group[0]
     inner_transactions = app_transaction.get("inner-txns", [])
     length = len(inner_transactions)
-    if length > 0:
-        fee = Algo(fee_amount / length)
-        txinfo.comment = "Yieldly Staking Pool"
-
-        for transaction in inner_transactions:
-            reward = get_transfer_asset(transaction)
-            if not reward.zero():
-                row = make_reward_tx(txinfo, reward, reward.ticker)
-                row.fee = fee.amount
-                exporter.ingest_row(row)
+    for transaction in inner_transactions:
+        reward = get_transfer_asset(transaction)
+        export_reward_tx(exporter, txinfo, reward, fee_amount / length, "Yieldly")
 
 
 def _handle_yieldly_pool_stake(group, exporter, txinfo):
@@ -314,12 +278,7 @@ def _handle_yieldly_pool_stake(group, exporter, txinfo):
     send_transaction = group[2]
     send_asset = get_transfer_asset(send_transaction)
 
-    fee = Algo(fee_amount)
-    txinfo.comment = "Yieldly Stake"
-
-    row = make_stake_tx(txinfo, send_asset.amount, send_asset.ticker)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
+    export_stake_tx(exporter, txinfo, send_asset, fee_amount, "Yieldly")
 
 
 def _handle_yieldly_pool_withdraw(group, exporter, txinfo):
@@ -330,12 +289,7 @@ def _handle_yieldly_pool_withdraw(group, exporter, txinfo):
     receive_transaction = group[2]
     receive_asset = get_transfer_asset(receive_transaction)
 
-    fee = Algo(fee_amount)
-    txinfo.comment = "Yieldly Withdraw"
-
-    row = make_unstake_tx(txinfo, receive_asset.amount, receive_asset.ticker)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
+    export_unstake_tx(exporter, txinfo, receive_asset, fee_amount, "Yieldly")
 
 
 def _handle_yieldly_t5_pool_stake(group, exporter, txinfo):
@@ -346,12 +300,7 @@ def _handle_yieldly_t5_pool_stake(group, exporter, txinfo):
     send_transaction = group[1]
     send_asset = get_transfer_asset(send_transaction)
 
-    fee = Algo(fee_amount)
-    txinfo.comment = "Yieldly Stake"
-
-    row = make_stake_tx(txinfo, send_asset.amount, send_asset.ticker)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
+    export_stake_tx(exporter, txinfo, send_asset, fee_amount, "Yieldly")
 
 
 def _handle_yieldly_t5_pool_withdraw(group, exporter, txinfo):
@@ -362,9 +311,4 @@ def _handle_yieldly_t5_pool_withdraw(group, exporter, txinfo):
     app_transaction = group[0]
     receive_asset = get_inner_transfer_asset(app_transaction)
 
-    fee = Algo(fee_amount)
-    txinfo.comment = "Yieldly Withdraw"
-
-    row = make_unstake_tx(txinfo, receive_asset.amount, receive_asset.ticker)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
+    export_unstake_tx(exporter, txinfo, receive_asset, fee_amount, "Yieldly")

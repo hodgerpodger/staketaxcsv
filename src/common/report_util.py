@@ -78,6 +78,12 @@ def parse_args(ticker):
             default=False,
             help="include legacy transactions for cosmoshub-3",
         )
+    if ticker in (TICKER_ALGO):
+        parser.add_argument(
+            "--exclude_asas",
+            type=str,
+            help="Exclude transactions for this comma separated list of ASAs",
+        )
 
     args = parser.parse_args()
 
@@ -99,6 +105,8 @@ def parse_args(ticker):
         options["lp_treatment"] = args.lp_treatment
     if "legacy" in args and args.legacy:
         options["legacy"] = True
+    if "exclude_asas" in args and args.exclude_asas:
+        options["exclude_asas"] = args.exclude_asas
 
     return args.wallet_address, args.format, args.txid, options
 
