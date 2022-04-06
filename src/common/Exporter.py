@@ -263,7 +263,7 @@ class Exporter:
         elif format == et.FORMAT_ZENLEDGER:
             self.export_zenledger_csv(csvpath)
         elif format == et.FORMAT_COINTELLI:
-            self.export_cointelli_csv(csvpath)    
+            self.export_cointelli_csv(csvpath)
 
         return csvpath
 
@@ -1198,6 +1198,8 @@ class Exporter:
                     transaction_type = ""
                     logging.critical("Transaction not handled correctly.  Fix this!")
 
+                comment = row.comment + " " + row.txid
+
                 line = [
                     self._cointelli_timestamp(row.timestamp),   # Timestamp
                     transaction_type,                           # Type
@@ -1207,7 +1209,7 @@ class Exporter:
                     row.received_amount,                        # In Quantity
                     row.fee_currency,                           # Fee Currency
                     row.fee,                                    # Fee Quantity
-                    row.comment,                                # Comments
+                    comment,                                    # Comments
                 ]
                 mywriter.writerow(line)
 
