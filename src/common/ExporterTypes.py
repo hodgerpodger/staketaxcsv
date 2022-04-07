@@ -14,7 +14,7 @@ FORMAT_RECAP = "recap"
 FORMAT_TAXBIT = "taxbit"
 FORMAT_TOKENTAX = "tokentax"
 FORMAT_ZENLEDGER = "zenledger"
-FORMAT_COINTELLI= "cointelli"
+FORMAT_COINTELLI = "cointelli"
 FORMATS = [
     FORMAT_DEFAULT,
     FORMAT_BALANCES,

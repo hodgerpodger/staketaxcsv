@@ -25,7 +25,6 @@ class TxInfoIBC(TxInfo):
             pprint.pprint(msg.wasm)
         print("\n")
 
-
     def is_execute_contract(self):
         if self.msgs and self.msgs[0].msg_type == common.ibc.constants.MSG_TYPE_EXECUTE_CONTRACT:
             return True

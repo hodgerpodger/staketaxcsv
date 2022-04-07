@@ -18,9 +18,9 @@ def process_txs(wallet_address, elems, exporter, node, progress=None):
 
         # Update progress bar for slower processing of fetchhub-1 (due to required timestamp query for each tx)
         if node == co2.FET_FETCHUB1_NODE:
-            if i % 10 == 0 or i == len(elems)-1:
+            if i % 10 == 0 or i == len(elems) - 1:
                 message = f"Processed {i + 1} of {len(elems)} transactions for fetchhub1"
-                progress.report(i+1, message, progress.STAGE_FET1_TXS)
+                progress.report(i + 1, message, progress.STAGE_FET1_TXS)
 
 
 def process_tx(wallet_address, elem, exporter, node=None):

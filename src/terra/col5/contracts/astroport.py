@@ -49,7 +49,7 @@ def _is_astro_stake(msgs):
         if len(actions) == 2:
             if actions[0]["action"] == "send" and actions[1]["action"] == "mint":
                 if (actions[0]["contract_address"] == CURRENCY_ADDRESS_ASTRO
-                    and actions[1]["contract_address"] == CURRENCY_ADDRESS_XASTRO):
+                   and actions[1]["contract_address"] == CURRENCY_ADDRESS_XASTRO):
                     return True
     return False
 

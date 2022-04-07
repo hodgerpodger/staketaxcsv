@@ -1155,7 +1155,6 @@ class Exporter:
 
         logging.info("Wrote to %s", csvpath)
 
-
     def export_cointelli_csv(self, csvpath):
         rows = self._rows_export(et.FORMAT_COINTELLI)
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
@@ -1163,7 +1162,6 @@ class Exporter:
 
             # header row
             mywriter.writerow(et.COINTELLI_FIELDS)
-
 
             # data rows
             for row in rows:
@@ -1215,8 +1213,6 @@ class Exporter:
 
         logging.info("Wrote to %s", csvpath)
 
-
-
     def _bitcointax_timestamp(self, ts):
         # Convert "2021-08-04 15:25:43" to "2021-08-04 15:25:43 -0000"
         return ts + " -0000"
@@ -1243,7 +1239,6 @@ class Exporter:
         dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
 
         return dt.strftime("%m/%d/%Y %H:%M:%S")
-
 
     def _utc_to_local(self, date_string, timezone_string):
         dt = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
