@@ -48,7 +48,7 @@ def make_osmo_reward_tx(txinfo, msginfo, reward_amount, reward_currency):
 
 
 def make_lp_reward_tx(wallet_address, day, reward_amount, reward_currency):
-    timestamp = "{} 17:00:00".format(day)
+    timestamp = "{} 17:15:00".format(day)
     txid = "{}.{}.{}".format(wallet_address, day, reward_currency)
     row = Row(
         timestamp=timestamp,
