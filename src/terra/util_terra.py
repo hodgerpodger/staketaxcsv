@@ -274,7 +274,7 @@ def _denom_to_currency(denom):
 
 
 def _decimals(currency):
-    if currency in ["LUNA", "UST"]:
+    if currency and currency.upper() in ["LUNA", "UST", "AUST"]:
         # temporary override fix (symbol clash cases)
         return 6
     elif currency in localconfig.decimals and localconfig.decimals[currency]:
