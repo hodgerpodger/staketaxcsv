@@ -66,7 +66,7 @@ class AlgoIndexerAPI:
         if status_code == 200:
             return data["transactions"]
         else:
-            return None
+            return []
 
     def get_asset(self, id):
         endpoint = f"v2/assets/{id}"
