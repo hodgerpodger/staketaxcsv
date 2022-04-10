@@ -1,9 +1,10 @@
 from algo.api_algoindexer import AlgoIndexerAPI
+from algo.constants import ASSET_ID_ALGO
 
 
 class Asset:
     asset_list = {
-        0: {
+        ASSET_ID_ALGO: {
             "name": "Algorand",
             "unit-name": "ALGO",
             "decimals": 6,
