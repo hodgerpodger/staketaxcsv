@@ -16,6 +16,7 @@ from common.ExporterTypes import (
     TX_TYPE_UNBOND_INSTANT,
     TX_TYPE_UNBOND_WITHDRAW,
 )
+from common import ExporterTypes as et
 from common.make_tx import _make_tx_exchange, _make_tx_received, _make_tx_sent, make_simple_tx
 from terra.constants import CUR_LUNA
 

@@ -4,8 +4,8 @@ import re
 
 from algo import constants as co
 from algo.asset import Algo, Asset
+from algo.export_tx import export_swap_tx
 from algo.util_algo import get_transaction_note, get_transfer_asset
-from common.make_tx import make_swap_tx
 
 # For reference check the whitepaper appendix:
 # https://github.com/algodex/algodex-public-documents/blob/master/Algodex%20Whitepaper%201.0.pdf
@@ -128,15 +128,11 @@ def _handle_algodex_partial_buy_sell_side(group, exporter, txinfo):
     fee_transaction = group[3]
     fee_amount += fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
 
-    txinfo.comment = "AlgoDex Partial Limit Sell Order"
-
-    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
-    fee = Algo(fee_amount)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, "AlgoDex Partial Limit Sell Order")
 
 
 def _handle_algodex_partial_buy_buy_side(group, exporter, txinfo):
+    fee_amount = 0
     receive_transaction = group[1]
     receive_asset = get_transfer_asset(receive_transaction)
 
@@ -145,10 +141,7 @@ def _handle_algodex_partial_buy_buy_side(group, exporter, txinfo):
 
     send_asset = Algo((receive_asset.uint_amount * d) / n)
 
-    txinfo.comment = "AlgoDex Partial Limit Buy Order"
-
-    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
-    exporter.ingest_row(row)
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, "AlgoDex Partial Limit Buy Order")
 
 
 # AlgoDex whitepaper: Diagram 11
@@ -170,15 +163,11 @@ def _handle_algodex_partial_sell_buy_side(group, exporter, txinfo):
 
     fee_amount += fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
 
-    txinfo.comment = "AlgoDex Partial Limit Buy Order"
-
-    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
-    fee = Algo(fee_amount)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, "AlgoDex Partial Limit Buy Order")
 
 
 def _handle_algodex_partial_sell_sell_side(group, exporter, txinfo):
+    fee_amount = 0
     receive_transaction = group[1]
     receive_asset = get_transfer_asset(receive_transaction)
 
@@ -187,10 +176,7 @@ def _handle_algodex_partial_sell_sell_side(group, exporter, txinfo):
 
     send_asset = Asset(asset_id, (receive_asset.uint_amount * n) / d)
 
-    txinfo.comment = "AlgoDex Partial Limit Sell Order"
-
-    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
-    exporter.ingest_row(row)
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, "AlgoDex Partial Limit Sell Order")
 
 
 # AlgoDex whitepaper: Diagram 6
@@ -203,15 +189,11 @@ def _handle_algodex_full_buy_sell_side(group, exporter, txinfo):
     fee_amount = send_transaction["fee"]
     send_asset = get_transfer_asset(send_transaction)
 
-    txinfo.comment = "AlgoDex Full Limit Sell Order"
-
-    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
-    fee = Algo(fee_amount)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, "AlgoDex Full Limit Sell Order")
 
 
 def _handle_algodex_full_buy_buy_side(group, exporter, txinfo):
+    fee_amount = 0
     receive_transaction = group[2]
     receive_asset = get_transfer_asset(receive_transaction)
 
@@ -220,10 +202,7 @@ def _handle_algodex_full_buy_buy_side(group, exporter, txinfo):
 
     send_asset = Algo((receive_asset.uint_amount * d) / n)
 
-    txinfo.comment = "AlgoDex Full Limit Buy Order"
-
-    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
-    exporter.ingest_row(row)
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, "AlgoDex Full Limit Buy Order")
 
 
 # AlgoDex whitepaper: Diagram 10
@@ -240,15 +219,11 @@ def _handle_algodex_full_sell_buy_side(group, exporter, txinfo):
         receive_transaction = group[3]
         receive_asset = get_transfer_asset(receive_transaction)
 
-    txinfo.comment = "AlgoDex Full Limit Buy Order"
-
-    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
-    fee = Algo(fee_amount)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, "AlgoDex Full Limit Buy Order")
 
 
 def _handle_algodex_full_sell_sell_side(group, exporter, txinfo):
+    fee_amount = 0
     receive_transaction = group[1]
     receive_asset = get_transfer_asset(receive_transaction)
 
@@ -257,10 +232,7 @@ def _handle_algodex_full_sell_sell_side(group, exporter, txinfo):
 
     send_asset = Asset(asset_id, (receive_asset.uint_amount * n) / d)
 
-    txinfo.comment = "AlgoDex Full Limit Sell Order"
-
-    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
-    exporter.ingest_row(row)
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, "AlgoDex Full Limit Sell Order")
 
 
 # Undocumented
@@ -281,15 +253,11 @@ def _handle_algodex_market_order_buy_side(group, exporter, txinfo):
 
     fee_amount += fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"] + fee_transaction["fee"]
 
-    txinfo.comment = "AlgoDex Market Buy Order"
-
-    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
-    fee = Algo(fee_amount)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, "AlgoDex Market Buy Order")
 
 
 def _handle_algodex_market_order_sell_side(group, exporter, txinfo):
+    fee_amount = 0
     app_transaction = group[0]
     n, d, asset_id = _get_order_details(app_transaction)
 
@@ -297,10 +265,7 @@ def _handle_algodex_market_order_sell_side(group, exporter, txinfo):
     receive_asset = get_transfer_asset(receive_transaction)
     send_asset = Asset(asset_id, (receive_asset.uint_amount * n) / d)
 
-    txinfo.comment = "AlgoDex Market Sell Order"
-
-    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
-    exporter.ingest_row(row)
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, "AlgoDex Market Sell Order")
 
 
 def _get_order_details(transaction):

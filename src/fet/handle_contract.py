@@ -65,7 +65,6 @@ def _handle_bridge_transfer_out(exporter, txinfo):
     bridge_destination = "https://etherscan.io/address/{}".format(wasm[0]["destination"].lower())
     comment = "bridge {}".format(bridge_destination)
 
-
     if len(transfers_out) == 1 and len(transfers_in) == 0:
         amount, currency = transfers_out[0]
         row = make_tx.make_transfer_out_tx(txinfo, msginfo, amount, currency)

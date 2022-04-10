@@ -1,7 +1,7 @@
 from algo import constants as co
 from algo.asset import Algo, Asset
+from algo.export_tx import export_swap_tx
 from algo.handle_simple import handle_participation_rewards
-from common.make_tx import make_reward_tx, make_swap_tx
 
 APPLICATION_ID_AKITA_SWAP = 537279393
 
@@ -10,9 +10,9 @@ def is_akita_swap_transaction(group):
     if len(group) != 3:
         return False
 
-    if (group[0]["tx-type"] != "axfer"
-            or group[1]["tx-type"] != "axfer"
-            or group[2]["tx-type"] != "appl"):
+    if (group[0]["tx-type"] != co.TRANSACTION_TYPE_ASSET_TRANSFER
+            or group[1]["tx-type"] != co.TRANSACTION_TYPE_ASSET_TRANSFER
+            or group[2]["tx-type"] != co.TRANSACTION_TYPE_APP_CALL):
         return False
 
     app_transaction = group[2]
@@ -49,9 +49,4 @@ def handle_akita_swap_transaction(group, exporter, txinfo):
     amount = receive_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"]
     receive_asset = Asset(asset_id, amount)
 
-    fee = Algo(fee_amount)
-    txinfo.comment = "Akita Migration Swap"
-
-    row = make_swap_tx(txinfo, send_asset.amount, send_asset.ticker, receive_asset.amount, receive_asset.ticker)
-    row.fee = fee.amount
-    exporter.ingest_row(row)
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, "Akita Migration Swap")

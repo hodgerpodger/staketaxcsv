@@ -4,9 +4,10 @@ import time
 from datetime import datetime, timezone
 
 import requests
-from settings_csv import SOL_NODE
+from settings_csv import SOL_NODE, REPORTS_DIR
 from sol.constants import BILLION, PROGRAMID_STAKE, PROGRAMID_TOKEN_ACCOUNTS
 from sol.config_sol import localconfig
+from common.debug_util import use_debug_files
 
 TOKEN_ACCOUNTS = {}
 
@@ -92,6 +93,7 @@ class RpcAPI(object):
         return out
 
     @classmethod
+    @use_debug_files(localconfig, REPORTS_DIR)
     def _get_inflation_reward(cls, staking_address, epoch):
         params_list = [
             [staking_address],
@@ -137,6 +139,7 @@ class RpcAPI(object):
         return addresses
 
     @classmethod
+    @use_debug_files(localconfig, REPORTS_DIR)
     def _fetch_staking_addresses(cls, wallet_address):
         params_list = [
             PROGRAMID_STAKE,
@@ -155,6 +158,7 @@ class RpcAPI(object):
         return cls._fetch("getProgramAccounts", params_list)
 
     @classmethod
+    @use_debug_files(localconfig, REPORTS_DIR)
     def fetch_tx(cls, txid):
         params_list = [txid, {"encoding": "jsonParsed"}]
         return cls._fetch("getConfirmedTransaction", params_list)
@@ -171,6 +175,7 @@ class RpcAPI(object):
         return result
 
     @classmethod
+    @use_debug_files(localconfig, REPORTS_DIR)
     def _fetch_token_accounts(cls, wallet_address):
         logging.info("Querying _fetch_token_accounts_()... wallet_address=%s", wallet_address)
         params_list = [
@@ -270,6 +275,7 @@ class RpcAPI(object):
         return out, last_txid
 
     @classmethod
+    @use_debug_files(localconfig, REPORTS_DIR)
     def _get_txids(cls, wallet_address, limit=None, before=None):
         config = {}
         if limit:

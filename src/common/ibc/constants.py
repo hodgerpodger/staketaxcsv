@@ -29,4 +29,3 @@ MSG_TYPE_WITHDRAW_COMMISSION = "MsgWithdrawValidatorCommission"
 MSG_TYPE_WITHDRAW_REWARD = "MsgWithdrawDelegatorReward"
 MSG_TYPE_TIMEOUT = "MsgTimeout"
 MSG_TYPE_MULTI_SEND = "MsgMultiSend"
-

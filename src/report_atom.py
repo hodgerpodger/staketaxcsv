@@ -69,7 +69,7 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def estimate_duration(wallet_address):
+def estimate_duration(wallet_address, options):
     return SECONDS_PER_PAGE * atom.api_lcd.get_txs_count_pages(wallet_address)
 
 
@@ -93,7 +93,7 @@ def txhistory(wallet_address, options):
         elems.extend(_fetch_txs_legacy(wallet_address, progress))
 
     # Fetch transactions
-    elems.extend(_fetch_txs(wallet_address, progress, count_pages))
+    elems.extend(_fetch_txs(wallet_address, progress))
     elems = _remove_duplicates(elems)
 
     progress.report_message(f"Processing {len(elems)} ATOM transactions... ")
@@ -129,7 +129,7 @@ def _fetch_txs_legacy(wallet_address, progress):
     return out
 
 
-def _fetch_txs(wallet_address, progress, num_pages):
+def _fetch_txs(wallet_address, progress):
     if localconfig.debug:
         debug_file = f"_reports/testatom.{wallet_address}.json"
         if os.path.exists(debug_file):
@@ -142,7 +142,7 @@ def _fetch_txs(wallet_address, progress, num_pages):
     for is_sender in (True, False):
         offset = 0
         for _ in range(0, _max_pages()):
-            message = f"Fetching page {current_page + 1} of {num_pages}"
+            message = "Fetching page {} for {}".format(current_page + 1, "sender" if is_sender else "recipient")
             progress.report(current_page, message)
             current_page += 1
 

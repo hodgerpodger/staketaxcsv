@@ -97,11 +97,15 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def estimate_duration(wallet_address):
+def estimate_duration(wallet_address, options):
+    _read_options(options)
+
     logging.info("Fetching staking addresses...")
     num_staking_addresses = len(RpcAPI.fetch_staking_addresses(wallet_address))
+
     logging.info("Fetching txids...")
     num_txids = _num_txids(wallet_address)
+
     return SECONDS_PER_STAKING_ADDRESS * num_staking_addresses + SECONDS_PER_TX * num_txids
 
 
@@ -117,6 +121,7 @@ def txhistory(wallet_address, options):
         localconfig.blocks = Cache().get_sol_blocks()
         logging.info("Loaded sol blocks info into cache...")
     logging.info("Using SOLANA_URL=%s...", SOL_NODE)
+    min_date = localconfig.start_date
 
     progress = ProgressSol()
     exporter = Exporter(wallet_address, localconfig, TICKER_SOL)
@@ -125,7 +130,7 @@ def txhistory(wallet_address, options):
     # Fetch data to so that job progress can be estimated ##########
 
     # Fetch transaction ids for wallet
-    txids = _txids(wallet_address, progress)
+    txids = _txids(wallet_address, progress, min_date)
 
     # Fetch current staking addresses for wallet
     progress.report_message("Fetching staking addresses...")
@@ -144,7 +149,7 @@ def txhistory(wallet_address, options):
     progress.update_estimate(len(wallet_info.get_staking_addresses()))
 
     # Staking rewards data
-    staking_rewards.reward_txs(wallet_info, exporter, progress)
+    staking_rewards.reward_txs(wallet_info, exporter, progress, min_date)
 
     ErrorCounter.log(TICKER_SOL, wallet_address)
     if localconfig.cache:
@@ -154,10 +159,9 @@ def txhistory(wallet_address, options):
     return exporter
 
 
-def _query_txids(addresses, progress):
-    """Returns transactions txid's across all token account addresses"""
+def _query_txids(addresses, progress, min_date=None):
+    """ Returns transactions txid's across all token account addresses """
     max_txs = localconfig.limit
-    min_date = localconfig.start_date
 
     out = []
     txids_seen = set()
@@ -192,14 +196,14 @@ def _query_txids(addresses, progress):
     return out
 
 
-def _txids(wallet_address, progress):
+def _txids(wallet_address, progress, min_date):
     # Sometimes, transactions do not all appear under main wallet address when querying transaction history.
     # So retrieve token addresses too.
     addresses = [wallet_address]
     token_accounts = RpcAPI.fetch_token_accounts(wallet_address).keys()
     addresses.extend(token_accounts)
 
-    out = _query_txids(addresses, progress)
+    out = _query_txids(addresses, progress, min_date)
     return out
 
 

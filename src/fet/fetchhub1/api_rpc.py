@@ -102,7 +102,7 @@ def get_txs_all(node, wallet_address, progress, max_txs, per_page=TXS_LIMIT_PER_
     out = []
     page_for_progress = 1
     for events_type in events_types:
-        for page in range(1, max_pages+1):
+        for page in range(1, max_pages + 1):
             message = f"Fetching page {page_for_progress} ..."
             progress.report(page_for_progress, message, stage_name)
             page_for_progress += 1

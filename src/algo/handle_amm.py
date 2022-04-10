@@ -1,8 +1,7 @@
 from algo import constants as co
-from algo.asset import Algo
+from algo.export_tx import export_lp_deposit_tx, export_lp_withdraw_tx, export_swap_tx
 from algo.handle_simple import handle_unknown
 from algo.util_algo import get_transfer_asset, get_transfer_receiver
-from common.make_tx import make_lp_deposit_tx, make_lp_withdraw_tx, make_swap_tx, make_unknown_tx
 
 
 def _get_swap_arg(transaction):
@@ -11,6 +10,9 @@ def _get_swap_arg(transaction):
         return False
 
     appl_args = set(transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"])
+    if not appl_args:
+        return co.UNKNOWN_TRANSACTION
+
     swap_args = set(co.APPL_ARGS_SWAP.keys())
     intersection = swap_args & appl_args
     if intersection:
@@ -178,23 +180,17 @@ def handle_swap(group, exporter, txinfo):
                     receive_asset = asset
 
         if receive_asset is not None:
-            row = make_swap_tx(
-                txinfo, send_asset.amount, send_asset.ticker,
-                receive_asset.amount, receive_asset.ticker, z_index=z_offset)
+            export_swap_tx(
+                exporter, txinfo, send_asset, receive_asset, fee_amount, co.APPL_ARGS_SWAP[swap_arg], z_offset)
         else:
-            row = make_unknown_tx(txinfo)
+            break
 
-        fee = Algo(fee_amount)
-        row.fee = fee.amount
-        amm = co.APPL_ARGS_SWAP[swap_arg]
-        row.comment = amm
-        exporter.ingest_row(row)
         fee_amount = 0
         i += 2
         z_offset += 1
 
     if i < length:
-        row = make_unknown_tx(txinfo)
+        handle_unknown(exporter, txinfo)
 
 
 def handle_lp_add(amm, group, exporter, txinfo):
@@ -230,20 +226,7 @@ def handle_lp_add(amm, group, exporter, txinfo):
             lp_asset = asset
 
     if lp_asset is not None:
-        lp_asset_currency = f"LP_{amm}_{send_asset_1.ticker}_{send_asset_2.ticker}"
-
-        fee = Algo(fee_amount / 2)
-        row = make_lp_deposit_tx(
-            txinfo, send_asset_1.amount, send_asset_1.ticker,
-            lp_asset.amount / 2, lp_asset_currency)
-        row.fee = fee.amount
-        exporter.ingest_row(row)
-
-        row = make_lp_deposit_tx(
-            txinfo, send_asset_2.amount, send_asset_2.ticker,
-            lp_asset.amount / 2, lp_asset_currency)
-        row.fee = fee.amount
-        exporter.ingest_row(row)
+        export_lp_deposit_tx(exporter, txinfo, amm, send_asset_1, send_asset_2, lp_asset, fee_amount)
     else:
         handle_unknown(exporter, txinfo)
 
@@ -263,20 +246,6 @@ def handle_lp_remove(amm, group, exporter, txinfo):
         receive_transaction = inner_transactions[1]
         receive_asset_2 = get_transfer_asset(receive_transaction)
 
-        lp_asset_currency = f"LP_{amm}_{receive_asset_1.ticker}_{receive_asset_2.ticker}"
-
-        fee = Algo(fee_amount / 2)
-
-        row = make_lp_withdraw_tx(
-            txinfo, lp_asset.amount / 2, lp_asset_currency,
-            receive_asset_1.amount, receive_asset_1.ticker)
-        row.fee = fee.amount
-        exporter.ingest_row(row)
-
-        row = make_lp_withdraw_tx(
-            txinfo, lp_asset.amount / 2, lp_asset_currency,
-            receive_asset_2.amount, receive_asset_2.ticker)
-        row.fee = fee.amount
-        exporter.ingest_row(row)
+        export_lp_withdraw_tx(exporter, txinfo, amm, lp_asset, receive_asset_1, receive_asset_2, fee_amount)
     else:
         handle_unknown(exporter, txinfo)

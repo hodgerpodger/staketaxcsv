@@ -39,6 +39,19 @@ def get_transfer_asset(transaction, asset_map={}):
     return Asset(asset_map.get(asset_id, asset_id), amount)
 
 
+def get_transfer_close_to_asset(transaction, asset_map={}):
+    amount = 0
+    asset_id = 0
+    txtype = transaction["tx-type"]
+    if txtype == "pay":
+        amount = transaction[co.TRANSACTION_KEY_PAYMENT]["close-amount"]
+    elif txtype == "axfer":
+        amount = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["close-amount"]
+        asset_id = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
+
+    return Asset(asset_map.get(asset_id, asset_id), amount)
+
+
 def get_inner_transfer_asset(transaction, asset_map={}):
     inner_transactions = transaction.get("inner-txns", [])
     for transaction in inner_transactions:

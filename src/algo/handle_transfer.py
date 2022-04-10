@@ -6,9 +6,9 @@ import base64
 
 from algo import constants as co
 from algo.asset import Algo, Asset
+from algo.export_tx import export_receive_tx, export_reward_tx, export_send_tx
 from algo.handle_simple import handle_participation_rewards, handle_unknown
 from algo.util_algo import get_transaction_note
-from common.make_tx import make_reward_tx, make_transfer_in_tx, make_transfer_out_tx
 
 # Algostake escrow wallet: https://algostake.org/litepaper
 ADDRESS_ALGOSTAKE_ESCROW = "4ZK3UPFRJ643ETWSWZ4YJXH3LQTL2FUEI6CIT7HEOVZL6JOECVRMPP34CY"
@@ -41,11 +41,9 @@ def handle_governance_reward_transaction(group, exporter, txinfo):
     transaction = group[0]
     payment_details = transaction[co.TRANSACTION_KEY_PAYMENT]
 
-    reward = Algo(payment_details["amount"] + transaction["receiver-rewards"])
     txinfo.txid = transaction["id"]
-    txinfo.comment = "Governance"
-    row = make_reward_tx(txinfo, reward, reward.ticker)
-    exporter.ingest_row(row)
+    reward = Algo(payment_details["amount"] + transaction["receiver-rewards"])
+    export_reward_tx(exporter, txinfo, reward, comment="Governance")
 
 
 def handle_payment_transaction(wallet_address, transaction, exporter, txinfo):
@@ -105,50 +103,35 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
             send_amount += details["amount"]
             rewards_amount += transaction["sender-rewards"]
             fee_amount = transaction["fee"]
-        amount = Asset(asset_id, receive_amount - send_amount)
-        if not amount.zero():
+        receive_asset = Asset(asset_id, receive_amount - send_amount)
+        if not receive_asset.zero():
             row = None
             if txsender == ADDRESS_ALGOSTAKE_ESCROW:
-                row = make_reward_tx(txinfo, amount, amount.ticker)
-                row.comment = "Algostake"
+                export_reward_tx(exporter, txinfo, receive_asset, comment="Algostake")
             else:
                 note = get_transaction_note(transaction)
                 if note is not None and "tinymanStaking/v1" in note:
-                    row = make_reward_tx(txinfo, amount, amount.ticker)
-                    row.comment = "Tinyman"
+                    export_reward_tx(exporter, txinfo, receive_asset, comment="Tinyman")
                 else:
-                    row = make_transfer_in_tx(txinfo, amount, amount.ticker)
-                    if txsender == ADDRESS_ALGOMINT:
-                        row.comment = "Algomint"
-                fee = Algo(fee_amount)
-                row.fee = fee.amount
-            exporter.ingest_row(row)
+                    export_receive_tx(
+                        exporter, txinfo, receive_asset, fee_amount,
+                        "Algomint" if txsender == ADDRESS_ALGOMINT else None)
     else:
         rewards_amount += transaction["sender-rewards"]
         if close_to and txreceiver != close_to:
             # We are closing the account, but sending the remaining balance is sent to different address
-            close_amount = Asset(asset_id, details["close-amount"])
-            row = make_transfer_out_tx(txinfo, close_amount, close_amount.ticker, close_to)
-            row.fee = 0
-            exporter.ingest_row(row)
-            send_amount = Asset(asset_id, details["amount"])
+            close_asset = Asset(asset_id, details["close-amount"])
+            export_send_tx(exporter, txinfo, close_asset)
 
-            if not send_amount.zero():
-                row = make_transfer_out_tx(txinfo, send_amount, send_amount.ticker, txreceiver)
-                fee = Algo(transaction["fee"])
-                row.fee = fee.amount
-                exporter.ingest_row(row)
+            send_asset = Asset(asset_id, details["amount"])
+            export_send_tx(exporter, txinfo, send_asset, transaction["fee"], txreceiver)
         else:
             # Regular send or closing to the same account
-            send_amount = Asset(asset_id, details["amount"] + details["close-amount"])
+            send_asset = Asset(asset_id, details["amount"] + details["close-amount"])
 
-            if not send_amount.zero():
-                row = make_transfer_out_tx(txinfo, send_amount, send_amount.ticker, txreceiver)
-                if txreceiver == ADDRESS_ALGOMINT:
-                    row.comment = "Algomint"
-                fee = Algo(transaction["fee"])
-                row.fee = fee.amount
-                exporter.ingest_row(row)
+            export_send_tx(
+                exporter, txinfo, send_asset, transaction["fee"], txreceiver,
+                "Algomint" if txreceiver == ADDRESS_ALGOMINT else None)
 
     reward = Algo(rewards_amount)
     handle_participation_rewards(reward, exporter, txinfo)
