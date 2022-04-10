@@ -16,7 +16,6 @@ from common.ExporterTypes import (
     TX_TYPE_UNKNOWN,
     TX_TYPE_LP_DEPOSIT,
     TX_TYPE_LP_WITHDRAW,
-    TX_TYPE_MARGIN_TRADE_FEE,
     TX_TYPE_UNSTAKE,
     TX_TYPE_WITHDRAW_COLLATERAL,
 )
@@ -48,11 +47,6 @@ def make_spend_tx(txinfo, sent_amount, sent_currency, z_index=0):
 
 def make_spend_fee_tx(txinfo, fee_amount, fee_currency, z_index=0):
     return _make_tx_sent(txinfo, fee_amount, fee_currency, TX_TYPE_SPEND, z_index=z_index, empty_fee=True)
-
-def make_margin_fee_tx(txinfo, fee_amount, fee_currency):
-    row = _make_tx_sent(txinfo, fee_amount, fee_currency, TX_TYPE_MARGIN_TRADE_FEE, empty_fee=True)
-    row.comment = "margin trade fee"
-    return row
 
 def make_transfer_out_tx(txinfo, sent_amount, sent_currency, dest_address=None):
     if dest_address and dest_address in DONATION_WALLETS:

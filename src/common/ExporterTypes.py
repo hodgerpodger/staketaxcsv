@@ -166,7 +166,6 @@ TX_TYPES_CSVEXPORT = [
     TX_TYPE_REPAY,
     TX_TYPE_LP_DEPOSIT,
     TX_TYPE_LP_WITHDRAW,
-    TX_TYPE_MARGIN_TRADE_FEE,
 ]
 
 # stake.tax csv format
