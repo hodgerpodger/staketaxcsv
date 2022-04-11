@@ -2,6 +2,7 @@ from common.make_tx import (
     make_borrow_tx,
     make_deposit_collateral_tx,
     make_liquidate_tx,
+    make_spend_fee_tx,
     make_repay_tx,
     make_swap_tx,
     make_withdraw_collateral_tx
@@ -50,6 +51,12 @@ def handle_repay_withdraw(exporter, elem, txinfo):
 
     row = make_repay_tx(txinfo, repay_amount, repay_currency, z_index=0)
     exporter.ingest_row(row)
+
+    margin_fee_amount, margin_fee_currency = util_terra._get_mirror_fees(elem, txinfo.txid)
+    if margin_fee_amount > 0:
+        row = make_spend_fee_tx(txinfo, margin_fee_amount, margin_fee_currency)
+        row.comment = "margin trade fee"
+        exporter.ingest_row(row)
 
     if len(data["logs"]) > 1:
         # Extract withdraw
