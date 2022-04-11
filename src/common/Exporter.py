@@ -689,13 +689,15 @@ class Exporter:
 
     def koinly_currency(self, currency):
         # Reference: https://app.koinly.io/p/markets?search=STARS
+        # TODO We might need a per-blockchain remap to avoid collisions
         remap = {
             "APOLLO": "ID:28478",
             "ASTRO": "ID:48993",
             "PSI": "ID:106376",
             "STARS": "ID:36899",
             "LOOP": "ID:10933",
-            "BETH": "ID:30493"
+            "BETH": "ID:30493",
+            "DEGEN": "ID:124845"
         }
 
         if self._is_koinly_lp(currency):
