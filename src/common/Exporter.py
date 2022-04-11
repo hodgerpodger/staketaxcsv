@@ -240,10 +240,14 @@ class Exporter:
             return xlsxpath
         elif format == et.FORMAT_BITCOINTAX:
             self.export_bitcointax_csv(csvpath)
+        elif format == et.FORMAT_BLOCKPIT:
+            self.export_blockpit_csv(csvpath)
         elif format == et.FORMAT_COINLEDGER:
             self.export_coinledger_csv(csvpath)
         elif format == et.FORMAT_COINPANDA:
             self.export_coinpanda_csv(csvpath)
+        elif format == et.FORMAT_COINTELLI:
+            self.export_cointelli_csv(csvpath)
         elif format == et.FORMAT_COINTRACKING:
             self.export_cointracking_csv(csvpath)
         elif format == et.FORMAT_COINTRACKER:
@@ -262,8 +266,7 @@ class Exporter:
             self.export_tokentax_csv(csvpath)
         elif format == et.FORMAT_ZENLEDGER:
             self.export_zenledger_csv(csvpath)
-        elif format == et.FORMAT_COINTELLI:
-            self.export_cointelli_csv(csvpath)
+
 
         return csvpath
 
@@ -1215,6 +1218,63 @@ class Exporter:
                 mywriter.writerow(line)
 
         logging.info("Wrote to %s", csvpath)
+
+    def export_blockpit_csv(self, csvpath):
+        """ Experimental-state CSV for blockpit.io """
+        BLOCKPIT_TYPES = {
+            et.TX_TYPE_STAKING: "staking",
+            et.TX_TYPE_AIRDROP: "airdrop",
+            et.TX_TYPE_TRADE: "trade",
+            et.TX_TYPE_SPEND: "expense",
+            et.TX_TYPE_INCOME: "staking",
+            et.TX_TYPE_TRANSFER: "transfer",
+            et.TX_TYPE_BORROW: "transfer",
+            et.TX_TYPE_REPAY: "transfer"
+        }
+        rows = self._rows_export(et.FORMAT_BLOCKPIT)
+
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
+            mywriter = csv.writer(f)
+
+            # header row
+            mywriter.writerow(et.BLOCKPIT_FIELDS)
+
+            # data rows
+            for i, row in enumerate(rows):
+                # Determine Transaction Type
+                bl_type = BLOCKPIT_TYPES[row.tx_type]
+                if bl_type == "transfer":
+                    if row.sent_amount:
+                        bl_type = "withdrawal"
+                    else:
+                        bl_type = "deposit"
+
+                id = i
+                exchange_name = self.ticker + "_exchange"
+                depot_name = self.wallet_address
+
+                line = [
+                    id,                                       # id
+                    exchange_name,                            # exchange_name
+                    depot_name,                               # depot_name
+                    self._blockpit_timestamp(row.timestamp),  # transaction_date
+                    row.received_currency,                    # buy_asset
+                    row.received_amount,                      # buy_amount
+                    row.sent_currency,                        # sell_asset
+                    row.sent_amount,                          # sell_amount
+                    row.fee_currency,                         # fee_asset
+                    row.fee,                                  # fee_amount
+                    bl_type,                                  # transaction_type
+                ]
+                mywriter.writerow(line)
+
+        logging.info("Wrote to %s", csvpath)
+
+    def _blockpit_timestamp(self, ts):
+        # Convert "2021-08-04 15:25:43" to "08/14/2021 15:25:43"
+        dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
+
+        return dt.strftime("%m/%d/%Y %H:%M:%S")
 
     def _bitcointax_timestamp(self, ts):
         # Convert "2021-08-04 15:25:43" to "2021-08-04 15:25:43 -0000"
