@@ -105,6 +105,7 @@ def _txinfo(exporter, elem, wallet_address):
 
 
 def _get_fee(elem):
+    more_fees = []
     amounts = elem["tx"]["value"]["fee"]["amount"]
 
     # Handle special case for old transaction (16421CD60E56DA4F859088B7CA87BCF05A3B3C3F56CD4C0B2528EE0A797CC22D)
@@ -125,6 +126,8 @@ def _get_fee(elem):
             tax_amount, tax_currency = util_terra._amount(tax_amount_string)
             if tax_currency == currency:
                 fee += tax_amount
+            else:
+                more_fees.append((tax_amount, tax_currency))
 
     if len(amounts) == 1:
         # "normal" single fee
@@ -132,11 +135,8 @@ def _get_fee(elem):
         # Special case for old col-3 transaction 7F3F1FA8AC89824B64715FEEE057273A873F240CA9A50BC4A87EEF4EE9813905
         if fee == 0:
             return 0, "", []
-
-        return fee, currency, []
     else:
         # multi-currency fee
-        more_fees = []
         for info in amounts[1:]:
             cur_denom = info["denom"]
             cur_amount_string = info["amount"]
@@ -144,8 +144,8 @@ def _get_fee(elem):
             cur_fee = util_terra._float_amount(cur_amount_string, cur_currency)
 
             more_fees.append((cur_fee, cur_currency))
-        return fee, currency, more_fees
 
+    return fee, currency, more_fees
 
 def _get_first_msgtype(elem):
     """Returns type identifier for this transaction"""
