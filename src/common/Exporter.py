@@ -6,6 +6,7 @@ import pandas as pd
 import pytz
 from pytz import timezone
 from tabulate import tabulate
+import time
 
 from common import ExporterTypes as et
 from common.exporter_koinly import NullMap
@@ -242,6 +243,9 @@ class Exporter:
             self.export_bitcointax_csv(csvpath)
         elif format == et.FORMAT_BLOCKPIT:
             self.export_blockpit_csv(csvpath)
+            xlsxpath = csvpath.replace(".csv", ".xlsx")
+            self.convert_csv_to_xlsx(csvpath, xlsxpath)
+            return xlsxpath
         elif format == et.FORMAT_COINLEDGER:
             self.export_coinledger_csv(csvpath)
         elif format == et.FORMAT_COINPANDA:
@@ -1249,12 +1253,11 @@ class Exporter:
                     else:
                         bl_type = "deposit"
 
-                id = i
-                exchange_name = self.ticker + "_exchange"
-                depot_name = self.wallet_address
+                exchange_name = self.ticker + "_blockchain"
+                depot_name = "staketax_" + self.wallet_address
 
                 line = [
-                    id,                                       # id
+                    self._blockpit_id(row),                   # id
                     exchange_name,                            # exchange_name
                     depot_name,                               # depot_name
                     self._blockpit_timestamp(row.timestamp),  # transaction_date
@@ -1270,11 +1273,18 @@ class Exporter:
 
         logging.info("Wrote to %s", csvpath)
 
+    def _blockpit_id(self, row):
+        # Convert "2021-08-04 15:25:43" to "14.08.2021 15:25:43"
+        dt = datetime.strptime(row.timestamp, "%Y-%m-%d %H:%M:%S")
+
+        id = str(int(time.mktime(dt.timetuple())))
+        return id
+
     def _blockpit_timestamp(self, ts):
-        # Convert "2021-08-04 15:25:43" to "08/14/2021 15:25:43"
+        # Convert "2021-08-04 15:25:43" to "14.08.2021 15:25:43"
         dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
 
-        return dt.strftime("%m/%d/%Y %H:%M:%S")
+        return dt.strftime("%d.%m.%Y %H:%M:%S")
 
     def _bitcointax_timestamp(self, ts):
         # Convert "2021-08-04 15:25:43" to "2021-08-04 15:25:43 -0000"
