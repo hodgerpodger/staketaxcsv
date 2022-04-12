@@ -24,8 +24,11 @@ from algo.util_algo import get_inner_transfer_asset, get_transfer_asset
 # https://github.com/Algofiorg/algofi-amm-py-sdk
 # https://github.com/Algofiorg/algofi-py-sdk
 
+COMMENT_ALGOFI = "AlgoFi"
+
 APPLICATION_ID_ALGOFI_AMM = 605753404
 APPLICATION_ID_ALGOFI_LENDING_MANAGER = 465818260
+APPLICATION_ID_ALGOFI_VALGO_MARKET = 465814318
 
 ALGOFI_AMM_SYMBOL = "AF"
 
@@ -220,7 +223,7 @@ def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
 
 
 def _handle_algofi_swap(group, exporter, txinfo, z_index=0):
-    txinfo.comment = "AlgoFi"
+    txinfo.comment = COMMENT_ALGOFI
     fee_amount = 0
     i = 0
     send_transaction = group[i]
@@ -262,7 +265,7 @@ def _handle_algofi_swap(group, exporter, txinfo, z_index=0):
         else:
             i += 2
 
-        export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, "AlgoFi", z_index + z_offset)
+        export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_ALGOFI, z_index + z_offset)
         z_offset += 1
         fee_amount = 0
 
@@ -322,7 +325,7 @@ def _handle_algofi_lp_add(group, exporter, txinfo):
         send_asset_2 -= redeem_asset_2
 
     export_lp_deposit_tx(
-        exporter, txinfo, ALGOFI_AMM_SYMBOL, send_asset_1, send_asset_2, lp_asset, fee_amount, "AlgoFi")
+        exporter, txinfo, ALGOFI_AMM_SYMBOL, send_asset_1, send_asset_2, lp_asset, fee_amount, COMMENT_ALGOFI)
 
 
 def _handle_algofi_lp_remove(group, exporter, txinfo):
@@ -340,7 +343,7 @@ def _handle_algofi_lp_remove(group, exporter, txinfo):
     receive_asset_2 = get_inner_transfer_asset(app_transaction)
 
     export_lp_withdraw_tx(
-        exporter, txinfo, ALGOFI_AMM_SYMBOL, lp_asset, receive_asset_1, receive_asset_2, fee_amount, "AlgoFi")
+        exporter, txinfo, ALGOFI_AMM_SYMBOL, lp_asset, receive_asset_1, receive_asset_2, fee_amount, COMMENT_ALGOFI)
 
 
 def _handle_algofi_claim_rewards(group, exporter, txinfo):
@@ -354,7 +357,7 @@ def _handle_algofi_claim_rewards(group, exporter, txinfo):
     length = len(inner_transactions)
     for transaction in inner_transactions:
         reward = get_transfer_asset(transaction)
-        export_reward_tx(exporter, txinfo, reward, fee_amount / length, "AlgoFi")
+        export_reward_tx(exporter, txinfo, reward, fee_amount / length, COMMENT_ALGOFI)
 
 
 def _handle_algofi_borrow(group, exporter, txinfo, z_index=0):
@@ -365,7 +368,7 @@ def _handle_algofi_borrow(group, exporter, txinfo, z_index=0):
     app_transaction = group[-1]
     receive_asset = get_inner_transfer_asset(app_transaction)
 
-    export_borrow_tx(exporter, txinfo, receive_asset, fee_amount, "AlgoFi")
+    export_borrow_tx(exporter, txinfo, receive_asset, fee_amount, COMMENT_ALGOFI)
 
 
 def _handle_algofi_repay_borrow(group, exporter, txinfo, z_index=0):
@@ -384,10 +387,11 @@ def _handle_algofi_repay_borrow(group, exporter, txinfo, z_index=0):
         if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
             interest_asset = get_inner_transfer_asset(app_transaction)
             if interest_asset is not None:
-                export_spend_tx(exporter, txinfo, interest_asset, 0, "AlgoFi interest payment", z_index)
+                export_spend_tx(
+                    exporter, txinfo, interest_asset, 0, COMMENT_ALGOFI + " interest payment", z_index)
                 z_offset = 1
 
-    export_repay_tx(exporter, txinfo, send_asset, fee_amount, "AlgoFi", z_index + z_offset)
+    export_repay_tx(exporter, txinfo, send_asset, fee_amount, COMMENT_ALGOFI, z_index + z_offset)
 
 
 def _handle_algofi_liquidate(wallet_address, group, exporter, txinfo):
@@ -402,10 +406,11 @@ def _handle_algofi_liquidate(wallet_address, group, exporter, txinfo):
         send_asset = get_transfer_asset(send_transaction)
 
         receive_asset = get_inner_transfer_asset(app_transaction, UNDERLYING_ASSETS)
-        export_liquidate_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, "AlgoFi liquidation")
+        export_liquidate_tx(
+            exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_ALGOFI + " liquidation")
     else:
         repay_asset = get_inner_transfer_asset(app_transaction, UNDERLYING_ASSETS)
-        export_repay_tx(exporter, txinfo, repay_asset, fee_amount, "AlgoFi liquidation")
+        export_repay_tx(exporter, txinfo, repay_asset, fee_amount, COMMENT_ALGOFI + " liquidation")
 
 
 def _handle_algofi_flash_loan(group, exporter, txinfo):
@@ -427,9 +432,10 @@ def _handle_algofi_deposit_collateral(group, exporter, txinfo):
     if app_id in ALGOFI_STAKING_CONTRACTS:
         export_lp_stake_tx(
             exporter, txinfo, send_asset, fee_amount,
-            "AlgoFi " + ALGOFI_STAKING_CONTRACTS[app_id] + " staking")
+            COMMENT_ALGOFI + " " + ALGOFI_STAKING_CONTRACTS[app_id] + " staking")
     else:
-        export_deposit_collateral_tx(exporter, txinfo, send_asset, fee_amount, "AlgoFi")
+        comment = COMMENT_ALGOFI + (" Vault" if app_id == APPLICATION_ID_ALGOFI_VALGO_MARKET else "")
+        export_deposit_collateral_tx(exporter, txinfo, send_asset, fee_amount, comment)
 
 
 def _handle_algofi_withdraw_collateral(group, exporter, txinfo):
@@ -440,11 +446,11 @@ def _handle_algofi_withdraw_collateral(group, exporter, txinfo):
     app_transaction = group[-1]
     receive_asset = get_inner_transfer_asset(app_transaction)
 
-    app_transaction = group[-2]
     app_id = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
     if app_id in ALGOFI_STAKING_CONTRACTS:
         export_lp_unstake_tx(
             exporter, txinfo, receive_asset, fee_amount,
-            "AlgoFi " + ALGOFI_STAKING_CONTRACTS[app_id] + " unstaking")
+            COMMENT_ALGOFI + " " + ALGOFI_STAKING_CONTRACTS[app_id] + " unstaking")
     else:
-        export_withdraw_collateral_tx(exporter, txinfo, receive_asset, fee_amount, "AlgoFi")
+        comment = COMMENT_ALGOFI + (" Vault" if app_id == APPLICATION_ID_ALGOFI_VALGO_MARKET else "")
+        export_withdraw_collateral_tx(exporter, txinfo, receive_asset, fee_amount, comment)
