@@ -10,6 +10,7 @@ import time
 
 from common import ExporterTypes as et
 from common.exporter_koinly import NullMap
+from settings_csv import TICKER_ALGO, TICKER_ATOM, TICKER_LUNA
 
 
 class Row:
@@ -696,21 +697,28 @@ class Exporter:
 
     def koinly_currency(self, currency):
         # Reference: https://app.koinly.io/p/markets?search=STARS
-        # TODO We might need a per-blockchain remap to avoid collisions
         remap = {
-            "APOLLO": "ID:28478",
-            "ASTRO": "ID:48993",
-            "PSI": "ID:106376",
-            "STARS": "ID:36899",
-            "LOOP": "ID:10933",
-            "BETH": "ID:30493",
-            "DEGEN": "ID:124845"
+            TICKER_LUNA: {
+                "APOLLO": "ID:28478",
+                "ASTRO": "ID:48993",
+                "PSI": "ID:106376",
+                "LOOP": "ID:10933",
+                "BETH": "ID:30493",
+            },
+            TICKER_ATOM: {
+                "STARS": "ID:36899",
+            },
+            TICKER_ALGO: {
+                "AKITA": "ID:132343",
+                "AKTA": "ID:182292",
+                "DEGEN": "ID:124845"
+            }
         }
 
         if self._is_koinly_lp(currency):
             return NullMap.get_null_symbol(currency)
-        if currency and currency.upper() in remap:
-            return remap[currency.upper()]
+        if currency and currency.upper() in remap.get(self.ticker, {}):
+            return remap[self.ticker][currency.upper()]
         return currency
 
     def _is_koinly_lp(self, currency):
