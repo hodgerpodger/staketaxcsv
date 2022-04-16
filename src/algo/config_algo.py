@@ -1,12 +1,9 @@
 from common import ExporterTypes as et
+from common.config import config
 
 
-class localconfig:
+class localconfig(config):
 
-    job = None
-    debug = False
-    cache = False
-    limit = 20000  # max txs
     start_date = None
     end_date = None
     lp_treatment = et.LP_TREATMENT_DEFAULT
