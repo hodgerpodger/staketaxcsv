@@ -1,15 +1,12 @@
 from common import ExporterTypes as et
+from common.config import config
 
 
-class localconfig:
+class localconfig(config):
 
-    job = None
-    debug = False
-    cache = False
     minor_rewards = False
     # Treat LP deposits/withdrawals as "transfers"/"omit"/"trades" (ignored for koinly)
     lp_treatment = et.LP_TREATMENT_DEFAULT
-    limit = 20000  # max txs
 
     # caches
     ibc_addresses = {}

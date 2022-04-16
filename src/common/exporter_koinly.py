@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from common.Cache import Cache
 KOINLY_NULL_MAP_JSON = os.path.dirname(os.path.realpath(__file__)) + "/../_reports/koinly_null_map.json"
@@ -6,49 +7,48 @@ KOINLY_NULL_MAP_JSON = os.path.dirname(os.path.realpath(__file__)) + "/../_repor
 
 class NullMap:
 
-    null_map = []
-    cache = None
+    def __init__(self, localconfig=None):
+        self.null_map = []
+        self.cache = None
+        self.json_filepath = localconfig.koinlynullmap if localconfig else KOINLY_NULL_MAP_JSON
+        logging.debug("Using Koinly NullMap json file %s", self.json_filepath)
 
-    @classmethod
-    def _cache(cls):
-        if not cls.cache:
-            cls.cache = Cache()
-        return cls.cache
+    def _cache(self):
+        if not self.cache:
+            self.cache = Cache()
+        return self.cache
 
-    @classmethod
-    def load(cls, use_cache=False):
+    def load(self, use_cache=False):
         if use_cache:
-            cls.null_map = cls._cache().get_koinly_null_map()
-            if not cls.null_map:
-                cls.null_map = []
+            self.null_map = self._cache().get_koinly_null_map()
+            if not self.null_map:
+                self.null_map = []
         else:
-            if os.path.exists(KOINLY_NULL_MAP_JSON):
-                with open(KOINLY_NULL_MAP_JSON, 'r') as f:
-                    cls.null_map = json.load(f)
+            if self.json_filepath and os.path.exists(self.json_filepath):
+                with open(self.json_filepath, 'r') as f:
+                    self.null_map = json.load(f)
 
-    @classmethod
-    def flush(cls, use_cache):
+    def flush(self, use_cache):
         if use_cache:
-            cls._cache().set_koinly_null_map(cls.null_map)
+            self._cache().set_koinly_null_map(self.null_map)
         else:
-            with open(KOINLY_NULL_MAP_JSON, 'w') as f:
-                json.dump(cls.null_map, f, indent=4)
+            if self.json_filepath:
+                with open(self.json_filepath, 'w') as f:
+                    json.dump(self.null_map, f, indent=4)
 
-    @classmethod
-    def get_null_symbol(cls, symbol):
-        if symbol not in cls.null_map:
-            cls.null_map.append(symbol)
+    def get_null_symbol(self, symbol):
+        if symbol not in self.null_map:
+            self.null_map.append(symbol)
 
-        index = cls.null_map.index(symbol)
+        index = self.null_map.index(symbol)
 
         # Koinly only accepts indices > 0
         return "NULL{}".format(index + 1)
 
-    @classmethod
-    def list_for_display(cls, use_cache=False):
-        cls.load(use_cache)
+    def list_for_display(self, use_cache=False):
+        self.load(use_cache)
 
         out = []
-        for index in range(len(cls.null_map)):
-            out.append(("NULL{}".format(index + 1), cls.null_map[index]))
+        for index in range(len(self.null_map)):
+            out.append(("NULL{}".format(index + 1), self.null_map[index]))
         return out

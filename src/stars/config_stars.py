@@ -1,7 +1,6 @@
-class localconfig:
+from common.config import config
 
-    job = None
-    debug = False
-    limit = 20000
+
+class localconfig(config):
+
     ibc_addresses = {}
-    cache = False

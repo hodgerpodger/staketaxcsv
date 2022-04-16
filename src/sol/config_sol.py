@@ -1,8 +1,8 @@
-class localconfig:
+from common.config import config
 
-    job = None
-    debug = False
-    cache = False
+
+class localconfig(config):
+
     blocks = {}
     limit = 5000  # max txs
     start_date = None

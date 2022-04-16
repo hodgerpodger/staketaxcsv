@@ -1,6 +1,6 @@
-class localconfig:
+from common.config import config
 
-    job = None
-    debug = False
-    cache = False
-    limit = 20000
+
+class localconfig(config):
+
+    pass

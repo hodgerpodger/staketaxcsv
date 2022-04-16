@@ -89,6 +89,7 @@ class Exporter:
 
         self.lp_treatment = et.LP_TREATMENT_DEFAULT
         self.use_cache = False
+        self.koinly_nullmap = NullMap(localconfig)
 
         if localconfig:
             if hasattr(localconfig, "lp_treatment"):
@@ -627,7 +628,7 @@ class Exporter:
 
     def export_koinly_csv(self, csvpath):
         """ Write CSV, suitable for import into Koinly """
-        NullMap.load(self.use_cache)
+        self.koinly_nullmap.load(self.use_cache)
         rows = self._rows_export(et.FORMAT_KOINLY)
 
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
@@ -693,7 +694,7 @@ class Exporter:
                 mywriter.writerow(line)
 
         logging.info("Wrote to %s", csvpath)
-        NullMap.flush(self.use_cache)
+        self.koinly_nullmap.flush(self.use_cache)
 
     def koinly_currency(self, currency):
         # Reference: https://app.koinly.io/p/markets?search=STARS
@@ -716,7 +717,7 @@ class Exporter:
         }
 
         if self._is_koinly_lp(currency):
-            return NullMap.get_null_symbol(currency)
+            return self.koinly_nullmap.get_null_symbol(currency)
         if currency and currency.upper() in remap.get(self.ticker, {}):
             return remap[self.ticker][currency.upper()]
         return currency

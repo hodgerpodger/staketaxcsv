@@ -43,6 +43,11 @@ def parse_args(ticker):
         type=int,
         help="change to non-default max transactions limit",
     )
+    parser.add_argument(
+        "--koinlynullmap",
+        type=str,
+        help="Path to the Koinly NullMap json file",
+    )
     if ticker in (TICKER_ALGO, TICKER_SOL):
         parser.add_argument(
             "--start_date",
@@ -95,6 +100,8 @@ def parse_args(ticker):
         options["cache"] = True
     if args.limit:
         options["limit"] = args.limit
+    if args.koinlynullmap:
+        options["koinlynullmap"] = args.koinlynullmap
     if "start_date" in args and args.start_date:
         options["start_date"] = args.start_date
     if "end_date" in args and args.end_date:
@@ -138,3 +145,4 @@ def read_common_options(localconfig, options):
     localconfig.debug = options.get("debug", False)
     localconfig.cache = options.get("cache", localconfig.job is not None)
     localconfig.limit = options.get("limit", localconfig.limit)
+    localconfig.koinlynullmap = options.get("koinlynullmap", localconfig.koinlynullmap)
