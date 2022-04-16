@@ -141,7 +141,7 @@ def txhistory(wallet_address, options):
     elems_3 = common.ibc.api_lcd.get_txs_all(
         co2.FET_FETCHUB3_NODE, wallet_address, progress, max_txs, debug=localconfig.debug,
         stage_name=progress.STAGE_FET3, events_types=EVENTS_TYPES_FET)
-    progress.report_message(f"Processing {len(elems_3)} transactions for fetchhub-2... ")
+    progress.report_message(f"Processing {len(elems_3)} transactions for fetchhub-3... ")
     fet.processor.process_txs(wallet_address, elems_3, exporter, co2.FET_FETCHUB3_NODE)
 
     # fetchhub4
