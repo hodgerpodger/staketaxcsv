@@ -10,6 +10,7 @@ class ProgressFet(Progress):
     STAGE_FET1_TXS = "fet1_txs"
     STAGE_FET2 = "fet2"
     STAGE_FET3 = "fet3"
+    STAGE_FET4 = "fet4"
 
     def __init__(self):
         super().__init__(localconfig)
@@ -23,3 +24,6 @@ class ProgressFet(Progress):
 
     def set_estimate_fet3(self, count_pages):
         self.add_stage(self.STAGE_FET3, count_pages, SECONDS_PER_PAGE)
+
+    def set_estimate_fet4(self, count_pages):
+        self.add_stage(self.STAGE_FET4, count_pages, SECONDS_PER_PAGE)

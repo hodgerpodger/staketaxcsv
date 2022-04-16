@@ -1,6 +1,7 @@
 
 FET_FETCHUB1_NODE = "https://rpc-fetchhub1-archive.fetch.ai"
 FET_FETCHUB2_NODE = "https://rest-fetchhub2-archive.fetch.ai"
+FET_FETCHUB3_NODE = "https://rest-fetchhub3-archive.fetch.ai"
 CUR_FET = "FET"
 MILLION = 1000000.0
 EXP18 = 10**18

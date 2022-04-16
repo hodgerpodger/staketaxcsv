@@ -64,8 +64,14 @@ def txone(wallet_address, txid):
 
 
 def _query_tx(txid):
-    # fetchhub-3
+    # fetchhub-4
     node = FET_NODE
+    elem = common.ibc.api_lcd.LcdAPI(node).get_tx(txid)
+    if elem:
+        return elem, node
+
+    # fetchhub-3
+    node = co2.FET_FETCHUB3_NODE
     elem = common.ibc.api_lcd.LcdAPI(node).get_tx(txid)
     if elem:
         return elem, node
@@ -107,10 +113,13 @@ def txhistory(wallet_address, options):
     pages_fet2 = common.ibc.api_lcd.get_txs_pages_count(
         co2.FET_FETCHUB2_NODE, wallet_address, max_txs, debug=localconfig.debug, events_types=EVENTS_TYPES_FET)
     pages_fet3 = common.ibc.api_lcd.get_txs_pages_count(
+        co2.FET_FETCHUB3_NODE, wallet_address, max_txs, debug=localconfig.debug, events_types=EVENTS_TYPES_FET)
+    pages_fet4 = common.ibc.api_lcd.get_txs_pages_count(
         FET_NODE, wallet_address, max_txs, debug=localconfig.debug, events_types=EVENTS_TYPES_FET)
     progress.set_estimate_fet1(pages_fet1, txs_fet1)
     progress.set_estimate_fet2(pages_fet2)
     progress.set_estimate_fet3(pages_fet3)
+    progress.set_estimate_fet4(pages_fet4)
 
     # fetchhub1
     elems_1 = fet.fetchhub1.api_rpc.get_txs_all(
@@ -130,11 +139,18 @@ def txhistory(wallet_address, options):
 
     # fetchhub3
     elems_3 = common.ibc.api_lcd.get_txs_all(
-        FET_NODE, wallet_address, progress, max_txs, debug=localconfig.debug, stage_name=progress.STAGE_FET3,
+        co2.FET_FETCHUB3_NODE, wallet_address, progress, max_txs, debug=localconfig.debug,
+        stage_name=progress.STAGE_FET3, events_types=EVENTS_TYPES_FET)
+    progress.report_message(f"Processing {len(elems_3)} transactions for fetchhub-2... ")
+    fet.processor.process_txs(wallet_address, elems_3, exporter, co2.FET_FETCHUB3_NODE)
+
+    # fetchhub4
+    elems_4 = common.ibc.api_lcd.get_txs_all(
+        FET_NODE, wallet_address, progress, max_txs, debug=localconfig.debug, stage_name=progress.STAGE_FET4,
         events_types=EVENTS_TYPES_FET
     )
-    progress.report_message(f"Processing {len(elems_3)} transactions for fetchhub-3... ")
-    fet.processor.process_txs(wallet_address, elems_3, exporter, FET_NODE)
+    progress.report_message(f"Processing {len(elems_4)} transactions for fetchhub-4... ")
+    fet.processor.process_txs(wallet_address, elems_4, exporter, FET_NODE)
 
     if localconfig.cache:
         Cache().set_ibc_addresses(localconfig.ibc_addresses)
