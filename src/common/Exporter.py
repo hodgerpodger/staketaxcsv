@@ -86,15 +86,10 @@ class Exporter:
         self.rows = []
         self.is_reverse = None  # last sorted direction
         self.ticker = ticker
-
-        self.lp_treatment = et.LP_TREATMENT_DEFAULT
-        self.use_cache = False
-        self.koinly_nullmap = NullMap(localconfig)
-
-        if localconfig:
-            if hasattr(localconfig, "lp_treatment"):
-                self.lp_treatment = localconfig.lp_treatment
-            self.use_cache = localconfig.cache
+        self.use_cache = localconfig.cache if (localconfig and localconfig.cache) else False
+        json_path = localconfig.koinlynullmap if (localconfig and localconfig.koinlynullmap) else None
+        self.koinly_nullmap = NullMap(json_path)
+        self.lp_treatment = localconfig.lp_treatment if (localconfig and hasattr(localconfig, "lp_treatment")) else et.LP_TREATMENT_DEFAULT
 
     def ingest_row(self, row):
         self.rows.append(row)
@@ -127,8 +122,8 @@ class Exporter:
             self.rows.sort(key=lambda row: (row.timestamp, row.z_index), reverse=reverse)
             self.is_reverse = reverse
 
-    def _rows_export(self, format):
-        self.sort_rows(reverse=True)
+    def _rows_export(self, format, reverse=True):
+        self.sort_rows(reverse)
         rows = filter(lambda row: row.tx_type in et.TX_TYPES_CSVEXPORT, self.rows)
 
         if format in [et.FORMAT_KOINLY, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI]:
@@ -272,7 +267,6 @@ class Exporter:
             self.export_tokentax_csv(csvpath)
         elif format == et.FORMAT_ZENLEDGER:
             self.export_zenledger_csv(csvpath)
-
 
         return csvpath
 
@@ -629,7 +623,7 @@ class Exporter:
     def export_koinly_csv(self, csvpath):
         """ Write CSV, suitable for import into Koinly """
         self.koinly_nullmap.load(self.use_cache)
-        rows = self._rows_export(et.FORMAT_KOINLY)
+        rows = self._rows_export(et.FORMAT_KOINLY, reverse=False)
 
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)

@@ -7,16 +7,20 @@ KOINLY_NULL_MAP_JSON = os.path.dirname(os.path.realpath(__file__)) + "/../_repor
 
 class NullMap:
 
-    def __init__(self, localconfig=None):
+    def __init__(self, json_path=None):
         self.null_map = []
         self.cache = None
-        self.json_filepath = localconfig.koinlynullmap if localconfig else KOINLY_NULL_MAP_JSON
-        logging.debug("Using Koinly NullMap json file %s", self.json_filepath)
+        self.json_path = json_path if json_path else KOINLY_NULL_MAP_JSON
+        logging.debug("Using Koinly NullMap json file %s", self.json_path)
 
     def _cache(self):
         if not self.cache:
             self.cache = Cache()
         return self.cache
+
+    def clear(self):
+        if os.path.exists(self.json_path):
+            os.remove(self.json_path)
 
     def load(self, use_cache=False):
         if use_cache:
@@ -24,16 +28,16 @@ class NullMap:
             if not self.null_map:
                 self.null_map = []
         else:
-            if self.json_filepath and os.path.exists(self.json_filepath):
-                with open(self.json_filepath, 'r') as f:
+            if self.json_path and os.path.exists(self.json_path):
+                with open(self.json_path, 'r') as f:
                     self.null_map = json.load(f)
 
     def flush(self, use_cache):
         if use_cache:
             self._cache().set_koinly_null_map(self.null_map)
         else:
-            if self.json_filepath:
-                with open(self.json_filepath, 'w') as f:
+            if self.json_path:
+                with open(self.json_path, 'w') as f:
                     json.dump(self.null_map, f, indent=4)
 
     def get_null_symbol(self, symbol):
