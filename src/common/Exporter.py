@@ -119,7 +119,9 @@ class Exporter:
 
     def sort_rows(self, reverse=True):
         if self.is_reverse != reverse:
-            self.rows.sort(key=lambda row: (row.timestamp, row.z_index), reverse=reverse)
+            self.rows.sort(
+                key=lambda row: (row.timestamp, row.z_index, row.tx_type, row.sent_currency, row.received_currency),
+                reverse=reverse)
             self.is_reverse = reverse
 
     def _rows_export(self, format, reverse=True):
