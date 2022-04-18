@@ -86,10 +86,11 @@ class Exporter:
         self.rows = []
         self.is_reverse = None  # last sorted direction
         self.ticker = ticker
-        self.use_cache = localconfig.cache if (localconfig and localconfig.cache) else False
-        json_path = localconfig.koinlynullmap if (localconfig and localconfig.koinlynullmap) else None
-        self.koinly_nullmap = NullMap(json_path)
-        self.lp_treatment = localconfig.lp_treatment if (localconfig and hasattr(localconfig, "lp_treatment")) else et.LP_TREATMENT_DEFAULT
+        self.koinly_nullmap = NullMap(localconfig)
+        if localconfig and hasattr(localconfig, "lp_treatment") and localconfig.lp_treatment:
+            self.lp_treatment = localconfig.lp_treatment
+        else:
+            self.lp_treatment = et.LP_TREATMENT_DEFAULT
 
     def ingest_row(self, row):
         self.rows.append(row)
@@ -130,6 +131,7 @@ class Exporter:
 
         if format in [et.FORMAT_KOINLY, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI]:
             return rows
+
 
         # For non-koinly CSVs, convert LP_DEPOSIT/LP_WITHDRAW into transfers/omit/trades
         # (due to lack of native csv import support)
@@ -624,7 +626,7 @@ class Exporter:
 
     def export_koinly_csv(self, csvpath):
         """ Write CSV, suitable for import into Koinly """
-        self.koinly_nullmap.load(self.use_cache)
+        self.koinly_nullmap.load()
         rows = self._rows_export(et.FORMAT_KOINLY, reverse=False)
 
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
@@ -690,7 +692,7 @@ class Exporter:
                 mywriter.writerow(line)
 
         logging.info("Wrote to %s", csvpath)
-        self.koinly_nullmap.flush(self.use_cache)
+        self.koinly_nullmap.flush()
 
     def koinly_currency(self, currency):
         # Reference: https://app.koinly.io/p/markets?search=STARS
