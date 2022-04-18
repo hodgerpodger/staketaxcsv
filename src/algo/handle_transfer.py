@@ -7,6 +7,7 @@ import base64
 from algo import constants as co
 from algo.asset import Algo, Asset
 from algo.export_tx import export_receive_tx, export_reward_tx, export_send_tx
+from algo.handle_folks import is_folks_escrow_address
 from algo.handle_simple import handle_participation_rewards, handle_unknown
 from algo.util_algo import get_transaction_note
 
@@ -129,9 +130,11 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
             # Regular send or closing to the same account
             send_asset = Asset(asset_id, details["amount"] + details["close-amount"])
 
-            export_send_tx(
-                exporter, txinfo, send_asset, transaction["fee"], txreceiver,
-                "Algomint" if txreceiver == ADDRESS_ALGOMINT else None)
+            # Ignore Folks transactions to increase collateral with fTokens
+            if not is_folks_escrow_address(txreceiver):
+                export_send_tx(
+                    exporter, txinfo, send_asset, transaction["fee"], txreceiver,
+                    "Algomint" if txreceiver == ADDRESS_ALGOMINT else None)
 
     reward = Algo(rewards_amount)
     handle_participation_rewards(reward, exporter, txinfo)
