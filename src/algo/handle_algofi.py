@@ -52,6 +52,8 @@ ALGOFI_TRANSACTION_LIQUIDATE = "bA=="               # "l"
 
 ALGOFI_TRANSACTION_FLASH_LOAN = "Zmw="              # "fl"
 
+ALGOFI_TRANSACTION_SYNC_VAULT = "c3Y="              # "sv"
+
 ALGOFI_MANAGER_USER_STORAGE_ACCOUNT = "dXNh"        # "usa"
 
 UNDERLYING_ASSETS = {
@@ -161,6 +163,9 @@ def is_algofi_transaction(group):
         if ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING in appl_args:
             return True
 
+        if ALGOFI_TRANSACTION_SYNC_VAULT in appl_args:
+            return True
+
     # The group size will only be 1 for liquidatee transactions
     if length < 2:
         return False
@@ -204,6 +209,8 @@ def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
             return _handle_algofi_liquidate(wallet_address, group, exporter, txinfo)
         elif ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING in appl_args:
             return _handle_algofi_withdraw_collateral(group, exporter, txinfo)
+        elif ALGOFI_TRANSACTION_SYNC_VAULT in appl_args:
+            return _handle_algofi_sync_vault(group, exporter, txinfo)
 
     txtype = group[0]["tx-type"]
     if txtype == co.TRANSACTION_TYPE_APP_CALL:
@@ -454,3 +461,14 @@ def _handle_algofi_withdraw_collateral(group, exporter, txinfo):
     else:
         comment = COMMENT_ALGOFI + (" Vault" if app_id == APPLICATION_ID_ALGOFI_VALGO_MARKET else "")
         export_withdraw_collateral_tx(exporter, txinfo, receive_asset, fee_amount, comment)
+
+
+def _handle_algofi_sync_vault(group, exporter, txinfo):
+    fee_amount = 0
+    for transaction in group:
+        fee_amount += transaction["fee"]
+
+    app_transaction = group[-1]
+    reward_asset = get_inner_transfer_asset(app_transaction)
+
+    export_reward_tx(exporter, txinfo, reward_asset, fee_amount, COMMENT_ALGOFI + " Vault")
