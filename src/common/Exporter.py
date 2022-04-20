@@ -703,6 +703,7 @@ class Exporter:
                 "PSI": "ID:106376",
                 "LOOP": "ID:10933",
                 "BETH": "ID:30493",
+                "MINE": "ID:21256",
             },
             TICKER_ATOM: {
                 "STARS": "ID:36899",
