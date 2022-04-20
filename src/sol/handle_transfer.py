@@ -2,6 +2,7 @@ from common.make_tx import make_transfer_in_tx, make_transfer_out_tx
 from sol.constants import (
     INSTRUCT_TRANSFERCHECK,
     INSTRUCT_TRANSFERCHECKED,
+    CURRENCY_SOL,
 )
 import sol.util_sol
 
@@ -28,7 +29,6 @@ def is_transfer(txinfo):
 def handle_transfer(exporter, txinfo):
     txid = txinfo.txid
     transfers_in, transfers_out, _ = txinfo.transfers_net
-    txinfo.fee = sol.util_sol.calculate_fee(txinfo)
 
     if len(transfers_out) == 1 and len(transfers_in) == 0:
         amount, currency, _, dest = transfers_out[0]

@@ -56,9 +56,9 @@ def handle_unknown(exporter, txinfo):
 
 
 def _handle_generic(exporter, txinfo, tx_type):
-    txinfo.fee = sol.util_sol.calculate_fee(txinfo)
+    fee = sol.util_sol.calculate_fee(txinfo)
 
-    row = make_spend_fee_tx(txinfo, txinfo.fee, txinfo.fee_currency)
+    row = make_spend_fee_tx(txinfo, fee, txinfo.fee_currency)
     row.fee = ""
     row.fee_currency = ""
     row.comment = "fee for {}".format(tx_type)

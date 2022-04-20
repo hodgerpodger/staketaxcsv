@@ -44,10 +44,9 @@ def parse_tx(txid, data, wallet_info):
 
     ts = result["blockTime"]
     timestamp = datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S") if ts else ""
-    fee = ""
     instructions = data["result"]["transaction"]["message"].get("instructions", [])
 
-    txinfo = TxInfoSol(txid, timestamp, fee, wallet_address)
+    txinfo = TxInfoSol(txid, timestamp, "", wallet_address)
 
     txinfo.fee_blockchain = float(result["meta"]["fee"]) / BILLION
     txinfo.instructions = instructions
@@ -65,18 +64,11 @@ def parse_tx(txid, data, wallet_info):
 
     txinfo.balance_changes_all, txinfo.balance_changes_wallet = _balance_changes(data, txinfo.wallet_accounts, txinfo.mints)
     txinfo.transfers = _transfers(txinfo.balance_changes_wallet)
-
-    txinfo.transfers_net, txinfo.fee = _transfers_net(txinfo, txinfo.transfers, fee)
-
-    if _has_empty_token_balances(data, txinfo.mints):
-        # Fall back to alternative method to calculate transfers
-        if is_transfer(txinfo):
-            txinfo.transfers = _transfers_instruction(txinfo, txinfo.instructions)
-            txinfo.transfers_net, _ = _transfers_net(txinfo, txinfo.transfers, fee, mint_to=True)
+    txinfo.transfers_net, txinfo.fee = _transfers_net(txinfo, txinfo.transfers)
 
     txinfo.lp_transfers = _transfers_instruction(txinfo, txinfo.inner)
     txinfo.lp_transfers_net, txinfo.lp_fee = _transfers_net(
-        txinfo, txinfo.lp_transfers, txinfo.fee, mint_to=True)
+        txinfo, txinfo.lp_transfers, mint_to=True)
 
     # Update wallet_info with any staking addresses found
     addresses = _staking_addresses_found(wallet_address, txinfo.instructions)
@@ -448,11 +440,9 @@ def _add_mint_to_as_transfers(txinfo, net_transfers_in):
             net_transfers_in.append((amount, currency, "", ""))
 
 
-def _transfers_net(txinfo, transfers, fee, mint_to=False):
+def _transfers_net(txinfo, transfers, mint_to=False):
     """ Combines like currencies and removes fees from transfers lists """
-    _transfers_in, _transfers_out, _transfers_unknown = transfers
-
-    transfers_in, transfers_out, fee = util_sol.detect_fees(_transfers_in, _transfers_out, fee)
+    transfers_in, transfers_out, transfers_unknown = transfers
 
     # Sum up net transfer by currency, into a dict
     net_amounts = {}
@@ -482,7 +472,9 @@ def _transfers_net(txinfo, transfers, fee, mint_to=False):
     if mint_to:
         _add_mint_to_as_transfers(txinfo, net_transfers_in)
 
-    return (net_transfers_in, net_transfers_out, _transfers_unknown), fee
+    net_transfers_in, net_transfers_out, fee = util_sol.detect_fees(transfers_in, transfers_out)
+
+    return (net_transfers_in, net_transfers_out, transfers_unknown), fee
 
 
 def _get_source_destination(currency, is_transfer_in, transfers_in, transfers_out):
