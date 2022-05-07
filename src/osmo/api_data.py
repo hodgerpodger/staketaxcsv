@@ -30,6 +30,15 @@ def get_txs(address, offset=0):
     return [row["tx_response"] for row in data]
 
 
+def get_tx(txid):
+    uri_path = f"txs/v1/tx/hash/{txid}"
+    query_params = {"decode": "true"}
+
+    data = _query(uri_path, query_params)
+
+    return data[0]["tx_response"]
+
+
 def get_lp_tokens(address):
     """Returns list of symbols"""
     uri_path = f"/lp/v1/rewards/token/{address}"

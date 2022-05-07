@@ -10,7 +10,6 @@ import math
 import pprint
 
 import osmo.api_data
-import osmo.api_tx
 import osmo.processor
 from common import report_util
 from common.Cache import Cache
@@ -52,7 +51,7 @@ def wallet_exists(wallet_address):
 
 
 def txone(wallet_address, txid):
-    data = osmo.api_tx.get_tx(txid)
+    data = osmo.api_data.get_tx(txid)
     print("\ndebug data:")
     pprint.pprint(data)
     print("\n")

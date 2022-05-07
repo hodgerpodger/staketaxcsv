@@ -31,6 +31,9 @@ def _transfers_coin_received(log, wallet_address):
             for i in range(0, len(attributes), 2):
                 receiver = attributes[i]["value"]
                 amount_string = attributes[i + 1]["value"]
+                if not amount_string:
+                    continue
+
                 if receiver == wallet_address:
                     for amount, currency in _amount_currency(amount_string):
                         transfers_in.append((amount, currency))
@@ -49,6 +52,9 @@ def _transfers_coin_spent(log, wallet_address):
             for i in range(0, len(attributes), 2):
                 spender = attributes[i]["value"]
                 amount_string = attributes[i + 1]["value"]
+                if not amount_string:
+                    continue
+
                 if spender == wallet_address:
                     for amount, currency in _amount_currency(amount_string):
                         transfers_out.append((amount, currency))
@@ -86,7 +92,6 @@ def _amount_currency(amount_string):
     # i.e. "16939122ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4",
     # i.e. "899999999ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2,\
     #       1252125015450ibc/9712DBB13B9631EDFA9BF61B55F1B2D290B2ADB67E3A4EB3A875F3B6081B3B84"
-
     out = []
     for amt_string in amount_string.split(","):
         if "ibc" in amt_string:
