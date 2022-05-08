@@ -16,6 +16,8 @@ ADDRESS_ALGOSTAKE_ESCROW = "4ZK3UPFRJ643ETWSWZ4YJXH3LQTL2FUEI6CIT7HEOVZL6JOECVRM
 
 ADDRESS_ALGOMINT = "ETGSQKACKC56JWGMDAEP5S2JVQWRKTQUVKCZTMPNUGZLDVCWPY63LSI3H4"
 
+ADDRESS_PACT_REWARDS = "PACTC5CQVKK6F43TPYII2WED72BXYIQ5OF7DKQREDOY4UXCYJRMGGQ5IQQ"
+
 
 def is_governance_reward_transaction(wallet_address, group):
     if len(group) != 1:
@@ -109,6 +111,8 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
             row = None
             if txsender == ADDRESS_ALGOSTAKE_ESCROW:
                 export_reward_tx(exporter, txinfo, receive_asset, comment="Algostake")
+            elif txsender == ADDRESS_PACT_REWARDS:
+                export_reward_tx(exporter, txinfo, receive_asset, comment="Pact")
             else:
                 note = get_transaction_note(transaction)
                 if note is not None and "tinymanStaking/v1" in note:
