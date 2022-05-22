@@ -10,9 +10,9 @@
   
 # Usage
 
-* Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_btsg.py (BTSG), report_fet.py (FET),
-  report_huahua.py (HUAHUA), report_juno.py (JUNO), report_iotex.py (IOTX), report_osmo.py (OSMO),
-  report_stars.py (STARS), report_sol.py (SOL), report_terra.py (LUNA):
+* Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_btsg.py (BTSG), report_dvpn.py (DVPN),
+  report_fet.py (FET), report_huahua.py (HUAHUA), report_juno.py (JUNO), report_iotex.py (IOTX),
+  report_osmo.py (OSMO), report_stars.py (STARS), report_sol.py (SOL), report_terra.py (LUNA):
 
   ```sh
   # Load environment variables from sample.env (add to ~/.bash_profile or ~/.bashrc to avoid doing every time)
