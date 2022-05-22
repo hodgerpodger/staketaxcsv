@@ -81,7 +81,7 @@ class ProtobufParserStack:
         self._stack.append(frame)
         self._clear_field_path()
 
-    def update_current_frame(self, end_of_field_offset: int):
+    def update_frame(self, end_of_field_offset: int):
         if not self._stack:
             raise RuntimeError("no stack frame to update")
 
@@ -202,7 +202,7 @@ class ProtobufParser:
             parser_stack.push_frame(field_number=field_number, end_of_field_offset=None)
             field_value, parse_embedded_message, embedded_message_length = self._get_field_value(wire_type, field_number, parser_stack)
             if parse_embedded_message:
-                parser_stack.update_current_frame(end_of_field_offset=self._buffer.tell() + embedded_message_length)
+                parser_stack.update_frame(end_of_field_offset=self._buffer.tell() + embedded_message_length)
                 continue
 
             # callback the application with any values found
