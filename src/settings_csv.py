@@ -6,6 +6,8 @@ ALGO_HIST_INDEXER_NODE = os.environ.get("ALGO_HIST_INDEXER_NODE", "https://index
 ALGO_INDEXER_NODE = os.environ.get("ALGO_INDEXER_NODE", "https://algoindexer.algoexplorerapi.io")
 ATOM_NODE = os.environ.get("ATOM_NODE", "")
 COVALENT_NODE = os.environ.get("COVALENT_NODE", "https://api.covalenthq.com")
+DVPN_LCD_NODE = os.environ.get("DVPN_LCD_NODE", "https://lcd.sentinel.co")
+DVPN_RPC_NODE = os.environ.get("DVPN_RPC_NODE", "https://rpc.sentinel.co")
 FET_NODE = os.environ.get("FET_NODE", "https://rest-fetchhub.fetch.ai")
 
 HUAHUA_NODE = os.environ.get("HUAHUA_NODE", "")
@@ -23,6 +25,7 @@ TERRA_FIGMENT_KEY = os.environ.get("TERRA_FIGMENT_KEY", "")
 
 TICKER_ALGO = "ALGO"
 TICKER_ATOM = "ATOM"
+TICKER_DVPN = "DVPN"
 TICKER_FET = "FET"
 TICKER_HUAHUA = "HUAHUA"
 TICKER_IOTEX = "IOTX"
