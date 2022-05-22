@@ -16,7 +16,7 @@ def process_usage_payments(wallet_address, exporter):
 
     Also, need to figure out what timestamp can be used with the payment.
     Quotas, unfortunately, do not contain a timestamp.
-    Subscriptions has a timestamp corresponding to the last status update time, which might be the best we can do.
+    Subscriptions have a timestamp corresponding to the last status update time which might be the best we can do.
 
     As there isn't indexing by sentinel node and only the latest data is provided by the quotas and subscription
     APIs instead of a time series, this implementation is still TODO.
