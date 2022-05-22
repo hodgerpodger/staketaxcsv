@@ -16,7 +16,6 @@ class Varint:
     def __init__(self):
         self._varint = 0
         self._shift = 0
-        self._bytes_read = 0
 
     @property
     def byte_size(self) -> int:
