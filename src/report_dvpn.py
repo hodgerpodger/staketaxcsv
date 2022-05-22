@@ -17,7 +17,7 @@ from common.Cache import Cache
 from common.Exporter import Exporter
 from common.ExporterTypes import FORMAT_DEFAULT
 from dvpn.config_dvpn import localconfig
-from dvpn.progress_dvpn import SECONDS_PER_PAGE, ProgressDvpn
+from dvpn.progress_dvpn import ProgressDvpn
 from settings_csv import DVPN_LCD_NODE, DVPN_RPC_NODE, TICKER_DVPN
 
 
@@ -116,10 +116,10 @@ def txhistory(wallet_address, options):
     progress.report_message(f"Processing {len(elems)} transactions... ")
     dvpn.processor.process_txs(wallet_address, elems, exporter)
 
-    # Calculate payments from escrow to the dVPN node for usage
-    # These payments are kept off-chain and are calculated by looking up all subscriptions,
-    # calculating their used percentage * price, and using the date information
-    # This will not be 100% accurate on timing of payments, but I haven't found a better way yet
+    # Calculate payments from escrow to the dVPN node for bandwidth usage.
+    # These payments are kept off-chain and need to be calculated through various apis provided by sentinelhub.
+    progress.set_usage_payment_estimate(0)
+    dvpn.processor.process_usage_payments(wallet_address, exporter)
 
     if localconfig.cache:
         Cache().set_ibc_addresses(localconfig.ibc_addresses)

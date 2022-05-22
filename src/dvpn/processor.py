@@ -6,6 +6,25 @@ from dvpn.config_dvpn import localconfig
 from settings_csv import DVPN_LCD_NODE
 
 
+def process_usage_payments(wallet_address, exporter):
+    """
+    Uses the sentinelhub API to calculate usage payments from escrow to the node operator.
+    As this data is held off-chain, the algorithm will need to leverage sentinelhub APIs to:
+        1. Get all subscriptions for the sentnode1 address (currently, this is not indexed by the sentnode1 address and requires a brute force search across all subscriptions)
+        2. For each subscription the node has, get the current usage from the quota
+        3. Multiply the usage percentage by the price set in the subscription
+
+    Also, need to figure out what timestamp can be used with the payment.
+    Quotas, unfortunately, do not contain a timestamp.
+    Subscriptions has a timestamp corresponding to the last status update time, which might be the best we can do.
+
+    As there isn't indexing by sentinel node and only the latest data is provided by the quotas and subscription
+    APIs instead of a time series, this implementation is still TODO.
+    TODO: finish this implementation
+    """
+    pass
+
+
 def process_txs(wallet_address, elems, exporter):
     for elem in elems:
         process_tx(wallet_address, elem, exporter)
@@ -46,8 +65,10 @@ def _handle_tx(exporter, txinfo, msginfo):
                       co.MSG_TYPE_DVPN_SUBSCRIBE_TO_NODE_REQUEST, co.MSG_TYPE_DVPN_START_REQUEST, co.MSG_TYPE_DVPN_END_REQUEST]:
         # dVPN client subscription messages
         _handle_subscription_message(exporter, txinfo, msginfo)
+    else:
+        return False
 
-    return False
+    return True
 
 
 def _handle_management_message(exporter, txinfo, msginfo):
