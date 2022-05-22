@@ -198,7 +198,7 @@ class ProtobufParser:
             # get the next field key
             wire_type, field_number = self._get_field_key()
 
-            # handle wire types
+            # get the field value
             parser_stack.push_frame(field_number=field_number, end_of_field_offset=None)
             field_value, parse_embedded_message, embedded_message_length = self._get_field_value(wire_type, field_number, parser_stack)
             if parse_embedded_message:
