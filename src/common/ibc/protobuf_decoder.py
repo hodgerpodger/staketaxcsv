@@ -178,10 +178,10 @@ class CosmosTransactionFeeExtractor(ProtobufParserCallback):
 class ProtobufParser:
     """
     A protobuf parser to parse protobuf data without a .proto file.
-    Most useful to extract data when you know the .proto file the buffer is based on, but you don't want to load it
+    Most useful to extract data when you know the .proto file the data is based on, but you don't want to load it
     into an application.
 
-    Implements the encoding described here : https://developers.google.com/protocol-buffers/docs/encoding
+    Implements the encoding described here: https://developers.google.com/protocol-buffers/docs/encoding.
     """
 
     _buffer: io.BytesIO
