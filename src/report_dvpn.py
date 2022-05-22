@@ -102,7 +102,7 @@ def txhistory(wallet_address, options):
 
     elems = lcd_elems
     if missing_tx_hashes:
-        progress.report_message(f"Found {len(missing_tx_hashes)} from RPC api that were missing from the LCD api")
+        progress.report_message(f"Found {len(missing_tx_hashes)} transactions from the rpc api that were missing from the lcd api")
 
         missing_elems = list(filter(
             lambda e, hashes=missing_tx_hashes: e["hash"] in hashes,
