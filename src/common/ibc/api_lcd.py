@@ -1,21 +1,19 @@
-import json
 import logging
 import math
-import os
-import requests
 import time
 from urllib.parse import urlencode
-from settings_csv import REPORTS_DIR
-from common.debug_util import use_debug_files
 
-TXS_LIMIT_PER_QUERY = 50
-EVENTS_TYPE_SENDER = "sender"
-EVENTS_TYPE_RECIPIENT = "recipient"
-EVENTS_TYPE_SIGNER = "signer"
-EVENTS_TYPE_LIST_DEFAULT = [
-    EVENTS_TYPE_SENDER,
+import requests
+from common.debug_util import use_debug_files
+from common.ibc.api_common import (
+    EVENTS_TYPE_LIST_DEFAULT,
     EVENTS_TYPE_RECIPIENT,
-]
+    EVENTS_TYPE_SENDER,
+    EVENTS_TYPE_SIGNER,
+    TXS_LIMIT_PER_QUERY,
+    remove_duplicates,
+)
+from settings_csv import REPORTS_DIR
 
 
 class LcdAPI:
@@ -124,22 +122,7 @@ def get_txs_all(node, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUE
             if offset is None:
                 break
 
-    out = _remove_duplicates(out)
-    return out
-
-
-def _remove_duplicates(elems):
-    out = []
-    txids = set()
-
-    for elem in elems:
-        if elem["txhash"] in txids:
-            continue
-
-        out.append(elem)
-        txids.add(elem["txhash"])
-
-    out.sort(key=lambda elem: elem["timestamp"], reverse=True)
+    out = remove_duplicates(out)
     return out
 
 
