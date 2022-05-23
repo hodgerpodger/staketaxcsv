@@ -4,7 +4,7 @@ from common.progress import Progress
 SECONDS_PER_PAGE = 4
 
 
-class ProgressBitsong(Progress):
+class ProgressBTSG(Progress):
 
     def __init__(self):
         super().__init__(localconfig)

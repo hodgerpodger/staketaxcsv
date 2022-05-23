@@ -10,7 +10,7 @@ FET_NODE = os.environ.get("FET_NODE", "https://rest-fetchhub.fetch.ai")
 
 HUAHUA_NODE = os.environ.get("HUAHUA_NODE", "")
 JUNO_NODE = os.environ.get("JUNO_NODE", "")
-BITSONG_NODE = os.environ.get("BITSONG_NODE", "https://lcd.explorebitsong.com")
+BTSG_NODE = os.environ.get("BTSG_NODE", "https://lcd.explorebitsong.com")
 STARS_NODE = os.environ.get("STARS_NODE", "")
 SOL_NODE = os.environ.get("SOL_NODE", "")
 TERRA_LCD_NODE = os.environ.get("TERRA_LCD_NODE", "")
@@ -27,7 +27,7 @@ TICKER_FET = "FET"
 TICKER_HUAHUA = "HUAHUA"
 TICKER_IOTEX = "IOTX"
 TICKER_JUNO = "JUNO"
-TICKER_BITSONG = "BITSONG"
+TICKER_BTSG = "BTSG"
 TICKER_STARS = "STARS"
 TICKER_LUNA = "LUNA"
 TICKER_OSMO = "OSMO"
@@ -40,7 +40,7 @@ DONATION_WALLETS = set([
     os.environ.get("DONATION_WALLET_HUAHUA", ""),
     os.environ.get("DONATION_WALLET_IOTX", ""),
     os.environ.get("DONATION_WALLET_JUNO", ""),
-    os.environ.get("DONATION_WALLET_BITSONG", ""),
+    os.environ.get("DONATION_WALLET_BTSG", ""),
     os.environ.get("DONATION_WALLET_STARS", ""),
     os.environ.get("DONATION_WALLET_LUNA", ""),
     os.environ.get("DONATION_WALLET_OSMO", ""),
