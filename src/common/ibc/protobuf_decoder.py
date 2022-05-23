@@ -22,7 +22,7 @@ class Varint:
         return int((self._shift + (8 - (self._shift % 8))) / 8)
 
     @property
-    def value(self):
+    def value(self) -> int:
         return self._varint
 
     def from_bytes(self, byte_stream: io.BytesIO) -> None:
@@ -81,7 +81,7 @@ class ProtobufParserStack:
         self._stack.append(frame)
         self._clear_field_path()
 
-    def update_frame(self, end_of_field_offset: int):
+    def update_frame(self, end_of_field_offset: int) -> None:
         if not self._stack:
             raise RuntimeError("no stack frame to update")
 
@@ -192,7 +192,7 @@ class ProtobufParser:
         self._buffer_size = len(protobuf_bytes)
         self._callback = callback
 
-    def parse(self):
+    def parse(self) -> None:
         parser_stack: ProtobufParserStack = ProtobufParserStack()
         while self._buffer.tell() < self._buffer_size:
             # get the next field key
