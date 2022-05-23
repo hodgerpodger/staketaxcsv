@@ -1,9 +1,9 @@
 import logging
 import common.ibc.processor
-import bitsong.constants as co
+import btsg.constants as co
 import common.ibc.processor
 import common.ibc.handle
-from bitsong.config_bitsong import localconfig
+from btsg.config_btsg import localconfig
 from settings_csv import BITSONG_NODE
 
 

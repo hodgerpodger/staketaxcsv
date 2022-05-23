@@ -7,14 +7,14 @@ Prints transactions and writes CSV(s) to _reports/BITSONG*.csv
 import logging
 import pprint
 
-from bitsong.config_bitsong import localconfig
-from bitsong.progress_bitsong import SECONDS_PER_PAGE, ProgressBitsong
+from btsg.config_btsg import localconfig
+from btsg.progress_btsg import SECONDS_PER_PAGE, ProgressBitsong
 from common import report_util
 from common.Cache import Cache
 from common.Exporter import Exporter
 from common.ExporterTypes import FORMAT_DEFAULT
 from settings_csv import TICKER_BITSONG, BITSONG_NODE
-import bitsong.processor
+import btsg.processor
 import common.ibc.api_lcd
 
 
@@ -48,7 +48,7 @@ def txone(wallet_address, txid):
     pprint.pprint(elem)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_BITSONG)
-    txinfo = bitsong.processor.process_tx(wallet_address, elem, exporter)
+    txinfo = btsg.processor.process_tx(wallet_address, elem, exporter)
     txinfo.print()
     return exporter
 
@@ -77,7 +77,7 @@ def txhistory(wallet_address, options):
     elems = common.ibc.api_lcd.get_txs_all(BITSONG_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
-    bitsong.processor.process_txs(wallet_address, elems, exporter)
+    btsg.processor.process_txs(wallet_address, elems, exporter)
 
     if localconfig.cache:
         Cache().set_ibc_addresses(localconfig.ibc_addresses)

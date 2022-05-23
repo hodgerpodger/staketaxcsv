@@ -1,4 +1,4 @@
-from bitsong.config_bitsong import localconfig
+from btsg.config_btsg import localconfig
 from common.progress import Progress
 
 SECONDS_PER_PAGE = 4
