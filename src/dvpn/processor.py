@@ -5,6 +5,8 @@ from common.make_tx import make_spend_fee_tx, make_spend_tx
 from dvpn.config_dvpn import localconfig
 from settings_csv import DVPN_LCD_NODE
 
+_handled_fee_spend_tx_hashes = set()
+
 
 def process_usage_payments(wallet_address, exporter):
     """
@@ -60,37 +62,54 @@ def _handle_tx(exporter, txinfo, msginfo):
     if msg_type in [co.MSG_TYPE_DVPN_REGISTER_REQUEST, co.MSG_TYPE_DVPN_SET_STATUS_REQUEST,
                     co.MSG_TYPE_DVPN_UPDATE_REQUEST]:
         # dVPN node management messages
-        _handle_management_message(exporter, txinfo, msginfo)
-    elif msg_type in [co.MSG_TYPE_DVPN_SERVICE_SUBSCRIBE_TO_NODE, co.MSG_TYPE_DVPN_SERVICE_START,
+        _handle_management_tx(exporter, txinfo, msginfo)
+    elif msg_type in [co.MSG_TYPE_DVPN_SERVICE_SUBSCRIBE_TO_NODE, co.MSG_TYPE_DVPN_SERVICE_START, co.MSG_TYPE_DVPN_SERVICE_END,
                       co.MSG_TYPE_DVPN_SUBSCRIBE_TO_NODE_REQUEST, co.MSG_TYPE_DVPN_START_REQUEST, co.MSG_TYPE_DVPN_END_REQUEST]:
         # dVPN client subscription messages
-        _handle_subscription_message(exporter, txinfo, msginfo)
+        _handle_subscription_tx(exporter, txinfo, msginfo)
     else:
         return False
 
     return True
 
 
-def _handle_management_message(exporter, txinfo, msginfo):
+def _handle_management_tx(exporter, txinfo, msginfo):
     """
     Messages that update the status of a dVPN node on-chain which will have a fee.
     """
-    _make_spend_fee_tx(exporter, txinfo, msginfo)
+    _handle_spend_fee_tx(exporter, txinfo, msginfo)
 
 
-def _handle_subscription_message(exporter, txinfo, msginfo):
+def _handle_subscription_tx(exporter, txinfo, msginfo):
     """
     Messages that indicate what dVPN nodes a user has subscribed to and when a dVPN session starts.
     Pricing is maintained in message data.
     """
     msg_type = msginfo.msg_type
     if msg_type in [co.MSG_TYPE_DVPN_SERVICE_SUBSCRIBE_TO_NODE, co.MSG_TYPE_DVPN_SUBSCRIBE_TO_NODE_REQUEST]:
-        _make_subscribed_to_node_tx(exporter, txinfo, msginfo)
+        _handle_subscribed_to_node_tx(exporter, txinfo, msginfo)
     else:
-        _make_spend_fee_tx(exporter, txinfo, msginfo)
+        _handle_spend_fee_tx(exporter, txinfo, msginfo)
 
 
-def _make_subscribed_to_node_tx(exporter, txinfo, msginfo):
+def _handle_spend_fee_tx(exporter, txinfo, msginfo):
+    global _handled_fee_spend_tx_hashes
+
+    # transactions can have multiple messages and the fee should only count once
+    if txinfo.txid in _handled_fee_spend_tx_hashes:
+        return
+
+    _handled_fee_spend_tx_hashes.add(txinfo.txid)
+
+    row = make_spend_fee_tx(txinfo, txinfo.fee, txinfo.fee_currency)
+
+    msg_type_for_comment = msginfo.msg_type.replace("Msg", "")
+    row.comment = f"fee for {msg_type_for_comment}"
+
+    exporter.ingest_row(row)
+
+
+def _handle_subscribed_to_node_tx(exporter, txinfo, msginfo):
     _, transfers_out = msginfo.transfers
     assert len(transfers_out) == 1
 
@@ -102,14 +121,5 @@ def _make_subscribed_to_node_tx(exporter, txinfo, msginfo):
     if dvpn_node_address:
         comment = f"{comment}: {dvpn_node_address}"
     row.comment = comment
-
-    exporter.ingest_row(row)
-
-
-def _make_spend_fee_tx(exporter, txinfo, msginfo):
-    row = make_spend_fee_tx(txinfo, txinfo.fee, txinfo.fee_currency)
-
-    msg_type_for_comment = msginfo.msg_type.replace("Msg", "")
-    row.comment = f"fee for {msg_type_for_comment}"
 
     exporter.ingest_row(row)
