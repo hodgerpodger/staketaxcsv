@@ -1,7 +1,7 @@
 
 # staketaxcsv
 
-* Python repository to create blockchain CSVs for Algorand (ALGO), Cosmos (ATOM), Chihuahua (HUAHUA), 
+* Python repository to create blockchain CSVs for Algorand (ALGO), Bitsong (BTSG), Cosmos (ATOM), Chihuahua (HUAHUA), 
   Fetch.ai (FET), IoTex (IOTX), Juno (JUNO), Osmosis (OSMO), Solana (SOL), Stargaze (STARS), and 
   Terra (LUNA) blockchains
 * CSV codebase for <https://stake.tax>
@@ -10,7 +10,7 @@
   
 # Usage
 
-* Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_fet.py (FET),
+* Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_bitsong (BTSG), report_fet.py (FET),
   report_huahua.py (HUAHUA), report_juno.py (JUNO), report_iotex.py (IOTX), report_osmo.py (OSMO),
   report_stars.py (STARS), report_sol.py (SOL), report_terra.py (LUNA):
 
