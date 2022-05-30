@@ -4,6 +4,7 @@ import os
 
 ALGO_HIST_INDEXER_NODE = os.environ.get("ALGO_HIST_INDEXER_NODE", "https://indexer.algoexplorerapi.io")
 ALGO_INDEXER_NODE = os.environ.get("ALGO_INDEXER_NODE", "https://algoindexer.algoexplorerapi.io")
+ALGO_NFDOMAINS = os.environ.get("ALGO_NFDOMAINS", "https://api.testnet.nf.domains")
 ATOM_NODE = os.environ.get("ATOM_NODE", "")
 COVALENT_NODE = os.environ.get("COVALENT_NODE", "https://api.covalenthq.com")
 DVPN_LCD_NODE = os.environ.get("DVPN_LCD_NODE", "https://lcd.sentinel.co")

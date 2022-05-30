@@ -1,5 +1,4 @@
 import logging
-import urllib.parse
 
 import requests
 from settings_csv import ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE
