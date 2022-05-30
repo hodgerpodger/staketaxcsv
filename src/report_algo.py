@@ -10,6 +10,7 @@ import logging
 import math
 import os
 import pprint
+from algo.api_nfdomains import NFDomainsAPI
 from algo.asset import Asset
 from algo.handle_algofi import get_algofi_liquidate_transactions, get_algofi_storage_address
 
@@ -28,6 +29,9 @@ indexer = AlgoIndexerAPI()
 
 def main():
     wallet_address, export_format, txid_or_groupid, options = report_util.parse_args(TICKER_ALGO)
+
+    if wallet_address.endswith(".algo"):
+        wallet_address = NFDomainsAPI().get_address(wallet_address)
 
     if txid_or_groupid:
         _read_options(options)
