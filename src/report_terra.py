@@ -57,6 +57,8 @@ def wallet_exists(wallet_address):
     data = SearchAPIFigment.get_txs(wallet_address, limit=2)
     if data is None:
         return False
+    if "message" in data and "no Route" in data.get("message"):
+        return False
     return len(data) > 0
 
 

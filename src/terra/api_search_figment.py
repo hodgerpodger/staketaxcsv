@@ -27,6 +27,6 @@ class SearchAPIFigment:
 
         response = cls.session.post(url, json=data)
         response_data = response.json()
-
+        
         time.sleep(0.2)
         return response_data
