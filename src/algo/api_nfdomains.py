@@ -15,7 +15,12 @@ class NFDomainsAPI:
         data, status_code = self._query(ALGO_NFDOMAINS, endpoint, params)
 
         if status_code == 200:
-            return data["owner"]
+            # https://docs.nf.domains/docs/faq#how-do-i-set-my-address-to-resolve-my-nfd
+            # If present, use the primary/deposit address, otherwise resolve to the owner address
+            if "caAlgo" in data:
+                return data["caAlgo"][0]
+            else:
+                return data["owner"]
         else:
             return None
 
