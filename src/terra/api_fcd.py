@@ -5,7 +5,7 @@ from settings_csv import REPORTS_DIR
 from common.debug_util import use_debug_files
 from terra.config_terra import localconfig
 
-FCD_URL = "https://fcd.terra.dev"
+FCD_URL = "https://columbus-fcd.terra.dev"
 LIMIT_FCD = 100
 
 

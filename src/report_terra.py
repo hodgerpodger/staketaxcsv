@@ -22,9 +22,9 @@ from common.Cache import Cache
 from common.ErrorCounter import ErrorCounter
 from common.Exporter import Exporter
 from common.ExporterTypes import FORMAT_DEFAULT, LP_TREATMENT_TRANSFERS
-from settings_csv import TERRA_FIGMENT_KEY, TICKER_LUNA, REPORTS_DIR
+from settings_csv import TICKER_LUNA
 from terra.api_fcd import LIMIT_FCD, FcdAPI
-from terra.api_search_figment import LIMIT_FIGMENT, SearchAPIFigment
+from terra.api_lcd import LcdAPI
 from terra.config_terra import localconfig
 from terra.progress_terra import SECONDS_PER_TX, ProgressTerra
 
@@ -54,12 +54,8 @@ def _read_options(options):
 def wallet_exists(wallet_address):
     if not wallet_address.startswith("terra"):
         return False
-    data = SearchAPIFigment.get_txs(wallet_address, limit=2)
-    if data is None:
-        return False
-    if "message" in data and "no Route" in data.get("message"):
-        return False
-    return len(data) > 0
+
+    return LcdAPI.has_txs(wallet_address)
 
 
 def txone(wallet_address, txid):
@@ -77,7 +73,7 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address, options):
-    return SECONDS_PER_TX * _num_txs(wallet_address)
+    return SECONDS_PER_TX * LcdAPI.num_txs(wallet_address)
 
 
 def _max_queries():
@@ -85,22 +81,6 @@ def _max_queries():
     max_queries = math.ceil(max_txs / LIMIT_FCD)
     logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
     return max_queries
-
-
-def _num_txs(wallet_address):
-    num_txs = 0
-    figment_max_queries = math.ceil(localconfig.limit / LIMIT_FIGMENT)
-
-    for _ in range(figment_max_queries):
-        logging.info("estimate_duration() loop num_txs=%s", num_txs)
-
-        data = SearchAPIFigment.get_txs(wallet_address, offset=num_txs)
-        num_txs += len(data)
-
-        if len(data) < LIMIT_FIGMENT:
-            break
-
-    return num_txs
 
 
 def txhistory(wallet_address, options):
@@ -113,11 +93,9 @@ def txhistory(wallet_address, options):
     progress = ProgressTerra()
     exporter = Exporter(wallet_address, localconfig, TICKER_LUNA)
 
-    if TERRA_FIGMENT_KEY:
-        # Optional: Fetch count of transactions to estimate progress more accurately later
-        num_txs = _num_txs(wallet_address)
-        progress.set_estimate(num_txs)
-        logging.info("num_txs=%s", num_txs)
+    num_txs = LcdAPI.num_txs(wallet_address)
+    progress.set_estimate(num_txs)
+    logging.info("num_txs=%s", num_txs)
 
     # Retrieve data
     elems = _get_txs(wallet_address, progress)
