@@ -16,6 +16,7 @@ from common import report_util
 from common.Cache import Cache
 from common.Exporter import Exporter
 from common.ExporterTypes import FORMAT_DEFAULT
+from common.ibc.api_rpc import RpcAPI
 from dvpn.config_dvpn import localconfig
 from dvpn.progress_dvpn import ProgressDvpn
 from settings_csv import DVPN_LCD_NODE, DVPN_RPC_NODE, TICKER_DVPN
@@ -46,6 +47,9 @@ def wallet_exists(wallet_address):
 
 def txone(wallet_address, txid):
     elem = common.ibc.api_lcd.LcdAPI(DVPN_LCD_NODE).get_tx(txid)
+    if not elem:
+        elem = RpcAPI(DVPN_RPC_NODE).get_tx(txid)
+        common.ibc.api_rpc.normalize_rpc_txns(DVPN_RPC_NODE, [elem])
 
     print("Transaction data:")
     pprint.pprint(elem)

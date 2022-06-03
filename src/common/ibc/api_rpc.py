@@ -65,7 +65,7 @@ class RpcAPI:
             "hash": "0x" + txid
         }
         data = self._query(uri_path, query_params, sleep_seconds=1)
-        return data.get("tx_response", None)
+        return data.get("result", None)
 
     def txs_search(self, wallet_address, events_type, page, per_page):
         data = self._txs_search(wallet_address, events_type, page, per_page)
