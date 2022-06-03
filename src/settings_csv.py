@@ -20,7 +20,6 @@ TERRA_LCD_NODE = os.environ.get("TERRA_LCD_NODE", "")
 
 # Optional environment variables
 COVALENT_API_KEY = os.environ.get("COVALENT_API_KEY", "")
-TERRA_FIGMENT_KEY = os.environ.get("TERRA_FIGMENT_KEY", "")
 
 # #############################################################################
 
