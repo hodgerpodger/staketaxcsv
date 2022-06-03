@@ -18,7 +18,7 @@ from common.Exporter import Exporter
 from common.ExporterTypes import FORMAT_DEFAULT
 from common.ibc.api_rpc import RpcAPI
 from dvpn.config_dvpn import localconfig
-from dvpn.progress_dvpn import ProgressDvpn
+from dvpn.progress_dvpn import ProgressDvpn, LCD_SECONDS_PER_PAGE
 from settings_csv import DVPN_LCD_NODE, DVPN_RPC_NODE, TICKER_DVPN
 
 
@@ -43,6 +43,11 @@ def _read_options(options):
 
 def wallet_exists(wallet_address):
     return common.ibc.api_lcd.LcdAPI(DVPN_LCD_NODE).account_exists(wallet_address)
+
+
+def estimate_duration(wallet_address, options):
+    max_txs = localconfig.limit
+    return LCD_SECONDS_PER_PAGE * common.ibc.api_lcd.get_txs_pages_count(DVPN_LCD_NODE, wallet_address, max_txs)
 
 
 def txone(wallet_address, txid):
