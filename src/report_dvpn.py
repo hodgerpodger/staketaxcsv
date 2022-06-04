@@ -79,6 +79,10 @@ def txhistory(wallet_address, options):
     # LCD - fetch count of transactions to estimate progress more accurately
     lcd_count_pages = common.ibc.api_lcd.get_txs_pages_count(DVPN_LCD_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_lcd_estimate(lcd_count_pages)
+    # RPC - fetch count of transactions to estimate progress more accurately
+    rpc_count_pages = common.ibc.api_rpc.get_txs_pages_count(DVPN_RPC_NODE, wallet_address, max_txs,
+                                                             debug=localconfig.debug)
+    progress.set_rpc_estimate(rpc_count_pages)
 
     # LCD - fetch transactions
     lcd_elems = common.ibc.api_lcd.get_txs_all(DVPN_LCD_NODE, wallet_address, progress, max_txs,
@@ -92,10 +96,6 @@ def txhistory(wallet_address, options):
     #
     # Use the RPC api to backfill any transactions that were missing.
     # Only found cases of this when the address is the sender, so the `events_types` queried are limited.
-
-    # RPC - fetch count of transactions to estimate progress more accurately
-    rpc_count_pages = common.ibc.api_rpc.get_txs_pages_count(DVPN_RPC_NODE, wallet_address, max_txs, debug=localconfig.debug)
-    progress.set_rpc_estimate(rpc_count_pages)
 
     # RPC - fetch transactions
     rpc_elems = common.ibc.api_rpc.get_txs_all(DVPN_RPC_NODE, wallet_address, progress, max_txs,
