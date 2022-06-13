@@ -16,8 +16,9 @@ from common import report_util
 from common.Cache import Cache
 from common.Exporter import Exporter
 from common.ExporterTypes import FORMAT_DEFAULT
+from common.ibc.api_rpc import RpcAPI
 from dvpn.config_dvpn import localconfig
-from dvpn.progress_dvpn import ProgressDvpn
+from dvpn.progress_dvpn import ProgressDvpn, LCD_SECONDS_PER_PAGE
 from settings_csv import DVPN_LCD_NODE, DVPN_RPC_NODE, TICKER_DVPN
 
 
@@ -44,8 +45,16 @@ def wallet_exists(wallet_address):
     return common.ibc.api_lcd.LcdAPI(DVPN_LCD_NODE).account_exists(wallet_address)
 
 
+def estimate_duration(wallet_address, options):
+    max_txs = localconfig.limit
+    return LCD_SECONDS_PER_PAGE * common.ibc.api_lcd.get_txs_pages_count(DVPN_LCD_NODE, wallet_address, max_txs)
+
+
 def txone(wallet_address, txid):
     elem = common.ibc.api_lcd.LcdAPI(DVPN_LCD_NODE).get_tx(txid)
+    if not elem:
+        elem = RpcAPI(DVPN_RPC_NODE).get_tx(txid)
+        common.ibc.api_rpc.normalize_rpc_txns(DVPN_RPC_NODE, [elem])
 
     print("Transaction data:")
     pprint.pprint(elem)
@@ -70,6 +79,10 @@ def txhistory(wallet_address, options):
     # LCD - fetch count of transactions to estimate progress more accurately
     lcd_count_pages = common.ibc.api_lcd.get_txs_pages_count(DVPN_LCD_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_lcd_estimate(lcd_count_pages)
+    # RPC - fetch count of transactions to estimate progress more accurately
+    rpc_count_pages = common.ibc.api_rpc.get_txs_pages_count(DVPN_RPC_NODE, wallet_address, max_txs,
+                                                             debug=localconfig.debug)
+    progress.set_rpc_estimate(rpc_count_pages)
 
     # LCD - fetch transactions
     lcd_elems = common.ibc.api_lcd.get_txs_all(DVPN_LCD_NODE, wallet_address, progress, max_txs,
@@ -83,10 +96,6 @@ def txhistory(wallet_address, options):
     #
     # Use the RPC api to backfill any transactions that were missing.
     # Only found cases of this when the address is the sender, so the `events_types` queried are limited.
-
-    # RPC - fetch count of transactions to estimate progress more accurately
-    rpc_count_pages = common.ibc.api_rpc.get_txs_pages_count(DVPN_RPC_NODE, wallet_address, max_txs, debug=localconfig.debug)
-    progress.set_rpc_estimate(rpc_count_pages)
 
     # RPC - fetch transactions
     rpc_elems = common.ibc.api_rpc.get_txs_all(DVPN_RPC_NODE, wallet_address, progress, max_txs,

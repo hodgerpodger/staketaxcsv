@@ -10,7 +10,7 @@ import time
 
 from common import ExporterTypes as et
 from common.exporter_koinly import NullMap
-from settings_csv import TICKER_ALGO, TICKER_ATOM, TICKER_LUNA
+from settings_csv import TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1
 
 
 class Row:
@@ -697,7 +697,7 @@ class Exporter:
     def koinly_currency(self, currency):
         # Reference: https://app.koinly.io/p/markets?search=STARS
         remap = {
-            TICKER_LUNA: {
+            TICKER_LUNA1: {
                 "APOLLO": "ID:28478",
                 "ASTRO": "ID:48993",
                 "PSI": "ID:106376",

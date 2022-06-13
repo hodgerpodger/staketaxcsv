@@ -60,7 +60,7 @@ enable caching:
 cd src
 
 # --cache flag requires working implementation of Cache class (common/cache.py)
-python3 report_terra.py <wallet_address> --cache
+python3 report_osmo.py <wallet_address> --cache
 ```
 
 To enable --cache, you must configure an aws connection for the boto3 code found in src/common/Cache.py:

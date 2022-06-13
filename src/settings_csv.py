@@ -4,7 +4,7 @@ import os
 
 ALGO_HIST_INDEXER_NODE = os.environ.get("ALGO_HIST_INDEXER_NODE", "https://indexer.algoexplorerapi.io")
 ALGO_INDEXER_NODE = os.environ.get("ALGO_INDEXER_NODE", "https://algoindexer.algoexplorerapi.io")
-ALGO_NFDOMAINS = os.environ.get("ALGO_NFDOMAINS", "https://api.testnet.nf.domains")
+ALGO_NFDOMAINS = os.environ.get("ALGO_NFDOMAINS", "https://api.nf.domains")
 ATOM_NODE = os.environ.get("ATOM_NODE", "")
 COVALENT_NODE = os.environ.get("COVALENT_NODE", "https://api.covalenthq.com")
 DVPN_LCD_NODE = os.environ.get("DVPN_LCD_NODE", "https://lcd.sentinel.co")
@@ -20,7 +20,6 @@ TERRA_LCD_NODE = os.environ.get("TERRA_LCD_NODE", "")
 
 # Optional environment variables
 COVALENT_API_KEY = os.environ.get("COVALENT_API_KEY", "")
-TERRA_FIGMENT_KEY = os.environ.get("TERRA_FIGMENT_KEY", "")
 
 # #############################################################################
 
@@ -33,7 +32,7 @@ TICKER_IOTEX = "IOTX"
 TICKER_JUNO = "JUNO"
 TICKER_BTSG = "BTSG"
 TICKER_STARS = "STARS"
-TICKER_LUNA = "LUNA"
+TICKER_LUNA1 = "LUNA1"
 TICKER_OSMO = "OSMO"
 TICKER_SOL = "SOL"
 

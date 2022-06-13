@@ -52,7 +52,7 @@ def process_tx(wallet_address, elem, exporter):
 
 
 def _handle_tx(msg_type, exporter, txinfo, elem, txid, i):
-    if msg_type == "MsgSend":
+    if msg_type in ("MsgSend", "MsgCreateVestingAccount"):
         handle_transfer(exporter, txinfo, elem, i)
     elif msg_type in ("MsgWithdrawDelegatorReward", "MsgWithdrawDelegationReward"):
         handle_withdraw_reward(exporter, txinfo, elem, i)

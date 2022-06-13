@@ -4,7 +4,7 @@ import logging
 import os
 
 from common.ExporterTypes import FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS
-from settings_csv import REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA, TICKER_OSMO, TICKER_SOL
+from settings_csv import REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL
 
 ALL = "all"
 
@@ -60,7 +60,7 @@ def parse_args(ticker):
             type=str,
             help="(YYYY-MM-DD) Only include transactions before end_date (inclusive)",
         )
-    if ticker == TICKER_LUNA:
+    if ticker == TICKER_LUNA1:
         parser.add_argument(
             "--minor_rewards",
             action="store_true",
@@ -68,7 +68,7 @@ def parse_args(ticker):
             help="include minor currency rewards",
         )
 
-    if ticker in (TICKER_LUNA, TICKER_OSMO, TICKER_ALGO):
+    if ticker in (TICKER_LUNA1, TICKER_OSMO, TICKER_ALGO):
         parser.add_argument(
             "--lp_treatment",
             choices=LP_TREATMENT_CHOICES,
