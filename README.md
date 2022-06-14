@@ -11,7 +11,7 @@
 # Usage
 
 * Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_btsg.py (BTSG), report_dvpn.py (DVPN),
-  report_fet.py (FET), report_huahua.py (HUAHUA), report_luna1.py (LUNC), report_luna2 (LUNA), 
+  report_fet.py (FET), report_huahua.py (HUAHUA), report_luna1.py (LUNC aka "1.0"), report_luna2 (LUNA aka "2.0"), 
   report report_juno.py (JUNO), report_iotex.py (IOTX), report_osmo.py (OSMO), report_stars.py (STARS), 
 * report_sol.py (SOL), :
 

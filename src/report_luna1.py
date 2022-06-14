@@ -1,7 +1,7 @@
 """
 usage: python3 report_luna1.py <walletaddress> [--format all|cointracking|koinly|..]
 
-Prints transactions and writes CSV(s) to _reports/LUNA*.csv
+Prints transactions and writes CSV(s) to _reports/LUNA1*.csv
 
 
 Notes:

@@ -70,16 +70,17 @@ class LcdAPI:
         return num_send + num_receiver
 
     @classmethod
+    def _accounts(cls, wallet_address):
+        uri_path = "/cosmos/auth/v1beta1/accounts/{}".format(wallet_address)
+        data = cls._query(uri_path, {})
+
+        return data
+
+
+    @classmethod
     def has_txs(self, wallet_address):
-        data = self._get_txs(wallet_address, EVENTS_TYPE_SENDER, 0, LIMIT_TX_QUERY, 0)
-        txs_sender = data.get("txs", [])
-        if txs_sender:
+        data = self._accounts(wallet_address)
+        if "account" in data:
             return True
-
-        data = self._get_txs(wallet_address, EVENTS_TYPE_RECIPIENT, 0, LIMIT_TX_QUERY, 0)
-        txs_receiver = data.get("txs", [])
-
-        if txs_receiver:
-            return True
-
-        return False
+        else:
+            return False
