@@ -7,7 +7,7 @@ class TxInfoTerra(TxInfo):
     """ Terra transaction info """
 
     def __init__(self, txid, timestamp, fee, fee_currency, wallet_address, msgs):
-        url = "https://finder.terra.money/mainnet/tx/{}".format(txid)
+        url = "https://finder.terra.money/classic/tx/{}".format(txid)
         super().__init__(txid, timestamp, fee, fee_currency, wallet_address, EXCHANGE_TERRA_BLOCKCHAIN, url)
 
         self.msgs = msgs
