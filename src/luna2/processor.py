@@ -12,8 +12,7 @@ def process_txs(wallet_address, elems, exporter):
 
 
 def process_tx(wallet_address, elem, exporter):
-    txinfo = common.ibc.processor.txinfo(
-        wallet_address, elem, "dummy", co.EXCHANGE_LUNA2, localconfig.ibc_addresses, LUNA2_LCD_NODE)
+    txinfo = _txinfo(wallet_address, elem)
 
     for msginfo in txinfo.msgs:
         # Handle common messages
@@ -24,4 +23,14 @@ def process_tx(wallet_address, elem, exporter):
         # Handle unknown messages
         common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
+    return txinfo
+
+
+def _txinfo(wallet_address, elem):
+    txinfo = common.ibc.processor.txinfo(
+        wallet_address, elem, "dummy", co.EXCHANGE_LUNA2, localconfig.ibc_addresses, LUNA2_LCD_NODE)
+
+    # Edit url, since terra not in mintscan
+    txid = elem["txhash"]
+    txinfo.url = "https://finder.terra.money/mainnet/tx/{}".format(txid)
     return txinfo
