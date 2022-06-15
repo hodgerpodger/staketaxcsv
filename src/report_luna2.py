@@ -73,8 +73,8 @@ def txhistory(wallet_address, options):
     # Configure localconfig based on options
     _read_options(options)
     if localconfig.cache:
-        localconfig.ibc_addresses = Cache().get_ibc_addresses()
-        logging.info("Loaded ibc_addresses from cache ...")
+        cache = Cache()
+        _cache_load(cache)
 
     max_txs = localconfig.limit
     progress = ProgressLuna2()
@@ -96,9 +96,19 @@ def txhistory(wallet_address, options):
     luna2.processor.process_txs(wallet_address, elems, exporter)
 
     if localconfig.cache:
-        Cache().set_ibc_addresses(localconfig.ibc_addresses)
+        _cache_push(cache)
 
     return exporter
+
+
+def _cache_load(cache):
+    localconfig.ibc_addresses = cache.get_ibc_addresses()
+    logging.info("_cache_load(): downloaded data from cache ...")
+
+
+def _cache_push(cache):
+    cache.set_ibc_addresses(localconfig.ibc_addresses)
+    logging.info("_cache_push(): push data to cache")
 
 
 def _max_queries():
