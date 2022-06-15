@@ -3,7 +3,7 @@
 
 * Python repository to create blockchain CSVs for Algorand (ALGO), Bitsong (BTSG), Cosmos (ATOM), Chihuahua (HUAHUA), 
   Fetch.ai (FET), IoTex (IOTX), Juno (JUNO), Osmosis (OSMO), Sentinel (DVPN), Solana (SOL),
-  Stargaze (STARS), and Terra (LUNA) blockchains
+  Stargaze (STARS), Terra Classic (LUNC aka "1.0"), and Terra 2.0 (LUNA aka "2.0") blockchains
 * CSV codebase for <https://stake.tax>
 * Community contribution and PRs are most welcome, especially to fix/support new types of
   protocols/transactions.
@@ -12,8 +12,7 @@
 
 * Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_btsg.py (BTSG), report_dvpn.py (DVPN),
   report_fet.py (FET), report_huahua.py (HUAHUA), report_luna1.py (LUNC aka "1.0"), report_luna2 (LUNA aka "2.0"), 
-  report report_juno.py (JUNO), report_iotex.py (IOTX), report_osmo.py (OSMO), report_stars.py (STARS), 
-* report_sol.py (SOL), :
+  report_juno.py (JUNO), report_iotex.py (IOTX), report_osmo.py (OSMO), report_stars.py (STARS), report_sol.py (SOL):
 
   ```sh
   # Load environment variables from sample.env (add to ~/.bash_profile or ~/.bashrc to avoid doing every time)

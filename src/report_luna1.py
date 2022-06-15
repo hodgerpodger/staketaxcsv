@@ -5,9 +5,9 @@ Prints transactions and writes CSV(s) to _reports/LUNA1*.csv
 
 
 Notes:
+    * Terra Classic
     * https://fcd.terra.dev/swagger
-    * https://lcd.terra.dev/swagger/
-    * https://docs.figment.io/network-documentation/terra/enriched-apis
+    * https://columbus-lcd.terra.dev/swagger/
 """
 
 import json
