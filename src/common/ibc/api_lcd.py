@@ -98,6 +98,14 @@ class LcdAPI:
         symbol = denom[1:].upper()  # i.e. "uosmo" -> "OSMO"
         return symbol
 
+    def balances(self, wallet_address, height=None):
+        uri_path = "/cosmos/bank/v1beta1/balances/{}".format(wallet_address)
+        query_params = {}
+        if height is not None:
+            query_params["height"] = height
+        data = self._query(uri_path, query_params)
+        return data
+
 
 def get_txs_all(node, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, sleep_seconds=1,
                 debug=False, stage_name="default", events_types=None):

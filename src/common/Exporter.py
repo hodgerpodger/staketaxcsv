@@ -10,7 +10,7 @@ import time
 
 from common import ExporterTypes as et
 from common.exporter_koinly import NullMap
-from settings_csv import TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1
+from settings_csv import TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TICKER_LUNA2
 
 
 class Row:
@@ -711,7 +711,10 @@ class Exporter:
             TICKER_ALGO: {
                 "AKITA": "ID:132343",
                 "AKTA": "ID:182292",
-                "DEGEN": "ID:124845"
+                "DEGEN": "ID:124845",
+            },
+            TICKER_LUNA2: {
+                "LUNA": "ID:6089",
             }
         }
 
@@ -1337,7 +1340,6 @@ class Exporter:
             "ATOM": "ATOM2",
             "GLOW": "GLOW3",
             "BETH": "BETH3",
-            "LUNA": "LUNA2",
             "LOOP": "LOOP2",
             "LUNI": "LUNI2",
             "MARS": "MARS6",
@@ -1355,6 +1357,11 @@ class Exporter:
             "WHALE": "WHALE3",
             "WTUST": "UST3",
         }
+        if self.ticker == TICKER_LUNA1:
+            remap["LUNA"] = "LUNA2"  # Terra Classic
+        elif self.ticker == TICKER_LUNA2:
+            remap["LUNA"] = "LUNA3"  # Terra v2
+
         if currency and currency.upper() in remap:
             return remap[currency.upper()]
         return currency

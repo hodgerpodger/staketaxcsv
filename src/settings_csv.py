@@ -17,6 +17,7 @@ BTSG_NODE = os.environ.get("BTSG_NODE", "https://lcd.explorebitsong.com")
 STARS_NODE = os.environ.get("STARS_NODE", "")
 SOL_NODE = os.environ.get("SOL_NODE", "")
 TERRA_LCD_NODE = os.environ.get("TERRA_LCD_NODE", "")
+LUNA2_LCD_NODE = os.environ.get("LUNA2_LCD_NODE", "")
 
 # Optional environment variables
 COVALENT_API_KEY = os.environ.get("COVALENT_API_KEY", "")
@@ -33,6 +34,7 @@ TICKER_JUNO = "JUNO"
 TICKER_BTSG = "BTSG"
 TICKER_STARS = "STARS"
 TICKER_LUNA1 = "LUNA1"
+TICKER_LUNA2 = "LUNA2"
 TICKER_OSMO = "OSMO"
 TICKER_SOL = "SOL"
 

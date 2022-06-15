@@ -28,8 +28,14 @@ class MsgInfoIBC:
         self.contract = self._contract(message)
 
     def _msg_type(self, message):
-        # i.e. /osmosis.lockup.MsgBeginUnlocking -> _MsgBeginUnlocking
-        last_field = message["@type"].split(".")[-1]
+        if "@type" in message:
+            # i.e. /osmosis.lockup.MsgBeginUnlocking -> _MsgBeginUnlocking
+            last_field = message["@type"].split(".")[-1]
+        elif "type" in message:
+            # luna2 only: staking/MsgUndelegate -> MsgUndelegate
+            last_field = message["type"].split("/")[-1]
+        else:
+            raise Exception("Unexpected message: {}".format(message))
         return last_field
 
     def _has_coin_spent_received(self):
