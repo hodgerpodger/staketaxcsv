@@ -26,7 +26,7 @@ from settings_csv import TICKER_LUNA1
 from luna1.api_fcd import LIMIT_FCD, FcdAPI
 from luna1.api_lcd import LcdAPI
 from luna1.config_luna1 import localconfig
-from luna1.progress_terra import SECONDS_PER_TX, ProgressTerra
+from luna1.progress_terra import SECONDS_PER_TX_FETCH, SECONDS_PER_TX_PROCESS, ProgressTerra
 
 
 def main():
@@ -73,7 +73,7 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address, options):
-    return SECONDS_PER_TX * LcdAPI.num_txs(wallet_address)
+    return (SECONDS_PER_TX_FETCH+SECONDS_PER_TX_PROCESS) * LcdAPI.num_txs(wallet_address)
 
 
 def _max_queries():

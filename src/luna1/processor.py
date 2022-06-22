@@ -29,7 +29,7 @@ def process_txs(wallet_address, elems, exporter, progress):
         process_tx(wallet_address, elem, exporter)
 
         if i % 50 == 0:
-            progress.report(i + 1, "Processed {} of {} transactions".format(i + 1, len(elems)))
+            progress.report(i + 1, "Processed {} of {} transactions".format(i + 1, len(elems)), "process_txs")
 
 
 def process_tx(wallet_address, elem, exporter):
