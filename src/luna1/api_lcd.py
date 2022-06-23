@@ -62,10 +62,10 @@ class LcdAPI:
     @classmethod
     def num_txs(cls, wallet_address):
         data = cls._get_txs(wallet_address, EVENTS_TYPE_SENDER, 0, LIMIT_TX_QUERY, 0)
-        num_send = len(data.get("txs", []))
+        num_send = int(data["pagination"]["total"])
 
         data = cls._get_txs(wallet_address, EVENTS_TYPE_RECIPIENT, 0, LIMIT_TX_QUERY, 0)
-        num_receiver = len(data.get("txs", []))
+        num_receiver = int(data["pagination"]["total"])
 
         return num_send + num_receiver
 
