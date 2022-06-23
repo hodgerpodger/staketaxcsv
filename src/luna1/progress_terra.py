@@ -2,8 +2,8 @@ from common.progress import Progress
 from luna1.config_luna1 import localconfig
 
 # Err on the side of overestimating for better user experience
-SECONDS_PER_TX_FETCH = 0.1
-SECONDS_PER_TX_PROCESS = 0.1
+SECONDS_PER_TX_FETCH = 0.2
+SECONDS_PER_TX_PROCESS = 0.2
 
 
 class ProgressTerra(Progress):
