@@ -392,11 +392,9 @@ def _handle_algofi_repay_borrow(group, exporter, txinfo, z_index=0):
     if txtype == co.TRANSACTION_TYPE_APP_CALL:
         appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
         if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
-            interest_asset = get_inner_transfer_asset(app_transaction)
-            if interest_asset is not None:
-                export_spend_tx(
-                    exporter, txinfo, interest_asset, 0, COMMENT_ALGOFI + " interest payment", z_index)
-                z_offset = 1
+            residual_asset = get_inner_transfer_asset(app_transaction)
+            if residual_asset is not None:
+                send_asset -= residual_asset
 
     export_repay_tx(exporter, txinfo, send_asset, fee_amount, COMMENT_ALGOFI, z_index + z_offset)
 
