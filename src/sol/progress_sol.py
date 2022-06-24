@@ -4,7 +4,7 @@ from sol.config_sol import localconfig
 # Err on the side of overestimating for better user experience
 SECONDS_PER_TOKEN_ADDRESS = 0.2
 SECONDS_PER_STAKING_ADDRESS = 35
-SECONDS_PER_TX = 5
+SECONDS_PER_TX = 0.6
 
 
 class ProgressSol(Progress):
