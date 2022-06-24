@@ -74,7 +74,7 @@ def process_tx(wallet_info, exporter, txid, data):
             handle_raydium_stake_v5(exporter, txinfo)
 
         # Orca programs
-        elif co.PROGRAMID_ORCA_SWAP_V2 in program_ids:
+        elif co.PROGRAMID_ORCA_SWAP_V2 in program_ids or co.PROGRAMID_ORCA_SWAP_WHIRL in program_ids:
             handle_orca_swap_v2(exporter, txinfo)
 
         # Saber programs
