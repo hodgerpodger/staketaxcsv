@@ -6,6 +6,7 @@ from luna1.make_tx import (
 from luna1.constants import CUR_UST
 from common.make_tx import make_liquidate_tx, make_repay_tx
 
+
 def handle_liquidate(exporter, elem, txinfo):
     wallet_address = txinfo.wallet_address
     txid = txinfo.txid

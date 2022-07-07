@@ -147,6 +147,7 @@ def _get_fee(elem):
 
     return fee, currency, more_fees
 
+
 def _get_first_msgtype(elem):
     """Returns type identifier for this transaction"""
     return elem["tx"]["value"]["msg"][0]["type"]

@@ -7,10 +7,10 @@ SECONDS_PER_TX_PROCESS = 0.2
 
 
 class ProgressTerra(Progress):
+
     def __init__(self):
         super().__init__(localconfig)
 
     def set_estimate(self, num_txs):
         self.add_stage("default", num_txs, SECONDS_PER_TX_FETCH)
         self.add_stage("process_txs", num_txs, SECONDS_PER_TX_PROCESS)
-

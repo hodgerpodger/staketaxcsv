@@ -10,6 +10,7 @@ from luna1.config_luna1 import localconfig
 import common.ibc.api_lcd
 from luna1.constants import CUR_UST
 
+
 def _contracts(elem):
     out = []
 
@@ -468,6 +469,7 @@ def _add_anchor_fees(elem, txid, row):
         row.fee += fee_amount
 
     return row
+
 
 def _get_mirror_fees(elem, txid):
     # Extract fee, if any, paid by mirror market contract to fee collector

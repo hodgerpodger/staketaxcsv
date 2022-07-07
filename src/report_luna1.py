@@ -73,7 +73,7 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address, options):
-    return (SECONDS_PER_TX_FETCH+SECONDS_PER_TX_PROCESS) * LcdAPI.num_txs(wallet_address)
+    return (SECONDS_PER_TX_FETCH + SECONDS_PER_TX_PROCESS) * LcdAPI.num_txs(wallet_address)
 
 
 def _max_queries():

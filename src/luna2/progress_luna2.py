@@ -11,4 +11,3 @@ class ProgressLuna2(Progress):
 
     def set_estimate(self, count_pages):
         self.add_stage("default", count_pages, SECONDS_PER_PAGE)
-

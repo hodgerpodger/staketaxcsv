@@ -69,6 +69,7 @@ def txone(wallet_address, txid):
 
     return exporter
 
+
 def txhistory(wallet_address, options):
     # Configure localconfig based on options
     _read_options(options)

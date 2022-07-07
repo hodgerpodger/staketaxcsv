@@ -132,7 +132,6 @@ class Exporter:
         if format in [et.FORMAT_KOINLY, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI]:
             return rows
 
-
         # For non-koinly CSVs, convert LP_DEPOSIT/LP_WITHDRAW into transfers/omit/trades
         # (due to lack of native csv import support)
         out = []

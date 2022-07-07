@@ -45,7 +45,6 @@ class NullMap:
                     with open(self.json_path, 'w') as f:
                         json.dump(self.null_map, f, indent=4)
 
-
     def get_null_symbol(self, symbol):
         if symbol not in self.null_map:
             self.null_map.append(symbol)

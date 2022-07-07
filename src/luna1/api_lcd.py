@@ -17,6 +17,7 @@ from common.ibc.api_common import (
 )
 LIMIT_TX_QUERY = 50
 
+
 class LcdAPI:
     session = requests.Session()
 
@@ -58,7 +59,6 @@ class LcdAPI:
 
         return data
 
-
     @classmethod
     def num_txs(cls, wallet_address):
         data = cls._get_txs(wallet_address, EVENTS_TYPE_SENDER, 0, LIMIT_TX_QUERY, 0)
@@ -75,7 +75,6 @@ class LcdAPI:
         data = cls._query(uri_path, {})
 
         return data
-
 
     @classmethod
     def has_txs(self, wallet_address):

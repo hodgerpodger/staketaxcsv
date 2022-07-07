@@ -1,8 +1,6 @@
 from common import ExporterTypes as et
 
 
-
-
 class config:
 
     job = None
