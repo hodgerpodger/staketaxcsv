@@ -56,7 +56,7 @@ See [Docker](README_reference.md#docker) to alternatively install/run in docker 
 
   ```sh
   # For a given txid, your PR (most commonly) should print different output before/after:
-  python3 report_terra.py <wallet_address> --txid <txid>
+  python3 report_osmo.py <wallet_address> --txid <txid>
   ```
 
 # Reference
