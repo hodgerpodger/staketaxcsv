@@ -158,6 +158,8 @@ class MsgInfoIBC:
                 uamount, ucurrency = amt_string.split("u", 1)
                 currency = ucurrency.upper()
                 amount = cls.amount(uamount, currency)
+            elif amt_string == "":
+                continue
             else:
                 raise Exception("Unexpected amount_string: {}".format(amount_string))
 
