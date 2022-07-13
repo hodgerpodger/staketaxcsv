@@ -44,12 +44,12 @@ class Progress:
         if self.localconfig.job:
             estimated_completion_timestamp = int(time.time() + seconds_left)
             self.localconfig.job.set_in_progress(message, estimated_completion_timestamp)
-        else:
-            logging.info({
-                "message": message,
-                "seconds_left": seconds_left,
-                "time_elapsed": time.time() - self.time_start,
-                "stage_name": stage_name,
-                "stage_total_tasks": stage.total_tasks,
-                "stage_current_task_number": stage.current_task_number,
-            })
+
+        logging.info({
+            "message": message,
+            "seconds_left": seconds_left,
+            "time_elapsed": time.time() - self.time_start,
+            "stage_name": stage_name,
+            "stage_total_tasks": stage.total_tasks,
+            "stage_current_task_number": stage.current_task_number,
+        })
