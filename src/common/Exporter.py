@@ -711,6 +711,9 @@ class Exporter:
                 "AKITA": "ID:132343",
                 "AKTA": "ID:182292",
                 "DEGEN": "ID:124845",
+                "DEFLY": "ID:171818",
+                "OCTO": "ID:174045",
+                "GALGO": "ID:5217593"
             },
             TICKER_LUNA2: {
                 "LUNA": "ID:6089",
