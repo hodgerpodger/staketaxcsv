@@ -13,12 +13,8 @@ def process_txs(wallet_address, elems, exporter):
 
 
 def process_tx(wallet_address, elem, exporter):
-    print("roger start transction")
-
     txinfo = common.ibc.processor.txinfo(
         wallet_address, elem, co.MINTSCAN_LABEL_JUNO, co.EXCHANGE_JUNO, localconfig.ibc_addresses, JUNO_NODE)
-
-    print("roger txid is {}".format(txinfo.txid))
 
     for msginfo in txinfo.msgs:
         result = common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)
