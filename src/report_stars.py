@@ -56,7 +56,7 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def estimate_duration(wallet_address):
+def estimate_duration(wallet_address, options):
     max_txs = localconfig.limit
     return SECONDS_PER_PAGE * common.ibc.api_lcd.get_txs_pages_count(STARS_NODE, wallet_address, max_txs)
 
