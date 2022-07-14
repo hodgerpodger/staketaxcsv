@@ -37,7 +37,7 @@ TICKER_OSMO = "OSMO"
 TICKER_SOL = "SOL"
 TICKER_STARS = "STARS"
 
-DONATION_WALLETS = set([v for k,v in os.environ.items() if k.startswith("DONATION_WALLET_")])
+DONATION_WALLETS = set([v for k, v in os.environ.items() if k.startswith("DONATION_WALLET_")])
 
 MESSAGE_ADDRESS_NOT_FOUND = "Wallet address not found"
 MESSAGE_STAKING_ADDRESS_FOUND = "Staking address found.  Please input the main wallet address instead."
