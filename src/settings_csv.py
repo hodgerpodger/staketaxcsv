@@ -37,19 +37,7 @@ TICKER_OSMO = "OSMO"
 TICKER_SOL = "SOL"
 TICKER_STARS = "STARS"
 
-DONATION_WALLETS = set([
-    os.environ.get("DONATION_WALLET_ALGO", ""),
-    os.environ.get("DONATION_WALLET_ATOM", ""),
-    os.environ.get("DONATION_WALLET_FET", ""),
-    os.environ.get("DONATION_WALLET_HUAHUA", ""),
-    os.environ.get("DONATION_WALLET_IOTX", ""),
-    os.environ.get("DONATION_WALLET_JUNO", ""),
-    os.environ.get("DONATION_WALLET_BTSG", ""),
-    os.environ.get("DONATION_WALLET_STARS", ""),
-    os.environ.get("DONATION_WALLET_LUNA", ""),
-    os.environ.get("DONATION_WALLET_OSMO", ""),
-    os.environ.get("DONATION_WALLET_SOL", ""),
-])
+DONATION_WALLETS = set([v for k,v in os.environ.items() if k.startswith("DONATION_WALLET_")])
 
 MESSAGE_ADDRESS_NOT_FOUND = "Wallet address not found"
 MESSAGE_STAKING_ADDRESS_FOUND = "Staking address found.  Please input the main wallet address instead."
