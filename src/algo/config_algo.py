@@ -8,3 +8,4 @@ class localconfig(config):
     end_date = None
     lp_treatment = et.LP_TREATMENT_DEFAULT
     exclude_asas = []
+    algofi_storage_address = None

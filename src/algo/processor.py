@@ -7,7 +7,7 @@ from algo.asset import Algo
 from algo.config_algo import localconfig
 from algo.handle_akita import handle_akita_swap_transaction, is_akita_swap_transaction
 from algo.handle_algodex import handle_algodex_transaction, is_algodex_transaction
-from algo.handle_algofi import handle_algofi_transaction, is_algofi_transaction
+from algo.handle_algofi import get_algofi_storage_address, handle_algofi_transaction, is_algofi_transaction
 from algo.handle_amm import handle_swap, is_simple_swap_group
 from algo.handle_folks import (
     handle_folks_reward_claim_transaction,
@@ -120,7 +120,8 @@ def _get_transaction_group(groupid, i, elems):
 
 
 def _handle_transaction_group(wallet_address, group, exporter, txinfo):
-    if is_governance_reward_transaction(wallet_address, group):
+    if (is_governance_reward_transaction(wallet_address, group)
+            or is_governance_reward_transaction(localconfig.algofi_storage_address, group)):
         handle_governance_reward_transaction(group, exporter, txinfo)
     elif is_tinyman_transaction(group):
         handle_tinyman_transaction(group, exporter, txinfo)
