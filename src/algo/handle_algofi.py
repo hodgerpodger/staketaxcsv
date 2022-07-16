@@ -13,11 +13,11 @@ from algo.export_tx import (
     export_lp_withdraw_tx,
     export_repay_tx,
     export_reward_tx,
-    export_spend_tx,
     export_swap_tx,
     export_withdraw_collateral_tx
 )
 from algo.handle_simple import handle_participation_rewards, handle_unknown
+from algo.handle_transfer import is_governance_reward_transaction
 from algo.util_algo import get_inner_transfer_asset, get_transfer_asset
 
 # For reference
@@ -26,11 +26,19 @@ from algo.util_algo import get_inner_transfer_asset, get_transfer_asset
 
 COMMENT_ALGOFI = "AlgoFi"
 
-APPLICATION_ID_ALGOFI_AMM = 605753404
+APPLICATION_ID_ALGOFI_AMM_MANAGER = 605753404
+APPLICATION_ID_ALGOFI_NANOSWAP_MANAGER = 658336870
 APPLICATION_ID_ALGOFI_LENDING_MANAGER = 465818260
+APPLICATION_ID_ALGOFI_STABILITY_MANAGER = 705663269
 APPLICATION_ID_ALGOFI_VALGO_MARKET = 465814318
 
 ALGOFI_AMM_SYMBOL = "AF"
+
+# fetch market variables
+# update prices
+# update protocol data
+# dummy transactions
+ALGOFI_NUM_INIT_TXNS = 12
 
 ALGOFI_TRANSACTION_SWAP_EXACT_FOR = "c2Vm"          # "sef"
 ALGOFI_TRANSACTION_SWAP_FOR_EXACT = "c2Zl"          # "sfe"
@@ -38,6 +46,7 @@ ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL = "cnNy"    # "rsr"
 
 ALGOFI_TRANSACTION_CLAIM_REWARDS = "Y3I="           # "cr"
 
+ALGOFI_TRANSACTION_POOL = "cA=="                    # "p"
 ALGOFI_TRANSACTION_REDEEM_POOL_ASSET1_RESIDUAL = "cnBhMXI="   # "rpa1r"
 ALGOFI_TRANSACTION_REDEEM_POOL_ASSET2_RESIDUAL = "cnBhMnI="   # "rpa2r"
 ALGOFI_TRANSACTION_BURN_ASSET1_OUT = "YmExbw=="     # "ba1o"
@@ -78,9 +87,15 @@ ALGOFI_STAKING_CONTRACTS = {
     635813909: "STBL-XET",
     635863793: "STBL-GOBTC",
     635866213: "STBL-GOETH",
+    674527132: "OPUL",
     637795072: "STBL-OPUL",
+    641500474: "DEFLY",
     639747739: "STBL-DEFLY",
     647785804: "STBL-ZONE",
+    661193019: "STBL-USDC",  # NanoSwap
+    661204747: "STBL-USDT",  # NanoSwap
+    661247364: "USDC-USDT",  # NanoSwap
+    705663269: "STBL-USDC",  # NanoSwap Stability
     # Market App ID
     482608867: "STBL",
     553866305: "Tinyman STBL-USDC",
@@ -89,13 +104,15 @@ ALGOFI_STAKING_CONTRACTS = {
     635812850: "STBL-XET",
     635860537: "STBL-GOBTC",
     635864509: "STBL-GOETH",
+    674526408: "OPUL",
     637793356: "STBL-OPUL",
+    641499935: "DEFLY",
     639747119: "STBL-DEFLY",
     647785158: "STBL-ZONE",
-    # Nano Swap
-    658337046: "USDC-STBL",
-    659677335: "USDT-STBL",
-    659678644: "USDT-USDC",
+    661192413: "STBL-USDC",  # NanoSwap
+    661199805: "STBL-USDT",  # NanoSwap
+    661207804: "USDC-USDT",  # NanoSwap
+    705657303: "STBL-USDC",  # NanoSwap Stability
 }
 
 
@@ -126,107 +143,414 @@ def get_algofi_liquidate_transactions(transactions):
     return out
 
 
-def is_algofi_transaction(group):
+def get_algofi_governance_rewards_transactions(transactions, storage_address):
+    out = []
+
+    for transaction in transactions:
+        txtype = transaction["tx-type"]
+        if txtype != co.TRANSACTION_TYPE_PAYMENT:
+            continue
+        if not is_governance_reward_transaction(storage_address, [transaction]):
+            continue
+        out.append(transaction)
+
+    return out
+
+
+def _is_algofi_zap(group):
     length = len(group)
-    if length > 16:
+    if length < 7 or length > 9:
         return False
 
-    app_transaction = group[-1]
-    if app_transaction["tx-type"] == co.TRANSACTION_TYPE_APP_CALL:
-        appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-        # Swap Exact For
-        if ALGOFI_TRANSACTION_SWAP_EXACT_FOR in appl_args:
-            return True
+    i = 0
+    txtype = group[i]["tx-type"]
+    # Skip opt-in transaction
+    if (txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
+            and group[i]["sender"] == group[i][co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
+        i += 1
 
-        # Swap For Exact
-        if ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL in appl_args:
-            return True
+    return _is_algofi_swap(group[:i + 2]) and _is_algofi_lp_add(group[i + 2:])
 
-        # Lending/staking rewards
-        if ALGOFI_TRANSACTION_CLAIM_REWARDS in appl_args:
-            return True
 
-        # LP mint
-        if ALGOFI_TRANSACTION_REDEEM_POOL_ASSET2_RESIDUAL in appl_args:
-            return True
-
-        # LP burn
-        if ALGOFI_TRANSACTION_BURN_ASSET2_OUT in appl_args:
-            return True
-
-        if ALGOFI_TRANSACTION_BORROW in appl_args:
-            return True
-
-        if ALGOFI_TRANSACTION_LIQUIDATE in appl_args:
-            return True
-
-        if ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING in appl_args:
-            return True
-
-        if ALGOFI_TRANSACTION_SYNC_VAULT in appl_args:
-            return True
-
-    # The group size will only be 1 for liquidatee transactions
+def _is_algofi_swap(group):
+    length = len(group)
     if length < 2:
         return False
 
-    app_transaction = group[0]
-    if app_transaction["tx-type"] == co.TRANSACTION_TYPE_APP_CALL:
-        appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-        if ALGOFI_TRANSACTION_FLASH_LOAN in appl_args:
-            return True
+    i = 0
+    txtype = group[i]["tx-type"]
+    # Skip opt-in transaction
+    if (txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
+            and group[i]["sender"] == group[i][co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
+        i += 1
 
-    app_transaction = group[-2]
-    if app_transaction["tx-type"] == co.TRANSACTION_TYPE_APP_CALL:
-        appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-        if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
-            return True
+    transaction = group[i]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_PAYMENT and txtype != co.TRANSACTION_TYPE_ASSET_TRANSFER:
+        return False
 
-        if ALGOFI_TRANSACTION_MINT_TO_COLLATERAL in appl_args:
-            return True
+    i += 1
+    transaction = group[i]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
 
-    return False
+    foreign_apps = transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]
+    if (APPLICATION_ID_ALGOFI_AMM_MANAGER not in foreign_apps
+            and APPLICATION_ID_ALGOFI_NANOSWAP_MANAGER not in foreign_apps):
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if ALGOFI_TRANSACTION_SWAP_EXACT_FOR in appl_args:
+        return True
+
+    if ALGOFI_TRANSACTION_SWAP_FOR_EXACT not in appl_args:
+        return False
+
+    i += 1
+    if length < i + 1:
+        return False
+
+    transaction = group[i]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    return ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL in appl_args
+
+
+def _is_algofi_claim_rewards(group):
+    if len(group) != ALGOFI_NUM_INIT_TXNS + 1:
+        return False
+
+    transaction = group[-1]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    if (app_id not in [APPLICATION_ID_ALGOFI_LENDING_MANAGER, APPLICATION_ID_ALGOFI_STABILITY_MANAGER]
+            and app_id not in ALGOFI_STAKING_CONTRACTS):
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    return ALGOFI_TRANSACTION_CLAIM_REWARDS in appl_args
+
+
+def _is_algofi_lp_add(group):
+    length = len(group)
+    # Optional ASA opt-in
+    if length != 5 and length != 6:
+        return False
+
+    transaction = group[-1]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if ALGOFI_TRANSACTION_REDEEM_POOL_ASSET2_RESIDUAL not in appl_args:
+        return False
+
+    transaction = group[-2]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if ALGOFI_TRANSACTION_REDEEM_POOL_ASSET1_RESIDUAL not in appl_args:
+        return False
+
+    transaction = group[-3]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if ALGOFI_TRANSACTION_POOL not in appl_args:
+        return False
+
+    foreign_apps = transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]
+    if foreign_apps:
+        return (APPLICATION_ID_ALGOFI_AMM_MANAGER in foreign_apps
+                    or APPLICATION_ID_ALGOFI_NANOSWAP_MANAGER in foreign_apps)
+    return True
+
+
+def _is_algofi_lp_remove(group):
+    if len(group) != 3:
+        return False
+
+    transaction = group[0]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_ASSET_TRANSFER:
+        return False
+
+    transaction = group[1]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if ALGOFI_TRANSACTION_BURN_ASSET1_OUT not in appl_args:
+        return False
+
+    transaction = group[2]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    return ALGOFI_TRANSACTION_BURN_ASSET2_OUT in appl_args
+
+
+def _is_algofi_borrow(group):
+    if len(group) != ALGOFI_NUM_INIT_TXNS + 2:
+        return False
+
+    transaction = group[-1]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if ALGOFI_TRANSACTION_BORROW not in appl_args:
+        return False
+
+    foreign_apps = transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]
+    if APPLICATION_ID_ALGOFI_LENDING_MANAGER not in foreign_apps:
+        return False
+
+    transaction = group[-2]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    if app_id != APPLICATION_ID_ALGOFI_LENDING_MANAGER:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    return ALGOFI_TRANSACTION_BORROW in appl_args
+
+
+def _is_algofi_repay_borrow(group):
+    if len(group) != ALGOFI_NUM_INIT_TXNS + 3:
+        return False
+
+    transaction = group[-2]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if ALGOFI_TRANSACTION_REPAY_BORROW not in appl_args:
+        return False
+
+    foreign_apps = transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]
+    if APPLICATION_ID_ALGOFI_LENDING_MANAGER not in foreign_apps:
+        return False
+
+    transaction = group[-3]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    if app_id != APPLICATION_ID_ALGOFI_LENDING_MANAGER:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    return ALGOFI_TRANSACTION_REPAY_BORROW in appl_args
+
+
+def _is_algofi_deposit_collateral(group):
+    if len(group) != ALGOFI_NUM_INIT_TXNS + 3:
+        return False
+
+    transaction = group[-2]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if ALGOFI_TRANSACTION_MINT_TO_COLLATERAL not in appl_args:
+        return False
+
+    app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    foreign_apps = transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]
+    if APPLICATION_ID_ALGOFI_LENDING_MANAGER not in foreign_apps and app_id not in ALGOFI_STAKING_CONTRACTS:
+        return False
+
+    transaction = group[-3]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    if app_id != APPLICATION_ID_ALGOFI_LENDING_MANAGER and app_id not in ALGOFI_STAKING_CONTRACTS:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    return ALGOFI_TRANSACTION_MINT_TO_COLLATERAL in appl_args
+
+
+def _is_algofi_remove_collateral(group):
+    if len(group) != ALGOFI_NUM_INIT_TXNS + 2:
+        return False
+
+    transaction = group[-1]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING not in appl_args:
+        return False
+
+    app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    foreign_apps = transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]
+    if APPLICATION_ID_ALGOFI_LENDING_MANAGER not in foreign_apps and app_id not in ALGOFI_STAKING_CONTRACTS:
+        return False
+
+    transaction = group[-2]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    if app_id != APPLICATION_ID_ALGOFI_LENDING_MANAGER and app_id not in ALGOFI_STAKING_CONTRACTS:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    return ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING in appl_args
+
+
+def _is_algofi_liquidate(group):
+    length = len(group)
+    # Liquidatee group transactions are trimmed down
+    if length != 2 and length != ALGOFI_NUM_INIT_TXNS + 4:
+        return False
+
+    transaction = group[-1]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if ALGOFI_TRANSACTION_LIQUIDATE not in appl_args:
+        return False
+
+    foreign_apps = transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]
+    return APPLICATION_ID_ALGOFI_LENDING_MANAGER in foreign_apps
+
+
+def _is_algofi_flash_loan(group):
+    # Borrow + tx group + repay
+    if len(group) < 3:
+        return False
+
+    transaction = group[0]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if ALGOFI_TRANSACTION_FLASH_LOAN not in appl_args:
+        return False
+
+    foreign_apps = transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]
+    return (APPLICATION_ID_ALGOFI_AMM_MANAGER in foreign_apps
+                or APPLICATION_ID_ALGOFI_NANOSWAP_MANAGER in foreign_apps)
+
+
+def _is_algofi_sync_vault(group):
+    if len(group) != ALGOFI_NUM_INIT_TXNS + 2:
+        return False
+
+    transaction = group[-1]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if ALGOFI_TRANSACTION_SYNC_VAULT not in appl_args:
+        return False
+
+    foreign_apps = transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]
+    return APPLICATION_ID_ALGOFI_LENDING_MANAGER in foreign_apps
+
+
+def is_algofi_transaction(group):
+    return (_is_algofi_zap(group)
+                or _is_algofi_swap(group)
+                or _is_algofi_claim_rewards(group)
+                or _is_algofi_lp_add(group)
+                or _is_algofi_lp_remove(group)
+                or _is_algofi_borrow(group)
+                or _is_algofi_repay_borrow(group)
+                or _is_algofi_deposit_collateral(group)
+                or _is_algofi_remove_collateral(group)
+                or _is_algofi_liquidate(group)
+                or _is_algofi_flash_loan(group)
+                or _is_algofi_sync_vault(group))
 
 
 def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
     reward = Algo(group[0]["sender-rewards"])
     handle_participation_rewards(reward, exporter, txinfo)
 
-    txtype = group[-1]["tx-type"]
-    if txtype == co.TRANSACTION_TYPE_APP_CALL:
-        appl_args = group[-1][co.TRANSACTION_KEY_APP_CALL]["application-args"]
-        if ALGOFI_TRANSACTION_SWAP_EXACT_FOR in appl_args or ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL in appl_args:
-            return _handle_algofi_swap(group, exporter, txinfo)
-        elif ALGOFI_TRANSACTION_CLAIM_REWARDS in appl_args:
-            return _handle_algofi_claim_rewards(group, exporter, txinfo)
-        elif ALGOFI_TRANSACTION_REDEEM_POOL_ASSET2_RESIDUAL in appl_args:
-            return _handle_algofi_lp_add(group, exporter, txinfo)
-        elif ALGOFI_TRANSACTION_BURN_ASSET2_OUT in appl_args:
-            return _handle_algofi_lp_remove(group, exporter, txinfo)
-        elif ALGOFI_TRANSACTION_BORROW in appl_args:
-            return _handle_algofi_borrow(group, exporter, txinfo)
-        elif ALGOFI_TRANSACTION_LIQUIDATE in appl_args:
-            return _handle_algofi_liquidate(wallet_address, group, exporter, txinfo)
-        elif ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING in appl_args:
-            return _handle_algofi_withdraw_collateral(group, exporter, txinfo)
-        elif ALGOFI_TRANSACTION_SYNC_VAULT in appl_args:
-            return _handle_algofi_sync_vault(group, exporter, txinfo)
+    if _is_algofi_zap(group):
+        _handle_algofi_zap(group, exporter, txinfo)
 
-    txtype = group[0]["tx-type"]
-    if txtype == co.TRANSACTION_TYPE_APP_CALL:
-        appl_args = group[0][co.TRANSACTION_KEY_APP_CALL]["application-args"]
-        if ALGOFI_TRANSACTION_FLASH_LOAN in appl_args:
-            return _handle_algofi_flash_loan(group, exporter, txinfo)
+    elif _is_algofi_swap(group):
+        _handle_algofi_swap(group, exporter, txinfo)
 
-    txtype = group[-2]["tx-type"]
-    if txtype == co.TRANSACTION_TYPE_APP_CALL:
-        appl_args = group[-2][co.TRANSACTION_KEY_APP_CALL]["application-args"]
-        if ALGOFI_TRANSACTION_REPAY_BORROW in appl_args:
-            return _handle_algofi_repay_borrow(group, exporter, txinfo)
-        elif ALGOFI_TRANSACTION_MINT_TO_COLLATERAL in appl_args:
-            return _handle_algofi_deposit_collateral(group, exporter, txinfo)
+    elif _is_algofi_claim_rewards(group):
+        _handle_algofi_claim_rewards(group, exporter, txinfo)
 
-    return handle_unknown(exporter, txinfo)
+    elif _is_algofi_lp_add(group):
+        _handle_algofi_lp_add(group, exporter, txinfo)
+
+    elif _is_algofi_lp_remove(group):
+        _handle_algofi_lp_remove(group, exporter, txinfo)
+
+    elif _is_algofi_borrow(group):
+        _handle_algofi_borrow(group, exporter, txinfo)
+
+    elif _is_algofi_repay_borrow(group):
+        _handle_algofi_repay_borrow(group, exporter, txinfo)
+
+    elif _is_algofi_deposit_collateral(group):
+        _handle_algofi_deposit_collateral(group, exporter, txinfo)
+
+    elif _is_algofi_remove_collateral(group):
+        _handle_algofi_withdraw_collateral(group, exporter, txinfo)
+
+    elif _is_algofi_liquidate(group):
+        _handle_algofi_liquidate(wallet_address, group, exporter, txinfo)
+
+    elif _is_algofi_flash_loan(group):
+        _handle_algofi_flash_loan(group, exporter, txinfo)
+
+    elif _is_algofi_sync_vault(group):
+        pass
+
+    else:
+        handle_unknown(exporter, txinfo)
+
+
+def _handle_algofi_zap(group, exporter, txinfo):
+    i = 0
+    txtype = group[i]["tx-type"]
+    # Skip opt-in transaction
+    if (txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
+            and group[i]["sender"] == group[i][co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
+        i += 1
+
+    _handle_algofi_swap(group[:i + 2], exporter, txinfo, 0)
+    _handle_algofi_lp_add(group[i + 2:], exporter, txinfo, 1)
 
 
 def _handle_algofi_swap(group, exporter, txinfo, z_index=0):
@@ -279,23 +603,8 @@ def _handle_algofi_swap(group, exporter, txinfo, z_index=0):
     return i
 
 
-def _is_zap_transaction(group):
+def _handle_algofi_lp_add(group, exporter, txinfo, z_index=0):
     i = 0
-    txtype = group[i]["tx-type"]
-    # Skip opt-in transaction
-    if (txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
-            and group[i]["sender"] == group[i][co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
-        i += 1
-
-    return (group[i]["tx-type"] == co.TRANSACTION_TYPE_ASSET_TRANSFER
-            and group[i + 1]["tx-type"] == co.TRANSACTION_TYPE_APP_CALL)
-
-
-def _handle_algofi_lp_add(group, exporter, txinfo):
-    i = 0
-    if _is_zap_transaction(group):
-        i = _handle_algofi_swap(group, exporter, txinfo) + 1
-
     send_transaction = group[i]
     fee_amount = send_transaction["fee"]
     txtype = send_transaction["tx-type"]
@@ -332,7 +641,7 @@ def _handle_algofi_lp_add(group, exporter, txinfo):
         send_asset_2 -= redeem_asset_2
 
     export_lp_deposit_tx(
-        exporter, txinfo, ALGOFI_AMM_SYMBOL, send_asset_1, send_asset_2, lp_asset, fee_amount, COMMENT_ALGOFI)
+        exporter, txinfo, ALGOFI_AMM_SYMBOL, send_asset_1, send_asset_2, lp_asset, fee_amount, COMMENT_ALGOFI, z_index)
 
 
 def _handle_algofi_lp_remove(group, exporter, txinfo):
@@ -459,14 +768,3 @@ def _handle_algofi_withdraw_collateral(group, exporter, txinfo):
     else:
         comment = COMMENT_ALGOFI + (" Vault" if app_id == APPLICATION_ID_ALGOFI_VALGO_MARKET else "")
         export_withdraw_collateral_tx(exporter, txinfo, receive_asset, fee_amount, comment)
-
-
-def _handle_algofi_sync_vault(group, exporter, txinfo):
-    fee_amount = 0
-    for transaction in group:
-        fee_amount += transaction["fee"]
-
-    app_transaction = group[-1]
-    reward_asset = get_inner_transfer_asset(app_transaction)
-
-    export_reward_tx(exporter, txinfo, reward_asset, fee_amount, COMMENT_ALGOFI + " Vault")

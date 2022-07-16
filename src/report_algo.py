@@ -12,7 +12,11 @@ import os
 import pprint
 from algo.api_nfdomains import NFDomainsAPI
 from algo.asset import Asset
-from algo.handle_algofi import get_algofi_liquidate_transactions, get_algofi_storage_address
+from algo.handle_algofi import (
+    get_algofi_governance_rewards_transactions,
+    get_algofi_liquidate_transactions,
+    get_algofi_storage_address
+)
 
 import algo.processor
 from algo.api_algoindexer import LIMIT_ALGOINDEXER, AlgoIndexerAPI
@@ -129,8 +133,10 @@ def _get_txs(wallet_address, account, progress):
 
     storage_address = get_algofi_storage_address(account)
     logging.debug("AlgoFi storage address: %s", storage_address)
+    localconfig.algofi_storage_address = storage_address
     storage_txs = _get_address_transactions(storage_address)
     out.extend(get_algofi_liquidate_transactions(storage_txs))
+    out.extend(get_algofi_governance_rewards_transactions(storage_txs, storage_address))
 
     num_tx = len(out)
 
