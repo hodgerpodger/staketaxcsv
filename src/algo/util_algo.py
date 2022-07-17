@@ -18,9 +18,9 @@ def get_transaction_note(transaction):
 
 def get_transfer_receiver(transaction):
     txtype = transaction["tx-type"]
-    if txtype == "pay":
+    if txtype == co.TRANSACTION_TYPE_PAYMENT:
         return transaction[co.TRANSACTION_KEY_PAYMENT]["receiver"]
-    elif txtype == "axfer":
+    elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
         return transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]
 
     return None
@@ -30,9 +30,9 @@ def get_transfer_asset(transaction, asset_map={}):
     amount = 0
     asset_id = 0
     txtype = transaction["tx-type"]
-    if txtype == "pay":
+    if txtype == co.TRANSACTION_TYPE_PAYMENT:
         amount = transaction[co.TRANSACTION_KEY_PAYMENT]["amount"]
-    elif txtype == "axfer":
+    elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
         amount = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"]
         asset_id = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
 
@@ -43,9 +43,9 @@ def get_transfer_close_to_asset(transaction, asset_map={}):
     amount = 0
     asset_id = 0
     txtype = transaction["tx-type"]
-    if txtype == "pay":
+    if txtype == co.TRANSACTION_TYPE_PAYMENT:
         amount = transaction[co.TRANSACTION_KEY_PAYMENT]["close-amount"]
-    elif txtype == "axfer":
+    elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
         amount = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["close-amount"]
         asset_id = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
 
