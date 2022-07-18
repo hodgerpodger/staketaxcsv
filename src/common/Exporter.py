@@ -699,10 +699,11 @@ class Exporter:
             TICKER_LUNA1: {
                 "APOLLO": "ID:28478",
                 "ASTRO": "ID:48993",
-                "PSI": "ID:106376",
-                "LOOP": "ID:10933",
                 "BETH": "ID:30493",
+                "LOOP": "ID:10933",
+                "LUNI": "ID:26855",
                 "MINE": "ID:21256",
+                "PSI": "ID:106376",
             },
             TICKER_ATOM: {
                 "STARS": "ID:36899",
