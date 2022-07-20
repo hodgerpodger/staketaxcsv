@@ -40,6 +40,22 @@ docker run --platform linux/amd64 -it --volume $PWD:/staketaxcsv staketaxcsv bas
 # See README usage section to run script(s)
 ```
 
+# Run CSV job with no transaction limit
+
+This is a common support request.  I provide some details here for those interested.  Steps:
+
+  1. Follow `Install` section or `Docker` section.  For those familiar with docker, I recommend Docker steps for simplicity.
+  2. Run CSV script using --limit flag
+
+```
+# Load environment variables from sample.env (add to ~/.bash_profile or ~/.bashrc to avoid doing every time)
+set -o allexport
+source sample.env
+
+# Run CSV job with custom high transaction limit
+python3 report_sol.py <wallet_address> --limit 100000 --format all
+```
+
 # Ideal Configuration
 
 Default code was made to work out of the box. These are changes that require manual actions. They improve reliability
