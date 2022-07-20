@@ -51,6 +51,7 @@ This is a common support request.  I provide some details here for those interes
 # Load environment variables from sample.env (add to ~/.bash_profile or ~/.bashrc to avoid doing every time)
 set -o allexport
 source sample.env
+set +o allexport
 
 # Run CSV job with custom high transaction limit
 python3 report_sol.py <wallet_address> --limit 100000 --format all
