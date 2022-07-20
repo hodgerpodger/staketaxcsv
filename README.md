@@ -33,7 +33,12 @@
   
   # Show CSV result for single transaction in debug mode (great for development/debugging)
   python3 report_osmo.py <wallet_address> --txid <txid> --debug
+  
+  # Run CSV job with custom high transaction limit
+  python3 report_osmo.py <wallet_address> --limit 100000 --format all
   ```
+  
+  
 
 # Install
 
