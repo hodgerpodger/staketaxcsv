@@ -44,7 +44,7 @@ docker run --platform linux/amd64 -it --volume $PWD:/staketaxcsv staketaxcsv bas
 
 This is a common support request.  I provide some details here for those interested.  Steps:
 
-  1. Follow `Install` section or `Docker` section.  For those familiar with docker, I recommend Docker steps for simplicity.
+  1. Follow `Install` section of README.md or `Docker` section in README_reference.md.  For those familiar with docker, I recommend `Docker` steps for simplicity.
   2. Run CSV script using --limit flag
 
 ```
