@@ -44,8 +44,8 @@ docker run --platform linux/amd64 -it --volume $PWD:/staketaxcsv staketaxcsv bas
 
 This is a common support request.  I provide some details here for those interested.  Steps:
 
-  1. Follow `Install` section of README.md or `Docker` section in README_reference.md.  For those familiar with docker, I recommend `Docker` steps for simplicity.
-  2. Run CSV script using --limit flag
+  1. Follow `Install` section or `Docker` section to install python and packages.  For those familiar with docker, I recommend `Docker` section.
+  3. Run CSV script using --limit flag
 
 ```
 # Load environment variables from sample.env (add to ~/.bash_profile or ~/.bashrc to avoid doing every time)
