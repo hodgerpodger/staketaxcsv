@@ -1,7 +1,7 @@
 """
-usage: python3 report_bitsong.py <walletaddress> [--format all|cointracking|koinly|..]
+usage: python3 report_btsg.py <walletaddress> [--format all|cointracking|koinly|..]
 
-Prints transactions and writes CSV(s) to _reports/BITSONG*.csv
+Prints transactions and writes CSV(s) to _reports/BTSG*.csv
 """
 
 import logging

@@ -28,7 +28,7 @@ def process_tx(wallet_address, elem, exporter):
 
 def _txinfo(wallet_address, elem):
     txinfo = common.ibc.processor.txinfo(
-        wallet_address, elem, "dummy", co.EXCHANGE_LUNA2, localconfig.ibc_addresses, LUNA2_LCD_NODE)
+        wallet_address, elem, "dummy", localconfig.ibc_addresses, LUNA2_LCD_NODE, co.EXCHANGE_LUNA2)
 
     # Edit url, since terra not in mintscan
     txid = elem["txhash"]

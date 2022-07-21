@@ -34,7 +34,7 @@ def process_txs(wallet_address, elems, exporter):
 
 def process_tx(wallet_address, elem, exporter):
     txinfo = common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_DVPN, co.EXCHANGE_DVPN, localconfig.ibc_addresses, DVPN_LCD_NODE)
+        wallet_address, elem, co.MINTSCAN_LABEL_DVPN, localconfig.ibc_addresses, DVPN_LCD_NODE)
 
     for msginfo in txinfo.msgs:
         # Handle sentinel specific messages

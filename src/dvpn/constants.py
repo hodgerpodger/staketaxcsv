@@ -1,4 +1,3 @@
-EXCHANGE_DVPN = "sentinel_blockchain"
 MINTSCAN_LABEL_DVPN = "sentinel"
 
 # dVPN node management messages

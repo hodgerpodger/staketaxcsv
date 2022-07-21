@@ -15,7 +15,7 @@ def process_txs(wallet_address, elems, exporter):
 
 def process_tx(wallet_address, elem, exporter):
     txinfo = common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_STARS, co.EXCHANGE_STARS, localconfig.ibc_addresses, STARS_NODE)
+        wallet_address, elem, co.MINTSCAN_LABEL_STARS, localconfig.ibc_addresses, STARS_NODE)
 
     for msginfo in txinfo.msgs:
         result = common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)

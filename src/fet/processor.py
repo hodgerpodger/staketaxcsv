@@ -28,7 +28,7 @@ def process_tx(wallet_address, elem, exporter, node=None):
         return process_tx_legacy(wallet_address, elem, exporter, node)
 
     txinfo = common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_FET, co.EXCHANGE_FET, localconfig.ibc_addresses, FET_NODE)
+        wallet_address, elem, co.MINTSCAN_LABEL_FET, localconfig.ibc_addresses, FET_NODE, co.EXCHANGE_FET)
 
     try:
         if txinfo.is_execute_contract():

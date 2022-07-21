@@ -17,7 +17,7 @@ from common.ibc import handle
 MILLION = 1000000.0
 
 
-def txinfo(wallet_address, elem, mintscan_label, exchange, ibc_addresses, lcd_node):
+def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, exchange=None):
     """ Parses transaction data to return TxInfo object """
     txid = elem["txhash"]
     timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
