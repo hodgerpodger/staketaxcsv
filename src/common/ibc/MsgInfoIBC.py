@@ -1,6 +1,9 @@
+import re
+
 import common.ibc.api_lcd
 import common.ibc.constants as co
 import common.ibc.util_ibc
+
 
 COIN_RECEIVED = "coin_received"
 COIN_SPENT = "coin_spent"
@@ -140,28 +143,21 @@ class MsgInfoIBC:
         #       1252125015450ibc/9712DBB13B9631EDFA9BF61B55F1B2D290B2ADB67E3A4EB3A875F3B6081B3B84"
         out = []
         for amt_string in amount_string.split(","):
-            if "ibc/" in amt_string:
-                uamount, ibc_address = amt_string.split("ibc/")
-                ibc_address = "ibc/" + ibc_address
-
-                currency = cls.ibc_symbol(ibc_address)
-                amount = cls.amount(uamount, currency)
-            elif "afet" in amt_string:
-                uamount, ucurrency = amt_string.split("afet", 1)
-                currency = "FET"
-                amount = cls.amount(uamount, currency)
-            elif "nanomobx" in amt_string:
-                uamount, ucurrency = amt_string.split("nanomobx", 1)
-                currency = "MOBX"
-                amount = cls.amount(uamount, currency)
-            elif "u" in amt_string:
-                uamount, ucurrency = amt_string.split("u", 1)
-                currency = ucurrency.upper()
-                amount = cls.amount(uamount, currency)
-            elif amt_string == "":
+            if amt_string == "":
                 continue
+
+            # Split into (amount_raw, currency_raw)
+            m = re.search('^(\d+)(.*)', amt_string)
+            if not m:
+                raise Exception("Unexpected amt_string: {}".format(amt_string))
+            amount_raw, currency_raw = m.group(1), m.group(2)
+
+            # Determine final (amount, currency)
+            if "ibc/" in currency_raw:
+                currency = cls.ibc_symbol(currency_raw)
+                amount = cls.amount(amount_raw, currency)
             else:
-                raise Exception("Unexpected amount_string: {}".format(amount_string))
+                amount, currency = cls._amount_currency_from_raw(amount_raw, currency_raw)
 
             out.append((amount, currency))
 
@@ -171,7 +167,7 @@ class MsgInfoIBC:
     def amount(cls, amount_string, currency):
         if currency == co.CUR_CRO:
             return float(amount_string) / co.MILLION / 100
-        elif currency == co.CUR_FET:
+        elif currency in [co.CUR_FET, co.CUR_EVMOS]:
             return float(amount_string) / co.EXP18
         elif currency == co.CUR_MOBX:
             return float(amount_string) / co.EXP9
@@ -179,11 +175,28 @@ class MsgInfoIBC:
             return float(amount_string) / co.MILLION
 
     @classmethod
+    def _amount_currency_from_raw(cls, amount_raw, currency_raw):
+        # i.e. 2670866451930aevmos
+        if currency_raw.startswith("a"):
+            amount = float(amount_raw) / co.EXP18
+            currency = currency_raw[1:].upper()
+            return amount, currency
+        elif currency_raw.startswith("nano"):
+            amount = float(amount_raw) / co.EXP9
+            currency = currency_raw[4:].upper()
+            return amount, currency
+        elif currency_raw.startswith("u"):
+            amount = float(amount_raw) / co.MILLION
+            currency = currency_raw[1:].upper()
+            return amount, currency
+        else:
+            raise Exception("_amount_currency_from_raw(): no case for amount_raw={}, currency_raw={}".format(
+                amount_raw, currency_raw))
+
+    @classmethod
     def denom_to_currency(cls, denom):
         # Example: 'uluna' -> 'LUNA'
-        if denom == "afet":
-            return co.CUR_FET
-        elif denom.startswith("u"):
+        if denom.startswith("u") or denom.startswith("a"):
             return denom[1:].upper()
         else:
             raise Exception("Unexpected denom={}".format(denom))

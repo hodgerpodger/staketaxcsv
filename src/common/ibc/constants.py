@@ -5,6 +5,7 @@ EXP9 = 10**9
 CUR_CRO = "CRO"
 CUR_FET = "FET"
 CUR_MOBX = "MOBX"
+CUR_EVMOS = "EVMOS"
 
 MSG_TYPE_ACKNOWLEDGMENT = "MsgAcknowledgement"
 MSG_TYPE_BEGIN_UNLOCKING = "MsgBeginUnlocking"
