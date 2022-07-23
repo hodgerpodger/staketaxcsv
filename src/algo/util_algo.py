@@ -54,9 +54,13 @@ def get_transfer_close_to_asset(transaction, asset_map={}):
 
 def get_inner_transfer_asset(transaction, asset_map={}):
     inner_transactions = transaction.get("inner-txns", [])
-    for transaction in inner_transactions:
-        txtype = transaction["tx-type"]
+    for tx in inner_transactions:
+        txtype = tx["tx-type"]
         if txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER or txtype == co.TRANSACTION_TYPE_PAYMENT:
-            return get_transfer_asset(transaction, asset_map)
+            return get_transfer_asset(tx, asset_map)
+        elif txtype == co.TRANSACTION_TYPE_APP_CALL and "inner-txns" in tx:
+            asset = get_inner_transfer_asset(tx, asset_map)
+            if asset is not None:
+                return asset
 
     return None

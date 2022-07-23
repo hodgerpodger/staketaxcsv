@@ -17,9 +17,19 @@ from algo.util_algo import get_inner_transfer_asset, get_transfer_asset, get_tra
 
 COMMENT_FOLKS = "Folks Finance"
 
+ADDRESS_FOLKS_GOVERNANCE_ALGO = [
+    "EPYLSPIP3OOKRBFFWKZJWDSPGCYEKUPYBB677GWC2TFYTMU6QP3JZ7OMOQ"
+]
+
 APPLICATION_ID_FOLKS_LENDING_MANAGER = 465818260
-APPLICATION_ID_FOLKS_GOVERNANCE = 694427622
-APPLICATION_ID_FOLKS_ORACLE_ADAPTER = 689185988
+APPLICATION_ID_FOLKS_GOVERNANCE_3 = 694427622
+APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR = [
+    793119270
+]
+APPLICATION_ID_FOLKS_ORACLE_ADAPTERS = [
+    689185988,
+    751277258,
+]
 
 APPLICATION_ID_FOLKS_POOL_ALGO = 686498781
 APPLICATION_ID_FOLKS_POOL_USDC = 686500029
@@ -27,6 +37,16 @@ APPLICATION_ID_FOLKS_POOL_USDT = 686500844
 APPLICATION_ID_FOLKS_POOL_GOBTC = 686501760
 APPLICATION_ID_FOLKS_POOL_GOETH = 694405065
 APPLICATION_ID_FOLKS_POOL_GALGO3 = 694464549
+APPLICATION_ID_FOLKS_POOL_GALGO = 794055220
+APPLICATION_ID_FOLKS_POOL_PLANET = 751285119
+APPLICATION_ID_FOLKS_POOL_ALGO_GALGO_PLP = 805846536
+APPLICATION_ID_FOLKS_POOL_ALGO_USDC_TMP = 747237154
+APPLICATION_ID_FOLKS_POOL_ALGO_USDC_PLP = 747239433
+APPLICATION_ID_FOLKS_POOL_ALGO_GALGO3_TMP = 743679535
+APPLICATION_ID_FOLKS_POOL_ALGO_GALGO3_PLP = 743685742
+APPLICATION_ID_FOLKS_POOL_USDC_GALGO_TMP = 805843312
+APPLICATION_ID_FOLKS_POOL_USDC_USDT_TMP = 776179559
+APPLICATION_ID_FOLKS_POOL_USDC_USDT_PLP = 776176449
 
 FOLKS_POOLS = [
     APPLICATION_ID_FOLKS_POOL_ALGO,
@@ -35,6 +55,16 @@ FOLKS_POOLS = [
     APPLICATION_ID_FOLKS_POOL_GOBTC,
     APPLICATION_ID_FOLKS_POOL_GOETH,
     APPLICATION_ID_FOLKS_POOL_GALGO3,
+    APPLICATION_ID_FOLKS_POOL_GALGO,
+    APPLICATION_ID_FOLKS_POOL_PLANET,
+    APPLICATION_ID_FOLKS_POOL_ALGO_GALGO_PLP,
+    APPLICATION_ID_FOLKS_POOL_ALGO_USDC_TMP,
+    APPLICATION_ID_FOLKS_POOL_ALGO_USDC_PLP,
+    APPLICATION_ID_FOLKS_POOL_ALGO_GALGO3_TMP,
+    APPLICATION_ID_FOLKS_POOL_ALGO_GALGO3_PLP,
+    APPLICATION_ID_FOLKS_POOL_USDC_GALGO_TMP,
+    APPLICATION_ID_FOLKS_POOL_USDC_USDT_TMP,
+    APPLICATION_ID_FOLKS_POOL_USDC_USDT_PLP,
 ]
 
 APPLICATION_ID_FOLKS_REWARDS_ALGO = 686860954
@@ -63,10 +93,14 @@ FOLKS_TRANSACTION_REWARD_CLAIM = "Yw=="     # "c"
 FOLKS_TRANSACTION_REWARD_STAKED_EXCHANGE = "ZQ=="      # "e"
 FOLKS_TRANSACTION_REWARD_IMMEDIATE_EXCHANGE = "aWU="   # "ie"
 
+FOLKS_TRANSACTION_GOVERNANCE_MINT = "bh9UTw=="
+FOLKS_TRANSACTION_GOVERNANCE_UNMINT = "3c0QwA=="
+FOLKS_TRANSACTION_GOVERNANCE_EARLY_CLAIM = "3jMsVA=="
+
 escrow_addresses = []
 
 
-def _is_folks_galgo_optin_transaction(group):
+def _is_folks_galgo3_optin_transaction(group):
     if len(group) != 2:
         return False
 
@@ -77,10 +111,10 @@ def _is_folks_galgo_optin_transaction(group):
 
     app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
     op = transaction[co.TRANSACTION_KEY_APP_CALL].get("on-completion")
-    return app_id == APPLICATION_ID_FOLKS_GOVERNANCE and op == "optin"
+    return app_id == APPLICATION_ID_FOLKS_GOVERNANCE_3 and op == "optin"
 
 
-def _is_folks_galgo_mint_transaction(group):
+def _is_folks_galgo3_mint_transaction(group):
     if len(group) != 2:
         return False
 
@@ -91,7 +125,78 @@ def _is_folks_galgo_mint_transaction(group):
 
     app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
     appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-    return app_id == APPLICATION_ID_FOLKS_GOVERNANCE and FOLKS_TRANSACTION_MINT in appl_args
+    return app_id == APPLICATION_ID_FOLKS_GOVERNANCE_3 and FOLKS_TRANSACTION_MINT in appl_args
+
+
+def _is_folks_galgo3_burn_transaction(group):
+    if len(group) != 3:
+        return False
+
+    transaction = group[0]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    return app_id == APPLICATION_ID_FOLKS_GOVERNANCE_3 and FOLKS_TRANSACTION_BORROW in appl_args
+
+
+def _is_folks_galgo_mint_transaction(group):
+    length = len(group)
+    if length < 2 or length > 4:
+        return False
+
+    transaction = group[-1]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    if app_id not in APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    if FOLKS_TRANSACTION_GOVERNANCE_MINT not in appl_args:
+        return False
+
+    transaction = group[-2]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_PAYMENT:
+        return False
+
+    receiver = get_transfer_receiver(transaction)
+    return receiver in ADDRESS_FOLKS_GOVERNANCE_ALGO
+
+
+def _is_folks_galgo_unmint_transaction(group):
+    if len(group) != 2:
+        return False
+
+    transaction = group[-1]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    if app_id not in APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    return FOLKS_TRANSACTION_GOVERNANCE_UNMINT in appl_args
+
+
+def is_folks_galgo_early_claim_transaction(transaction):
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+    if app_id not in APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR:
+        return False
+
+    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+    return FOLKS_TRANSACTION_GOVERNANCE_EARLY_CLAIM in appl_args
 
 
 def _is_folks_deposit_transaction(group):
@@ -155,7 +260,7 @@ def _is_folks_borrow_transaction(group):
         return False
 
     app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
-    if app_id != APPLICATION_ID_FOLKS_ORACLE_ADAPTER:
+    if app_id not in APPLICATION_ID_FOLKS_ORACLE_ADAPTERS:
         return False
 
     transaction = group[1]
@@ -212,7 +317,7 @@ def _is_folks_increase_borrow_transaction(group):
         return False
 
     app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
-    if app_id != APPLICATION_ID_FOLKS_ORACLE_ADAPTER:
+    if app_id not in APPLICATION_ID_FOLKS_ORACLE_ADAPTERS:
         return False
 
     transaction = group[1]
@@ -235,7 +340,7 @@ def _is_folks_reduce_collateral_transaction(group):
         return False
 
     app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
-    if app_id != APPLICATION_ID_FOLKS_ORACLE_ADAPTER:
+    if app_id not in APPLICATION_ID_FOLKS_ORACLE_ADAPTERS:
         return False
 
     transaction = group[1]
@@ -296,8 +401,11 @@ def is_folks_reward_claim_transaction(transaction):
 
 
 def is_folks_transaction(wallet_address, group):
-    return (_is_folks_galgo_optin_transaction(group)
+    return (_is_folks_galgo3_optin_transaction(group)
+                or _is_folks_galgo3_mint_transaction(group)
+                or _is_folks_galgo3_burn_transaction(group)
                 or _is_folks_galgo_mint_transaction(group)
+                or _is_folks_galgo_unmint_transaction(group)
                 or _is_folks_deposit_transaction(group)
                 or _is_folks_withdraw_transaction(group)
                 or _is_folks_add_escrow_transaction(wallet_address, group)
@@ -317,11 +425,20 @@ def handle_folks_transaction(wallet_address, group, exporter, txinfo):
     reward = Algo(group[0]["sender-rewards"])
     handle_participation_rewards(reward, exporter, txinfo)
 
-    if _is_folks_galgo_optin_transaction(group):
+    if _is_folks_galgo3_optin_transaction(group):
         pass
+
+    elif _is_folks_galgo3_mint_transaction(group):
+        _handle_folks_galgo3_mint_transaction(group, exporter, txinfo)
+
+    elif _is_folks_galgo3_burn_transaction(group):
+        _handle_folks_galgo3_burn_transaction(group, exporter, txinfo)
 
     elif _is_folks_galgo_mint_transaction(group):
         _handle_folks_galgo_mint_transaction(group, exporter, txinfo)
+
+    elif _is_folks_galgo_unmint_transaction(group):
+        _handle_folks_galgo_unmint_transaction(group, exporter, txinfo)
 
     elif _is_folks_deposit_transaction(group):
         _handle_folks_deposit_transaction(group, exporter, txinfo)
@@ -351,7 +468,7 @@ def handle_folks_transaction(wallet_address, group, exporter, txinfo):
         handle_unknown(exporter, txinfo)
 
 
-def _handle_folks_galgo_mint_transaction(group, exporter, txinfo):
+def _handle_folks_galgo3_mint_transaction(group, exporter, txinfo):
     app_transaction = group[0]
     fee_amount = app_transaction["fee"]
     receive_asset = get_inner_transfer_asset(app_transaction)
@@ -360,6 +477,52 @@ def _handle_folks_galgo_mint_transaction(group, exporter, txinfo):
     send_asset = get_transfer_asset(send_transaction)
 
     export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_FOLKS)
+
+
+def _handle_folks_galgo3_burn_transaction(group, exporter, txinfo):
+    app_transaction = group[0]
+    fee_amount = app_transaction["fee"]
+
+    send_transaction = group[1]
+    send_asset = get_transfer_asset(send_transaction)
+
+    receive_transaction = group[2]
+    receive_asset = get_transfer_asset(receive_transaction)
+
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_FOLKS)
+
+
+def _handle_folks_galgo_mint_transaction(group, exporter, txinfo):
+    fee_amount = 0
+    for transaction in group:
+        fee_amount += transaction["fee"]
+
+    app_transaction = group[-1]
+    receive_asset = get_inner_transfer_asset(app_transaction)
+
+    send_transaction = group[-2]
+    send_asset = get_transfer_asset(send_transaction)
+
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_FOLKS)
+
+
+def _handle_folks_galgo_unmint_transaction(group, exporter, txinfo):
+    app_transaction = group[1]
+    fee_amount = app_transaction["fee"]
+
+    receive_asset = get_inner_transfer_asset(app_transaction)
+
+    send_transaction = group[0]
+    send_asset = get_transfer_asset(send_transaction)
+
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_FOLKS)
+
+
+def handle_folks_galgo_early_claim_transaction(transaction, exporter, txinfo):
+    fee_amount = transaction["fee"]
+    reward_asset = get_inner_transfer_asset(transaction)
+
+    export_reward_tx(exporter, txinfo, reward_asset, fee_amount, COMMENT_FOLKS)
 
 
 # Note: For the moment we are ignoring fTokens as they are
