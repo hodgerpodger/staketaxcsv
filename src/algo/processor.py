@@ -7,11 +7,13 @@ from algo.asset import Algo
 from algo.config_algo import localconfig
 from algo.handle_akita import handle_akita_swap_transaction, is_akita_swap_transaction
 from algo.handle_algodex import handle_algodex_transaction, is_algodex_transaction
-from algo.handle_algofi import get_algofi_storage_address, handle_algofi_transaction, is_algofi_transaction
+from algo.handle_algofi import handle_algofi_transaction, is_algofi_transaction
 from algo.handle_amm import handle_swap, is_simple_swap_group
 from algo.handle_folks import (
+    handle_folks_galgo_early_claim_transaction,
     handle_folks_reward_claim_transaction,
     handle_folks_transaction,
+    is_folks_galgo_early_claim_transaction,
     is_folks_reward_claim_transaction,
     is_folks_transaction
 )
@@ -55,6 +57,8 @@ def process_txs(wallet_address, elems, exporter, progress):
                     if txns:
                         if is_folks_reward_claim_transaction(elem):
                             handle_folks_reward_claim_transaction(elem, exporter, txinfo)
+                        elif is_folks_galgo_early_claim_transaction(elem):
+                            handle_folks_galgo_early_claim_transaction(elem, exporter, txinfo)
                         elif has_only_transfer_transactions(txns):
                             handle_transfer_transactions(wallet_address, txns, exporter, txinfo)
                 elif txtype == co.TRANSACTION_TYPE_ASSET_CONFIG:
