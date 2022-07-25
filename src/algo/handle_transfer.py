@@ -18,6 +18,8 @@ ADDRESS_ALGOMINT = "ETGSQKACKC56JWGMDAEP5S2JVQWRKTQUVKCZTMPNUGZLDVCWPY63LSI3H4"
 
 ADDRESS_PACT_REWARDS = "PACTC5CQVKK6F43TPYII2WED72BXYIQ5OF7DKQREDOY4UXCYJRMGGQ5IQQ"
 
+ADDRESS_FOLKS_REWARDS = "OW3VJ3YSECTNTJ73GNQE2LYOQUMMAV577NDNF53SXRKB33OST6NNTPRD4Y"
+
 
 def is_governance_reward_transaction(wallet_address, group):
     if len(group) != 1:
@@ -117,6 +119,8 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
                 note = get_transaction_note(transaction)
                 if note is not None and "tinymanStaking/v1" in note:
                     export_reward_tx(exporter, txinfo, receive_asset, comment="Tinyman")
+                elif txsender == ADDRESS_FOLKS_REWARDS and note == "Folks Finance fStaking rewards":
+                    export_reward_tx(exporter, txinfo, receive_asset, comment="Folks Finance")
                 else:
                     export_receive_tx(
                         exporter, txinfo, receive_asset, fee_amount,
