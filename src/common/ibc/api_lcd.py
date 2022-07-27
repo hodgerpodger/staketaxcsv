@@ -135,7 +135,7 @@ def get_txs_all(node, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUE
 
 
 def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY, debug=False,
-                        events_types=None):
+                        events_types=None, sleep_seconds=1):
     LcdAPI.debug = debug
     api = LcdAPI(node)
     events_types = events_types if events_types else EVENTS_TYPE_LIST_DEFAULT
@@ -143,7 +143,7 @@ def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY, debug
     total_pages = 0
     for event_type in events_types:
         # Number of queries for events message.sender
-        _, _, num_txs = api.get_txs(address, event_type, offset=0, limit=limit, sleep_seconds=0)
+        _, _, num_txs = api.get_txs(address, event_type, offset=0, limit=limit, sleep_seconds=sleep_seconds)
         num_txs = min(num_txs, max_txs)
         num_pages = math.ceil(num_txs / limit) if num_txs else 1
 
