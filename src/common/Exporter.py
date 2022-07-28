@@ -260,6 +260,8 @@ class Exporter:
             self.export_cryptocom_csv(csvpath)
         elif format == et.FORMAT_CRYPTOTAXCALCULATOR:
             self.export_calculator_csv(csvpath)
+        elif format == et.FORMAT_CRYPTOWORTH:
+            self.export_cryptoworth_csv(csvpath)
         elif format == et.FORMAT_KOINLY:
             self.export_koinly_csv(csvpath)
         elif format == et.FORMAT_RECAP:
@@ -295,6 +297,9 @@ class Exporter:
             writer = csv.writer(output, lineterminator="\n")
             writer.writerows(table)
             return output.getvalue()
+
+    def export_cryptoworth_csv(self, csvpath):
+        self.export_default_csv(csvpath)
 
     def export_cointracking_csv(self, csvpath):
         """ Write CSV, suitable for import into cointracking.info """
