@@ -249,7 +249,7 @@ def _amount(amount_string):
     if "ibc/" in amount_string:
         amount, address = amount_string.split("ibc/", 1)
         ibc_address = "ibc/{}".format(address)
-        currency = common.ibc.api_lcd.get_ibc_ticker(ATOM_NODE, ibc_address, localconfig.ibc_addresses)
+        currency = common.ibc.api_lcd.ibc_address_to_symbol(ATOM_NODE, ibc_address, localconfig.ibc_addresses)
         amount = float(amount) / MILLION
         return amount, currency
 

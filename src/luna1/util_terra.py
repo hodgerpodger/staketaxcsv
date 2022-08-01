@@ -210,7 +210,7 @@ def _extract_amounts(amount_string):
             uamount, ibc_address = amount.split("ibc")
             ibc_address = "ibc" + ibc_address
 
-            currency = common.ibc.api_lcd.get_ibc_ticker(TERRA_LCD_NODE, ibc_address, localconfig.ibc_addresses)
+            currency = common.ibc.api_lcd.ibc_address_to_symbol(TERRA_LCD_NODE, ibc_address, localconfig.ibc_addresses)
             out[currency] = _float_amount(uamount, currency)
         else:
             # regular (i.e. 99700703uusd)

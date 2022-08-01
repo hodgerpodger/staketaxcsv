@@ -153,12 +153,26 @@ def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY, debug
     return total_pages
 
 
-def get_ibc_ticker(node, ibc_address, cache_ibc_addresses=None):
-    if cache_ibc_addresses is not None and ibc_address in cache_ibc_addresses:
-        return cache_ibc_addresses[ibc_address]
+def ibc_address_to_symbol(node, ibc_address, ibc_addresses=None):
+    # i.e. ibc_address="ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4", returns "IKT"
+    if ibc_address in IBC_ADDRESSES_FALLBACK_LOOKUP:
+        return IBC_ADDRESSES_FALLBACK_LOOKUP[ibc_address]
+    if not node:
+        return ibc_address
 
-    symbol = LcdAPI(node).get_ibc_symbol(ibc_address)
+    if ibc_addresses and ibc_address in ibc_addresses:
+        return ibc_addresses[ibc_address]
 
-    if cache_ibc_addresses is not None:
-        cache_ibc_addresses[ibc_address] = symbol
-    return symbol
+    result = LcdAPI(node).get_ibc_symbol(ibc_address)
+    val = result if result else ibc_address
+
+    if ibc_addresses is not None:
+        ibc_addresses[ibc_address] = val
+
+    return val
+
+
+# Add only if regular lcd api lookup is missing correct data
+IBC_ADDRESSES_FALLBACK_LOOKUP = {
+    "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518": "OSMO",
+}

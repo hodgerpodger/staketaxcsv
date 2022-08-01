@@ -16,7 +16,7 @@ class MsgInfoIBC:
     ibc_addresses = None
 
     def __init__(self, wallet_address, msg_index, message, log, lcd_node, ibc_addresses):
-        if lcd_node is None:
+        if lcd_node is not None:
             MsgInfoIBC.lcd_node = lcd_node
             MsgInfoIBC.ibc_addresses = ibc_addresses
 
@@ -154,7 +154,7 @@ class MsgInfoIBC:
 
             # Determine final (amount, currency)
             if "ibc/" in currency_raw:
-                currency = cls.ibc_symbol(currency_raw)
+                currency = common.ibc.api_lcd.ibc_address_to_symbol(cls.lcd_node, currency_raw, cls.ibc_addresses)
                 amount = cls.amount(amount_raw, currency)
             else:
                 amount, currency = cls._amount_currency_from_raw(amount_raw, currency_raw)
@@ -200,20 +200,6 @@ class MsgInfoIBC:
             return denom[1:].upper()
         else:
             raise Exception("Unexpected denom={}".format(denom))
-
-    @classmethod
-    def ibc_symbol(cls, ibc_address):
-        # i.e. "ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4" -> "IKT"
-        if not cls.lcd_node:
-            return ibc_address
-        if ibc_address in cls.ibc_addresses:
-            return cls.ibc_addresses[ibc_address]
-
-        result = common.ibc.api_lcd.get_ibc_ticker(cls.lcd_node, ibc_address, cls.ibc_addresses)
-        val = result if result else ibc_address
-
-        cls.ibc_addresses[ibc_address] = val
-        return val
 
     @classmethod
     def wasm(cls, log):
