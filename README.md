@@ -1,18 +1,18 @@
 
 # staketaxcsv
 
-* Python repository to create blockchain CSVs for Algorand (ALGO), Cosmos (ATOM), Bitsong (BTSG), Sentinel (DVPN),
-  Evmos (EVMOS), Fetch.ai (FET), Chihuahua (HUAHUA), IoTex (IOTX), Juno (JUNO), Terra Classic (LUNC), Terra 2.0 (LUNA),
-  Osmosis (OSMO), Solana (SOL), and Stargaze (STARS) blockchains. 
+* Python repository to create blockchain CSVs for Algorand (ALGO), Cosmos (ATOM), Agoric (BLD), Bitsong (BTSG),
+  Sentinel (DVPN), Evmos (EVMOS), Fetch.ai (FET), Chihuahua (HUAHUA), IoTex (IOTX), Juno (JUNO), Terra Classic (LUNC),
+  Terra 2.0 (LUNA), Osmosis (OSMO), Solana (SOL), and Stargaze (STARS) blockchains. 
 * CSV codebase for <https://stake.tax>
 * Community contribution and PRs are most welcome, especially to fix/support new types of
   protocols/transactions.
   
 # Usage
 
-* Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_btsg.py (BTSG), report_dvpn.py (DVPN),
-  report_evmos.py (EVMOS), report_fet.py (FET), report_huahua.py (HUAHUA), report_iotex.py (IOTX), 
-  report_juno.py (JUNO), report_luna1.py (LUNC), report_luna2 (LUNA),  report_osmo.py (OSMO), 
+* Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_bld.py (BLD), report_btsg.py (BTSG),
+  report_dvpn.py (DVPN), report_evmos.py (EVMOS), report_fet.py (FET), report_huahua.py (HUAHUA), 
+  report_iotex.py (IOTX), report_juno.py (JUNO), report_luna1.py (LUNC), report_luna2 (LUNA),  report_osmo.py (OSMO), 
   report_sol.py (SOL), report_stars.py (STARS):
 
   ```sh
