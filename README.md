@@ -6,7 +6,9 @@
   Terra 2.0 (LUNA), Osmosis (OSMO), Solana (SOL), and Stargaze (STARS) blockchains. 
 * CSV codebase for <https://stake.tax>
 * Community contribution and PRs are most welcome, especially to fix/support new types of
-  protocols/transactions.
+  protocols/transactions:
+  * Adding new cosmos-based CSV example (i.e. Agoric, BLD): [commit](https://github.com/hodgerpodger/staketaxcsv/commit/ff8af30b85ea4416504d043723e91f3edf5c7ee1) 
+  * Adding new CSV format example (i.e. coinledger): [commit](https://github.com/hodgerpodger/staketaxcsv/commit/105b9e50dc08349dc750fd2e3f99298c369b543e) 
   
 # Usage
 
