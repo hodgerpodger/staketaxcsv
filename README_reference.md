@@ -108,11 +108,3 @@ Alternatively, you may implement your own Cache class (common/cache.py).
   # install pip packages (same as README.md)
   pip3 install -r requirements.txt
   ```
-
-# Example to add new cosmos-based CSV (i.e. Agoric, BLD):
-
-* https://github.com/hodgerpodger/staketaxcsv/commit/ff8af30b85ea4416504d043723e91f3edf5c7ee1
-
-# Example to add CSV format (i.e. coinledger):
-
-* https://github.com/hodgerpodger/staketaxcsv/commit/105b9e50dc08349dc750fd2e3f99298c369b543e
