@@ -127,12 +127,16 @@ def handle_unknown_detect_transfers_tx(exporter, txinfo):
 
 def handle_exec(exporter, txinfo, msginfo):
     msg_types = set(map(lambda x: x["@type"].split(".")[-1], msginfo.message["msgs"]))
+
     # execs can have multiple messages, but the most common are to delegate and withdraw
     # if we can ensure our messages only contain those messages, we can reuse the staking handler
     if msg_types.issubset([co.MSG_TYPE_DELEGATE, co.MSG_TYPE_REDELEGATE, co.MSG_TYPE_WITHDRAW_REWARD,
                           co.MSG_TYPE_WITHDRAW_COMMISSION, co.MSG_TYPE_UNDELEGATE]):
-        # add a lineitem that this was staking - for delegation
-        msginfo.msg_type += "Staking"
-        handle_staking(exporter, txinfo, msginfo)
+        transfers_in, transfers_out = msginfo.transfers
+        if len(transfers_in) == 0:
+            # ignore delegatory messages not related to this wallet address to reduce verbosity
+            pass
+        else:
+            handle_staking(exporter, txinfo, msginfo)
     else:
         handle_unknown(exporter, txinfo, msginfo)
