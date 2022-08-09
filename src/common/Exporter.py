@@ -881,6 +881,7 @@ class Exporter:
                     row.fee_currency,                            # feeAsset
                     classification,                              # classification
                     row.txid,                                    # operationId
+                    row.comment,                                 # comments
                 ]
                 mywriter.writerow(line)
 
