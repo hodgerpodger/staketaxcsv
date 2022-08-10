@@ -125,6 +125,7 @@ def handle_unknown_detect_transfers_tx(exporter, txinfo):
     for msginfo in txinfo.msgs:
         handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
+
 def handle_exec(exporter, txinfo, msginfo):
     msg_types = set(map(lambda x: x["@type"].split(".")[-1], msginfo.message["msgs"]))
 
