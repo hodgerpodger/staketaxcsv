@@ -11,10 +11,6 @@
   # (some configuration in setup.cfg)
   pycodestyle
   ```
-* Auto fix import sorting by running isort from the project root:
-  ```sh
-  isort .
-  ```
 
 # Unit Tests
 
