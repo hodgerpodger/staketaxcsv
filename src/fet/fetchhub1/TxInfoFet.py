@@ -10,7 +10,8 @@ class TxInfoFet(TxInfo):
 
     def __init__(self, txid, timestamp, fee, wallet_address, msgs):
         url = "https://mintscan.io/{}/txs/{}".format(co.MINTSCAN_LABEL_FET, txid)
-        super().__init__(txid, timestamp, fee, co2.CUR_FET, wallet_address, co.EXCHANGE_FET, url)
+        fee_currency = co2.CUR_FET if fee else ""
+        super().__init__(txid, timestamp, fee, fee_currency, wallet_address, co.EXCHANGE_FET, url)
 
         self.msgs = msgs
 

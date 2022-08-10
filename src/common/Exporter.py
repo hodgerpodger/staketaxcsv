@@ -256,6 +256,8 @@ class Exporter:
             self.export_cointracking_csv(csvpath)
         elif format == et.FORMAT_COINTRACKER:
             self.export_cointracker_csv(csvpath)
+        elif format == et.FORMAT_CRYPTIO:
+            self.export_cryptio_csv(csvpath)
         elif format == et.FORMAT_CRYPTOCOM:
             self.export_cryptocom_csv(csvpath)
         elif format == et.FORMAT_CRYPTOTAXCALCULATOR:
@@ -1305,6 +1307,59 @@ class Exporter:
         dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
 
         return dt.strftime("%d.%m.%Y %H:%M:%S")
+
+    def export_cryptio_csv(self, csvpath):
+        # row.tx_type -> (orderType, internalTransfer)
+        TRANSFER_TEMP_TYPE = "TRANSFER_TEMP_TYPE"
+        cryptio_types = {
+            et.TX_TYPE_AIRDROP: ("deposit", 0),
+            et.TX_TYPE_STAKING: ("deposit", 0),
+            et.TX_TYPE_TRADE: ("trade", 0),
+            et.TX_TYPE_TRANSFER: (TRANSFER_TEMP_TYPE, 1),
+            et.TX_TYPE_INCOME: ("deposit", 0),
+            et.TX_TYPE_SPEND: ("withdraw", 0),
+            et.TX_TYPE_BORROW: (TRANSFER_TEMP_TYPE, 1),
+            et.TX_TYPE_REPAY: (TRANSFER_TEMP_TYPE, 1),
+        }
+
+        rows = self._rows_export(et.FORMAT_CRYPTIO)
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
+            mywriter = csv.writer(f)
+
+            # header row
+            mywriter.writerow(et.CRYPTIO_FIELDS)
+
+            # data rows
+            for row in rows:
+
+                # Determine orderType and internalTransfer
+                order_type, internal_transfer = cryptio_types[row.tx_type]
+                if order_type == TRANSFER_TEMP_TYPE:
+                    if row.sent_amount:
+                        order_type = "withdraw"
+                    elif row.received_amount:
+                        order_type = "deposit"
+                    else:
+                        raise Exception("export_cryptio_csv(): Unable to handle transfer case with no amounts")
+
+                line = [
+                    row.timestamp,          # transactionDate
+                    order_type,             # orderType
+                    row.txid,               # txhash
+                    row.received_currency,  # incomingAsset
+                    row.received_amount,    # incomingVolume
+                    row.sent_currency,      # outgoingAsset
+                    row.sent_amount,        # outgoingVolume
+                    row.fee_currency,       # feeAsset
+                    row.fee,                # feeVolume
+                    "",                     # otherParties
+                    row.comment,            # note
+                    1,                      # success
+                    internal_transfer,      # internalTransfer
+                ]
+                mywriter.writerow(line)
+
+        logging.info("Wrote to %s", csvpath)
 
     def _bitcointax_timestamp(self, ts):
         # Convert "2021-08-04 15:25:43" to "2021-08-04 15:25:43 -0000"
