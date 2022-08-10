@@ -26,6 +26,7 @@ def _parse_claim_event(msginfo):
         event_type = event["type"]
         if event_type == "claim":
             amount_string = event["attributes"][1]["value"]
-            amount, currency = util_osmo._amount_currency(amount_string)[0]
+            #amount, currency = util_osmo._amount_currency(amount_string)[0]
+            amount, currency = msginfo.amount_currency(amount_string)[0]
             return (amount, currency)
     return None

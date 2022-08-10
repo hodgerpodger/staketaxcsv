@@ -14,13 +14,14 @@ class MsgInfoIBC:
 
     lcd_node = None
     ibc_addresses = None
+    wallet_address = None
 
     def __init__(self, wallet_address, msg_index, message, log, lcd_node, ibc_addresses):
         if lcd_node is not None:
             MsgInfoIBC.lcd_node = lcd_node
             MsgInfoIBC.ibc_addresses = ibc_addresses
 
-        self.wallet_address = wallet_address
+        MsgInfoIBC.wallet_address = wallet_address
         self.msg_index = msg_index
         self.message = message
         self.msg_type = self._msg_type(message)
@@ -78,7 +79,7 @@ class MsgInfoIBC:
                     receiver = attributes[i]["value"]
                     amount_string = attributes[i + 1]["value"]
                     if receiver == self.wallet_address:
-                        for amount, currency in MsgInfoIBC.amount_currency(amount_string):
+                        for amount, currency in self.amount_currency(amount_string):
                             transfers_in.append((amount, currency))
 
         return transfers_in
@@ -96,7 +97,7 @@ class MsgInfoIBC:
                     amount_string = attributes[i + 1]["value"]
 
                     if spender == self.wallet_address:
-                        for amount, currency in MsgInfoIBC.amount_currency(amount_string):
+                        for amount, currency in self.amount_currency(amount_string):
                             transfers_out.append((amount, currency))
 
         return transfers_out
@@ -122,21 +123,20 @@ class MsgInfoIBC:
                     amount_string = attributes[i + 2]["value"]
 
                     if recipient == self.wallet_address:
-                        for amount, currency in MsgInfoIBC.amount_currency(amount_string):
+                        for amount, currency in self.amount_currency(amount_string):
                             if show_addrs:
                                 transfers_in.append((amount, currency, sender, recipient))
                             else:
                                 transfers_in.append((amount, currency))
                     elif sender == self.wallet_address:
-                        for amount, currency in MsgInfoIBC.amount_currency(amount_string):
+                        for amount, currency in self.amount_currency(amount_string):
                             if show_addrs:
                                 transfers_out.append((amount, currency, sender, recipient))
                             else:
                                 transfers_out.append((amount, currency))
         return transfers_in, transfers_out
 
-    @classmethod
-    def amount_currency(cls, amount_string):
+    def amount_currency(self, amount_string):
         # i.e. "5000000uosmo",
         # i.e. "16939122ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4",
         # i.e. "899999999ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2,\
@@ -152,32 +152,27 @@ class MsgInfoIBC:
                 raise Exception("Unexpected amt_string: {}".format(amt_string))
             amount_raw, currency_raw = m.group(1), m.group(2)
 
-            # Determine final (amount, currency)
-            if "ibc/" in currency_raw:
-                currency = common.ibc.api_lcd.ibc_address_to_symbol(cls.lcd_node, currency_raw, cls.ibc_addresses)
-                amount = cls.amount(amount_raw, currency)
-            else:
-                amount, currency = cls._amount_currency_from_raw(amount_raw, currency_raw)
+            # Convert from raw string to float amount and currency symbol
+            amount, currency = self._amount_currency_from_raw(amount_raw, currency_raw)
 
             out.append((amount, currency))
 
         return out
 
-    @classmethod
-    def amount(cls, amount_string, currency):
-        if currency == co.CUR_CRO:
-            return float(amount_string) / co.MILLION / 100
-        elif currency in [co.CUR_FET, co.CUR_EVMOS]:
-            return float(amount_string) / co.EXP18
-        elif currency == co.CUR_MOBX:
-            return float(amount_string) / co.EXP9
-        else:
-            return float(amount_string) / co.MILLION
-
-    @classmethod
-    def _amount_currency_from_raw(cls, amount_raw, currency_raw):
+    def _amount_currency_from_raw(self, amount_raw, currency_raw):
         # i.e. 2670866451930aevmos
-        if currency_raw.startswith("a"):
+        if currency_raw.startswith("ibc/"):
+            currency = common.ibc.api_lcd.ibc_address_to_symbol(self.lcd_node, currency_raw, self.ibc_addresses)
+            amount = self.amount_float(amount_raw, currency)
+            return amount, currency
+        elif currency_raw.startswith("gamm/"):
+            # osmosis lp currencies
+            # i.e. "gamm/pool/6" -> "GAMM-6"
+            _, _, num = currency_raw.split("/")
+            currency = "GAMM-{}".format(num)
+            amount = self.amount_float(amount_raw, currency)
+            return amount, currency
+        elif currency_raw.startswith("a"):
             amount = float(amount_raw) / co.EXP18
             currency = currency_raw[1:].upper()
             return amount, currency
@@ -192,6 +187,22 @@ class MsgInfoIBC:
         else:
             raise Exception("_amount_currency_from_raw(): no case for amount_raw={}, currency_raw={}".format(
                 amount_raw, currency_raw))
+
+    def get_amount_float(self, amount_string, currency):
+        return MsgInfoIBC.amount_float(amount_string, currency)
+
+    @staticmethod
+    def amount_float(amount_string, currency):
+        if currency == co.CUR_CRO:
+            return float(amount_string) / co.MILLION / 100
+        elif currency in [co.CUR_FET, co.CUR_EVMOS]:
+            return float(amount_string) / co.EXP18
+        elif currency == co.CUR_MOBX:
+            return float(amount_string) / co.EXP9
+        elif currency.startswith("GAMM-"):
+            return float(amount_string) / co.EXP18
+        else:
+            return float(amount_string) / co.MILLION
 
     @classmethod
     def denom_to_currency(cls, denom):

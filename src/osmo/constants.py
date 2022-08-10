@@ -1,3 +1,4 @@
+MINTSCAN_LABEL_OSMO = "osmosis"
 MILLION = 1000000.0
 EXP18 = 10 ** 18
 EXCHANGE_OSMOSIS = "osmosis_blockchain"

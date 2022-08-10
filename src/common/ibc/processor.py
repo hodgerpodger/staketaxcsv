@@ -17,7 +17,7 @@ from common.ibc import handle
 MILLION = 1000000.0
 
 
-def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, exchange=None):
+def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, exchange=None, customMsgInfo=None):
     """ Parses transaction data to return TxInfo object """
     txid = elem["txhash"]
     timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
@@ -29,7 +29,10 @@ def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, exchan
         message = elem["tx"]["body"]["messages"][i]
         log = elem["logs"][i]
 
-        msginfo = MsgInfoIBC(wallet_address, i, message, log, lcd_node, ibc_addresses)
+        if customMsgInfo:
+            msginfo = customMsgInfo(wallet_address, i, message, log, lcd_node, ibc_addresses)
+        else:
+            msginfo = MsgInfoIBC(wallet_address, i, message, log, lcd_node, ibc_addresses)
         msgs.append(msginfo)
 
     txinfo = TxInfoIBC(txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, exchange)
@@ -39,7 +42,7 @@ def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, exchan
 def _get_fee(elem):
     amount_list = elem["tx"]["auth_info"]["fee"]["amount"]
     if len(amount_list) == 0:
-        return 0, ""
+        return "", ""
 
     # Get fee currency
     denom = amount_list[0]["denom"]
@@ -47,10 +50,10 @@ def _get_fee(elem):
 
     # Get fee amount
     amount_string = amount_list[0]["amount"]
-    fee = MsgInfoIBC.amount(amount_string, fee_currency)
+    fee = MsgInfoIBC.amount_float(amount_string, fee_currency)
 
     if fee == 0:
-        return 0, ""
+        return "", ""
     else:
         return fee, fee_currency
 
@@ -70,8 +73,13 @@ def handle_message(exporter, txinfo, msginfo, debug=False):
             # 0 transfers
             handle.handle_simple(exporter, txinfo, msginfo)
         elif msg_type in [co.MSG_TYPE_SUBMIT_PROPOSAL, co.MSG_TYPE_DEPOSIT]:
-            # 1 outbound transfer
-            handle.handle_simple_outbound(exporter, txinfo, msginfo)
+            transfers_in, transfers_out = msginfo.transfers
+
+            if len(transfers_in) == 0 and len(transfers_out) == 1:
+                # 1 outbound transfer
+                handle.handle_simple_outbound(exporter, txinfo, msginfo)
+            else:
+                handle.handle_simple(exporter, txinfo, msginfo)
         elif msg_type in [co.MSG_TYPE_UPDATE_CLIENT, co.MSG_TYPE_ACKNOWLEDGMENT]:
             pass
 
