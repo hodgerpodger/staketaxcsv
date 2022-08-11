@@ -11,10 +11,7 @@
   
 # Usage
 
-* Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_bld.py (BLD), report_btsg.py (BTSG),
-  report_dvpn.py (DVPN), report_evmos.py (EVMOS), report_fet.py (FET), report_huahua.py (HUAHUA), 
-  report_iotex.py (IOTX), report_juno.py (JUNO), report_luna1.py (LUNC), report_luna2 (LUNA),  report_osmo.py (OSMO), 
-  report_sol.py (SOL), report_stars.py (STARS):
+* Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), etc:
 
   ```sh
   # Load environment variables from sample.env (add to ~/.bash_profile or ~/.bashrc to avoid doing every time)
@@ -25,16 +22,16 @@
   cd src
   
   # Create default CSV
-  python3 report_osmo.py <wallet_address>
+  python3 report_atom.py <wallet_address>
   
   # Create all CSV formats (i.e. koinly, cointracking, etc.)
-  python3 report_osmo.py <wallet_address> --format all
+  python3 report_atom.py <wallet_address> --format all
   
   # Show CSV result for single transaction (great for development/debugging)
-  python3 report_osmo.py <wallet_address> --txid <txid>
+  python3 report_atom.py <wallet_address> --txid <txid>
   
   # Show CSV result for single transaction in debug mode (great for development/debugging)
-  python3 report_osmo.py <wallet_address> --txid <txid> --debug
+  python3 report_atom.py <wallet_address> --txid <txid> --debug
   ```
   
   
