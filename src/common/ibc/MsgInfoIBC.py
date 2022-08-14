@@ -209,6 +209,9 @@ class MsgInfoIBC:
         # Example: 'uluna' -> 'LUNA'
         if denom.startswith("u") or denom.startswith("a"):
             return denom[1:].upper()
+        elif denom == "osmo":
+            # Handle abnormal denom value gracefully
+            return denom.upper()
         else:
             raise Exception("Unexpected denom={}".format(denom))
 

@@ -23,6 +23,8 @@ def process_tx(wallet_address, elem, exporter):
     txinfo = common.ibc.processor.txinfo(
         wallet_address, elem, co.MINTSCAN_LABEL_OSMO, localconfig.ibc_addresses, OSMO_NODE, None, MsgInfoOsmo)
 
+    print("roger txid is {}".format(txinfo.txid))
+
     # Detect failed transaction
     if elem["code"] > 0:
         osmo.handle_general.handle_failed_tx(exporter, txinfo)
