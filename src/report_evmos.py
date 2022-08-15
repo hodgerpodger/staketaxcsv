@@ -2,6 +2,9 @@
 usage: python3 report_evmos.py <walletaddress> [--format all|cointracking|koinly|..]
 
 Prints transactions and writes CSV(s) to _reports/EVMOS*.csv
+
+Note:
+    * <walletaddress> can be either of 'evmos...' or '0x...' formats
 """
 
 import logging
@@ -15,11 +18,16 @@ from common.Exporter import Exporter
 from common.ExporterTypes import FORMAT_DEFAULT
 from settings_csv import TICKER_EVMOS, EVMOS_NODE
 import evmos.processor
+import common.address
 import common.ibc.api_lcd
 
 
 def main():
     wallet_address, export_format, txid, options = report_util.parse_args(TICKER_EVMOS)
+
+    # Use "evmos..." format for wallet_address before proceeding with rest of script
+    wallet_address, hex_address = all_address_formats(wallet_address)
+    logging.info("wallet_address: %s, hex_address: %s", wallet_address, hex_address)
 
     if txid:
         _read_options(options)
@@ -30,6 +38,18 @@ def main():
     else:
         exporter = txhistory(wallet_address, options)
         report_util.run_exports(TICKER_EVMOS, wallet_address, exporter, export_format)
+
+
+def all_address_formats(wallet_address):
+    """ Returns ('evmos'..., '0x...') given wallet_address in either format """
+    if wallet_address.startswith("0x"):
+        bech32_address = common.address.from_hex_to_bech32("evmos", wallet_address)
+        return bech32_address, wallet_address
+    elif wallet_address.startswith("evmos"):
+        hex_address = common.address.from_bech32_to_hex("evmos", wallet_address)
+        return wallet_address, hex_address
+    else:
+        return None, None
 
 
 def _read_options(options):
