@@ -50,7 +50,7 @@ def _get_fee(elem):
 
     # Get fee amount
     amount_string = amount_list[0]["amount"]
-    fee = MsgInfoIBC.amount_float(amount_string, fee_currency)
+    fee = MsgInfoIBC.get_amount_float(amount_string, fee_currency)
 
     if fee == 0:
         return "", ""

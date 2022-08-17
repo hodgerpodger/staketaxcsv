@@ -159,6 +159,11 @@ class MsgInfoIBC:
 
         return out
 
+    @staticmethod
+    def asset_to_currency(amount_raw, currency_raw, lcd_node, ibc_addresses):
+        return MsgInfoIBC("dummy_addresss", 0, {'@type': '/cosmwasm.wasm.v1.MsgExecuteContract'},
+                          {"events": []}, lcd_node, ibc_addresses)._amount_currency_from_raw(amount_raw, currency_raw)
+
     def _amount_currency_from_raw(self, amount_raw, currency_raw):
         # i.e. 2670866451930aevmos
         if currency_raw.startswith("ibc/"):
@@ -188,11 +193,11 @@ class MsgInfoIBC:
             raise Exception("_amount_currency_from_raw(): no case for amount_raw={}, currency_raw={}".format(
                 amount_raw, currency_raw))
 
-    def get_amount_float(self, amount_string, currency):
-        return MsgInfoIBC.amount_float(amount_string, currency)
+    def amount_float(self, amount_string, currency):
+        return MsgInfoIBC.get_amount_float(amount_string, currency)
 
     @staticmethod
-    def amount_float(amount_string, currency):
+    def get_amount_float(amount_string, currency):
         if currency == co.CUR_CRO:
             return float(amount_string) / co.MILLION / 100
         elif currency in [co.CUR_FET, co.CUR_EVMOS]:
@@ -230,7 +235,7 @@ class MsgInfoIBC:
                 for kv in attributes:
                     k, v = kv["key"], kv["value"]
 
-                    if k == "contract_address":
+                    if k in ["contract_address", "_contract_address"]:
                         # reached beginning of next action
 
                         # add previous action to list
@@ -239,7 +244,7 @@ class MsgInfoIBC:
 
                         # start new action
                         action = {}
-                        action["contract_address"] = v
+                        action[k] = v
                     else:
                         action[k] = v
 

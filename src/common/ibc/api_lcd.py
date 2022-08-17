@@ -107,6 +107,7 @@ class LcdAPI:
         return data
 
 
+
 def get_txs_all(node, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, sleep_seconds=1,
                 debug=False, stage_name="default", events_types=None):
     LcdAPI.debug = debug

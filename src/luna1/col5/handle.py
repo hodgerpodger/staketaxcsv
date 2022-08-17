@@ -17,7 +17,7 @@ def can_handle(exporter, elem, txinfo):
 
 
 def handle(exporter, elem, txinfo):
-    # Lookup handler function from terra.col5.contracts.*
+    # Lookup handler function from luna1.col5.contracts.*
     contract = util_terra._contract(elem, 0)
     handler_func = CONTRACTS[contract]
 
