@@ -1,7 +1,7 @@
 from evmos.config_evmos import localconfig
 from common.progress import Progress
 
-SECONDS_PER_PAGE = 4
+SECONDS_PER_PAGE = 8
 
 
 class ProgressEVMOS(Progress):
