@@ -104,11 +104,17 @@ def txhistory(wallet_address, options):
 
 def _cache_load(cache):
     localconfig.ibc_addresses = cache.get_ibc_addresses()
+    localconfig.contracts = cache.get_luna2_contracts()
+    localconfig.currency_addresses = cache.get_luna2_currency_addresses()
+    localconfig.lp_currency_addresses = cache.get_luna2_lp_currency_addresses()
     logging.info("_cache_load(): downloaded data from cache ...")
 
 
 def _cache_push(cache):
     cache.set_ibc_addresses(localconfig.ibc_addresses)
+    cache.set_luna2_contracts(localconfig.contracts)
+    cache.set_luna2_currency_addresses(localconfig.currency_addresses)
+    cache.set_luna2_lp_currency_addresses(localconfig.lp_currency_addresses)
     logging.info("_cache_push(): push data to cache")
 
 

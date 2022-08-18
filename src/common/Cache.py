@@ -12,6 +12,9 @@ FIELD_TERRA_LP_CURRENCY_ADDRESSES = "terra_lp_currency_addresses"
 FIELD_IBC_ADDRESSES = "ibc_addresses"
 FIELD_KOINLY_NULL_MAP = "koinly_null_map"
 FIELD_OSMO_EXPONENTS = "osmo_exponents"
+FIELD_LUNA2_CONTRACTS = "luna2_contracts"
+FIELD_LUNA2_CURRENCY_ADDRESSES = "luna2_currency_addresses"
+FIELD_LUNA2_LP_CURRENCY_ADDRESSES = "luna2_lp_currency_addresses"
 
 
 class Cache:
@@ -85,6 +88,33 @@ class Cache:
 
     def get_terra_decimals(self):
         return self._get(FIELD_TERRA_DECIMALS)
+
+    def get_luna2_contracts(self):
+        return self._get(FIELD_LUNA2_CONTRACTS)
+
+    def set_luna2_contracts(self, data):
+        # Remove entries where no symbol was found or empty attribute
+        data = {k: v for k, v in data.items() if (k and v)}
+
+        return self._set_merge(FIELD_LUNA2_CONTRACTS, data)
+
+    def get_luna2_currency_addresses(self):
+        return self._get(FIELD_LUNA2_CURRENCY_ADDRESSES)
+
+    def set_luna2_currency_addresses(self, data):
+        # Remove entries where no symbol was found or empty attribute
+        data = {k: v for k, v in data.items() if (k and v)}
+
+        return self._set_merge(FIELD_LUNA2_CURRENCY_ADDRESSES, data)
+
+    def get_luna2_lp_currency_addresses(self):
+        return self._get(FIELD_LUNA2_LP_CURRENCY_ADDRESSES)
+
+    def set_luna2_lp_currency_addresses(self, data):
+        # Remove entries where no symbol was found or empty attribute
+        data = {k: v for k, v in data.items() if (k and v)}
+
+        return self._set_merge(FIELD_LUNA2_LP_CURRENCY_ADDRESSES, data)
 
     def set_ibc_addresses(self, data):
         # Remove entries where no symbol was found

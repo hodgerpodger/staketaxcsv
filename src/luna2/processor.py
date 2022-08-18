@@ -5,6 +5,7 @@ import common.ibc.processor
 import common.make_tx
 from luna2.config_luna2 import localconfig
 from luna2 import constants as co
+from luna2.api_lcd import Luna2LcdAPI
 from settings_csv import LUNA2_LCD_NODE
 
 # Import contract handler functions
@@ -46,37 +47,54 @@ def _txinfo(wallet_address, elem):
 
 
 def _is_execute_contract(txinfo):
-    if len(txinfo.msgs) > 0 and txinfo.msgs[0].msg_type == "MsgExecuteContract":
-        return True
-    else:
-        return False
+    return len(txinfo.msgs) > 0 and txinfo.msgs[0].msg_type == "MsgExecuteContract"
 
 
 def _handle_execute_contract(exporter, elem, txinfo):
     first_contract = txinfo.msgs[0].contract
 
+    # Find handler function for this contract
     if first_contract in CONTRACTS:
-        try:
-            # Lookup handler function from luna2.contracts.*
-            handler_func = CONTRACTS[first_contract]
-
-            # Run handler function that returns CSV row(s)
-            rows = handler_func(elem, txinfo)
-
-            # Add row(s) to CSV
-            common.make_tx.ingest_rows(exporter, txinfo, rows)
-
-        except Exception as e:
-            logging.error("Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
-            _handle_unknown(exporter, txinfo)
-
-            if localconfig.debug:
-                raise e
-
+        # Found in luna2.contracts.*
+        handler_func = CONTRACTS[first_contract]
     else:
-        logging.warning("Unknown contract: %s for txid=%s", first_contract, txinfo.txid)
-        for msginfo in txinfo.msgs:
-            common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+        # Query contract metadata (to identify it)
+        contract_data = _get_contract_metadata(first_contract)
+
+        if _is_astroport_pair_contract(contract_data):
+            handler_func = luna2.contracts.astroport.handle_astroport
+        else:
+            # No handler found for this contract
+            for msginfo in txinfo.msgs:
+                common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+            return
+
+    # Run handler function that returns CSV row(s)
+    try:
+        rows = handler_func(elem, txinfo)
+
+        # Add row(s) to CSV
+        common.make_tx.ingest_rows(exporter, txinfo, rows)
+    except Exception as e:
+        logging.error("Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
+        _handle_unknown(exporter, txinfo)
+
+        if localconfig.debug:
+            raise e
+
+
+def _get_contract_metadata(address):
+    if address in localconfig.contracts[address]:
+        return localconfig.contracts[address]
+
+    data = Luna2LcdAPI(LUNA2_LCD_NODE).contract(address)
+
+    localconfig.contracts[address] = data
+    return data
+
+
+def _is_astroport_pair_contract(contract_data):
+    return "contract_info" in contract_data and contract_data["contract_info"].get("label") == "Astroport pair"
 
 
 def _handle_unknown(exporter, txinfo):
