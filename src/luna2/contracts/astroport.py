@@ -7,6 +7,7 @@ CONTRACT_ASTROPORT_ASTRO = "terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fv
 CONTRACT_ASTROPORT_AIRDROP_REGISTRY = "terra15hlvnufpk8a3gcex09djzkhkz3jg9dpqvv6fvgd0ynudtu2z0qlq2fyfaq"
 CONTRACT_ASTROPORT_LUNAAXLUSDCPAIR = "terra1fd68ah02gr2y8ze7tm9te7m70zlmc7vjyyhs6xlhsdmqqcjud4dql4wpxr"
 CONTRACT_ASTROPORT_GENERATOR = "terra1ksvlfex49desf4c452j6dewdjs6c48nafemetuwjyj6yexd7x3wqvwa7j9"
+CONTRACT_ASTROPORT_ROUTER_2 = "terra19hz374h6ruwtzrnm8ytkae782uv79h9yt9tuytgvt94t26c4793qnfg7vn"
 
 
 def handle_astroport(elem, txinfo):
@@ -163,6 +164,7 @@ def _handle_increase_allowance(txinfo, msginfo):
 
 # Astroport Swap
 CONTRACTS[CONTRACT_ASTROPORT_ROUTER] = handle_astroport
+CONTRACTS[CONTRACT_ASTROPORT_ROUTER_2] = handle_astroport
 
 # Astroport Staking (xAstro)
 CONTRACTS[CONTRACT_ASTROPORT_ASTRO] = handle_astroport

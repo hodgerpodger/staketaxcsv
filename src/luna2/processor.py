@@ -11,6 +11,8 @@ from settings_csv import LUNA2_LCD_NODE
 # Import contract handler functions
 from luna2.contracts.config import CONTRACTS
 import luna2.contracts.astroport
+import luna2.contracts.treat_as_unknown
+import luna2.contracts.valkyrie
 
 
 def process_txs(wallet_address, elems, exporter):

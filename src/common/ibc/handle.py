@@ -95,12 +95,12 @@ def handle_multisend(exporter, txinfo, msginfo):
         i += 1
 
 
-def handle_unknown_detect_transfers(exporter, txinfo, msginfo):
+def unknown_txs_detect_transfers(txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
 
     if len(transfers_in) == 0 and len(transfers_out) == 0:
-        handle_unknown(exporter, txinfo, msginfo)
-        return
+        row = make_tx.make_unknown_tx(txinfo, msginfo)
+        return [row]
     elif len(transfers_in) == 1 and len(transfers_out) == 1:
         # Present unknown transaction as one line (for this special case).
         sent_amount, sent_currency = transfers_out[0]
@@ -108,7 +108,7 @@ def handle_unknown_detect_transfers(exporter, txinfo, msginfo):
 
         row = make_tx.make_unknown_tx_with_transfer(
             txinfo, msginfo, sent_amount, sent_currency, received_amount, received_currency)
-        exporter.ingest_row(row)
+        return [row]
     else:
         # Handle unknown transaction as separate transfers for each row.
         rows = []
@@ -118,7 +118,12 @@ def handle_unknown_detect_transfers(exporter, txinfo, msginfo):
         for received_amount, received_currency in transfers_in:
             rows.append(
                 make_tx.make_unknown_tx_with_transfer(txinfo, msginfo, "", "", received_amount, received_currency))
-        util_ibc._ingest_rows(exporter, txinfo, msginfo, rows, "")
+        return rows
+
+
+def handle_unknown_detect_transfers(exporter, txinfo, msginfo):
+    rows = unknown_txs_detect_transfers(txinfo, msginfo)
+    util_ibc._ingest_rows(exporter, txinfo, msginfo, rows, "")
 
 
 def handle_unknown_detect_transfers_tx(exporter, txinfo):
