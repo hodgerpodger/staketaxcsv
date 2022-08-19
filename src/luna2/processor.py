@@ -84,7 +84,7 @@ def _handle_execute_contract(exporter, elem, txinfo):
 
 
 def _get_contract_metadata(address):
-    if address in localconfig.contracts[address]:
+    if address in localconfig.contracts:
         return localconfig.contracts[address]
 
     data = Luna2LcdAPI(LUNA2_LCD_NODE).contract(address)
