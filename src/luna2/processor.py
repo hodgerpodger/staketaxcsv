@@ -11,8 +11,13 @@ from settings_csv import LUNA2_LCD_NODE
 # Import contract handler functions
 from luna2.contracts.config import CONTRACTS
 import luna2.contracts.astroport
-import luna2.contracts.treat_as_unknown
+import luna2.contracts.general
 import luna2.contracts.valkyrie
+
+CONTRACT_VKR_TOKEN = "terra1gy73st560m2j0esw5c5rjmr899hvtv4rhh4seeajt3clfhr4aupszjss4j"
+CONTRACTS_USE_SECOND_MESSAGE = set([
+    CONTRACT_VKR_TOKEN
+])
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -53,15 +58,17 @@ def _is_execute_contract(txinfo):
 
 
 def _handle_execute_contract(exporter, elem, txinfo):
-    first_contract = txinfo.msgs[0].contract
+    contract = txinfo.msgs[0].contract
+    if contract in CONTRACTS_USE_SECOND_MESSAGE and len(txinfo.msgs) > 1:
+        contract = txinfo.msgs[1].contract
 
     # Find handler function for this contract
-    if first_contract in CONTRACTS:
+    if contract in CONTRACTS:
         # Found in luna2.contracts.*
-        handler_func = CONTRACTS[first_contract]
+        handler_func = CONTRACTS[contract]
     else:
         # Query contract metadata (to identify it)
-        contract_data = _get_contract_metadata(first_contract)
+        contract_data = _get_contract_metadata(contract)
 
         if _is_astroport_pair_contract(contract_data):
             handler_func = luna2.contracts.astroport.handle_astroport

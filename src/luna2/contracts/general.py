@@ -1,3 +1,4 @@
+import logging
 import common.make_tx
 from luna2.contracts.config import CONTRACTS
 
