@@ -28,6 +28,8 @@ def handle_astroport(elem, txinfo):
             result = _handle_increase_allowance(txinfo, msginfo)
         elif _is_provide_liquidity(actions):
             result = _handle_provide_liquidity(txinfo, msginfo)
+        elif _is_withdraw_liquidity(actions):
+            result = _handle_withdraw_liquidity(txinfo, msginfo)
         else:
             raise Exception("handle_astroport(): Unknown message.  actions={}".format(
                 [action["action"] for action in actions]))
@@ -68,6 +70,41 @@ def _handle_provide_liquidity(txinfo, msginfo):
     rows = [
         common.make_tx.make_lp_deposit_tx(txinfo, sent_amount_1, sent_currency_1, lp_amount / 2, lp_currency),
         common.make_tx.make_lp_deposit_tx(txinfo, sent_amount_2, sent_currency_2, lp_amount / 2, lp_currency)
+    ]
+
+    return rows
+
+def _is_withdraw_liquidity(actions):
+    # example action lists:
+    # ["send", "withdraw_liquidity", "burn"]
+
+    action_names = [action["action"] for action in actions]
+
+    if action_names == ["send", "withdraw_liquidity", "burn"]:
+        return True
+    else:
+        return False
+
+
+def _handle_withdraw_liquidity(txinfo, msginfo):
+    actions = msginfo.wasm
+
+    wl_action = [action for action in actions if action["action"] == "withdraw_liquidity"][0]
+
+    # Determine received amounts
+    rec_amounts = luna2.util_luna2.amount_assets_to_currency(wl_action["refund_assets"])
+    rec_amount_1, rec_currency_1 = rec_amounts[0]
+    rec_amount_2, rec_currency_2 = rec_amounts[1]
+
+    # Determine received LP currency
+    lp_amount_raw = wl_action["withdrawn_share"]
+    lp_asset = wl_action["_contract_address"]
+    lp_amount, lp_currency = luna2.util_luna2.lp_asset_to_currency(lp_amount_raw, lp_asset)
+
+    # Create CSV rows
+    rows = [
+        common.make_tx.make_lp_withdraw_tx(txinfo, rec_amount_1, rec_currency_1, lp_amount / 2, lp_currency),
+        common.make_tx.make_lp_withdraw_tx(txinfo, rec_amount_2, rec_currency_2, lp_amount / 2, lp_currency)
     ]
 
     return rows

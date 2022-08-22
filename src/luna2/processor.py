@@ -103,7 +103,8 @@ def _get_contract_metadata(address):
 
 
 def _is_astroport_pair_contract(contract_data):
-    return "contract_info" in contract_data and contract_data["contract_info"].get("label") == "Astroport pair"
+    return ("contract_info" in contract_data
+           and contract_data["contract_info"].get("label") in ("Astroport pair", "Astroport LP token"))
 
 
 def _handle_unknown(exporter, txinfo):
