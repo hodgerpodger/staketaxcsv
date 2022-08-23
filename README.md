@@ -11,7 +11,7 @@
   
 # Usage
 
-* Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), etc:
+* Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_*.py, etc:
 
   ```sh
   # Load environment variables from sample.env (add to ~/.bash_profile or ~/.bashrc to avoid doing every time)
