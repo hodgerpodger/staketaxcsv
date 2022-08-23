@@ -1,0 +1,2 @@
+
+MINTSCAN_LABEL_KUJI = "kuji"
