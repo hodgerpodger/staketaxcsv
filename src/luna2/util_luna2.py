@@ -1,5 +1,5 @@
 from common.ibc.MsgInfoIBC import MsgInfoIBC
-from luna2.api_lcd import Luna2LcdAPI
+from common.cosmwasm.api_lcd_cosmwasm import CosmWasmLcdAPI, extract_msg
 from luna2.constants import MILLION
 from luna2.config_luna2 import localconfig
 from settings_csv import LUNA2_LCD_NODE
@@ -10,23 +10,14 @@ def _contract_address_to_currency(address):
         currency, decimals = localconfig.currency_addresses[address]
         return currency, int(decimals)
 
-    data = Luna2LcdAPI(LUNA2_LCD_NODE).contract_history(address)
-    msg = _extract_msg(data)
+    data = CosmWasmLcdAPI(LUNA2_LCD_NODE).contract_history(address)
+    msg = extract_msg(data)
 
     currency = msg["symbol"]
     decimals = int(msg["decimals"])
 
     localconfig.currency_addresses[address] = (currency, decimals)
     return currency, decimals
-
-
-def _extract_msg(data):
-    for entry in data["entries"]:
-        if entry["operation"] == "CONTRACT_CODE_HISTORY_OPERATION_TYPE_INIT":
-            msg = entry["msg"]
-            return msg
-
-    return None
 
 
 def asset_to_currency(amount_raw, asset):
@@ -79,8 +70,8 @@ def _lp_asset_to_currency(lp_asset):
     if lp_asset in localconfig.lp_currency_addresses:
         return localconfig.lp_currency_addresses[lp_asset]
 
-    data = Luna2LcdAPI(LUNA2_LCD_NODE).contract_history(lp_asset)
-    msg = _extract_msg(data)
+    data = CosmWasmLcdAPI(LUNA2_LCD_NODE).contract_history(lp_asset)
+    msg = extract_msg(data)
 
     # Extract pair of currencies in LP pair
     if "asset_infos" in msg:
@@ -88,8 +79,8 @@ def _lp_asset_to_currency(lp_asset):
         currency2 = _asset_info_to_currency(msg["asset_infos"][1])
     elif "mint" in msg:
         minter = msg["mint"]["minter"]
-        data = Luna2LcdAPI(LUNA2_LCD_NODE).contract_history(minter)
-        msg = _extract_msg(data)
+        data = CosmWasmLcdAPI(LUNA2_LCD_NODE).contract_history(minter)
+        msg = extract_msg(data)
         currency1 = _asset_info_to_currency(msg["asset_infos"][0])
         currency2 = _asset_info_to_currency(msg["asset_infos"][1])
     else:

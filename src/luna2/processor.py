@@ -5,7 +5,7 @@ import common.ibc.processor
 import common.make_tx
 from luna2.config_luna2 import localconfig
 from luna2 import constants as co
-from luna2.api_lcd import Luna2LcdAPI
+from common.cosmwasm.api_lcd_cosmwasm import CosmWasmLcdAPI
 from settings_csv import LUNA2_LCD_NODE
 
 # Import contract handler functions
@@ -67,10 +67,10 @@ def _handle_execute_contract(exporter, elem, txinfo):
         # Found in luna2.contracts.*
         handler_func = CONTRACTS[contract]
     else:
-        # Query contract metadata (to identify it)
-        contract_data = _get_contract_metadata(contract)
+        # Query contract data (to identify it)
+        contract_data = _get_contract_data(contract)
 
-        if _is_astroport_pair_contract(contract_data):
+        if luna2.contracts.astroport.is_astroport_pair_contract(contract_data):
             handler_func = luna2.contracts.astroport.handle_astroport
         else:
             # No handler found for this contract
@@ -92,19 +92,15 @@ def _handle_execute_contract(exporter, elem, txinfo):
             raise e
 
 
-def _get_contract_metadata(address):
+def _get_contract_data(address):
     if address in localconfig.contracts:
         return localconfig.contracts[address]
 
-    data = Luna2LcdAPI(LUNA2_LCD_NODE).contract(address)
+    data = CosmWasmLcdAPI(LUNA2_LCD_NODE).contract(address)
 
     localconfig.contracts[address] = data
     return data
 
-
-def _is_astroport_pair_contract(contract_data):
-    return ("contract_info" in contract_data
-           and contract_data["contract_info"].get("label") in ("Astroport pair", "Astroport LP token"))
 
 
 def _handle_unknown(exporter, txinfo):
