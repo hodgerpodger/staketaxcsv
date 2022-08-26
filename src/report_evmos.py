@@ -41,7 +41,7 @@ def main():
 
 
 def all_address_formats(wallet_address):
-    """ Returns ('evmos'..., '0x...') given wallet_address in either format """
+    """ Returns ('evmos...', '0x...') given wallet_address in either format """
     if wallet_address.startswith("0x"):
         bech32_address = common.address.from_hex_to_bech32("evmos", wallet_address)
         return bech32_address, wallet_address
