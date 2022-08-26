@@ -132,6 +132,11 @@ def handle_unknown_detect_transfers_tx(exporter, txinfo):
 
 
 def handle_exec(exporter, txinfo, msginfo):
+    # adjust fee to zero since wallet address in wrapped message does not pay fee
+    # (address running exec message is fee payer)
+    txinfo.fee = ""
+    txinfo.fee_currency = ""
+
     msg_types = set(map(lambda x: x["@type"].split(".")[-1], msginfo.message["msgs"]))
 
     # execs can have multiple messages, but the most common are to delegate and withdraw

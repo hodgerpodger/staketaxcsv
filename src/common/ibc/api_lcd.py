@@ -175,4 +175,5 @@ def ibc_address_to_symbol(node, ibc_address, ibc_addresses=None):
 # Add only if regular lcd api lookup is missing correct data
 IBC_ADDRESSES_FALLBACK_LOOKUP = {
     "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518": "OSMO",
+    "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1": "CRO",
 }

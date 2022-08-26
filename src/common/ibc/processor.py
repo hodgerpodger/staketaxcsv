@@ -63,7 +63,7 @@ def handle_message(exporter, txinfo, msginfo, debug=False):
     try:
         msg_type = msginfo.msg_type
 
-        # Handle exec messages (wrapped messages)
+        # Handle exec messages (wrapped messages; currently only for restake)
         if msg_type == co.MSG_TYPE_EXEC:
             handle.handle_exec(exporter, txinfo, msginfo)
             return True
