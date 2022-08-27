@@ -94,11 +94,17 @@ class LcdAPI:
         return data
 
     def get_ibc_symbol(self, ibc_address):
+        denom_to_currency_map = {
+            "weth-wei": co.CUR_WETH,
+            "wavax-wei": co.CUR_WAVAX,
+            "cw20:juno1qsrercqegvs4ye0yqg93knv73ye5dc3prqwd6jcdcuj8ggp6w0us66deup": co.CUR_LOOP,
+        }
+
         data = self._get_ibc_symbol(ibc_address)
         denom = data["denom_trace"]["base_denom"]
 
-        if denom == "weth-wei":
-            symbol = co.CUR_WETH
+        if denom in denom_to_currency_map:
+            return denom_to_currency_map[denom]
         elif denom.startswith("u"):
             symbol = denom[1:].upper()  # i.e. "uosmo" -> "OSMO"
         else:

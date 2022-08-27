@@ -208,29 +208,14 @@ class MsgInfoIBC:
     def get_amount_float(amount_string, currency):
         if currency == co.CUR_CRO:
             return float(amount_string) / co.MILLION / 100
-        elif currency in [co.CUR_FET, co.CUR_EVMOS]:
+        elif currency in [co.CUR_FET, co.CUR_EVMOS, co.CUR_WETH, co.CUR_WAVAX]:
             return float(amount_string) / co.EXP18
         elif currency == co.CUR_MOBX:
             return float(amount_string) / co.EXP9
         elif currency.startswith("GAMM-"):
             return float(amount_string) / co.EXP18
-        elif currency == co.CUR_WETH:
-            return float(amount_string) / co.EXP18
         else:
             return float(amount_string) / co.MILLION
-
-    """
-    @classmethod
-    def denom_to_currency(cls, denom):
-        # Example: 'uluna' -> 'LUNA'
-        if denom.startswith("u") or denom.startswith("a"):
-            return denom[1:].upper()
-        elif denom == "osmo":
-            # Handle abnormal denom value gracefully
-            return denom.upper()
-        else:
-            raise Exception("Unexpected denom={}".format(denom))
-    """
 
     @classmethod
     def wasm(cls, log):
