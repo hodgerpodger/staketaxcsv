@@ -105,8 +105,8 @@ class LcdAPI:
 
         if denom in denom_to_currency_map:
             return denom_to_currency_map[denom]
-        elif denom.startswith("u"):
-            symbol = denom[1:].upper()  # i.e. "uosmo" -> "OSMO"
+        elif denom.startswith("u") or denom.startswith("a"):
+            symbol = denom[1:].upper()  # i.e. "uosmo" -> "OSMO", "aevmos" -> "EVMOS"
         else:
             symbol = denom[0:].upper()
         return symbol
