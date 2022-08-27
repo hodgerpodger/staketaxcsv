@@ -225,24 +225,6 @@ class MsgInfoIBC:
             raise Exception("_amount_currency_from_raw(): no case for amount_raw={}, currency_raw={}".format(
                 amount_raw, currency_raw))
 
-    """
-    def amount_float(self, amount_string, currency):
-        return MsgInfoIBC.get_amount_float(amount_string, currency)
-
-    @staticmethod
-    def get_amount_float(amount_string, currency):
-        if currency == co.CUR_CRO:
-            return float(amount_string) / co.MILLION / 100
-        elif currency in [co.CUR_FET, co.CUR_EVMOS, co.CUR_WETH, co.CUR_WAVAX]:
-            return float(amount_string) / co.EXP18
-        elif currency == co.CUR_MOBX:
-            return float(amount_string) / co.EXP9
-        elif currency.startswith("GAMM-"):
-            return float(amount_string) / co.EXP18
-        else:
-            return float(amount_string) / co.MILLION
-    """
-
     @classmethod
     def wasm(cls, log):
         """ Parses wasm in log to return list of action dictionaries. """
