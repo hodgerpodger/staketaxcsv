@@ -6,3 +6,4 @@ CURRENCIES = {
 }
 CHAIN_ID_COSMOHUB3 = "cosmoshub-3"
 CHAIN_ID_COSMOHUB4 = "cosmoshub-4"
+MINTSCAN_LABEL_ATOM = "cosmos"
