@@ -84,7 +84,7 @@ class LcdAPI:
         total_count_txs = int(data["pagination"]["total"])
         return elems, next_offset, total_count_txs
 
-    def _get_ibc_symbol(self, ibc_address):
+    def _ibc_address_to_denom(self, ibc_address):
         """ 'ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B' -> 'OSMO' """
         _, hash = ibc_address.split("/")
         uri_path = "/ibc/apps/transfer/v1/denom_traces/{}".format(hash)
@@ -93,23 +93,11 @@ class LcdAPI:
         data = self._query(uri_path, query_params, sleep_seconds=1)
         return data
 
-    def get_ibc_symbol(self, ibc_address):
-        denom_to_currency_map = {
-            "weth-wei": co.CUR_WETH,
-            "wavax-wei": co.CUR_WAVAX,
-            "cw20:juno1qsrercqegvs4ye0yqg93knv73ye5dc3prqwd6jcdcuj8ggp6w0us66deup": co.CUR_LOOP,
-        }
-
-        data = self._get_ibc_symbol(ibc_address)
+    def ibc_address_to_denom(self, ibc_address):
+        data = self._ibc_address_to_denom(ibc_address)
         denom = data["denom_trace"]["base_denom"]
 
-        if denom in denom_to_currency_map:
-            return denom_to_currency_map[denom]
-        elif denom.startswith("u") or denom.startswith("a"):
-            symbol = denom[1:].upper()  # i.e. "uosmo" -> "OSMO", "aevmos" -> "EVMOS"
-        else:
-            symbol = denom[0:].upper()
-        return symbol
+        return denom
 
     def balances(self, wallet_address, height=None):
         uri_path = "/cosmos/bank/v1beta1/balances/{}".format(wallet_address)
@@ -166,27 +154,23 @@ def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY, debug
     return total_pages
 
 
-def ibc_address_to_symbol(node, ibc_address, ibc_addresses=None):
-    # i.e. ibc_address="ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4", returns "IKT"
-    if ibc_address in IBC_ADDRESSES_FALLBACK_LOOKUP:
-        return IBC_ADDRESSES_FALLBACK_LOOKUP[ibc_address]
+def ibc_address_to_denom(node, ibc_address, ibc_addresses):
+    if ibc_address in IBC_ADDRESSES_TO_DENOM:
+        return IBC_ADDRESSES_TO_DENOM[ibc_address]
     if not node:
-        return ibc_address
-
-    if ibc_addresses and ibc_address in ibc_addresses:
+        return None
+    if ibc_address in ibc_addresses:
         return ibc_addresses[ibc_address]
 
-    result = LcdAPI(node).get_ibc_symbol(ibc_address)
-    val = result if result else ibc_address
+    denom = LcdAPI(node).ibc_address_to_denom(ibc_address)
 
-    if ibc_addresses is not None:
-        ibc_addresses[ibc_address] = val
-
-    return val
+    ibc_addresses[ibc_address] = denom
+    return denom
 
 
-# Add only if regular lcd api lookup is missing correct data
-IBC_ADDRESSES_FALLBACK_LOOKUP = {
-    "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518": "OSMO",
-    "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1": "CRO",
+# Add only if regular lcd api lookup is missing functional data
+IBC_ADDRESSES_TO_DENOM = {
+    "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518": "uosmo",
+    "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1": co.CUR_CRO,
+    "ibc/8318B7E036E50C0CF799848F23ED84778AAA8749D9C0BCD4FF3F4AF73C53387F": "uloop",
 }

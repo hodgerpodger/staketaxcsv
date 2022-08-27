@@ -1,6 +1,4 @@
 import common.make_tx
-from common.cosmwasm.api_lcd_cosmwasm import extract_msg
-
 
 FIN_OWNER = "kujira1ghmq7k50rwpsnye39aefngd2k7x9kc2hrqq5xd"
 

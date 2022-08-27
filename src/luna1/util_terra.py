@@ -9,6 +9,7 @@ from luna1.api_lcd import LcdAPI
 from luna1.config_luna1 import localconfig
 import common.ibc.api_lcd
 from luna1.constants import CUR_UST
+from common.ibc.MsgInfoIBC import MsgInfoIBC
 
 
 def _contracts(elem):
@@ -210,7 +211,9 @@ def _extract_amounts(amount_string):
             uamount, ibc_address = amount.split("ibc")
             ibc_address = "ibc" + ibc_address
 
-            currency = common.ibc.api_lcd.ibc_address_to_symbol(TERRA_LCD_NODE, ibc_address, localconfig.ibc_addresses)
+            _, currency = MsgInfoIBC.asset_to_currency(0, ibc_address, TERRA_LCD_NODE, localconfig.ibc_addresses)
+
+            #currency = common.ibc.api_lcd.ibc_address_to_denom(TERRA_LCD_NODE, ibc_address, localconfig.ibc_addresses)
             out[currency] = _float_amount(uamount, currency)
         else:
             # regular (i.e. 99700703uusd)

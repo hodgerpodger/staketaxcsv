@@ -168,17 +168,42 @@ class MsgInfoIBC:
                           {"events": []}, lcd_node, ibc_addresses)._amount_currency_from_raw(amount_raw, currency_raw)
 
     def _amount_currency_from_raw(self, amount_raw, currency_raw):
-        # i.e. 2670866451930aevmos
+        # i.e. 2670866451930, aevmos
         if currency_raw.startswith("ibc/"):
-            currency = common.ibc.api_lcd.ibc_address_to_symbol(self.lcd_node, currency_raw, self.ibc_addresses)
-            amount = self.amount_float(amount_raw, currency)
+            # ibc address currency
+            denom = common.ibc.api_lcd.ibc_address_to_denom(self.lcd_node, currency_raw, self.ibc_addresses)
+
+            if denom:
+                currency_raw = denom
+            else:
+                # ibc address failed lookup: use common exponent and raw ibc address as currency
+                amount = float(amount_raw) / co.MILLION
+                return amount, currency_raw
+
+        # Special cases for nonconforming denoms/assets
+        CURRENCY_RAW_TO_EXPONENTS = {
+            co.CUR_CRO : 8,
+            co.CUR_MOBX : 9,
+            "OSMO": 6,
+            "osmo": 6,
+        }
+
+        if currency_raw in CURRENCY_RAW_TO_EXPONENTS:
+            exponent = CURRENCY_RAW_TO_EXPONENTS[currency_raw]
+            amount = float(amount_raw) / float(10 ** exponent)
+            currency = currency_raw
             return amount, currency
         elif currency_raw.startswith("gamm/"):
             # osmosis lp currencies
             # i.e. "gamm/pool/6" -> "GAMM-6"
+            amount = float(amount_raw) / co.EXP18
             _, _, num = currency_raw.split("/")
             currency = "GAMM-{}".format(num)
-            amount = self.amount_float(amount_raw, currency)
+            return amount, currency
+        elif currency_raw.endswith("-wei"):
+            amount = float(amount_raw) / co.EXP18
+            currency, _ = currency_raw.split("-wei")
+            currency = currency.upper()
             return amount, currency
         elif currency_raw.startswith("a"):
             amount = float(amount_raw) / co.EXP18
@@ -188,19 +213,19 @@ class MsgInfoIBC:
             amount = float(amount_raw) / co.EXP9
             currency = currency_raw[4:].upper()
             return amount, currency
+        elif currency_raw.startswith("n"):
+            amount = float(amount_raw) / co.EXP9
+            currency = currency_raw[1:].upper()
+            return amount, currency
         elif currency_raw.startswith("u"):
             amount = float(amount_raw) / co.MILLION
             currency = currency_raw[1:].upper()
-            return amount, currency
-        elif currency_raw == "osmo":
-            # Handle abnormal denom value gracefully
-            amount = float(amount_raw) / co.MILLION
-            currency = currency_raw.upper()
             return amount, currency
         else:
             raise Exception("_amount_currency_from_raw(): no case for amount_raw={}, currency_raw={}".format(
                 amount_raw, currency_raw))
 
+    """
     def amount_float(self, amount_string, currency):
         return MsgInfoIBC.get_amount_float(amount_string, currency)
 
@@ -216,6 +241,7 @@ class MsgInfoIBC:
             return float(amount_string) / co.EXP18
         else:
             return float(amount_string) / co.MILLION
+    """
 
     @classmethod
     def wasm(cls, log):

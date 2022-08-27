@@ -7,7 +7,7 @@ class CosmWasmLcdAPI(LcdAPI):
 
     def contract_history(self, contract):
         uri_path = "/cosmwasm/wasm/v1/contract/{}/history".format(contract)
-        logging.info("Querying lcd for contract = %s ...", contract)
+        logging.info("Querying lcd for contract history = %s ...", contract)
         data = self._query(uri_path, {})
         return data
 

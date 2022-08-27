@@ -5,7 +5,7 @@ import common.ibc.processor
 import common.make_tx
 from luna2.config_luna2 import localconfig
 from luna2 import constants as co
-from common.cosmwasm.api_lcd_cosmwasm import CosmWasmLcdAPI
+from common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI
 from settings_csv import LUNA2_LCD_NODE
 
 # Import contract handler functions

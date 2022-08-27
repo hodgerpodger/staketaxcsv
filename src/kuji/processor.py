@@ -3,7 +3,7 @@ import logging
 import common.ibc.processor
 import common.ibc.handle
 from kuji.config_kuji import localconfig
-from common.cosmwasm.api_lcd_cosmwasm import CosmWasmLcdAPI, extract_msg
+from common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI, extract_msg
 import kuji.constants as co
 from settings_csv import KUJI_NODE
 
