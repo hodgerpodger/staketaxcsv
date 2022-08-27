@@ -161,6 +161,9 @@ class MsgInfoIBC:
 
     @staticmethod
     def asset_to_currency(amount_raw, currency_raw, lcd_node, ibc_addresses):
+        # example currency_raw:
+        # 'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4'
+        # 'uluna'
         return MsgInfoIBC("dummy_addresss", 0, {'@type': '/cosmwasm.wasm.v1.MsgExecuteContract'},
                           {"events": []}, lcd_node, ibc_addresses)._amount_currency_from_raw(amount_raw, currency_raw)
 
@@ -189,6 +192,11 @@ class MsgInfoIBC:
             amount = float(amount_raw) / co.MILLION
             currency = currency_raw[1:].upper()
             return amount, currency
+        elif currency_raw == "osmo":
+            # Handle abnormal denom value gracefully
+            amount = float(amount_raw) / co.MILLION
+            currency = currency_raw.upper()
+            return amount, currency
         else:
             raise Exception("_amount_currency_from_raw(): no case for amount_raw={}, currency_raw={}".format(
                 amount_raw, currency_raw))
@@ -206,9 +214,12 @@ class MsgInfoIBC:
             return float(amount_string) / co.EXP9
         elif currency.startswith("GAMM-"):
             return float(amount_string) / co.EXP18
+        elif currency == co.CUR_WETH:
+            return float(amount_string) / co.EXP18
         else:
             return float(amount_string) / co.MILLION
 
+    """
     @classmethod
     def denom_to_currency(cls, denom):
         # Example: 'uluna' -> 'LUNA'
@@ -219,6 +230,7 @@ class MsgInfoIBC:
             return denom.upper()
         else:
             raise Exception("Unexpected denom={}".format(denom))
+    """
 
     @classmethod
     def wasm(cls, log):

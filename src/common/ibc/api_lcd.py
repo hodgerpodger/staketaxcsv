@@ -14,6 +14,7 @@ from common.ibc.api_common import (
     remove_duplicates,
 )
 from settings_csv import REPORTS_DIR
+import common.ibc.constants as co
 
 
 class LcdAPI:
@@ -95,7 +96,13 @@ class LcdAPI:
     def get_ibc_symbol(self, ibc_address):
         data = self._get_ibc_symbol(ibc_address)
         denom = data["denom_trace"]["base_denom"]
-        symbol = denom[1:].upper()  # i.e. "uosmo" -> "OSMO"
+
+        if denom == "weth-wei":
+            symbol = co.CUR_WETH
+        elif denom.startswith("u"):
+            symbol = denom[1:].upper()  # i.e. "uosmo" -> "OSMO"
+        else:
+            symbol = denom[1:].upper()
         return symbol
 
     def balances(self, wallet_address, height=None):

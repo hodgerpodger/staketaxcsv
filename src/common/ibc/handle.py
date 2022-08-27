@@ -37,9 +37,17 @@ def handle_staking(exporter, txinfo, msginfo):
         totals[currency] += amount
 
     if sum(totals.values()) > 0:
+        i = 0
         for currency, total in totals.items():
             row = make_tx.make_reward_tx(txinfo, msginfo, total, currency)
             row.comment = "claim reward in {}".format(msginfo.msg_type)
+
+            # Only first row should have fee (if exists)
+            if i > 0:
+                row.fee = ""
+                row.fee_currency = ""
+            i += 1
+
             exporter.ingest_row(row)
     else:
         # No reward: add non-income delegation transaction just so transaction doesn't appear "missing"

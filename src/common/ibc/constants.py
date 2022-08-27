@@ -6,6 +6,7 @@ CUR_CRO = "CRO"
 CUR_FET = "FET"
 CUR_MOBX = "MOBX"
 CUR_EVMOS = "EVMOS"
+CUR_WETH = "wETH"
 
 MSG_TYPE_ACKNOWLEDGMENT = "MsgAcknowledgement"
 MSG_TYPE_BEGIN_UNLOCKING = "MsgBeginUnlocking"
