@@ -1,7 +1,6 @@
 # CSV transactions with details
 
 ## General
-
 - Algo payments
 - ASA transfers
 - Participation rewards
@@ -23,9 +22,14 @@
 ## AlgoStake
 - Staking rewards
 
+## Folks Finance
+- Supply, borrow and repay
+- Staking rewards
+
 ## HumbleSwap
 - Swaps
 - Add and remove from liquidity pools
+- Farm rewards
 
 ## Pact
 - Swaps
