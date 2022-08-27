@@ -108,7 +108,7 @@ class LcdAPI:
         elif denom.startswith("u"):
             symbol = denom[1:].upper()  # i.e. "uosmo" -> "OSMO"
         else:
-            symbol = denom[1:].upper()
+            symbol = denom[0:].upper()
         return symbol
 
     def balances(self, wallet_address, height=None):
