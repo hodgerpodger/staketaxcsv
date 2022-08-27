@@ -10,22 +10,22 @@ https://node.atomscan.com/swagger/
 
 """
 
-import json
 import logging
 import math
-import os
 import pprint
 
-import atom.api_cosmostation
+import atom.cosmoshub3.api_cosmostation
 import atom.api_lcd
 import atom.processor
+import common.ibc.api_lcd
 from atom.config_atom import localconfig
 from atom.progress_atom import SECONDS_PER_PAGE, ProgressAtom
 from common import report_util
 from common.Cache import Cache
 from common.Exporter import Exporter
 from common.ExporterTypes import FORMAT_DEFAULT
-from settings_csv import TICKER_ATOM
+from settings_csv import TICKER_ATOM, ATOM_NODE
+import common.ibc.api_lcd
 
 LIMIT_PER_QUERY = 50
 
@@ -57,7 +57,7 @@ def wallet_exists(wallet_address):
 
 def txone(wallet_address, txid):
     if localconfig.legacy:
-        elem = atom.api_cosmostation.get_tx(txid)
+        elem = atom.cosmoshub3.api_cosmostation.get_tx(txid)
     else:
         elem = atom.api_lcd.get_tx(txid)
 
@@ -80,6 +80,7 @@ def txhistory(wallet_address, options):
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")
 
+    max_txs = localconfig.limit
     progress = ProgressAtom()
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
 
@@ -93,7 +94,7 @@ def txhistory(wallet_address, options):
         elems.extend(_fetch_txs_legacy(wallet_address, progress))
 
     # Fetch transactions
-    elems.extend(_fetch_txs(wallet_address, progress))
+    elems.extend(common.ibc.api_lcd.get_txs_all(ATOM_NODE, wallet_address, progress, max_txs, debug=localconfig.debug))
     elems = _remove_duplicates(elems)
 
     progress.report_message(f"Processing {len(elems)} ATOM transactions... ")
@@ -121,7 +122,7 @@ def _fetch_txs_legacy(wallet_address, progress):
         progress.report_message(message)
         current_page += 1
 
-        elems, next_id = atom.api_cosmostation.get_txs_legacy(wallet_address, next_id)
+        elems, next_id = atom.cosmoshub3.api_cosmostation.get_txs_legacy(wallet_address, next_id)
         out.extend(elems)
         if next_id is None:
             break
@@ -129,6 +130,7 @@ def _fetch_txs_legacy(wallet_address, progress):
     return out
 
 
+"""
 def _fetch_txs(wallet_address, progress):
     if localconfig.debug:
         debug_file = f"_reports/testatom.{wallet_address}.json"
@@ -158,6 +160,7 @@ def _fetch_txs(wallet_address, progress):
             json.dump(out, f, indent=4)
         logging.info("Wrote to %s for debugging", debug_file)
     return out
+"""
 
 
 def _remove_duplicates(elems):

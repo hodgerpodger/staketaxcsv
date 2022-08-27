@@ -21,7 +21,7 @@ def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, exchan
     """ Parses transaction data to return TxInfo object """
     txid = elem["txhash"]
     timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
-    fee, fee_currency = _get_fee(elem, lcd_node, ibc_addresses)
+    fee, fee_currency = _get_fee(wallet_address, elem, lcd_node, ibc_addresses)
 
     # Construct msgs: list of MsgInfoIBC objects
     msgs = []
@@ -39,7 +39,7 @@ def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, exchan
     return txinfo
 
 
-def _get_fee(elem, lcd_node, ibc_addresses):
+def _get_fee(wallet_address, elem, lcd_node, ibc_addresses):
     amount_list = elem["tx"]["auth_info"]["fee"]["amount"]
     if len(amount_list) == 0:
         return "", ""
