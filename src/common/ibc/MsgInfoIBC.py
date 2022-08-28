@@ -177,8 +177,8 @@ class MsgInfoIBC:
             except Exception as e:
                 logging.warning("Unable to find symbol for ibc address %s, denom=%s, exception=%s",
                                 currency_raw, denom, str(e))
-                amount = float(amount_raw) / co.EXP9
-                currency = denom.upper() if denom else currency_raw
+                amount = float(amount_raw) / co.MILLION
+                currency = "unknown_{}".format(denom if denom else currency_raw)
                 return amount, currency
         else:
             return MsgInfoIBC._amount_currency_convert(amount_raw, currency_raw)
@@ -230,8 +230,11 @@ class MsgInfoIBC:
             currency = currency_raw[1:].upper()
             return amount, currency
         else:
-            raise Exception("_amount_currency_from_raw(): no case for amount_raw={}, currency_raw={}".format(
+            logging.error("_amount_currency_from_raw(): no case for amount_raw={}, currency_raw={}".format(
                 amount_raw, currency_raw))
+            amount = float(amount_raw) / co.MILLION
+            currency = "unknown_{}".format(currency_raw)
+            return amount, currency
 
     @classmethod
     def wasm(cls, log):
