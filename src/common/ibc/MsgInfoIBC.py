@@ -188,14 +188,14 @@ class MsgInfoIBC:
         # Special cases for nonconforming denoms/assets
         # currency_raw -> (currency, exponent)
         CURRENCY_RAW_MAP = {
-            co.CUR_CRO : (co.CUR_CRO, 8),
-            co.CUR_MOBX : (co.CUR_MOBX, 9),
-            "gravity0xfB5c6815cA3AC72Ce9F5006869AE67f18bF77006" : (co.CUR_PSTAKE, 18),
-            "inj": ("INJ", 18),
-            "OSMO": ("OSMO", 6),
-            "osmo": ("OSMO", 6),
+            co.CUR_CRO: (co.CUR_CRO, 8),
+            co.CUR_MOBX: (co.CUR_MOBX, 9),
+            "gravity0xfB5c6815cA3AC72Ce9F5006869AE67f18bF77006": (co.CUR_PSTAKE, 18),
+            "inj": (co.CUR_INJ, 18),
+            "OSMO": (co.CUR_OSMO, 6),
+            "osmo": (co.CUR_OSMO, 6),
             "rowan": ("ROWAN", 18),
-            "basecro": ("CRO", 8),
+            "basecro": (co.CUR_CRO, 8),
         }
 
         if currency_raw in CURRENCY_RAW_MAP:
