@@ -183,17 +183,18 @@ class MsgInfoIBC:
     @staticmethod
     def _amount_currency_convert(amount_raw, currency_raw):
         # Special cases for nonconforming denoms/assets
-        CURRENCY_RAW_TO_EXPONENTS = {
-            co.CUR_CRO : 8,
-            co.CUR_MOBX : 9,
-            "OSMO": 6,
-            "osmo": 6,
+        # currency_raw -> (currency, exponent)
+        CURRENCY_RAW_MAP = {
+            co.CUR_CRO : (co.CUR_CRO, 8),
+            co.CUR_MOBX : (co.CUR_MOBX, 9),
+            "gravity0xfB5c6815cA3AC72Ce9F5006869AE67f18bF77006" : (co.CUR_PSTAKE, 18),
+            "OSMO": ("OSMO", 6),
+            "osmo": ("OSMO", 6),
         }
 
-        if currency_raw in CURRENCY_RAW_TO_EXPONENTS:
-            exponent = CURRENCY_RAW_TO_EXPONENTS[currency_raw]
+        if currency_raw in CURRENCY_RAW_MAP:
+            currency, exponent = CURRENCY_RAW_MAP[currency_raw]
             amount = float(amount_raw) / float(10 ** exponent)
-            currency = currency_raw
             return amount, currency
         elif currency_raw.startswith("gamm/"):
             # osmosis lp currencies
