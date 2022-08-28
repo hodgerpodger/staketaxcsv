@@ -169,14 +169,17 @@ class MsgInfoIBC:
         # 'aevmos'
         if currency_raw.startswith("ibc/"):
             # ibc address
+            denom = None
             try:
                 denom = common.ibc.api_lcd.ibc_address_to_denom(lcd_node, currency_raw, ibc_addresses)
                 amount, currency = MsgInfoIBC._amount_currency_convert(amount_raw, denom)
                 return amount, currency
             except Exception as e:
-                logging.warning("Unable to find symbol for ibc address %s, exception=%s", currency_raw, str(e))
-                amount = float(amount_raw) / co.MILLION
-                return amount, currency_raw
+                logging.warning("Unable to find symbol for ibc address %s, denom=%s, exception=%s",
+                                currency_raw, denom, str(e))
+                amount = float(amount_raw) / co.EXP9
+                currency = denom.upper() if denom else currency_raw
+                return amount, currency
         else:
             return MsgInfoIBC._amount_currency_convert(amount_raw, currency_raw)
 
@@ -191,6 +194,7 @@ class MsgInfoIBC:
             "inj": ("INJ", 18),
             "OSMO": ("OSMO", 6),
             "osmo": ("OSMO", 6),
+            "rowan": ("ROWAN", 18)
         }
 
         if currency_raw in CURRENCY_RAW_MAP:
