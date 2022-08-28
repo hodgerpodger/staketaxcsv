@@ -245,8 +245,8 @@ def _amount(amount_string):
         #currency = common.ibc.api_lcd.ibc_address_to_denom(ATOM_NODE, ibc_address, localconfig.ibc_addresses)
         #amount = float(amount) / MILLION
 
-        amount, currency = MsgInfoIBC.asset_to_currency(amount, address, ATOM_NODE, localconfig.ibc_addresses)
-        return amount, currency
+        return MsgInfoIBC.amount_currency_from_raw(
+            amount, ibc_address, ATOM_NODE, localconfig.ibc_addresses)
 
     amount, currency = amount_string.split("u", 1)
     amount = float(amount) / MILLION

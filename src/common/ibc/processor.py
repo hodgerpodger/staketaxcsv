@@ -50,7 +50,7 @@ def _get_fee(wallet_address, elem, lcd_node, ibc_addresses):
     # Get fee amount
     amount_string = amount_list[0]["amount"]
 
-    fee, fee_currency = MsgInfoIBC.asset_to_currency(amount_string, denom, lcd_node, ibc_addresses)
+    fee, fee_currency = MsgInfoIBC.amount_currency_from_raw(amount_string, denom, lcd_node, ibc_addresses)
 
     if fee == 0:
         return "", ""

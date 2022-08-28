@@ -1,3 +1,4 @@
+import logging
 import re
 
 import common.ibc.api_lcd
@@ -153,33 +154,34 @@ class MsgInfoIBC:
             amount_raw, currency_raw = m.group(1), m.group(2)
 
             # Convert from raw string to float amount and currency symbol
-            amount, currency = self._amount_currency_from_raw(amount_raw, currency_raw)
+            amount, currency = MsgInfoIBC.amount_currency_from_raw(
+                amount_raw, currency_raw, self.lcd_node, self.ibc_addresses)
 
             out.append((amount, currency))
 
         return out
 
     @staticmethod
-    def asset_to_currency(amount_raw, currency_raw, lcd_node, ibc_addresses):
+    def amount_currency_from_raw(amount_raw, currency_raw, lcd_node, ibc_addresses):
         # example currency_raw:
         # 'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4'
         # 'uluna'
-        return MsgInfoIBC("dummy_addresss", 0, {'@type': '/cosmwasm.wasm.v1.MsgExecuteContract'},
-                          {"events": []}, lcd_node, ibc_addresses)._amount_currency_from_raw(amount_raw, currency_raw)
-
-    def _amount_currency_from_raw(self, amount_raw, currency_raw):
-        # i.e. 2670866451930, aevmos
+        # 'aevmos'
         if currency_raw.startswith("ibc/"):
-            # ibc address currency
-            denom = common.ibc.api_lcd.ibc_address_to_denom(self.lcd_node, currency_raw, self.ibc_addresses)
-
-            if denom:
-                currency_raw = denom
-            else:
-                # ibc address failed lookup: use common exponent and raw ibc address as currency
+            # ibc address
+            try:
+                denom = common.ibc.api_lcd.ibc_address_to_denom(lcd_node, currency_raw, ibc_addresses)
+                amount, currency = MsgInfoIBC._amount_currency_convert(amount_raw, denom)
+                return amount, currency
+            except Exception as e:
+                logging.warning("Unable to find symbol for ibc address %s, exception=%s", currency_raw, str(e))
                 amount = float(amount_raw) / co.MILLION
                 return amount, currency_raw
+        else:
+            return MsgInfoIBC._amount_currency_convert(amount_raw, currency_raw)
 
+    @staticmethod
+    def _amount_currency_convert(amount_raw, currency_raw):
         # Special cases for nonconforming denoms/assets
         CURRENCY_RAW_TO_EXPONENTS = {
             co.CUR_CRO : 8,

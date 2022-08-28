@@ -31,7 +31,7 @@ def asset_to_currency(amount_raw, asset):
         amount = float(amount_raw) / (10 ** decimals)
         return amount, currency
     else:
-        return MsgInfoIBC.asset_to_currency(amount_raw, asset, LUNA2_LCD_NODE, localconfig.ibc_addresses)
+        return MsgInfoIBC.amount_currency_from_raw(amount_raw, asset, LUNA2_LCD_NODE, localconfig.ibc_addresses)
 
 
 def amount_assets_to_currency(amount_assets_raw):
