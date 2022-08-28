@@ -188,6 +188,7 @@ class MsgInfoIBC:
             co.CUR_CRO : (co.CUR_CRO, 8),
             co.CUR_MOBX : (co.CUR_MOBX, 9),
             "gravity0xfB5c6815cA3AC72Ce9F5006869AE67f18bF77006" : (co.CUR_PSTAKE, 18),
+            "inj": ("INJ", 18),
             "OSMO": ("OSMO", 6),
             "osmo": ("OSMO", 6),
         }
