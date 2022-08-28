@@ -194,7 +194,8 @@ class MsgInfoIBC:
             "inj": ("INJ", 18),
             "OSMO": ("OSMO", 6),
             "osmo": ("OSMO", 6),
-            "rowan": ("ROWAN", 18)
+            "rowan": ("ROWAN", 18),
+            "basecro": ("CRO", 8),
         }
 
         if currency_raw in CURRENCY_RAW_MAP:
