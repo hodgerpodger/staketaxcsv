@@ -11,3 +11,5 @@ def handle_airdrop(exporter, txinfo, msginfo):
         exporter.ingest_row(row)
     else:
         common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+
+    return True
