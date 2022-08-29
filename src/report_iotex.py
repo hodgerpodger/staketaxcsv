@@ -128,12 +128,15 @@ def _get_txs(wallet_address, progress):
 
     count = min(num_stake_actions, co.IOTEX_API_LIMIT)
     ids = []
+    ids_set = set()
     for i in range(_max_queries()):
         actions = IoTexScan.get_stake_actions(wallet_address, i, count)
-        ids.extend(
-            [act["action_hash"]
-                for act in actions
-                    if act["act_type"].lower() == co.ACTION_TYPE_DEPOSIT_STAKE])
+
+        for act in actions:
+            id = act["action_hash"]
+            if id not in ids_set and act["act_type"].lower() == co.ACTION_TYPE_DEPOSIT_STAKE:
+                ids.append(id)
+                ids_set.add(id)
 
         if len(actions) < co.IOTEX_API_LIMIT:
             break

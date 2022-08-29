@@ -65,7 +65,8 @@ def txone(wallet_address, txid):
     pprint.pprint(elem)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
-    atom.processor.process_tx(wallet_address, elem, exporter)
+    txinfo = atom.processor.process_tx(wallet_address, elem, exporter)
+    txinfo.print()
     return exporter
 
 
