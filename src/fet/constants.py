@@ -1,2 +1,2 @@
-EXCHANGE_FET = "fet_blockchain"
+EXCHANGE_FET = "fetchai_blockchain"
 MINTSCAN_LABEL_FET = "fetchai"

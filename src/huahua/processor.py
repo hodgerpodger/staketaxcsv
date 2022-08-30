@@ -14,7 +14,7 @@ def process_txs(wallet_address, elems, exporter):
 
 def process_tx(wallet_address, elem, exporter):
     txinfo = common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_HUAHUA, localconfig.ibc_addresses, HUAHUA_NODE, co.EXCHANGE_HUAHUA)
+        wallet_address, elem, co.MINTSCAN_LABEL_HUAHUA, localconfig.ibc_addresses, HUAHUA_NODE)
 
     for msginfo in txinfo.msgs:
         result = common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)

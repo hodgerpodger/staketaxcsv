@@ -9,3 +9,4 @@ class TxInfo:
         self.exchange = exchange
         self.url = url
         self.comment = ""
+        self.memo = ""

@@ -17,11 +17,12 @@ from common.ibc import handle
 MILLION = 1000000.0
 
 
-def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, exchange=None, customMsgInfo=None):
+def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, customMsgInfo=None):
     """ Parses transaction data to return TxInfo object """
     txid = elem["txhash"]
     timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
     fee, fee_currency = _get_fee(wallet_address, elem, lcd_node, ibc_addresses)
+    memo = _get_memo(elem)
 
     # Construct msgs: list of MsgInfoIBC objects
     msgs = []
@@ -35,7 +36,7 @@ def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, exchan
             msginfo = MsgInfoIBC(wallet_address, i, message, log, lcd_node, ibc_addresses)
         msgs.append(msginfo)
 
-    txinfo = TxInfoIBC(txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, exchange)
+    txinfo = TxInfoIBC(txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, memo)
     return txinfo
 
 
@@ -56,6 +57,14 @@ def _get_fee(wallet_address, elem, lcd_node, ibc_addresses):
         return "", ""
     else:
         return fee, fee_currency
+
+
+def _get_memo(elem):
+    tx = elem["tx"]
+    if "body" in tx and "memo" in tx["body"]:
+        return tx["body"]["memo"]
+    else:
+        return ""
 
 
 def handle_message(exporter, txinfo, msginfo, debug=False):

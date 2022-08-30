@@ -7,12 +7,12 @@ import common.ibc.constants
 
 class TxInfoIBC(TxInfo):
 
-    def __init__(self, txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, exchange=None):
+    def __init__(self, txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, memo):
         url = "https://mintscan.io/{}/txs/{}".format(mintscan_label, txid)
-        if not exchange:
-            exchange = "{}_blockchain".format(mintscan_label)
+        exchange = "{}_blockchain".format(mintscan_label)
         super().__init__(txid, timestamp, fee, fee_currency, wallet_address, exchange, url)
         self.msgs = msgs
+        self.memo = memo
 
     def print(self):
         for i, msg in enumerate(self.msgs):

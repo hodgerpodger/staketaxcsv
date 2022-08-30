@@ -23,7 +23,7 @@ def process_tx(wallet_address, elem, exporter):
         return
 
     txinfo = common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_ATOM, localconfig.ibc_addresses, ATOM_NODE, co.EXCHANGE_COSMOS_BLOCKCHAIN)
+        wallet_address, elem, co.MINTSCAN_LABEL_ATOM, localconfig.ibc_addresses, ATOM_NODE)
 
     for msginfo in txinfo.msgs:
         result = common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)
