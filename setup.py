@@ -9,5 +9,6 @@ setup(
     name='staketaxcsv',
     version='0.0.1',
     install_requires=required,
-    packages=find_packages(),
+    package_dir={"": "src"},
+    packages=find_packages(where="src"),
 )
