@@ -1,5 +1,5 @@
-from huahua.config_huahua import localconfig
-from common.progress import Progress
+from staketaxcsv.common.progress import Progress
+from staketaxcsv.huahua.config_huahua import localconfig
 
 SECONDS_PER_PAGE = 4
 
