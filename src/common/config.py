@@ -1,4 +1,4 @@
-from common import ExporterTypes as et
+from staketaxcsv.common import ExporterTypes as et
 
 
 class config:

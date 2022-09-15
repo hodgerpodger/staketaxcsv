@@ -7,16 +7,20 @@ import time
 from urllib.parse import urlencode
 
 import requests
-from common.ibc.api_common import (
+from dateutil import parser
+from staketaxcsv.common.ibc.api_common import (
     EVENTS_TYPE_LIST_DEFAULT,
     EVENTS_TYPE_RECIPIENT,
     EVENTS_TYPE_SENDER,
     EVENTS_TYPE_SIGNER,
     remove_duplicates,
 )
-from common.ibc.protobuf_decoder import CosmosTransactionFeeExtractor, ProtobufParser, ProtobufParserCallback
-from dateutil import parser
-from fet.fetchhub1.api_rpc import TXS_LIMIT_PER_QUERY
+from staketaxcsv.common.ibc.protobuf_decoder import (
+    CosmosTransactionFeeExtractor,
+    ProtobufParser,
+    ProtobufParserCallback,
+)
+from staketaxcsv.fet.fetchhub1.api_rpc import TXS_LIMIT_PER_QUERY
 
 
 class RpcAPI:

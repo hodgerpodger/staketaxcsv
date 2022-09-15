@@ -1,7 +1,7 @@
-from common.Exporter import Row
-from common.ExporterTypes import TX_TYPE_STAKING, TX_TYPE_UNKNOWN, TX_TYPE_NOOP
-import common.make_tx
-from common.ibc import util_ibc
+import staketaxcsv.common.make_tx
+from staketaxcsv.common.Exporter import Row
+from staketaxcsv.common.ExporterTypes import TX_TYPE_NOOP, TX_TYPE_STAKING, TX_TYPE_UNKNOWN
+from staketaxcsv.common.ibc import util_ibc
 
 
 def _make_tx(txinfo, msginfo, sent_amount, sent_currency, received_amount, received_currency, tx_type=None):

@@ -1,7 +1,9 @@
 import json
 import logging
 import os
-from common.Cache import Cache
+
+from staketaxcsv.common.Cache import Cache
+
 KOINLY_NULL_MAP_JSON = os.path.dirname(os.path.realpath(__file__)) + "/../_reports/koinly_null_map.json"
 LOCAL_MAP = "local_map"
 

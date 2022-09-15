@@ -1,12 +1,14 @@
-from common.Exporter import Row
-from common.ExporterTypes import (
+from staketaxcsv.common.Exporter import Row
+from staketaxcsv.common.ExporterTypes import (
     TX_TYPE_AIRDROP,
     TX_TYPE_BORROW,
     TX_TYPE_DEPOSIT_COLLATERAL,
     TX_TYPE_EXCLUDED,
     TX_TYPE_INCOME,
+    TX_TYPE_LP_DEPOSIT,
     TX_TYPE_LP_STAKE,
     TX_TYPE_LP_UNSTAKE,
+    TX_TYPE_LP_WITHDRAW,
     TX_TYPE_REPAY,
     TX_TYPE_SOL_TRANSFER_SELF,
     TX_TYPE_SPEND,
@@ -15,12 +17,10 @@ from common.ExporterTypes import (
     TX_TYPE_TRADE,
     TX_TYPE_TRANSFER,
     TX_TYPE_UNKNOWN,
-    TX_TYPE_LP_DEPOSIT,
-    TX_TYPE_LP_WITHDRAW,
     TX_TYPE_UNSTAKE,
     TX_TYPE_WITHDRAW_COLLATERAL,
 )
-from settings_csv import DONATION_WALLETS
+from staketaxcsv.settings_csv import DONATION_WALLETS
 
 
 def make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,

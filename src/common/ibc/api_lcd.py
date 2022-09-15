@@ -4,8 +4,9 @@ import time
 from urllib.parse import urlencode
 
 import requests
-from common.debug_util import use_debug_files
-from common.ibc.api_common import (
+import staketaxcsv.common.ibc.constants as co
+from staketaxcsv.common.debug_util import use_debug_files
+from staketaxcsv.common.ibc.api_common import (
     EVENTS_TYPE_LIST_DEFAULT,
     EVENTS_TYPE_RECIPIENT,
     EVENTS_TYPE_SENDER,
@@ -13,8 +14,7 @@ from common.ibc.api_common import (
     TXS_LIMIT_PER_QUERY,
     remove_duplicates,
 )
-from settings_csv import REPORTS_DIR
-import common.ibc.constants as co
+from staketaxcsv.settings_csv import REPORTS_DIR
 
 
 class LcdAPI:

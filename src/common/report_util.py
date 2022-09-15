@@ -3,8 +3,8 @@ import datetime
 import logging
 import os
 
-from common.ExporterTypes import FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS
-from settings_csv import REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL
+from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS
+from staketaxcsv.settings_csv import REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL
 
 ALL = "all"
 

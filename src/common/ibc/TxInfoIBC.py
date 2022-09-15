@@ -1,8 +1,9 @@
 
 
-from common.TxInfo import TxInfo
 import pprint
-import common.ibc.constants
+
+import staketaxcsv.common.ibc.constants
+from staketaxcsv.common.TxInfo import TxInfo
 
 
 class TxInfoIBC(TxInfo):

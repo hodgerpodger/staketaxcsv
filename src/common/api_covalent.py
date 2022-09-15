@@ -1,8 +1,8 @@
 import logging
 
 import requests
-from common.Singleton import Singleton
-from settings_csv import COVALENT_API_KEY, COVALENT_NODE
+from staketaxcsv.common.Singleton import Singleton
+from staketaxcsv.settings_csv import COVALENT_API_KEY, COVALENT_NODE
 
 
 # Documentation: https://www.covalenthq.com/docs/developer/

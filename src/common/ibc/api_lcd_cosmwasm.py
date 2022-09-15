@@ -1,6 +1,6 @@
 import logging
 
-from common.ibc.api_lcd import LcdAPI
+from staketaxcsv.common.ibc.api_lcd import LcdAPI
 
 
 class CosmWasmLcdAPI(LcdAPI):
