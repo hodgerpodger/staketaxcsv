@@ -2,8 +2,8 @@
 # https://docs.iotex.io/reference/node-core-api-grpc
 # https://github.com/iotexproject/iotex-core
 # https://github.com/iotexproject/iotex-explorer
-from common.make_tx import make_reward_tx, make_transfer_in_tx, make_transfer_out_tx
-from iotex import constants as co
+from staketaxcsv.common.make_tx import make_reward_tx, make_transfer_in_tx, make_transfer_out_tx
+from staketaxcsv.iotex import constants as co
 
 
 def is_transfer_transaction(elem):

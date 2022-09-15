@@ -1,4 +1,4 @@
-from common.make_tx import make_unknown_tx
+from staketaxcsv.common.make_tx import make_unknown_tx
 
 
 def handle_unknown(exporter, txinfo):

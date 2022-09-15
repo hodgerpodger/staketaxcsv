@@ -1,5 +1,5 @@
-from common.progress import Progress
-from iotex.config_iotex import localconfig
+from staketaxcsv.common.progress import Progress
+from staketaxcsv.iotex.config_iotex import localconfig
 
 # Err on the side of overestimating for better user experience
 SECONDS_PER_TX = 0.01
