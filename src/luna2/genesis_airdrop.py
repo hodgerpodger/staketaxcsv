@@ -1,7 +1,7 @@
-import luna2.constants as co
-from luna2.make_tx import make_genesis_airdrop1_tx
-from settings_csv import LUNA2_LCD_NODE
-import common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.luna2.constants as co
+from staketaxcsv.luna2.make_tx import make_genesis_airdrop1_tx
+from staketaxcsv.settings_csv import LUNA2_LCD_NODE
 
 
 def genesis_airdrop(wallet_address, exporter):
@@ -12,7 +12,7 @@ def genesis_airdrop(wallet_address, exporter):
 
 
 def _genesis_airdrop_luna_amount(wallet_address):
-    data = common.ibc.api_lcd.LcdAPI(LUNA2_LCD_NODE).balances(wallet_address, height=1)
+    data = staketaxcsv.common.ibc.api_lcd.LcdAPI(LUNA2_LCD_NODE).balances(wallet_address, height=1)
     balances_elem = data["balances"]
 
     if len(balances_elem) == 0:

@@ -1,5 +1,5 @@
-from common.progress import Progress
-from luna2.config_luna2 import localconfig
+from staketaxcsv.common.progress import Progress
+from staketaxcsv.luna2.config_luna2 import localconfig
 
 SECONDS_PER_PAGE = 3
 

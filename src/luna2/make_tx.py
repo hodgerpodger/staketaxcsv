@@ -1,6 +1,6 @@
-from common.Exporter import Row
-from common.ExporterTypes import TX_TYPE_AIRDROP
-from luna2.constants import EXCHANGE_LUNA2, CURRENCY_LUNA2
+from staketaxcsv.common.Exporter import Row
+from staketaxcsv.common.ExporterTypes import TX_TYPE_AIRDROP
+from staketaxcsv.luna2.constants import CURRENCY_LUNA2, EXCHANGE_LUNA2
 
 
 def make_genesis_airdrop1_tx(amount_luna, wallet_address):

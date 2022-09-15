@@ -1,8 +1,8 @@
-from common.ibc.MsgInfoIBC import MsgInfoIBC
-from common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI, extract_msg
-from luna2.constants import MILLION
-from luna2.config_luna2 import localconfig
-from settings_csv import LUNA2_LCD_NODE
+from staketaxcsv.common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI, extract_msg
+from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
+from staketaxcsv.luna2.config_luna2 import localconfig
+from staketaxcsv.luna2.constants import MILLION
+from staketaxcsv.settings_csv import LUNA2_LCD_NODE
 
 
 def _contract_address_to_currency(address):

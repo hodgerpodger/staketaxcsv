@@ -1,18 +1,18 @@
 import logging
 
-import common.ibc.handle
-import common.ibc.processor
-import common.make_tx
-from luna2.config_luna2 import localconfig
-from luna2 import constants as co
-from common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI
-from settings_csv import LUNA2_LCD_NODE
+import staketaxcsv.common.ibc.handle
+import staketaxcsv.common.ibc.processor
+import staketaxcsv.common.make_tx
+import staketaxcsv.luna2.contracts.astroport
+import staketaxcsv.luna2.contracts.general
+import staketaxcsv.luna2.contracts.valkyrie
+from staketaxcsv.common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI
+from staketaxcsv.luna2 import constants as co
+from staketaxcsv.luna2.config_luna2 import localconfig
 
 # Import contract handler functions
-from luna2.contracts.config import CONTRACTS
-import luna2.contracts.astroport
-import luna2.contracts.general
-import luna2.contracts.valkyrie
+from staketaxcsv.luna2.contracts.config import CONTRACTS
+from staketaxcsv.settings_csv import LUNA2_LCD_NODE
 
 CONTRACT_VKR_TOKEN = "terra1gy73st560m2j0esw5c5rjmr899hvtv4rhh4seeajt3clfhr4aupszjss4j"
 CONTRACTS_USE_SECOND_MESSAGE = set([
@@ -33,18 +33,18 @@ def process_tx(wallet_address, elem, exporter):
     else:
         for msginfo in txinfo.msgs:
             # Handle common ibc messages
-            result = common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)
+            result = staketaxcsv.common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)
             if result:
                 continue
 
             # Handle unknown messages
-            common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+            staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
     return txinfo
 
 
 def _txinfo(wallet_address, elem):
-    txinfo = common.ibc.processor.txinfo(
+    txinfo = staketaxcsv.common.ibc.processor.txinfo(
         wallet_address, elem, "dummy", localconfig.ibc_addresses, LUNA2_LCD_NODE)
 
     # Edit url, since terra not in mintscan
@@ -70,12 +70,12 @@ def _handle_execute_contract(exporter, elem, txinfo):
         # Query contract data (to identify it)
         contract_data = _get_contract_data(contract)
 
-        if luna2.contracts.astroport.is_astroport_pair_contract(contract_data):
-            handler_func = luna2.contracts.astroport.handle_astroport
+        if staketaxcsv.luna2.contracts.astroport.is_astroport_pair_contract(contract_data):
+            handler_func = staketaxcsv.luna2.contracts.astroport.handle_astroport
         else:
             # No handler found for this contract
             for msginfo in txinfo.msgs:
-                common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+                staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
             return
 
     # Run handler function that returns CSV row(s)
@@ -83,7 +83,7 @@ def _handle_execute_contract(exporter, elem, txinfo):
         rows = handler_func(elem, txinfo)
 
         # Add row(s) to CSV
-        common.make_tx.ingest_rows(exporter, txinfo, rows)
+        staketaxcsv.common.make_tx.ingest_rows(exporter, txinfo, rows)
     except Exception as e:
         logging.error("Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
         _handle_unknown(exporter, txinfo)
@@ -104,5 +104,5 @@ def _get_contract_data(address):
 
 
 def _handle_unknown(exporter, txinfo):
-    row = common.make_tx.make_unknown_tx(txinfo)
+    row = staketaxcsv.common.make_tx.make_unknown_tx(txinfo)
     exporter.ingest_row(row)

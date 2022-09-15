@@ -1,6 +1,6 @@
-import common.make_tx
-from luna2.contracts.config import CONTRACTS
-import luna2.util_luna2
+import staketaxcsv.common.make_tx
+import staketaxcsv.luna2.util_luna2
+from staketaxcsv.luna2.contracts.config import CONTRACTS
 
 CONTRACT_ASTROPORT_ROUTER = "terra1j8hayvehh3yy02c2vtw5fdhz9f4drhtee8p5n5rguvg3nyd6m83qd2y90a"
 CONTRACT_ASTROPORT_ASTRO = "terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26"
@@ -62,19 +62,19 @@ def _handle_provide_liquidity(txinfo, msginfo):
     mint_action = [action for action in actions if action["action"] == "mint"][0]
 
     # Determine sent amounts
-    sent_amounts = luna2.util_luna2.amount_assets_to_currency(pl_action["assets"])
+    sent_amounts = staketaxcsv.luna2.util_luna2.amount_assets_to_currency(pl_action["assets"])
     sent_amount_1, sent_currency_1 = sent_amounts[0]
     sent_amount_2, sent_currency_2 = sent_amounts[1]
 
     # Determine received LP currency
     lp_amount_raw = mint_action["amount"]
     lp_asset = mint_action["_contract_address"]
-    lp_amount, lp_currency = luna2.util_luna2.lp_asset_to_currency(lp_amount_raw, lp_asset)
+    lp_amount, lp_currency = staketaxcsv.luna2.util_luna2.lp_asset_to_currency(lp_amount_raw, lp_asset)
 
     # Create CSV rows
     rows = [
-        common.make_tx.make_lp_deposit_tx(txinfo, sent_amount_1, sent_currency_1, lp_amount / 2, lp_currency),
-        common.make_tx.make_lp_deposit_tx(txinfo, sent_amount_2, sent_currency_2, lp_amount / 2, lp_currency)
+        staketaxcsv.common.make_tx.make_lp_deposit_tx(txinfo, sent_amount_1, sent_currency_1, lp_amount / 2, lp_currency),
+        staketaxcsv.common.make_tx.make_lp_deposit_tx(txinfo, sent_amount_2, sent_currency_2, lp_amount / 2, lp_currency)
     ]
 
     return rows
@@ -97,19 +97,19 @@ def _handle_withdraw_liquidity(txinfo, msginfo):
     wl_action = [action for action in actions if action["action"] == "withdraw_liquidity"][0]
 
     # Determine received amounts
-    rec_amounts = luna2.util_luna2.amount_assets_to_currency(wl_action["refund_assets"])
+    rec_amounts = staketaxcsv.luna2.util_luna2.amount_assets_to_currency(wl_action["refund_assets"])
     rec_amount_1, rec_currency_1 = rec_amounts[0]
     rec_amount_2, rec_currency_2 = rec_amounts[1]
 
     # Determine received LP currency
     lp_amount_raw = wl_action["withdrawn_share"]
     lp_asset = wl_action["_contract_address"]
-    lp_amount, lp_currency = luna2.util_luna2.lp_asset_to_currency(lp_amount_raw, lp_asset)
+    lp_amount, lp_currency = staketaxcsv.luna2.util_luna2.lp_asset_to_currency(lp_amount_raw, lp_asset)
 
     # Create CSV rows
     rows = [
-        common.make_tx.make_lp_withdraw_tx(txinfo, rec_amount_1, rec_currency_1, lp_amount / 2, lp_currency),
-        common.make_tx.make_lp_withdraw_tx(txinfo, rec_amount_2, rec_currency_2, lp_amount / 2, lp_currency)
+        staketaxcsv.common.make_tx.make_lp_withdraw_tx(txinfo, rec_amount_1, rec_currency_1, lp_amount / 2, lp_currency),
+        staketaxcsv.common.make_tx.make_lp_withdraw_tx(txinfo, rec_amount_2, rec_currency_2, lp_amount / 2, lp_currency)
     ]
 
     return rows
@@ -128,10 +128,10 @@ def _handle_swap(txinfo, msginfo):
     sent_amount_raw, sent_asset = swap_actions[0]["offer_amount"], swap_actions[0]["offer_asset"]
     received_amount_raw, received_asset = swap_actions[-1]["return_amount"], swap_actions[-1]["ask_asset"]
 
-    sent_amount, sent_currency = luna2.util_luna2.asset_to_currency(sent_amount_raw, sent_asset)
-    received_amount, received_currency = luna2.util_luna2.asset_to_currency(received_amount_raw, received_asset)
+    sent_amount, sent_currency = staketaxcsv.luna2.util_luna2.asset_to_currency(sent_amount_raw, sent_asset)
+    received_amount, received_currency = staketaxcsv.luna2.util_luna2.asset_to_currency(received_amount_raw, received_asset)
 
-    row = common.make_tx.make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
+    row = staketaxcsv.common.make_tx.make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
     return [row]
 
 
@@ -150,10 +150,10 @@ def _handle_xastro_staking(txinfo, msginfo):
     sent_amount_raw, sent_asset = actions[0]["amount"], actions[0]["_contract_address"]
     received_amount_raw, received_asset = actions[1]["amount"], actions[1]["_contract_address"]
 
-    sent_amount, sent_currency = luna2.util_luna2.asset_to_currency(sent_amount_raw, sent_asset)
-    received_amount, received_currency = luna2.util_luna2.asset_to_currency(received_amount_raw, received_asset)
+    sent_amount, sent_currency = staketaxcsv.luna2.util_luna2.asset_to_currency(sent_amount_raw, sent_asset)
+    received_amount, received_currency = staketaxcsv.luna2.util_luna2.asset_to_currency(received_amount_raw, received_asset)
 
-    row = common.make_tx.make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
+    row = staketaxcsv.common.make_tx.make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
     return [row]
 
 
@@ -170,9 +170,9 @@ def _handle_airdrop(txinfo, msginfo):
     actions = msginfo.wasm
 
     reward_amount_raw, reward_asset = actions[1]["amount"], actions[1]["_contract_address"]
-    reward_amount, reward_currency = luna2.util_luna2.asset_to_currency(reward_amount_raw, reward_asset)
+    reward_amount, reward_currency = staketaxcsv.luna2.util_luna2.asset_to_currency(reward_amount_raw, reward_asset)
 
-    row = common.make_tx.make_airdrop_tx(txinfo, reward_amount, reward_currency)
+    row = staketaxcsv.common.make_tx.make_airdrop_tx(txinfo, reward_amount, reward_currency)
     return [row]
 
 
@@ -190,9 +190,9 @@ def _handle_aidrop_vesting_account(txinfo, msginfo):
     actions = msginfo.wasm
 
     reward_amount_raw, reward_asset = actions[2]["amount"], actions[2]["_contract_address"]
-    reward_amount, reward_currency = luna2.util_luna2.asset_to_currency(reward_amount_raw, reward_asset)
+    reward_amount, reward_currency = staketaxcsv.luna2.util_luna2.asset_to_currency(reward_amount_raw, reward_asset)
 
-    row = common.make_tx.make_airdrop_tx(txinfo, reward_amount, reward_currency)
+    row = staketaxcsv.common.make_tx.make_airdrop_tx(txinfo, reward_amount, reward_currency)
     return [row]
 
 
