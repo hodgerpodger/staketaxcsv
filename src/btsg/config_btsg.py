@@ -1,4 +1,4 @@
-from common.config import config
+from staketaxcsv.common.config import config
 
 
 class localconfig(config):

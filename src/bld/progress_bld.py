@@ -1,5 +1,5 @@
-from bld.config_bld import localconfig
-from common.progress import Progress
+from staketaxcsv.bld.config_bld import localconfig
+from staketaxcsv.common.progress import Progress
 
 SECONDS_PER_PAGE = 4
 

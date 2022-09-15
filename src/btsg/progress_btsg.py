@@ -1,5 +1,5 @@
-from btsg.config_btsg import localconfig
-from common.progress import Progress
+from staketaxcsv.btsg.config_btsg import localconfig
+from staketaxcsv.common.progress import Progress
 
 SECONDS_PER_PAGE = 4
 

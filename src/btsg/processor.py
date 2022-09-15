@@ -1,10 +1,10 @@
 import logging
-import common.ibc.processor
-import btsg.constants as co
-import common.ibc.processor
-import common.ibc.handle
-from btsg.config_btsg import localconfig
-from settings_csv import BTSG_NODE
+
+import staketaxcsv.btsg.constants as co
+import staketaxcsv.common.ibc.handle
+import staketaxcsv.common.ibc.processor
+from staketaxcsv.btsg.config_btsg import localconfig
+from staketaxcsv.settings_csv import BTSG_NODE
 
 
 def process_txs(wallet_address, elems, exporter):
