@@ -1,7 +1,7 @@
 
-from luna1.col5.contracts.config import CONTRACTS
-from luna1 import util_terra
-from luna1.make_tx import make_swap_tx_terra
+from staketaxcsv.luna1 import util_terra
+from staketaxcsv.luna1.col5.contracts.config import CONTRACTS
+from staketaxcsv.luna1.make_tx import make_swap_tx_terra
 
 
 def _extract_asset_info_contract_or_denom(asset_info):

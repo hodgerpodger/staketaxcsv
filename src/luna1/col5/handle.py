@@ -1,9 +1,9 @@
-import common.make_tx
-from luna1 import util_terra
-from luna1.col5.contracts.config import CONTRACTS
-import luna1.col5.contracts.astroport
-import luna1.col5.contracts.wormhole
-import luna1.col5.contracts.terraswap_route_swap
+import staketaxcsv.common.make_tx
+import staketaxcsv.luna1.col5.contracts.astroport
+import staketaxcsv.luna1.col5.contracts.terraswap_route_swap
+import staketaxcsv.luna1.col5.contracts.wormhole
+from staketaxcsv.luna1 import util_terra
+from staketaxcsv.luna1.col5.contracts.config import CONTRACTS
 
 
 def can_handle(exporter, elem, txinfo):

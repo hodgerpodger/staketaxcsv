@@ -1,6 +1,6 @@
-from luna1.col5.contracts.config import CONTRACTS
-from common.make_tx import make_transfer_in_tx, make_unknown_tx, make_transfer_out_tx
-from luna1.col5.actions.complete_transfer_wrapped import handle_action_complete_transfer_wrapped
+from staketaxcsv.common.make_tx import make_transfer_in_tx, make_transfer_out_tx, make_unknown_tx
+from staketaxcsv.luna1.col5.actions.complete_transfer_wrapped import handle_action_complete_transfer_wrapped
+from staketaxcsv.luna1.col5.contracts.config import CONTRACTS
 
 
 def handle_wormhole(elem, txinfo):

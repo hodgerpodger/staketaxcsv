@@ -1,5 +1,5 @@
-from luna1 import util_terra
-from common.make_tx import make_transfer_in_tx
+from staketaxcsv.common.make_tx import make_transfer_in_tx
+from staketaxcsv.luna1 import util_terra
 
 
 def handle_action_complete_transfer_wrapped(txinfo, action, row_comment):

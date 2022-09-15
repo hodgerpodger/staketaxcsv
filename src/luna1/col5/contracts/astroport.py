@@ -1,10 +1,8 @@
-from luna1.col5.contracts.config import CONTRACTS
-from luna1.constants import CUR_ASTRO
-from luna1 import util_terra
-from common.make_tx import make_airdrop_tx, make_swap_tx
-from luna1 import util_terra
-from luna1 import constants as co
-
+from staketaxcsv.common.make_tx import make_airdrop_tx, make_swap_tx
+from staketaxcsv.luna1 import constants as co
+from staketaxcsv.luna1 import util_terra
+from staketaxcsv.luna1.col5.contracts.config import CONTRACTS
+from staketaxcsv.luna1.constants import CUR_ASTRO
 
 CONTRACT_ASTROPORT_AIRDROP = "terra1dpe2aqykm2vnakcz4vgpha0agxnlkjvgfahhk7"
 
