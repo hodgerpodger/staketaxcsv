@@ -6,13 +6,13 @@ import logging
 import re
 from datetime import datetime, timezone
 
-from sol import util_sol
-from sol.api_rpc import RpcAPI
-from sol.constants import BILLION, CURRENCY_SOL, INSTRUCTION_TYPE_DELEGATE, MINT_SOL, PROGRAM_STAKE
-from sol.tickers.tickers import Tickers
-from sol.TxInfoSol import TxInfoSol
-from sol.handle_transfer import is_transfer
-import sol.util_sol
+import staketaxcsv.sol.util_sol
+from staketaxcsv.sol import util_sol
+from staketaxcsv.sol.api_rpc import RpcAPI
+from staketaxcsv.sol.constants import BILLION, CURRENCY_SOL, INSTRUCTION_TYPE_DELEGATE, MINT_SOL, PROGRAM_STAKE
+from staketaxcsv.sol.handle_transfer import is_transfer
+from staketaxcsv.sol.tickers.tickers import Tickers
+from staketaxcsv.sol.TxInfoSol import TxInfoSol
 
 
 def parse_tx(txid, data, wallet_info):

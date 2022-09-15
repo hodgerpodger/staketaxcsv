@@ -1,7 +1,7 @@
 # Unknown program DjVE6JNiYqPL2QXyCUUh8rNjHrbz9hXHNYt99MQ59qw1
 
-from common.make_tx import make_swap_tx
-from sol.handle_simple import handle_unknown
+from staketaxcsv.common.make_tx import make_swap_tx
+from staketaxcsv.sol.handle_simple import handle_unknown
 
 
 def handle_2kd(exporter, txinfo):

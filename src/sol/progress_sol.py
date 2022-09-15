@@ -1,5 +1,5 @@
-from common.progress import Progress
-from sol.config_sol import localconfig
+from staketaxcsv.common.progress import Progress
+from staketaxcsv.sol.config_sol import localconfig
 
 # Err on the side of overestimating for better user experience
 SECONDS_PER_TOKEN_ADDRESS = 0.2

@@ -1,5 +1,7 @@
 import logging
-from sol.constants import CURRENCY_SOL, MILLION
+
+from staketaxcsv.sol.constants import CURRENCY_SOL, MILLION
+
 FEE_THRESHOLD = 0.03
 
 

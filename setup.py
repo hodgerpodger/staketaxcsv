@@ -20,4 +20,5 @@ setup(
     install_requires=required,
     package_dir={PACKAGE_NAME: SOURCE_DIRECTORY},
     packages=project_packages,
+    include_package_data=True,
 )

@@ -4,10 +4,10 @@ import time
 from datetime import datetime, timezone
 
 import requests
-from settings_csv import SOL_NODE, REPORTS_DIR
-from sol.constants import BILLION, PROGRAMID_STAKE, PROGRAMID_TOKEN_ACCOUNTS
-from sol.config_sol import localconfig
-from common.debug_util import use_debug_files
+from staketaxcsv.common.debug_util import use_debug_files
+from staketaxcsv.settings_csv import REPORTS_DIR, SOL_NODE
+from staketaxcsv.sol.config_sol import localconfig
+from staketaxcsv.sol.constants import BILLION, PROGRAMID_STAKE, PROGRAMID_TOKEN_ACCOUNTS
 
 TOKEN_ACCOUNTS = {}
 

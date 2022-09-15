@@ -1,7 +1,7 @@
-from common.ExporterTypes import TX_TYPE_SOL_INIT_ACCOUNT
-from common.make_tx import make_swap_tx
-from sol.handle_simple import handle_unknown_detect_transfers
-from sol.make_tx import make_lp_deposit_tx, make_lp_farm_tx, make_simple_tx
+from staketaxcsv.common.ExporterTypes import TX_TYPE_SOL_INIT_ACCOUNT
+from staketaxcsv.common.make_tx import make_swap_tx
+from staketaxcsv.sol.handle_simple import handle_unknown_detect_transfers
+from staketaxcsv.sol.make_tx import make_lp_deposit_tx, make_lp_farm_tx, make_simple_tx
 
 
 def handle_saber(exporter, txinfo):

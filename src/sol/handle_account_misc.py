@@ -1,5 +1,5 @@
-from common.ExporterTypes import TX_TYPE_SOL_CLOSE_ACCOUNT, TX_TYPE_SOL_INIT_ACCOUNT
-from sol.constants import (
+from staketaxcsv.common.ExporterTypes import TX_TYPE_SOL_CLOSE_ACCOUNT, TX_TYPE_SOL_INIT_ACCOUNT
+from staketaxcsv.sol.constants import (
     INSTRUCTION_TYPE_CLOSE_ACCOUNT,
     INSTRUCTION_TYPE_CREATE_ACCOUNT,
     INSTRUCTION_TYPE_INITIALIZE,
@@ -7,7 +7,7 @@ from sol.constants import (
     PROGRAM_SPL_ASSOCIATED_TOKEN_ACCOUNT,
     PROGRAM_SPL_TOKEN,
 )
-from sol.handle_simple import _handle_generic
+from staketaxcsv.sol.handle_simple import _handle_generic
 
 INSTRUCTION_TYPES_INIT = set([
     INSTRUCTION_TYPE_CREATE_ACCOUNT,

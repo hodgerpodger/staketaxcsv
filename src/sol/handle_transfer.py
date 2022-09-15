@@ -1,10 +1,6 @@
-from common.make_tx import make_transfer_in_tx, make_transfer_out_tx
-from sol.constants import (
-    INSTRUCT_TRANSFERCHECK,
-    INSTRUCT_TRANSFERCHECKED,
-    CURRENCY_SOL,
-)
-import sol.util_sol
+import staketaxcsv.sol.util_sol
+from staketaxcsv.common.make_tx import make_transfer_in_tx, make_transfer_out_tx
+from staketaxcsv.sol.constants import CURRENCY_SOL, INSTRUCT_TRANSFERCHECK, INSTRUCT_TRANSFERCHECKED
 
 
 def is_transfer(txinfo):

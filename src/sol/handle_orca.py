@@ -1,8 +1,7 @@
-from common.make_tx import make_swap_tx
-from sol.handle_simple import handle_unknown_detect_transfers
-from sol.constants import CURRENCY_SOL, CURRENCY_STSOL
-from sol.util_sol import FEE_THRESHOLD
-
+from staketaxcsv.common.make_tx import make_swap_tx
+from staketaxcsv.sol.constants import CURRENCY_SOL, CURRENCY_STSOL
+from staketaxcsv.sol.handle_simple import handle_unknown_detect_transfers
+from staketaxcsv.sol.util_sol import FEE_THRESHOLD
 
 STSOL_FEE_THRESHOLD = 0.0001
 

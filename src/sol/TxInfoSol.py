@@ -1,7 +1,7 @@
 import pprint
 
-from common.TxInfo import TxInfo
-from sol.constants import CURRENCY_SOL, EXCHANGE_SOLANA_BLOCKCHAIN
+from staketaxcsv.common.TxInfo import TxInfo
+from staketaxcsv.sol.constants import CURRENCY_SOL, EXCHANGE_SOLANA_BLOCKCHAIN
 
 
 class TxInfoSol(TxInfo):

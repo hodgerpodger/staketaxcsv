@@ -1,5 +1,5 @@
-from common.Exporter import Row
-from common.ExporterTypes import (
+from staketaxcsv.common.Exporter import Row
+from staketaxcsv.common.ExporterTypes import (
     TX_TYPE_SOL_LP_DEPOSIT,
     TX_TYPE_SOL_LP_FARM,
     TX_TYPE_SOL_LP_WITHDRAW,
@@ -7,8 +7,8 @@ from common.ExporterTypes import (
     TX_TYPE_SOL_SERUM_DEX,
     TX_TYPE_STAKING,
 )
-from common.make_tx import _make_tx_exchange, _make_tx_received, _make_tx_sent, make_simple_tx
-from sol.constants import CURRENCY_SOL, EXCHANGE_SOLANA_BLOCKCHAIN
+from staketaxcsv.common.make_tx import _make_tx_exchange, _make_tx_received, _make_tx_sent, make_simple_tx
+from staketaxcsv.sol.constants import CURRENCY_SOL, EXCHANGE_SOLANA_BLOCKCHAIN
 
 
 def make_sol_reward_tx(timestamp, reward, wallet_address, txid):

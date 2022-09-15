@@ -1,13 +1,13 @@
 import csv
+import datetime
 import glob
 import logging
 import os
 import subprocess
-import datetime
 
-from sol.api_rpc import RpcAPI
-from sol.config_sol import localconfig
-from sol.make_tx import make_sol_reward_tx
+from staketaxcsv.sol.api_rpc import RpcAPI
+from staketaxcsv.sol.config_sol import localconfig
+from staketaxcsv.sol.make_tx import make_sol_reward_tx
 
 DATADIR = os.path.dirname(os.path.realpath(__file__)) + "/data_staking_rewards"
 START_EPOCH = 132  # epoch of first ever staking reward

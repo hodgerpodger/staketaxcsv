@@ -1,8 +1,8 @@
 # Swap V2 Program: SwaPpA9LAaLfeLi3a68M4DjnLqgtticKg6CnyNwgAC8
 
-from common.make_tx import make_swap_tx
-from sol.constants import LOG_INSTRUCTION_SWAP
-from sol.handle_simple import handle_unknown
+from staketaxcsv.common.make_tx import make_swap_tx
+from staketaxcsv.sol.constants import LOG_INSTRUCTION_SWAP
+from staketaxcsv.sol.handle_simple import handle_unknown
 
 
 def handle_program_swap_v2(exporter, txinfo):

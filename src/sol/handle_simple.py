@@ -1,12 +1,13 @@
-from common.ExporterTypes import (
+import staketaxcsv.sol.util_sol
+from staketaxcsv.common.ExporterTypes import (
     TX_TYPE_SOL_STAKING_CREATE,
     TX_TYPE_SOL_STAKING_DEACTIVATE,
     TX_TYPE_SOL_STAKING_SPLIT,
     TX_TYPE_SOL_STAKING_WITHDRAW,
     TX_TYPE_STAKING_DELEGATE,
 )
-from common.make_tx import make_simple_tx, make_unknown_tx, make_unknown_tx_with_transfer, make_spend_fee_tx
-from sol.constants import (
+from staketaxcsv.common.make_tx import make_simple_tx, make_spend_fee_tx, make_unknown_tx, make_unknown_tx_with_transfer
+from staketaxcsv.sol.constants import (
     INSTRUCTION_TYPE_CREATE_ACCOUNT_WITH_SEED,
     INSTRUCTION_TYPE_DEACTIVATE,
     INSTRUCTION_TYPE_DELEGATE,
@@ -16,7 +17,6 @@ from sol.constants import (
     PROGRAM_STAKE,
     PROGRAM_SYSTEM,
 )
-import sol.util_sol
 
 SIMPLE_TXS = {
     (INSTRUCTION_TYPE_DEACTIVATE, PROGRAM_STAKE): TX_TYPE_SOL_STAKING_DEACTIVATE,
@@ -50,13 +50,13 @@ def handle_simple_tx(exporter, txinfo):
 
 
 def handle_unknown(exporter, txinfo):
-    txinfo.fee = sol.util_sol.calculate_fee(txinfo)
+    txinfo.fee = staketaxcsv.sol.util_sol.calculate_fee(txinfo)
     row = make_unknown_tx(txinfo)
     exporter.ingest_row(row)
 
 
 def _handle_generic(exporter, txinfo, tx_type):
-    fee = sol.util_sol.calculate_fee(txinfo)
+    fee = staketaxcsv.sol.util_sol.calculate_fee(txinfo)
 
     row = make_spend_fee_tx(txinfo, fee, txinfo.fee_currency)
     row.fee = ""
