@@ -1,5 +1,5 @@
-from kuji.config_kuji import localconfig
-from common.progress import Progress
+from staketaxcsv.common.progress import Progress
+from staketaxcsv.kuji.config_kuji import localconfig
 
 SECONDS_PER_PAGE = 4
 

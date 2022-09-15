@@ -1,15 +1,15 @@
 import logging
 
-import common.ibc.processor
-import common.ibc.handle
-from kuji.config_kuji import localconfig
-from common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI, extract_msg
-import kuji.constants as co
-from settings_csv import KUJI_NODE
+import staketaxcsv.common.ibc.handle
+import staketaxcsv.common.ibc.processor
+import staketaxcsv.kuji.constants as co
+import staketaxcsv.kuji.contracts.fin
+from staketaxcsv.common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI, extract_msg
+from staketaxcsv.kuji.config_kuji import localconfig
 
 # Import contract handler functions
-from kuji.contracts.config import CONTRACTS
-import kuji.contracts.fin
+from staketaxcsv.kuji.contracts.config import CONTRACTS
+from staketaxcsv.settings_csv import KUJI_NODE
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -18,7 +18,7 @@ def process_txs(wallet_address, elems, exporter):
 
 
 def process_tx(wallet_address, elem, exporter):
-    txinfo = common.ibc.processor.txinfo(
+    txinfo = staketaxcsv.common.ibc.processor.txinfo(
         wallet_address, elem, co.MINTSCAN_LABEL_KUJI, localconfig.ibc_addresses, KUJI_NODE)
     txinfo.url = "https://finder.kujira.app/kaiyo-1/tx/{}".format(txinfo.txid)
 
@@ -26,11 +26,11 @@ def process_tx(wallet_address, elem, exporter):
         _handle_execute_contract(exporter, elem, txinfo)
     else:
         for msginfo in txinfo.msgs:
-            result = common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)
+            result = staketaxcsv.common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)
             if result:
                 continue
 
-            common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+            staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
     return txinfo
 
@@ -50,12 +50,12 @@ def _handle_execute_contract(exporter, elem, txinfo):
         # Query contract metadata (to identify it)
         contract_history_data = _get_contract_history_data(contract)
 
-        if kuji.contracts.fin.is_fin_contract(contract_history_data):
-            handler_func = kuji.contracts.fin.handle_fin
+        if staketaxcsv.kuji.contracts.fin.is_fin_contract(contract_history_data):
+            handler_func = staketaxcsv.kuji.contracts.fin.handle_fin
         else:
             # No handler found for this contract
             for msginfo in txinfo.msgs:
-                common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+                staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
             return
 
     # Run handler function that returns CSV row(s)
@@ -63,7 +63,7 @@ def _handle_execute_contract(exporter, elem, txinfo):
         rows = handler_func(elem, txinfo)
 
         # Add row(s) to CSV
-        common.make_tx.ingest_rows(exporter, txinfo, rows)
+        staketaxcsv.common.make_tx.ingest_rows(exporter, txinfo, rows)
     except Exception as e:
         logging.error("Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
         _handle_unknown(exporter, txinfo)
@@ -84,5 +84,5 @@ def _get_contract_history_data(address):
 
 
 def _handle_unknown(exporter, txinfo):
-    row = common.make_tx.make_unknown_tx(txinfo)
+    row = staketaxcsv.common.make_tx.make_unknown_tx(txinfo)
     exporter.ingest_row(row)

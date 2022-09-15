@@ -1,4 +1,4 @@
-import common.make_tx
+import staketaxcsv.common.make_tx
 
 FIN_OWNER = "kujira1ghmq7k50rwpsnye39aefngd2k7x9kc2hrqq5xd"
 
@@ -37,7 +37,7 @@ def _handle_swap(txinfo, msginfo):
         received_amount, received_currency = transfers_in[0]
         sent_amount, sent_currency = transfers_out[0]
 
-        row = common.make_tx.make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
+        row = staketaxcsv.common.make_tx.make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
         return [row]
     else:
         raise Exception("_handle_swap(): unable to handle transaction")

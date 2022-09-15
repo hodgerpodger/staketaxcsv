@@ -1,5 +1,5 @@
-from juno.config_juno import localconfig
-from common.progress import Progress
+from staketaxcsv.common.progress import Progress
+from staketaxcsv.juno.config_juno import localconfig
 
 SECONDS_PER_PAGE = 4
 
