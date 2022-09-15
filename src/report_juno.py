@@ -10,15 +10,15 @@ TODO: JUNO CSVs are only in experimental state.  All "execute contract" transact
 import logging
 import pprint
 
-from juno.config_juno import localconfig
-from juno.progress_juno import SECONDS_PER_PAGE, ProgressJuno
-from common import report_util
-from common.Cache import Cache
-from common.Exporter import Exporter
-from common.ExporterTypes import FORMAT_DEFAULT
-from settings_csv import TICKER_JUNO, JUNO_NODE
-import juno.processor
-import common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.juno.processor
+from staketaxcsv.common import report_util
+from staketaxcsv.common.Cache import Cache
+from staketaxcsv.common.Exporter import Exporter
+from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
+from staketaxcsv.juno.config_juno import localconfig
+from staketaxcsv.juno.progress_juno import SECONDS_PER_PAGE, ProgressJuno
+from staketaxcsv.settings_csv import JUNO_NODE, TICKER_JUNO
 
 
 def main():
@@ -41,24 +41,24 @@ def _read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return common.ibc.api_lcd.LcdAPI(JUNO_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd.LcdAPI(JUNO_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = common.ibc.api_lcd.LcdAPI(JUNO_NODE).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(JUNO_NODE).get_tx(txid)
 
     print("Transaction data:")
     pprint.pprint(elem)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_JUNO)
-    txinfo = juno.processor.process_tx(wallet_address, elem, exporter)
+    txinfo = staketaxcsv.juno.processor.process_tx(wallet_address, elem, exporter)
     txinfo.print()
     return exporter
 
 
 def estimate_duration(wallet_address, options):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * common.ibc.api_lcd.get_txs_pages_count(JUNO_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(JUNO_NODE, wallet_address, max_txs)
 
 
 def txhistory(wallet_address, options):
@@ -73,14 +73,14 @@ def txhistory(wallet_address, options):
     exporter = Exporter(wallet_address, localconfig, TICKER_JUNO)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = common.ibc.api_lcd.get_txs_pages_count(JUNO_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(JUNO_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = common.ibc.api_lcd.get_txs_all(JUNO_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
+    elems = staketaxcsv.common.ibc.api_lcd.get_txs_all(JUNO_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
-    juno.processor.process_txs(wallet_address, elems, exporter)
+    staketaxcsv.juno.processor.process_txs(wallet_address, elems, exporter)
 
     if localconfig.cache:
         Cache().set_ibc_addresses(localconfig.ibc_addresses)

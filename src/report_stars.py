@@ -10,15 +10,15 @@ TODO: STARS CSVs are only in experimental state.  All "execute contract" transac
 import logging
 import pprint
 
-from stars.config_stars import localconfig
-from stars.progress_stars import SECONDS_PER_PAGE, ProgressStars
-from common import report_util
-from common.Cache import Cache
-from common.Exporter import Exporter
-from common.ExporterTypes import FORMAT_DEFAULT
-from settings_csv import TICKER_STARS, STARS_NODE
-import stars.processor
-import common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.stars.processor
+from staketaxcsv.common import report_util
+from staketaxcsv.common.Cache import Cache
+from staketaxcsv.common.Exporter import Exporter
+from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
+from staketaxcsv.settings_csv import STARS_NODE, TICKER_STARS
+from staketaxcsv.stars.config_stars import localconfig
+from staketaxcsv.stars.progress_stars import SECONDS_PER_PAGE, ProgressStars
 
 
 def main():
@@ -41,24 +41,24 @@ def _read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return common.ibc.api_lcd.LcdAPI(STARS_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd.LcdAPI(STARS_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = common.ibc.api_lcd.LcdAPI(STARS_NODE).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(STARS_NODE).get_tx(txid)
 
     print("Transaction data:")
     pprint.pprint(elem)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_STARS)
-    txinfo = stars.processor.process_tx(wallet_address, elem, exporter)
+    txinfo = staketaxcsv.stars.processor.process_tx(wallet_address, elem, exporter)
     txinfo.print()
     return exporter
 
 
 def estimate_duration(wallet_address, options):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * common.ibc.api_lcd.get_txs_pages_count(STARS_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(STARS_NODE, wallet_address, max_txs)
 
 
 def txhistory(wallet_address, options):
@@ -73,14 +73,14 @@ def txhistory(wallet_address, options):
     exporter = Exporter(wallet_address, localconfig, TICKER_STARS)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = common.ibc.api_lcd.get_txs_pages_count(STARS_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(STARS_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = common.ibc.api_lcd.get_txs_all(STARS_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
+    elems = staketaxcsv.common.ibc.api_lcd.get_txs_all(STARS_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
-    stars.processor.process_txs(wallet_address, elems, exporter)
+    staketaxcsv.stars.processor.process_txs(wallet_address, elems, exporter)
 
     if localconfig.cache:
         Cache().set_ibc_addresses(localconfig.ibc_addresses)

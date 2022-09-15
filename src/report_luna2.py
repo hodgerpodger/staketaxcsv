@@ -14,18 +14,18 @@ import logging
 import math
 import pprint
 
-import common.ibc.api_common
-import common.ibc.api_lcd
-import luna2.genesis_airdrop
-import luna2.processor
-from common import report_util
-from common.Cache import Cache
-from common.Exporter import Exporter
-from common.ExporterTypes import FORMAT_DEFAULT
-from luna2.api_fcd import FcdAPI, LIMIT_FCD
-from luna2.config_luna2 import localconfig
-from luna2.progress_luna2 import SECONDS_PER_PAGE, ProgressLuna2
-from settings_csv import TICKER_LUNA2, LUNA2_LCD_NODE
+import staketaxcsv.common.ibc.api_common
+import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.luna2.genesis_airdrop
+import staketaxcsv.luna2.processor
+from staketaxcsv.common import report_util
+from staketaxcsv.common.Cache import Cache
+from staketaxcsv.common.Exporter import Exporter
+from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
+from staketaxcsv.luna2.api_fcd import LIMIT_FCD, FcdAPI
+from staketaxcsv.luna2.config_luna2 import localconfig
+from staketaxcsv.luna2.progress_luna2 import SECONDS_PER_PAGE, ProgressLuna2
+from staketaxcsv.settings_csv import LUNA2_LCD_NODE, TICKER_LUNA2
 
 
 def main():
@@ -48,12 +48,12 @@ def _read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return common.ibc.api_lcd.LcdAPI(LUNA2_LCD_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd.LcdAPI(LUNA2_LCD_NODE).account_exists(wallet_address)
 
 
 def estimate_duration(wallet_address, options):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * common.ibc.api_lcd.get_txs_pages_count(LUNA2_LCD_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(LUNA2_LCD_NODE, wallet_address, max_txs)
 
 
 def txone(wallet_address, txid):
@@ -63,7 +63,7 @@ def txone(wallet_address, txid):
     print("")
 
     exporter = Exporter(wallet_address, localconfig, TICKER_LUNA2)
-    txinfo = luna2.processor.process_tx(wallet_address, data, exporter)
+    txinfo = staketaxcsv.luna2.processor.process_tx(wallet_address, data, exporter)
     txinfo.print()
     print("")
 
@@ -83,10 +83,10 @@ def txhistory(wallet_address, options):
 
     # Fetch/add genesis airdrop to csv
     progress.report_message("Fetching genesis airdrop amount...")
-    luna2.genesis_airdrop.genesis_airdrop(wallet_address, exporter)
+    staketaxcsv.luna2.genesis_airdrop.genesis_airdrop(wallet_address, exporter)
 
     # LCD - fetch count of transactions to estimate progress more accurately
-    pages = common.ibc.api_lcd.get_txs_pages_count(LUNA2_LCD_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(LUNA2_LCD_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_estimate(pages)
 
     # FCD - fetch transactions
@@ -94,7 +94,7 @@ def txhistory(wallet_address, options):
 
     # Process all transactions
     progress.report_message(f"Processing {len(elems)} transactions... ")
-    luna2.processor.process_txs(wallet_address, elems, exporter)
+    staketaxcsv.luna2.processor.process_txs(wallet_address, elems, exporter)
 
     if localconfig.cache:
         _cache_push(cache)

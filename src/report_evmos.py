@@ -10,16 +10,16 @@ Note:
 import logging
 import pprint
 
-from evmos.config_evmos import localconfig
-from evmos.progress_evmos import SECONDS_PER_PAGE, ProgressEVMOS
-from common import report_util
-from common.Cache import Cache
-from common.Exporter import Exporter
-from common.ExporterTypes import FORMAT_DEFAULT
-from settings_csv import TICKER_EVMOS, EVMOS_NODE
-import evmos.processor
-import common.address
-import common.ibc.api_lcd
+import staketaxcsv.common.address
+import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.evmos.processor
+from staketaxcsv.common import report_util
+from staketaxcsv.common.Cache import Cache
+from staketaxcsv.common.Exporter import Exporter
+from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
+from staketaxcsv.evmos.config_evmos import localconfig
+from staketaxcsv.evmos.progress_evmos import SECONDS_PER_PAGE, ProgressEVMOS
+from staketaxcsv.settings_csv import EVMOS_NODE, TICKER_EVMOS
 
 
 def main():
@@ -43,10 +43,10 @@ def main():
 def all_address_formats(wallet_address):
     """ Returns ('evmos...', '0x...') given wallet_address in either format """
     if wallet_address.startswith("0x"):
-        bech32_address = common.address.from_hex_to_bech32("evmos", wallet_address)
+        bech32_address = staketaxcsv.common.address.from_hex_to_bech32("evmos", wallet_address)
         return bech32_address, wallet_address
     elif wallet_address.startswith("evmos"):
-        hex_address = common.address.from_bech32_to_hex("evmos", wallet_address)
+        hex_address = staketaxcsv.common.address.from_bech32_to_hex("evmos", wallet_address)
         return wallet_address, hex_address
     else:
         return None, None
@@ -58,24 +58,24 @@ def _read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return common.ibc.api_lcd.LcdAPI(EVMOS_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd.LcdAPI(EVMOS_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = common.ibc.api_lcd.LcdAPI(EVMOS_NODE).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(EVMOS_NODE).get_tx(txid)
 
     print("Transaction data:")
     pprint.pprint(elem)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_EVMOS)
-    txinfo = evmos.processor.process_tx(wallet_address, elem, exporter)
+    txinfo = staketaxcsv.evmos.processor.process_tx(wallet_address, elem, exporter)
     txinfo.print()
     return exporter
 
 
 def estimate_duration(wallet_address, options):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * common.ibc.api_lcd.get_txs_pages_count(EVMOS_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(EVMOS_NODE, wallet_address, max_txs)
 
 
 def txhistory(wallet_address, options):
@@ -90,14 +90,14 @@ def txhistory(wallet_address, options):
     exporter = Exporter(wallet_address, localconfig, TICKER_EVMOS)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = common.ibc.api_lcd.get_txs_pages_count(EVMOS_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(EVMOS_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = common.ibc.api_lcd.get_txs_all(EVMOS_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
+    elems = staketaxcsv.common.ibc.api_lcd.get_txs_all(EVMOS_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
-    evmos.processor.process_txs(wallet_address, elems, exporter)
+    staketaxcsv.evmos.processor.process_txs(wallet_address, elems, exporter)
 
     if localconfig.cache:
         Cache().set_ibc_addresses(localconfig.ibc_addresses)

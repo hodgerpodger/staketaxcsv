@@ -16,17 +16,17 @@ import math
 import os
 import pprint
 
-import luna1.processor
-from common import report_util
-from common.Cache import Cache
-from common.ErrorCounter import ErrorCounter
-from common.Exporter import Exporter
-from common.ExporterTypes import FORMAT_DEFAULT, LP_TREATMENT_TRANSFERS
-from settings_csv import TICKER_LUNA1
-from luna1.api_fcd import LIMIT_FCD, FcdAPI
-from luna1.api_lcd import LcdAPI
-from luna1.config_luna1 import localconfig
-from luna1.progress_terra import SECONDS_PER_TX_FETCH, SECONDS_PER_TX_PROCESS, ProgressTerra
+import staketaxcsv.luna1.processor
+from staketaxcsv.common import report_util
+from staketaxcsv.common.Cache import Cache
+from staketaxcsv.common.ErrorCounter import ErrorCounter
+from staketaxcsv.common.Exporter import Exporter
+from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, LP_TREATMENT_TRANSFERS
+from staketaxcsv.luna1.api_fcd import LIMIT_FCD, FcdAPI
+from staketaxcsv.luna1.api_lcd import LcdAPI
+from staketaxcsv.luna1.config_luna1 import localconfig
+from staketaxcsv.luna1.progress_terra import SECONDS_PER_TX_FETCH, SECONDS_PER_TX_PROCESS, ProgressTerra
+from staketaxcsv.settings_csv import TICKER_LUNA1
 
 
 def main():
@@ -65,7 +65,7 @@ def txone(wallet_address, txid):
     print("")
 
     exporter = Exporter(wallet_address, localconfig, TICKER_LUNA1)
-    txinfo = luna1.processor.process_tx(wallet_address, data, exporter)
+    txinfo = staketaxcsv.luna1.processor.process_tx(wallet_address, data, exporter)
     txinfo.print()
     print("")
 
@@ -102,7 +102,7 @@ def txhistory(wallet_address, options):
     elems.sort(key=lambda elem: elem["timestamp"])
 
     # Create rows for CSV
-    luna1.processor.process_txs(wallet_address, elems, exporter, progress)
+    staketaxcsv.luna1.processor.process_txs(wallet_address, elems, exporter, progress)
 
     # Log error stats if exists
     ErrorCounter.log(TICKER_LUNA1, wallet_address)

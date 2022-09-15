@@ -9,20 +9,19 @@ import logging
 import math
 from json.decoder import JSONDecodeError
 
-import sol.processor
-from common import report_util
-from common.Cache import Cache
-from common.ErrorCounter import ErrorCounter
-from common.Exporter import Exporter
-from common.ExporterTypes import FORMAT_DEFAULT
-from settings_csv import MESSAGE_ADDRESS_NOT_FOUND, MESSAGE_STAKING_ADDRESS_FOUND, SOL_NODE, TICKER_SOL
-from sol import staking_rewards
-from sol.api_rpc import RpcAPI
-from sol.config_sol import localconfig
-from sol.constants import PROGRAMID_STAKE
-from sol.progress_sol import SECONDS_PER_STAKING_ADDRESS, SECONDS_PER_TX, ProgressSol
-from sol.TxInfoSol import WalletInfo
-from sol.config_sol import localconfig
+import staketaxcsv.sol.processor
+from staketaxcsv.common import report_util
+from staketaxcsv.common.Cache import Cache
+from staketaxcsv.common.ErrorCounter import ErrorCounter
+from staketaxcsv.common.Exporter import Exporter
+from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
+from staketaxcsv.settings_csv import MESSAGE_ADDRESS_NOT_FOUND, MESSAGE_STAKING_ADDRESS_FOUND, SOL_NODE, TICKER_SOL
+from staketaxcsv.sol import staking_rewards
+from staketaxcsv.sol.api_rpc import RpcAPI
+from staketaxcsv.sol.config_sol import localconfig
+from staketaxcsv.sol.constants import PROGRAMID_STAKE
+from staketaxcsv.sol.progress_sol import SECONDS_PER_STAKING_ADDRESS, SECONDS_PER_TX, ProgressSol
+from staketaxcsv.sol.TxInfoSol import WalletInfo
 
 LIMIT_PER_QUERY = 1000
 RPC_TIMEOUT = 600  # seconds
@@ -92,7 +91,7 @@ def txone(wallet_address, txid):
     print("\n")
 
     exporter = Exporter(wallet_address, localconfig, TICKER_SOL)
-    txinfo = sol.processor.process_tx(WalletInfo(wallet_address), exporter, txid, data)
+    txinfo = staketaxcsv.sol.processor.process_tx(WalletInfo(wallet_address), exporter, txid, data)
     txinfo.print()
     return exporter
 
@@ -212,7 +211,7 @@ def _fetch_and_process_txs(txids, wallet_info, exporter, progress):
 
     for i, txid in enumerate(txids):
         elem = RpcAPI.fetch_tx(txid)
-        sol.processor.process_tx(wallet_info, exporter, txid, elem)
+        staketaxcsv.sol.processor.process_tx(wallet_info, exporter, txid, elem)
 
         if i % 10 == 0:
             # Update progress to db every so often for user

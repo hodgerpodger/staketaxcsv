@@ -14,18 +14,17 @@ import logging
 import math
 import pprint
 
-import atom.cosmoshub123.api_cosmostation
-import atom.api_lcd
-import atom.processor
-import common.ibc.api_lcd
-from atom.config_atom import localconfig
-from atom.progress_atom import SECONDS_PER_PAGE, ProgressAtom
-from common import report_util
-from common.Cache import Cache
-from common.Exporter import Exporter
-from common.ExporterTypes import FORMAT_DEFAULT
-from settings_csv import TICKER_ATOM, ATOM_NODE
-import common.ibc.api_lcd
+import staketaxcsv.atom.api_lcd
+import staketaxcsv.atom.cosmoshub123.api_cosmostation
+import staketaxcsv.atom.processor
+import staketaxcsv.common.ibc.api_lcd
+from staketaxcsv.atom.config_atom import localconfig
+from staketaxcsv.atom.progress_atom import SECONDS_PER_PAGE, ProgressAtom
+from staketaxcsv.common import report_util
+from staketaxcsv.common.Cache import Cache
+from staketaxcsv.common.Exporter import Exporter
+from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
+from staketaxcsv.settings_csv import ATOM_NODE, TICKER_ATOM
 
 LIMIT_PER_QUERY = 50
 
@@ -52,27 +51,27 @@ def _read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return atom.api_lcd.account_exists(wallet_address)
+    return staketaxcsv.atom.api_lcd.account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
     if localconfig.legacy:
-        elem = atom.cosmoshub123.api_cosmostation.get_tx(txid)
+        elem = staketaxcsv.atom.cosmoshub123.api_cosmostation.get_tx(txid)
     else:
-        elem = atom.api_lcd.get_tx(txid)
+        elem = staketaxcsv.atom.api_lcd.get_tx(txid)
 
     print("Transaction data:")
     pprint.pprint(elem)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
-    txinfo = atom.processor.process_tx(wallet_address, elem, exporter)
+    txinfo = staketaxcsv.atom.processor.process_tx(wallet_address, elem, exporter)
     if txinfo:
         txinfo.print()
     return exporter
 
 
 def estimate_duration(wallet_address, options):
-    return SECONDS_PER_PAGE * atom.api_lcd.get_txs_count_pages(wallet_address)
+    return SECONDS_PER_PAGE * staketaxcsv.atom.api_lcd.get_txs_count_pages(wallet_address)
 
 
 def txhistory(wallet_address, options):
@@ -87,7 +86,7 @@ def txhistory(wallet_address, options):
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = atom.api_lcd.get_txs_count_pages(wallet_address)
+    count_pages = staketaxcsv.atom.api_lcd.get_txs_count_pages(wallet_address)
     progress.set_estimate(count_pages)
 
     # Fetch legacy transactions conditionally (cosmoshub-3)
@@ -96,11 +95,15 @@ def txhistory(wallet_address, options):
         elems.extend(_fetch_txs_legacy(wallet_address, progress))
 
     # Fetch transactions
-    elems.extend(common.ibc.api_lcd.get_txs_all(ATOM_NODE, wallet_address, progress, max_txs, debug=localconfig.debug))
+    elems.extend(
+        staketaxcsv.common.ibc.api_lcd.get_txs_all(
+            ATOM_NODE, wallet_address, progress, max_txs, debug=localconfig.debug
+        )
+    )
     elems = _remove_duplicates(elems)
 
     progress.report_message(f"Processing {len(elems)} ATOM transactions... ")
-    atom.processor.process_txs(wallet_address, elems, exporter)
+    staketaxcsv.atom.processor.process_txs(wallet_address, elems, exporter)
 
     if localconfig.cache:
         Cache().set_ibc_addresses(localconfig.ibc_addresses)
@@ -124,7 +127,7 @@ def _fetch_txs_legacy(wallet_address, progress):
         progress.report_message(message)
         current_page += 1
 
-        elems, next_id = atom.cosmoshub123.api_cosmostation.get_txs_legacy(wallet_address, next_id)
+        elems, next_id = staketaxcsv.atom.cosmoshub123.api_cosmostation.get_txs_legacy(wallet_address, next_id)
         out.extend(elems)
         if next_id is None:
             break

@@ -7,15 +7,15 @@ Prints transactions and writes CSV(s) to _reports/HUAHUA*.csv
 import logging
 import pprint
 
-from huahua.config_huahua import localconfig
-from huahua.progress_huahua import SECONDS_PER_PAGE, ProgressHuahua
-from common import report_util
-from common.Cache import Cache
-from common.Exporter import Exporter
-from common.ExporterTypes import FORMAT_DEFAULT
-from settings_csv import TICKER_HUAHUA, HUAHUA_NODE
-import huahua.processor
-import common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.huahua.processor
+from staketaxcsv.common import report_util
+from staketaxcsv.common.Cache import Cache
+from staketaxcsv.common.Exporter import Exporter
+from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
+from staketaxcsv.huahua.config_huahua import localconfig
+from staketaxcsv.huahua.progress_huahua import SECONDS_PER_PAGE, ProgressHuahua
+from staketaxcsv.settings_csv import HUAHUA_NODE, TICKER_HUAHUA
 
 
 def main():
@@ -38,24 +38,24 @@ def _read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return common.ibc.api_lcd.LcdAPI(HUAHUA_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd.LcdAPI(HUAHUA_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = common.ibc.api_lcd.LcdAPI(HUAHUA_NODE).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(HUAHUA_NODE).get_tx(txid)
 
     print("Transaction data:")
     pprint.pprint(elem)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_HUAHUA)
-    txinfo = huahua.processor.process_tx(wallet_address, elem, exporter)
+    txinfo = staketaxcsv.huahua.processor.process_tx(wallet_address, elem, exporter)
     txinfo.print()
     return exporter
 
 
 def estimate_duration(wallet_address, options):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * common.ibc.api_lcd.get_txs_pages_count(HUAHUA_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(HUAHUA_NODE, wallet_address, max_txs)
 
 
 def txhistory(wallet_address, options):
@@ -70,14 +70,14 @@ def txhistory(wallet_address, options):
     exporter = Exporter(wallet_address, localconfig, TICKER_HUAHUA)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = common.ibc.api_lcd.get_txs_pages_count(HUAHUA_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(HUAHUA_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = common.ibc.api_lcd.get_txs_all(HUAHUA_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
+    elems = staketaxcsv.common.ibc.api_lcd.get_txs_all(HUAHUA_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
-    huahua.processor.process_txs(wallet_address, elems, exporter)
+    staketaxcsv.huahua.processor.process_txs(wallet_address, elems, exporter)
 
     if localconfig.cache:
         Cache().set_ibc_addresses(localconfig.ibc_addresses)

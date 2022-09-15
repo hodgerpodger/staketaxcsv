@@ -9,17 +9,17 @@ import logging
 import math
 import pprint
 
-import osmo.api_data
-import osmo.processor
-from common import report_util
-from common.Cache import Cache
-from common.ErrorCounter import ErrorCounter
-from common.Exporter import Exporter
-from common.ExporterTypes import LP_TREATMENT_TRANSFERS, FORMAT_DEFAULT
-from osmo.config_osmo import localconfig
-from osmo.lp_rewards import lp_rewards
-from osmo.progress_osmo import SECONDS_PER_PAGE, ProgressOsmo
-from settings_csv import TICKER_OSMO
+import staketaxcsv.osmo.api_data
+import staketaxcsv.osmo.processor
+from staketaxcsv.common import report_util
+from staketaxcsv.common.Cache import Cache
+from staketaxcsv.common.ErrorCounter import ErrorCounter
+from staketaxcsv.common.Exporter import Exporter
+from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, LP_TREATMENT_TRANSFERS
+from staketaxcsv.osmo.config_osmo import localconfig
+from staketaxcsv.osmo.lp_rewards import lp_rewards
+from staketaxcsv.osmo.progress_osmo import SECONDS_PER_PAGE, ProgressOsmo
+from staketaxcsv.settings_csv import TICKER_OSMO
 
 
 def main():
@@ -46,18 +46,18 @@ def _read_options(options):
 def wallet_exists(wallet_address):
     if not wallet_address.startswith("osmo"):
         return False
-    count = osmo.api_data.get_count_txs(wallet_address)
+    count = staketaxcsv.osmo.api_data.get_count_txs(wallet_address)
     return count > 0
 
 
 def txone(wallet_address, txid):
-    data = osmo.api_data.get_tx(txid)
+    data = staketaxcsv.osmo.api_data.get_tx(txid)
     print("\ndebug data:")
     pprint.pprint(data)
     print("\n")
 
     exporter = Exporter(wallet_address, localconfig, TICKER_OSMO)
-    txinfo = osmo.processor.process_tx(wallet_address, data, exporter)
+    txinfo = staketaxcsv.osmo.processor.process_tx(wallet_address, data, exporter)
     txinfo.print()
 
     return exporter
@@ -71,9 +71,9 @@ def estimate_duration(wallet_address, options):
 def _pages(wallet_address):
     """ Returns list of page numbers to be retrieved """
     max_txs = localconfig.limit
-    num_txs = min(osmo.api_data.get_count_txs(wallet_address), max_txs)
+    num_txs = min(staketaxcsv.osmo.api_data.get_count_txs(wallet_address), max_txs)
 
-    last_page = math.ceil(num_txs / osmo.api_data.LIMIT_PER_QUERY) - 1
+    last_page = math.ceil(num_txs / staketaxcsv.osmo.api_data.LIMIT_PER_QUERY) - 1
     pages = list(range(last_page, -1, -1))
     return pages
 
@@ -89,7 +89,7 @@ def txhistory(wallet_address, options):
     exporter = Exporter(wallet_address, localconfig, TICKER_OSMO)
 
     # Set time estimate to estimate progress later
-    reward_tokens = osmo.api_data.get_lp_tokens(wallet_address)
+    reward_tokens = staketaxcsv.osmo.api_data.get_lp_tokens(wallet_address)
     pages = _pages(wallet_address)
     progress.set_estimate(len(pages), len(reward_tokens))
     logging.info("pages: %s, reward_tokens: %s", pages, reward_tokens)
@@ -147,7 +147,7 @@ def _fetch_and_process_txs(wallet_address, exporter, progress, pages):
         progress.report(i, message, "txs")
         i += 1
 
-        elems = osmo.api_data.get_txs(wallet_address, page * osmo.api_data.LIMIT_PER_QUERY)
+        elems = staketaxcsv.osmo.api_data.get_txs(wallet_address, page * staketaxcsv.osmo.api_data.LIMIT_PER_QUERY)
 
         # Remove duplicates (data from this api has duplicates)
         elems_clean = _remove_dups(elems, txids_seen)
@@ -155,7 +155,7 @@ def _fetch_and_process_txs(wallet_address, exporter, progress, pages):
         # Sort to process oldest first (so that lock/unlock tokens transactions processed correctly)
         elems_clean.sort(key=lambda elem: elem["timestamp"])
 
-        osmo.processor.process_txs(wallet_address, elems_clean, exporter)
+        staketaxcsv.osmo.processor.process_txs(wallet_address, elems_clean, exporter)
         count_txs_processed += len(elems)
 
     # Report final progress

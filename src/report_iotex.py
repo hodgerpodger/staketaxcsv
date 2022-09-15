@@ -10,17 +10,17 @@ import math
 import os
 import pprint
 
-import iotex.processor
-from common import report_util
-from common.ErrorCounter import ErrorCounter
-from common.Exporter import Exporter
-from common.ExporterTypes import FORMAT_DEFAULT
-from iotex import constants as co
-from iotex.api_graphql import IoTexGraphQL
-from iotex.api_iotexscan import IoTexScan
-from iotex.config_iotex import localconfig
-from iotex.progress_iotex import ProgressIotex, SECONDS_PER_TX
-from settings_csv import TICKER_IOTEX
+import staketaxcsv.iotex.processor
+from staketaxcsv.common import report_util
+from staketaxcsv.common.ErrorCounter import ErrorCounter
+from staketaxcsv.common.Exporter import Exporter
+from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
+from staketaxcsv.iotex import constants as co
+from staketaxcsv.iotex.api_graphql import IoTexGraphQL
+from staketaxcsv.iotex.api_iotexscan import IoTexScan
+from staketaxcsv.iotex.config_iotex import localconfig
+from staketaxcsv.iotex.progress_iotex import SECONDS_PER_TX, ProgressIotex
+from staketaxcsv.settings_csv import TICKER_IOTEX
 
 
 def main():
@@ -57,7 +57,7 @@ def txone(wallet_address, txid):
 
     progress.set_estimate(1)
     exporter = Exporter(wallet_address, localconfig)
-    iotex.processor.process_txs(wallet_address, elems, exporter, progress)
+    staketaxcsv.iotex.processor.process_txs(wallet_address, elems, exporter, progress)
     print("")
 
     return exporter
@@ -81,7 +81,7 @@ def txhistory(wallet_address, options):
     elems = _get_txs(wallet_address, progress)
 
     # Create rows for CSV
-    iotex.processor.process_txs(wallet_address, elems, exporter, progress)
+    staketaxcsv.iotex.processor.process_txs(wallet_address, elems, exporter, progress)
 
     # Log error stats if exists
     ErrorCounter.log(TICKER_IOTEX, wallet_address)

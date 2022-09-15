@@ -10,23 +10,23 @@ import logging
 import math
 import os
 import pprint
-from algo.api_nfdomains import NFDomainsAPI
-from algo.asset import Asset
-from algo.handle_algofi import (
+
+import staketaxcsv.algo.processor
+from staketaxcsv.algo.api_algoindexer import LIMIT_ALGOINDEXER, AlgoIndexerAPI
+from staketaxcsv.algo.api_nfdomains import NFDomainsAPI
+from staketaxcsv.algo.asset import Asset
+from staketaxcsv.algo.config_algo import localconfig
+from staketaxcsv.algo.handle_algofi import (
     get_algofi_governance_rewards_transactions,
     get_algofi_liquidate_transactions,
-    get_algofi_storage_address
+    get_algofi_storage_address,
 )
-
-import algo.processor
-from algo.api_algoindexer import LIMIT_ALGOINDEXER, AlgoIndexerAPI
-from algo.config_algo import localconfig
-from algo.progress_algo import ProgressAlgo
-from common import report_util
-from common.ErrorCounter import ErrorCounter
-from common.Exporter import Exporter
-from common.ExporterTypes import FORMAT_DEFAULT, LP_TREATMENT_TRANSFERS
-from settings_csv import TICKER_ALGO
+from staketaxcsv.algo.progress_algo import ProgressAlgo
+from staketaxcsv.common import report_util
+from staketaxcsv.common.ErrorCounter import ErrorCounter
+from staketaxcsv.common.Exporter import Exporter
+from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, LP_TREATMENT_TRANSFERS
+from staketaxcsv.settings_csv import TICKER_ALGO
 
 indexer = AlgoIndexerAPI()
 
@@ -84,7 +84,7 @@ def txone(wallet_address, txid_or_groupid):
 
     progress.set_estimate(1)
     exporter = Exporter(wallet_address, localconfig, TICKER_ALGO)
-    algo.processor.process_txs(wallet_address, elems, exporter, progress)
+    staketaxcsv.algo.processor.process_txs(wallet_address, elems, exporter, progress)
     print("")
 
     return exporter
@@ -112,7 +112,7 @@ def txhistory(wallet_address, options):
     elems = _get_txs(wallet_address, account, progress)
 
     # Create rows for CSV
-    algo.processor.process_txs(wallet_address, elems, exporter, progress)
+    staketaxcsv.algo.processor.process_txs(wallet_address, elems, exporter, progress)
 
     # Log error stats if exists
     ErrorCounter.log(TICKER_ALGO, wallet_address)
