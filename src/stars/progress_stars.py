@@ -1,5 +1,5 @@
-from stars.config_stars import localconfig
-from common.progress import Progress
+from staketaxcsv.common.progress import Progress
+from staketaxcsv.stars.config_stars import localconfig
 
 SECONDS_PER_PAGE = 4
 

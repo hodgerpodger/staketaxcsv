@@ -1,5 +1,5 @@
-from common.make_tx import make_airdrop_tx
-import common.ibc.handle
+import staketaxcsv.common.ibc.handle
+from staketaxcsv.common.make_tx import make_airdrop_tx
 
 
 def handle_airdrop(exporter, txinfo, msginfo):
@@ -10,6 +10,6 @@ def handle_airdrop(exporter, txinfo, msginfo):
         row = make_airdrop_tx(txinfo, amount, currency)
         exporter.ingest_row(row)
     else:
-        common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+        staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
     return True

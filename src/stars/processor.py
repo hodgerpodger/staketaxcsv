@@ -1,11 +1,11 @@
 import logging
-import common.ibc.processor
-import stars.constants as co
-import common.ibc.processor
-import common.ibc.handle
-from stars.config_stars import localconfig
-from settings_csv import STARS_NODE
-from stars.handle import handle_airdrop
+
+import staketaxcsv.common.ibc.handle
+import staketaxcsv.common.ibc.processor
+import staketaxcsv.stars.constants as co
+from staketaxcsv.settings_csv import STARS_NODE
+from staketaxcsv.stars.config_stars import localconfig
+from staketaxcsv.stars.handle import handle_airdrop
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -14,11 +14,11 @@ def process_txs(wallet_address, elems, exporter):
 
 
 def process_tx(wallet_address, elem, exporter):
-    txinfo = common.ibc.processor.txinfo(
+    txinfo = staketaxcsv.common.ibc.processor.txinfo(
         wallet_address, elem, co.MINTSCAN_LABEL_STARS, localconfig.ibc_addresses, STARS_NODE)
 
     for msginfo in txinfo.msgs:
-        result = common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)
+        result = staketaxcsv.common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)
         if result:
             continue
 
@@ -27,6 +27,6 @@ def process_tx(wallet_address, elem, exporter):
             if result_airdrop:
                 continue
 
-        common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+        staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
     return txinfo
