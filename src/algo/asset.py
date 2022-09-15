@@ -1,5 +1,5 @@
-from algo.api_algoindexer import AlgoIndexerAPI
-from algo.constants import ASSET_ID_ALGO
+from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
+from staketaxcsv.algo.constants import ASSET_ID_ALGO
 
 
 class Asset:

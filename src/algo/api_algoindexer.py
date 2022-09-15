@@ -1,7 +1,7 @@
 import logging
 
 import requests
-from settings_csv import ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE
+from staketaxcsv.settings_csv import ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE
 
 LIMIT_ALGOINDEXER = 1000
 

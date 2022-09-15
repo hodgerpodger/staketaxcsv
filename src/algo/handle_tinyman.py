@@ -1,8 +1,14 @@
-from algo import constants as co
-from algo.asset import Algo
-from algo.export_tx import export_income_tx, export_lp_deposit_tx, export_lp_withdraw_tx, export_reward_tx, export_swap_tx
-from algo.handle_simple import handle_participation_rewards, handle_unknown
-from algo.util_algo import get_transfer_asset
+from staketaxcsv.algo import constants as co
+from staketaxcsv.algo.asset import Algo
+from staketaxcsv.algo.export_tx import (
+    export_income_tx,
+    export_lp_deposit_tx,
+    export_lp_withdraw_tx,
+    export_reward_tx,
+    export_swap_tx,
+)
+from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
+from staketaxcsv.algo.util_algo import get_transfer_asset
 
 APPLICATION_ID_TINYMAN_v10 = 350338509
 APPLICATION_ID_TINYMAN_v11 = 552635992

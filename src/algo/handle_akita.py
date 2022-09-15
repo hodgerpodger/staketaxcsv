@@ -1,7 +1,7 @@
-from algo import constants as co
-from algo.asset import Algo, Asset
-from algo.export_tx import export_swap_tx
-from algo.handle_simple import handle_participation_rewards
+from staketaxcsv.algo import constants as co
+from staketaxcsv.algo.asset import Algo, Asset
+from staketaxcsv.algo.export_tx import export_swap_tx
+from staketaxcsv.algo.handle_simple import handle_participation_rewards
 
 APPLICATION_ID_AKITA_SWAP = 537279393
 

@@ -1,7 +1,7 @@
 import base64
 
-from algo import constants as co
-from algo.asset import Asset
+from staketaxcsv.algo import constants as co
+from staketaxcsv.algo.asset import Asset
 
 
 def get_transaction_note(transaction):

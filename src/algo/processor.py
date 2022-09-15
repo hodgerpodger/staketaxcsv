@@ -2,26 +2,27 @@ import logging
 import urllib.parse
 from datetime import datetime
 
-from algo import constants as co
-from algo.asset import Algo
-from algo.config_algo import localconfig
-from algo.handle_akita import handle_akita_swap_transaction, is_akita_swap_transaction
-from algo.handle_algodex import handle_algodex_transaction, is_algodex_transaction
-from algo.handle_algofi import handle_algofi_transaction, is_algofi_transaction
-from algo.handle_amm import handle_swap, is_simple_swap_group
-from algo.handle_folks import (
+from staketaxcsv.algo import constants as co
+from staketaxcsv.algo.asset import Algo
+from staketaxcsv.algo.config_algo import localconfig
+from staketaxcsv.algo.handle_akita import handle_akita_swap_transaction, is_akita_swap_transaction
+from staketaxcsv.algo.handle_algodex import handle_algodex_transaction, is_algodex_transaction
+from staketaxcsv.algo.handle_algofi import handle_algofi_transaction, is_algofi_transaction
+from staketaxcsv.algo.handle_amm import handle_swap, is_simple_swap_group
+from staketaxcsv.algo.handle_folks import (
     handle_folks_galgo_early_claim_transaction,
     handle_folks_reward_claim_transaction,
     handle_folks_transaction,
     is_folks_galgo_early_claim_transaction,
     is_folks_reward_claim_transaction,
-    is_folks_transaction
+    is_folks_transaction,
 )
-from algo.handle_gard import handle_gard_transaction, is_gard_transaction
-from algo.handle_humbleswap import handle_humbleswap_transaction, is_humbleswap_transaction
-from algo.handle_pact import handle_pact_transaction, is_pact_transaction
-from algo.handle_tinyman import handle_tinyman_transaction, is_tinyman_transaction
-from algo.handle_transfer import (
+from staketaxcsv.algo.handle_gard import handle_gard_transaction, is_gard_transaction
+from staketaxcsv.algo.handle_humbleswap import handle_humbleswap_transaction, is_humbleswap_transaction
+from staketaxcsv.algo.handle_pact import handle_pact_transaction, is_pact_transaction
+from staketaxcsv.algo.handle_simple import handle_unknown, handle_unknown_transactions
+from staketaxcsv.algo.handle_tinyman import handle_tinyman_transaction, is_tinyman_transaction
+from staketaxcsv.algo.handle_transfer import (
     handle_asa_transaction,
     handle_governance_reward_transaction,
     handle_payment_transaction,
@@ -29,11 +30,10 @@ from algo.handle_transfer import (
     has_only_transfer_transactions,
     is_governance_reward_transaction,
 )
-from algo.handle_simple import handle_unknown, handle_unknown_transactions
-from algo.handle_wagmiswap import handle_wagmiswap_transaction, is_wagmiswap_transaction
-from algo.handle_yieldly import handle_yieldly_transaction, is_yieldly_transaction
-from common.ErrorCounter import ErrorCounter
-from common.TxInfo import TxInfo
+from staketaxcsv.algo.handle_wagmiswap import handle_wagmiswap_transaction, is_wagmiswap_transaction
+from staketaxcsv.algo.handle_yieldly import handle_yieldly_transaction, is_yieldly_transaction
+from staketaxcsv.common.ErrorCounter import ErrorCounter
+from staketaxcsv.common.TxInfo import TxInfo
 
 
 def process_txs(wallet_address, elems, exporter, progress):

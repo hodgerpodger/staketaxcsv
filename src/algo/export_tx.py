@@ -1,7 +1,7 @@
 
-from algo.asset import Algo, Asset
-from algo.config_algo import localconfig
-from common.make_tx import (
+from staketaxcsv.algo.asset import Algo, Asset
+from staketaxcsv.algo.config_algo import localconfig
+from staketaxcsv.common.make_tx import (
     make_borrow_tx,
     make_deposit_collateral_tx,
     make_excluded_tx,

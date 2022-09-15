@@ -1,9 +1,9 @@
 import base64
-from algosdk import encoding
 
-from algo import constants as co
-from algo.asset import Algo
-from algo.export_tx import (
+from algosdk import encoding
+from staketaxcsv.algo import constants as co
+from staketaxcsv.algo.asset import Algo
+from staketaxcsv.algo.export_tx import (
     export_borrow_tx,
     export_deposit_collateral_tx,
     export_liquidate_tx,
@@ -14,11 +14,11 @@ from algo.export_tx import (
     export_repay_tx,
     export_reward_tx,
     export_swap_tx,
-    export_withdraw_collateral_tx
+    export_withdraw_collateral_tx,
 )
-from algo.handle_simple import handle_participation_rewards, handle_unknown
-from algo.handle_transfer import is_governance_reward_transaction
-from algo.util_algo import get_inner_transfer_asset, get_transfer_asset
+from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
+from staketaxcsv.algo.handle_transfer import is_governance_reward_transaction
+from staketaxcsv.algo.util_algo import get_inner_transfer_asset, get_transfer_asset
 
 # For reference
 # https://github.com/Algofiorg/algofi-amm-py-sdk

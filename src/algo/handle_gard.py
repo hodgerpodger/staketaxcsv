@@ -1,14 +1,14 @@
-from algo import constants as co
-from algo.api_algoindexer import AlgoIndexerAPI
-from algo.asset import Algo
-from algo.export_tx import (
+from staketaxcsv.algo import constants as co
+from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
+from staketaxcsv.algo.asset import Algo
+from staketaxcsv.algo.export_tx import (
     export_borrow_tx,
     export_deposit_collateral_tx,
     export_repay_tx,
-    export_withdraw_collateral_tx
+    export_withdraw_collateral_tx,
 )
-from algo.handle_simple import handle_participation_rewards, handle_unknown
-from algo.util_algo import get_transfer_asset, get_transfer_close_to_asset, get_transfer_receiver
+from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
+from staketaxcsv.algo.util_algo import get_transfer_asset, get_transfer_close_to_asset, get_transfer_receiver
 
 # For reference
 # https://github.com/Tapera-Finance/GARD-BackEnd

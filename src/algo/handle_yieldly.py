@@ -1,8 +1,8 @@
-from algo import constants as co
-from algo.asset import Algo, Asset
-from algo.export_tx import export_reward_tx, export_stake_tx, export_unstake_tx
-from algo.handle_simple import handle_participation_rewards, handle_unknown
-from algo.util_algo import get_inner_transfer_asset, get_transfer_asset
+from staketaxcsv.algo import constants as co
+from staketaxcsv.algo.asset import Algo, Asset
+from staketaxcsv.algo.export_tx import export_reward_tx, export_stake_tx, export_unstake_tx
+from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
+from staketaxcsv.algo.util_algo import get_inner_transfer_asset, get_transfer_asset
 
 APPLICATION_ID_YIELDLY = 233725848
 APPLICATION_ID_YIELDLY_NLL = 233725844

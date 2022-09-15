@@ -1,17 +1,18 @@
 import re
-from algo import constants as co
-from algo.asset import Algo
-from algo.export_tx import export_reward_tx
-from algo.handle_amm import (
+
+from staketaxcsv.algo import constants as co
+from staketaxcsv.algo.asset import Algo
+from staketaxcsv.algo.export_tx import export_reward_tx
+from staketaxcsv.algo.handle_amm import (
     handle_lp_add,
     handle_lp_remove,
     handle_swap,
     is_simple_lp_add_group,
     is_simple_lp_remove_group,
-    is_simple_swap_group
+    is_simple_swap_group,
 )
-from algo.handle_simple import handle_participation_rewards, handle_unknown
-from algo.util_algo import get_transaction_note, get_transfer_asset
+from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
+from staketaxcsv.algo.util_algo import get_transaction_note, get_transfer_asset
 
 HUMBLESWAP_AMM_SYMBOL = "HMB"
 

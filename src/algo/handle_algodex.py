@@ -2,10 +2,10 @@ import base64
 import json
 import re
 
-from algo import constants as co
-from algo.asset import Algo, Asset
-from algo.export_tx import export_swap_tx
-from algo.util_algo import get_transaction_note, get_transfer_asset
+from staketaxcsv.algo import constants as co
+from staketaxcsv.algo.asset import Algo, Asset
+from staketaxcsv.algo.export_tx import export_swap_tx
+from staketaxcsv.algo.util_algo import get_transaction_note, get_transfer_asset
 
 # For reference check the whitepaper appendix:
 # https://github.com/algodex/algodex-public-documents/blob/master/Algodex%20Whitepaper%201.0.pdf

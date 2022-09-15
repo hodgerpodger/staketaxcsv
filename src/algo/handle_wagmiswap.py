@@ -1,7 +1,7 @@
-from algo import constants as co
-from algo.asset import Algo
-from algo.handle_amm import handle_lp_add, handle_lp_remove, handle_swap
-from algo.handle_simple import handle_participation_rewards, handle_unknown
+from staketaxcsv.algo import constants as co
+from staketaxcsv.algo.asset import Algo
+from staketaxcsv.algo.handle_amm import handle_lp_add, handle_lp_remove, handle_swap
+from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
 
 WAGMISWAP_TRANSACTION_SWAP = "c3dhcA=="                  # "swap"
 WAGMISWAP_TRANSACTION_LP_ADD = "YWRkLWxpcXVpZGl0eQ=="    # "add-liquidity"

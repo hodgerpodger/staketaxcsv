@@ -1,7 +1,7 @@
-from algo import constants as co
-from algo.export_tx import export_lp_deposit_tx, export_lp_withdraw_tx, export_swap_tx
-from algo.handle_simple import handle_unknown
-from algo.util_algo import get_transfer_asset, get_transfer_receiver
+from staketaxcsv.algo import constants as co
+from staketaxcsv.algo.export_tx import export_lp_deposit_tx, export_lp_withdraw_tx, export_swap_tx
+from staketaxcsv.algo.handle_simple import handle_unknown
+from staketaxcsv.algo.util_algo import get_transfer_asset, get_transfer_receiver
 
 
 def _get_swap_arg(transaction):

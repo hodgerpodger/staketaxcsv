@@ -1,7 +1,7 @@
 import logging
 
 import requests
-from settings_csv import ALGO_NFDOMAINS
+from staketaxcsv.settings_csv import ALGO_NFDOMAINS
 
 
 # API documentation: https://editor.swagger.io/?url=https://api.testnet.nf.domains/info/openapi3.yaml
