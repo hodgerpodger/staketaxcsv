@@ -1,10 +1,10 @@
 import logging
-import common.ibc.processor
-import evmos.constants as co
-import common.ibc.processor
-import common.ibc.handle
-from evmos.config_evmos import localconfig
-from settings_csv import EVMOS_NODE
+
+import staketaxcsv.common.ibc.handle
+import staketaxcsv.common.ibc.processor
+import staketaxcsv.evmos.constants as co
+from staketaxcsv.evmos.config_evmos import localconfig
+from staketaxcsv.settings_csv import EVMOS_NODE
 
 
 def process_txs(wallet_address, elems, exporter):

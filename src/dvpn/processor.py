@@ -1,9 +1,9 @@
-import common.ibc.handle
-import common.ibc.processor
-import dvpn.constants as co
-from common.make_tx import make_spend_fee_tx, make_spend_tx
-from dvpn.config_dvpn import localconfig
-from settings_csv import DVPN_LCD_NODE
+import staketaxcsv.common.ibc.handle
+import staketaxcsv.common.ibc.processor
+import staketaxcsv.dvpn.constants as co
+from staketaxcsv.common.make_tx import make_spend_fee_tx, make_spend_tx
+from staketaxcsv.dvpn.config_dvpn import localconfig
+from staketaxcsv.settings_csv import DVPN_LCD_NODE
 
 _handled_fee_spend_tx_hashes = set()
 

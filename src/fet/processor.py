@@ -1,15 +1,15 @@
 import logging
-import common.ibc.processor
-import fet.constants as co
-import fet.fetchhub1.constants as co2
-import common.ibc.processor
-import common.ibc.handle
-import common.ibc.constants
-from fet.config_fet import localconfig
-from settings_csv import FET_NODE
-from fet.fetchhub1.processor_legacy import process_tx_legacy
-from fet.handle_tx import handle_tx
-from fet.handle_contract import handle_contract
+
+import staketaxcsv.common.ibc.constants
+import staketaxcsv.common.ibc.handle
+import staketaxcsv.common.ibc.processor
+import staketaxcsv.fet.constants as co
+import staketaxcsv.fet.fetchhub1.constants as co2
+from staketaxcsv.fet.config_fet import localconfig
+from staketaxcsv.fet.fetchhub1.processor_legacy import process_tx_legacy
+from staketaxcsv.fet.handle_contract import handle_contract
+from staketaxcsv.fet.handle_tx import handle_tx
+from staketaxcsv.settings_csv import FET_NODE
 
 
 def process_txs(wallet_address, elems, exporter, node, progress=None):

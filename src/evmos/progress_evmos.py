@@ -1,5 +1,5 @@
-from evmos.config_evmos import localconfig
-from common.progress import Progress
+from staketaxcsv.common.progress import Progress
+from staketaxcsv.evmos.config_evmos import localconfig
 
 SECONDS_PER_PAGE = 8
 

@@ -9,8 +9,9 @@ fetchcli can be found at https://github.com/fetchai/fetchd/archive/refs/tags/v0.
 
 import logging
 import subprocess
+
 import yaml
-from fet.fetchhub1 import constants as co2
+from staketaxcsv.fet.fetchhub1 import constants as co2
 
 
 def get_fee(elem):

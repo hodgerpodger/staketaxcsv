@@ -1,5 +1,5 @@
-from fet.config_fet import localconfig
-from common.progress import Progress
+from staketaxcsv.common.progress import Progress
+from staketaxcsv.fet.config_fet import localconfig
 
 SECONDS_PER_PAGE = 3
 SECONDS_PER_TX_RPC = 0.55

@@ -1,9 +1,7 @@
-import common.ibc.handle
-from common.ibc.MsgInfoIBC import MsgInfoIBC
-from common.ibc import make_tx
-import common.ibc.handle
-import common.make_tx
-
+import staketaxcsv.common.ibc.handle
+import staketaxcsv.common.make_tx
+from staketaxcsv.common.ibc import make_tx
+from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 
 CONTRACT_BRIDGE_V1 = "fetch18vd8fpwxzck93qlwghaj6arh4p7c5n890l3amr"
 CONTRACT_BRIDGE_V2 = "fetch1qxxlalvsdjd07p07y3rc5fu6ll8k4tmetpha8n"

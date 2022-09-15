@@ -1,8 +1,9 @@
 import pprint
-from common.TxInfo import TxInfo
-from fet import constants as co
-from fet.fetchhub1 import constants as co2
-from common.ibc.MsgInfoIBC import MsgInfoIBC
+
+from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
+from staketaxcsv.common.TxInfo import TxInfo
+from staketaxcsv.fet import constants as co
+from staketaxcsv.fet.fetchhub1 import constants as co2
 
 
 class TxInfoFet(TxInfo):

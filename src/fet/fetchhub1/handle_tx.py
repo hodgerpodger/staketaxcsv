@@ -1,10 +1,9 @@
 
-import common.ibc.handle
-from common.ibc.MsgInfoIBC import MsgInfoIBC
-from common.ibc import make_tx
-import common.ibc.handle
-from common.make_tx import make_spend_fee_tx, ingest_rows
-import fet.fetchhub1. constants as co2
+import staketaxcsv.common.ibc.handle
+import staketaxcsv.fet.fetchhub1.constants as co2
+from staketaxcsv.common.ibc import make_tx
+from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
+from staketaxcsv.common.make_tx import ingest_rows, make_spend_fee_tx
 
 
 def handle_tx(exporter, txinfo):

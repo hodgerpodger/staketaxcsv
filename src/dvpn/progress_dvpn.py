@@ -1,5 +1,5 @@
-from common.progress import Progress
-from dvpn.config_dvpn import localconfig
+from staketaxcsv.common.progress import Progress
+from staketaxcsv.dvpn.config_dvpn import localconfig
 
 LCD_SECONDS_PER_PAGE = 3
 RPC_SECONDS_PER_PAGE = 2

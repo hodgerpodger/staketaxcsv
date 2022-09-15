@@ -6,16 +6,16 @@ import time
 from urllib.parse import urlencode
 
 import requests
-from common.debug_util import use_debug_files
-from common.ibc.api_common import (
+from dateutil import parser
+from staketaxcsv.common.debug_util import use_debug_files
+from staketaxcsv.common.ibc.api_common import (
     EVENTS_TYPE_LIST_DEFAULT,
     EVENTS_TYPE_RECIPIENT,
     EVENTS_TYPE_SENDER,
     EVENTS_TYPE_SIGNER,
 )
-from dateutil import parser
-from fet.config_fet import localconfig
-from settings_csv import REPORTS_DIR
+from staketaxcsv.fet.config_fet import localconfig
+from staketaxcsv.settings_csv import REPORTS_DIR
 
 TXS_LIMIT_PER_QUERY = 50
 

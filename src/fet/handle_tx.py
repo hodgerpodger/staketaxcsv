@@ -1,6 +1,6 @@
-import common.ibc.handle
-import common.ibc.processor
-from fet.config_fet import localconfig
+import staketaxcsv.common.ibc.handle
+import staketaxcsv.common.ibc.processor
+from staketaxcsv.fet.config_fet import localconfig
 
 
 def handle_tx(exporter, txinfo):

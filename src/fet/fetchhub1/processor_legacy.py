@@ -1,15 +1,16 @@
 # For fetchhub-1 rpc data parsing
 
-import logging
 import base64
-from fet.fetchhub1 import constants as co2
-from fet.fetchhub1.api_rpc import FetRpcAPI
-from fet.fetchhub1.TxInfoFet import TxInfoFet, MsgInfo
-from fet.fetchhub1.handle_tx import handle_tx
-import fet.handle_contract
-import common.ibc.handle
-from fet.config_fet import localconfig
-from fet.fetchhub1.get_fee import get_fee
+import logging
+
+import staketaxcsv.common.ibc.handle
+import staketaxcsv.fet.handle_contract
+from staketaxcsv.fet.config_fet import localconfig
+from staketaxcsv.fet.fetchhub1 import constants as co2
+from staketaxcsv.fet.fetchhub1.api_rpc import FetRpcAPI
+from staketaxcsv.fet.fetchhub1.get_fee import get_fee
+from staketaxcsv.fet.fetchhub1.handle_tx import handle_tx
+from staketaxcsv.fet.fetchhub1.TxInfoFet import MsgInfo, TxInfoFet
 
 
 def process_tx_legacy(wallet_address, elem, exporter, node):
