@@ -1,5 +1,5 @@
-from common.make_tx import make_airdrop_tx, make_unknown_tx, make_withdraw_collateral_tx
-from luna1 import util_terra
+from staketaxcsv.common.make_tx import make_airdrop_tx, make_unknown_tx, make_withdraw_collateral_tx
+from staketaxcsv.luna1 import util_terra
 
 
 def handle_airdrop_pylon(exporter, elem, txinfo):

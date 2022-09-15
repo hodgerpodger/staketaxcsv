@@ -1,7 +1,7 @@
-from common.ErrorCounter import ErrorCounter
-from common.make_tx import make_transfer_in_tx, make_transfer_out_tx, make_unknown_tx_with_transfer
-from luna1 import util_terra
-from luna1.col4.handle_simple import handle_unknown, handle_unknown_detect_transfers
+from staketaxcsv.common.ErrorCounter import ErrorCounter
+from staketaxcsv.common.make_tx import make_transfer_in_tx, make_transfer_out_tx, make_unknown_tx_with_transfer
+from staketaxcsv.luna1 import util_terra
+from staketaxcsv.luna1.col4.handle_simple import handle_unknown, handle_unknown_detect_transfers
 
 
 def handle_transfer(exporter, elem, txinfo):

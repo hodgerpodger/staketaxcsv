@@ -1,7 +1,7 @@
-from luna1 import util_terra
-from luna1.constants import CUR_AUST, CUR_UST
-from luna1.col4.handle_simple import handle_unknown
-from luna1.make_tx import make_swap_tx_terra
+from staketaxcsv.luna1 import util_terra
+from staketaxcsv.luna1.col4.handle_simple import handle_unknown
+from staketaxcsv.luna1.constants import CUR_AUST, CUR_UST
+from staketaxcsv.luna1.make_tx import make_swap_tx_terra
 
 
 def _exchange_rate(ust, aust):

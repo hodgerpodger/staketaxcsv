@@ -1,7 +1,7 @@
-from common.make_tx import make_lp_stake_tx, make_lp_unstake_tx
-from luna1 import util_terra
-from luna1.col4.handle_lp import _handle_lp_deposit, _handle_lp_withdraw
-from luna1.make_tx import make_swap_tx_terra
+from staketaxcsv.common.make_tx import make_lp_stake_tx, make_lp_unstake_tx
+from staketaxcsv.luna1 import util_terra
+from staketaxcsv.luna1.col4.handle_lp import _handle_lp_deposit, _handle_lp_withdraw
+from staketaxcsv.luna1.make_tx import make_swap_tx_terra
 
 
 def handle_zap_into_strategy(exporter, elem, txinfo):

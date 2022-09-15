@@ -1,9 +1,9 @@
-from common.ErrorCounter import ErrorCounter
-from common.make_tx import make_airdrop_tx, make_reward_tx, make_unknown_tx
-from luna1 import util_terra
-from luna1.config_luna1 import localconfig
-from luna1.constants import CUR_ANC, CUR_MINE, CUR_MIR
-from luna1.col4.handle_reward import REWARD_CURRENCIES
+from staketaxcsv.common.ErrorCounter import ErrorCounter
+from staketaxcsv.common.make_tx import make_airdrop_tx, make_reward_tx, make_unknown_tx
+from staketaxcsv.luna1 import util_terra
+from staketaxcsv.luna1.col4.handle_reward import REWARD_CURRENCIES
+from staketaxcsv.luna1.config_luna1 import localconfig
+from staketaxcsv.luna1.constants import CUR_ANC, CUR_MINE, CUR_MIR
 
 CONTRACTS_AIRDROP = {
     "terra1kalp2knjm4cs3f59ukr4hdhuuncp648eqrgshw": CUR_MIR,

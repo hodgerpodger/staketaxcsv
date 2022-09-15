@@ -1,5 +1,5 @@
-from common.make_tx import make_spend_fee_tx
-from luna1 import util_terra
+from staketaxcsv.common.make_tx import make_spend_fee_tx
+from staketaxcsv.luna1 import util_terra
 
 
 def handle_failed_tx(exporter, elem, txinfo):

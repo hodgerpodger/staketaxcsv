@@ -1,6 +1,6 @@
-from common.make_tx import make_reward_tx, make_unknown_tx
-from luna1 import util_terra
-from luna1.make_tx import make_gov_stake_tx, make_gov_unstake_tx
+from staketaxcsv.common.make_tx import make_reward_tx, make_unknown_tx
+from staketaxcsv.luna1 import util_terra
+from staketaxcsv.luna1.make_tx import make_gov_stake_tx, make_gov_unstake_tx
 
 
 def handle_governance_stake(exporter, elem, txinfo):

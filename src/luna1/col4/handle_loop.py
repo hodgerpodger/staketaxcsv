@@ -1,5 +1,5 @@
-from common.make_tx import make_airdrop_tx, make_lp_unstake_tx
-from luna1 import util_terra
+from staketaxcsv.common.make_tx import make_airdrop_tx, make_lp_unstake_tx
+from staketaxcsv.luna1 import util_terra
 
 
 def handle_unstake_and_claim(exporter, elem, txinfo):

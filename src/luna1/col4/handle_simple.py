@@ -1,5 +1,5 @@
-from common.make_tx import make_simple_tx, make_unknown_tx, make_unknown_tx_with_transfer
-from luna1 import util_terra
+from staketaxcsv.common.make_tx import make_simple_tx, make_unknown_tx, make_unknown_tx_with_transfer
+from staketaxcsv.luna1 import util_terra
 
 
 def handle_unknown(exporter, txinfo):

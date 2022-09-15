@@ -1,10 +1,10 @@
-from common.make_tx import (
+from staketaxcsv.common.make_tx import (
     make_borrow_tx,
     make_deposit_collateral_tx,
     make_repay_tx,
-    make_withdraw_collateral_tx
+    make_withdraw_collateral_tx,
 )
-from luna1 import util_terra
+from staketaxcsv.luna1 import util_terra
 
 
 def handle_deposit_collateral(exporter, elem, txinfo):

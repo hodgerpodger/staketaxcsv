@@ -1,6 +1,6 @@
-from common.make_tx import make_reward_tx
-from luna1 import util_terra
-from luna1.constants import CUR_SPEC
+from staketaxcsv.common.make_tx import make_reward_tx
+from staketaxcsv.luna1 import util_terra
+from staketaxcsv.luna1.constants import CUR_SPEC
 
 
 def handle_spec_withdraw(exporter, elem, txinfo):
