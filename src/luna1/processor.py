@@ -1,21 +1,21 @@
 import logging
 from datetime import datetime
 
-import luna1.execute_type as ex
-from common.ErrorCounter import ErrorCounter
-from common.ExporterTypes import TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN, TX_TYPE_VOTE
-from common.make_tx import make_spend_fee_tx
-from luna1.TxInfoTerra import TxInfoTerra, MsgInfo
-from luna1 import util_terra
-from luna1.config_luna1 import localconfig
-from luna1.col4.handle_failed_tx import handle_failed_tx
-from luna1.col4.handle_simple import handle_simple, handle_unknown, handle_unknown_detect_transfers
-from luna1.col4.handle_swap import handle_swap_msgswap
-from luna1.col4.handle_reward import handle_reward
-from luna1.col4.handle_transfer import handle_transfer, handle_multi_transfer, handle_ibc_transfer
-import luna1.col4.handle
-import luna1.col5.handle
-from common.ibc.MsgInfoIBC import MsgInfoIBC
+import staketaxcsv.luna1.col4.handle
+import staketaxcsv.luna1.col5.handle
+import staketaxcsv.luna1.execute_type as ex
+from staketaxcsv.common.ErrorCounter import ErrorCounter
+from staketaxcsv.common.ExporterTypes import TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN, TX_TYPE_VOTE
+from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
+from staketaxcsv.common.make_tx import make_spend_fee_tx
+from staketaxcsv.luna1 import util_terra
+from staketaxcsv.luna1.col4.handle_failed_tx import handle_failed_tx
+from staketaxcsv.luna1.col4.handle_reward import handle_reward
+from staketaxcsv.luna1.col4.handle_simple import handle_simple, handle_unknown, handle_unknown_detect_transfers
+from staketaxcsv.luna1.col4.handle_swap import handle_swap_msgswap
+from staketaxcsv.luna1.col4.handle_transfer import handle_ibc_transfer, handle_multi_transfer, handle_transfer
+from staketaxcsv.luna1.config_luna1 import localconfig
+from staketaxcsv.luna1.TxInfoTerra import MsgInfo, TxInfoTerra
 
 # execute_type -> tx_type mapping for generic transactions with no tax details
 EXECUTE_TYPES_SIMPLE = {
@@ -58,13 +58,13 @@ def process_tx(wallet_address, elem, exporter):
             # LUNA staking reward
             handle_reward(exporter, elem, txinfo, msgtype)
         elif msgtype == "wasm/MsgExecuteContract":
-            if luna1.col5.handle.can_handle(exporter, elem, txinfo):
+            if staketaxcsv.luna1.col5.handle.can_handle(exporter, elem, txinfo):
                 # THIS SHOULD BE FIRST CHOICE TO ADD NEW HANDLERS
-                luna1.col5.handle.handle(exporter, elem, txinfo)
+                staketaxcsv.luna1.col5.handle.handle(exporter, elem, txinfo)
                 logging.debug("Used col5 handler")
             else:
                 # Legacy handlers
-                luna1.col4.handle.handle(exporter, elem, txinfo)
+                staketaxcsv.luna1.col4.handle.handle(exporter, elem, txinfo)
                 logging.debug("Used col4 handler")
         else:
             logging.error("Unknown msgtype for txid=%s", txid)

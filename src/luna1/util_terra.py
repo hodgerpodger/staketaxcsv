@@ -4,12 +4,12 @@ import base64
 import json
 import logging
 
-from settings_csv import TERRA_LCD_NODE
-from luna1.api_lcd import LcdAPI
-from luna1.config_luna1 import localconfig
-import common.ibc.api_lcd
-from luna1.constants import CUR_UST
-from common.ibc.MsgInfoIBC import MsgInfoIBC
+import staketaxcsv.common.ibc.api_lcd
+from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
+from staketaxcsv.luna1.api_lcd import LcdAPI
+from staketaxcsv.luna1.config_luna1 import localconfig
+from staketaxcsv.luna1.constants import CUR_UST
+from staketaxcsv.settings_csv import TERRA_LCD_NODE
 
 
 def _contracts(elem):

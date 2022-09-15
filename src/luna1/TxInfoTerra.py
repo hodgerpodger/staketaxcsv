@@ -1,6 +1,7 @@
-from common.TxInfo import TxInfo
-from luna1.constants import EXCHANGE_TERRA_BLOCKCHAIN
 import pprint
+
+from staketaxcsv.common.TxInfo import TxInfo
+from staketaxcsv.luna1.constants import EXCHANGE_TERRA_BLOCKCHAIN
 
 
 class TxInfoTerra(TxInfo):

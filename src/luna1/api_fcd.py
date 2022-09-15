@@ -1,9 +1,10 @@
 import logging
 import time
+
 import requests
-from settings_csv import REPORTS_DIR
-from common.debug_util import use_debug_files
-from luna1.config_luna1 import localconfig
+from staketaxcsv.common.debug_util import use_debug_files
+from staketaxcsv.luna1.config_luna1 import localconfig
+from staketaxcsv.settings_csv import REPORTS_DIR
 
 FCD_URL = "https://columbus-fcd.terra.dev"
 LIMIT_FCD = 100

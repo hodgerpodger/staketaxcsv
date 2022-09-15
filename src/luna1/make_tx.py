@@ -1,4 +1,5 @@
-from common.ExporterTypes import (
+from staketaxcsv.common import ExporterTypes as et
+from staketaxcsv.common.ExporterTypes import (
     TX_TYPE_BOND,
     TX_TYPE_GOV_STAKE,
     TX_TYPE_GOV_UNSTAKE,
@@ -16,9 +17,8 @@ from common.ExporterTypes import (
     TX_TYPE_UNBOND_INSTANT,
     TX_TYPE_UNBOND_WITHDRAW,
 )
-from common import ExporterTypes as et
-from common.make_tx import _make_tx_exchange, _make_tx_received, _make_tx_sent, make_simple_tx
-from luna1.constants import CUR_LUNA
+from staketaxcsv.common.make_tx import _make_tx_exchange, _make_tx_received, _make_tx_sent, make_simple_tx
+from staketaxcsv.luna1.constants import CUR_LUNA
 
 
 def make_swap_tx_terra(txinfo, sent_amount, sent_currency, received_amount, received_currency,

@@ -9,12 +9,9 @@ import time
 from urllib.parse import urlencode
 
 import requests
-from settings_csv import TERRA_LCD_NODE
-from common.ibc.api_common import (
-    EVENTS_TYPE_RECIPIENT,
-    EVENTS_TYPE_SENDER,
-    EVENTS_TYPE_SIGNER,
-)
+from staketaxcsv.common.ibc.api_common import EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SENDER, EVENTS_TYPE_SIGNER
+from staketaxcsv.settings_csv import TERRA_LCD_NODE
+
 LIMIT_TX_QUERY = 50
 
 

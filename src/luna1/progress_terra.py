@@ -1,5 +1,5 @@
-from common.progress import Progress
-from luna1.config_luna1 import localconfig
+from staketaxcsv.common.progress import Progress
+from staketaxcsv.luna1.config_luna1 import localconfig
 
 # Err on the side of overestimating for better user experience
 SECONDS_PER_TX_FETCH = 0.2

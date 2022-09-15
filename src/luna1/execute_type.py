@@ -2,7 +2,7 @@ import base64
 import json
 import logging
 
-from luna1 import util_terra
+from staketaxcsv.luna1 import util_terra
 
 EXECUTE_TYPE_UNKNOWN = "unknown_execute_type"
 EXECUTE_TYPE_SWAP = "swap"
