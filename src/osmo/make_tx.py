@@ -1,6 +1,6 @@
-from common.Exporter import Row
-from common.ExporterTypes import TX_TYPE_STAKING, TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW
-from common.make_tx import (
+from staketaxcsv.common.Exporter import Row
+from staketaxcsv.common.ExporterTypes import TX_TYPE_LP_DEPOSIT, TX_TYPE_LP_WITHDRAW, TX_TYPE_STAKING
+from staketaxcsv.common.make_tx import (
     _make_tx_exchange,
     make_reward_tx,
     make_swap_tx,
@@ -9,8 +9,8 @@ from common.make_tx import (
     make_unknown_tx,
     make_unknown_tx_with_transfer,
 )
-from osmo import util_osmo
-from osmo.constants import EXCHANGE_OSMOSIS
+from staketaxcsv.osmo import util_osmo
+from staketaxcsv.osmo.constants import EXCHANGE_OSMOSIS
 
 
 def _edit_row(row, txinfo, msginfo):

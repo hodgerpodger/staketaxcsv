@@ -1,7 +1,7 @@
-from osmo.make_tx import make_osmo_simple_tx, make_osmo_lp_stake_tx
-from osmo import util_osmo
-from osmo.handle_unknown import handle_unknown_detect_transfers
-from osmo.handle_lp import LockedTokens
+from staketaxcsv.osmo import util_osmo
+from staketaxcsv.osmo.handle_lp import LockedTokens
+from staketaxcsv.osmo.handle_unknown import handle_unknown_detect_transfers
+from staketaxcsv.osmo.make_tx import make_osmo_lp_stake_tx, make_osmo_simple_tx
 
 
 def handle_delegate(exporter, txinfo, msginfo):

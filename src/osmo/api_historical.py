@@ -1,7 +1,7 @@
 import time
 from urllib.parse import quote
 
-from osmo.api_util import APIUtil
+from staketaxcsv.osmo.api_util import APIUtil
 
 OSMO_HISTORICAL_API_NETLOC = "api-osmosis.imperator.co"
 

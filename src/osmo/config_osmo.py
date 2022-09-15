@@ -1,5 +1,5 @@
-from common import ExporterTypes as et
-from common.config import config
+from staketaxcsv.common import ExporterTypes as et
+from staketaxcsv.common.config import config
 
 
 class localconfig(config):

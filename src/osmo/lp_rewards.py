@@ -1,5 +1,5 @@
-from osmo import api_data
-from osmo.make_tx import make_lp_reward_tx
+from staketaxcsv.osmo import api_data
+from staketaxcsv.osmo.make_tx import make_lp_reward_tx
 
 
 def lp_rewards(wallet_address, reward_tokens, exporter, progress):

@@ -1,5 +1,5 @@
-from osmo import util_osmo
-from osmo.make_tx import make_osmo_unknown_tx, make_osmo_unknown_tx_with_transfer
+from staketaxcsv.osmo import util_osmo
+from staketaxcsv.osmo.make_tx import make_osmo_unknown_tx, make_osmo_unknown_tx_with_transfer
 
 
 def handle_unknown_detect_transfers(exporter, txinfo, msginfo):

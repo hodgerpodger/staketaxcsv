@@ -1,9 +1,9 @@
 import logging
 
-from osmo import util_osmo
-from osmo.handle_claim import handle_claim
-from osmo.handle_unknown import handle_unknown_detect_transfers
-from osmo.make_tx import (
+from staketaxcsv.osmo import util_osmo
+from staketaxcsv.osmo.handle_claim import handle_claim
+from staketaxcsv.osmo.handle_unknown import handle_unknown_detect_transfers
+from staketaxcsv.osmo.make_tx import (
     make_osmo_lp_deposit_tx,
     make_osmo_lp_stake_tx,
     make_osmo_lp_unstake_tx,

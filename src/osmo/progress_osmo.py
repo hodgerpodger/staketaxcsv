@@ -1,5 +1,5 @@
-from common.progress import Progress
-from osmo.config_osmo import localconfig
+from staketaxcsv.common.progress import Progress
+from staketaxcsv.osmo.config_osmo import localconfig
 
 SECONDS_PER_PAGE = 15
 SECONDS_PER_REWARD_TOKEN = 2.0

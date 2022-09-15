@@ -1,6 +1,6 @@
 import time
 
-from osmo.api_util import APIUtil
+from staketaxcsv.osmo.api_util import APIUtil
 
 OSMO_DATA_API_NETLOC = "api-osmosis-chain.imperator.co"
 LIMIT_PER_QUERY = 25

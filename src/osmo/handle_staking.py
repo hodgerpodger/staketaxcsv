@@ -1,12 +1,12 @@
-import osmo.constants as co
-from common.ExporterTypes import (
+import staketaxcsv.osmo.constants as co
+from staketaxcsv.common.ExporterTypes import (
     TX_TYPE_OSMO_WITHDRAW_COMMISSION,
     TX_TYPE_OSMO_WITHDRAW_DELEGATOR_REWARD,
     TX_TYPE_STAKING_DELEGATE,
     TX_TYPE_STAKING_REDELEGATE,
     TX_TYPE_STAKING_UNDELEGATE,
 )
-from osmo.make_tx import make_osmo_reward_tx, make_osmo_simple_tx
+from staketaxcsv.osmo.make_tx import make_osmo_reward_tx, make_osmo_simple_tx
 
 TX_TYPES_DELEGATION = {
     co.MSG_TYPE_REDELEGATE: TX_TYPE_STAKING_REDELEGATE,

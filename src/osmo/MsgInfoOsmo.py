@@ -1,7 +1,7 @@
-import common.ibc.constants as co
-import osmo.api_historical
-from common.ibc.MsgInfoIBC import MsgInfoIBC
-from osmo.config_osmo import localconfig
+import staketaxcsv.common.ibc.constants as co
+import staketaxcsv.osmo.api_historical
+from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
+from staketaxcsv.osmo.config_osmo import localconfig
 
 
 class MsgInfoOsmo(MsgInfoIBC):
@@ -22,7 +22,7 @@ class MsgInfoOsmo(MsgInfoIBC):
         if currency in localconfig.exponents:
             return int(localconfig.exponents[currency])
 
-        exponent = osmo.api_historical.get_exponent(currency)
+        exponent = staketaxcsv.osmo.api_historical.get_exponent(currency)
         if exponent is None:
             exponent = 6
 
