@@ -19,7 +19,7 @@ KUJI_NODE = os.environ.get("STAKETAX_KUJI_NODE", "")
 OSMO_NODE = os.environ.get("STAKETAX_OSMO_NODE", "https://lcd.osmosis.zone")
 STARS_NODE = os.environ.get("STAKETAX_STARS_NODE", "")
 SOL_NODE = os.environ.get("STAKETAX_SOL_NODE", "https://api.mainnet-beta.solana.com")
-TERRA_LCD_NODE = os.environ.get("STAKETAX_TERRA_LCD_NODE", "https://lcd.terra.dev")
+TERRA_LCD_NODE = os.environ.get("STAKETAX_TERRA_LCD_NODE", "")
 LUNA2_LCD_NODE = os.environ.get("STAKETAX_LUNA2_LCD_NODE", "https://phoenix-lcd.terra.dev")
 
 # Optional environment variables
