@@ -1,11 +1,12 @@
 import common.ibc.api_lcd
 from atom.config_atom import localconfig
-from atom.cosmoshub3.make_tx import make_atom_reward_tx
+from atom.cosmoshub123.make_tx import make_atom_reward_tx
 from settings_csv import ATOM_NODE
 import common.ibc.processor
 import common.ibc.handle
 import atom.constants as co
-import atom.cosmoshub3.processor
+import atom.cosmoshub123.processor_3
+import atom.cosmoshub123.processor_12
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -13,13 +14,20 @@ def process_txs(wallet_address, elems, exporter):
         process_tx(wallet_address, elem, exporter)
 
 
+def _is_legacy_format_cosmoshub12(elem):
+    return "value" in elem["tx"] and elem["logs"] and "events" not in elem["logs"][0]
+
+
 def _is_legacy_format_cosmoshub3(elem):
-    return "value" in elem["tx"]
+    return "value" in elem["tx"] and elem["logs"] and "events" in elem["logs"][0]
 
 
 def process_tx(wallet_address, elem, exporter):
+    if _is_legacy_format_cosmoshub12(elem):
+        atom.cosmoshub123.processor_12.process_tx(wallet_address, elem, exporter)
+        return
     if _is_legacy_format_cosmoshub3(elem):
-        atom.cosmoshub3.processor.process_tx(wallet_address, elem, exporter)
+        atom.cosmoshub123.processor_3.process_tx(wallet_address, elem, exporter)
         return
 
     txinfo = common.ibc.processor.txinfo(

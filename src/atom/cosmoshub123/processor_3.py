@@ -1,10 +1,15 @@
+"""
+Transactions processor for cosmoshub3 transactions.
+"""
+
+
 import logging
 from datetime import datetime
 
 import common.ibc.api_lcd
 from atom.config_atom import localconfig
-from atom.constants import CHAIN_ID_COSMOHUB3, CHAIN_ID_COSMOHUB4, CUR_ATOM, MILLION
-from atom.cosmoshub3.make_tx import make_atom_reward_tx, make_transfer_receive_tx
+from atom.constants import CHAIN_ID_COSMOSHUB3, CHAIN_ID_COSMOSHUB4, CUR_ATOM, MILLION
+from atom.cosmoshub123.make_tx import make_atom_reward_tx, make_transfer_receive_tx
 from atom.TxInfoAtom import TxInfoAtom
 from common.ErrorCounter import ErrorCounter
 from common.ExporterTypes import (
@@ -22,7 +27,7 @@ from common.ibc.MsgInfoIBC import MsgInfoIBC
 def process_tx(wallet_address, elem, exporter):
     txid = elem["txhash"]
 
-    chain_id = CHAIN_ID_COSMOHUB3 if "value" in elem["tx"] else CHAIN_ID_COSMOHUB4
+    chain_id = CHAIN_ID_COSMOSHUB3 if "value" in elem["tx"] else CHAIN_ID_COSMOSHUB4
     timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
     fee = _get_fee(elem, chain_id)
     url = "https://www.mintscan.io/cosmos/txs/{}".format(txid)
@@ -163,7 +168,7 @@ def handle_withdraw_reward(exporter, txinfo, elem, msg_index):
 
 
 def _extract_transfers(txinfo, events, wallet_address, txid):
-    if txinfo.chain_id == CHAIN_ID_COSMOHUB3:
+    if txinfo.chain_id == CHAIN_ID_COSMOSHUB3:
         return _extract_transfers_cosmoshub3(events, wallet_address, txid)
 
     transfers_in = []
@@ -256,7 +261,7 @@ def _amount(amount_string):
 
 
 def _get_fee(elem, chain_id):
-    if chain_id == CHAIN_ID_COSMOHUB3:
+    if chain_id == CHAIN_ID_COSMOSHUB3:
         return _get_fee_cosmoshub3(elem)
 
     amount_list = elem["tx"]["auth_info"]["fee"]["amount"]
@@ -284,7 +289,7 @@ def _get_fee_cosmoshub3(elem):
 
 def _msg_types(elem, chain_id):
     """Returns list of @type values found in tx.body.messages"""
-    if chain_id == CHAIN_ID_COSMOHUB3:
+    if chain_id == CHAIN_ID_COSMOSHUB3:
         return _msg_types_cosmohub3(elem)
 
     types = [msg["@type"] for msg in elem["tx"]["body"]["messages"]]

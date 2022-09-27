@@ -31,8 +31,7 @@ def get_txs_legacy(wallet_address, from_id=None):
         from_id = INITIAL_ID
     data = _get_txs_legacy(wallet_address, from_id)
 
-    # Filter to only cosmoshub-1, cosmoshub-2, cosmoshub-3 transactions
-    elems = [datum["data"] for datum in data if datum["header"]["chain_id"] in ["cosmoshub-1", "cosmoshub-2", "cosmoshub-3"]]
+    elems = [datum["data"] for datum in data]
 
     # Get id argument to be used in subsequent query
     next_id = data[-1]["header"]["id"] if len(elems) == LIMIT else None

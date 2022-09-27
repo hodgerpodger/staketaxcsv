@@ -14,7 +14,7 @@ import logging
 import math
 import pprint
 
-import atom.cosmoshub3.api_cosmostation
+import atom.cosmoshub123.api_cosmostation
 import atom.api_lcd
 import atom.processor
 import common.ibc.api_lcd
@@ -57,7 +57,7 @@ def wallet_exists(wallet_address):
 
 def txone(wallet_address, txid):
     if localconfig.legacy:
-        elem = atom.cosmoshub3.api_cosmostation.get_tx(txid)
+        elem = atom.cosmoshub123.api_cosmostation.get_tx(txid)
     else:
         elem = atom.api_lcd.get_tx(txid)
 
@@ -124,7 +124,7 @@ def _fetch_txs_legacy(wallet_address, progress):
         progress.report_message(message)
         current_page += 1
 
-        elems, next_id = atom.cosmoshub3.api_cosmostation.get_txs_legacy(wallet_address, next_id)
+        elems, next_id = atom.cosmoshub123.api_cosmostation.get_txs_legacy(wallet_address, next_id)
         out.extend(elems)
         if next_id is None:
             break
