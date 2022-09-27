@@ -20,6 +20,7 @@ MILLION = 1000000.0
 def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, customMsgInfo=None):
     """ Parses transaction data to return TxInfo object """
     txid = elem["txhash"]
+
     timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
     fee, fee_currency = _get_fee(wallet_address, elem, lcd_node, ibc_addresses)
     memo = _get_memo(elem)

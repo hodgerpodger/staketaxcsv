@@ -68,6 +68,9 @@ class MsgInfoIBC:
                 return True
         return False
 
+    def _num_keys(self, attributes):
+        return len(set([a["key"] for a in attributes]))
+
     def _transfers_coin_received(self):
         transfers_in = []
 
@@ -76,7 +79,7 @@ class MsgInfoIBC:
             event_type, attributes = event["type"], event["attributes"]
 
             if event_type == COIN_RECEIVED:
-                for i in range(0, len(attributes), 2):
+                for i in range(0, len(attributes), self._num_keys(attributes)):
                     receiver = attributes[i]["value"]
                     amount_string = attributes[i + 1]["value"]
                     if receiver == self.wallet_address:
@@ -93,7 +96,7 @@ class MsgInfoIBC:
             event_type, attributes = event["type"], event["attributes"]
 
             if event_type == COIN_SPENT:
-                for i in range(0, len(attributes), 2):
+                for i in range(0, len(attributes), self._num_keys(attributes)):
                     spender = attributes[i]["value"]
                     amount_string = attributes[i + 1]["value"]
 
@@ -118,7 +121,7 @@ class MsgInfoIBC:
                     continue
 
                 # Handle all other cases
-                for i in range(0, len(attributes), 3):
+                for i in range(0, len(attributes), self._num_keys(attributes)):
                     recipient = attributes[i]["value"]
                     sender = attributes[i + 1]["value"]
                     amount_string = attributes[i + 2]["value"]
