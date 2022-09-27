@@ -2,11 +2,15 @@ import logging
 import time
 
 import requests
+from urllib.parse import urlencode
+from common.debug_util import use_debug_files
+from settings_csv import REPORTS_DIR
 
-LIMIT = 250
+LIMIT = 50
 INITIAL_ID = 3197873
 
 
+@use_debug_files(None, REPORTS_DIR)
 def _get_txs_legacy(wallet_address, from_id):
     query_params = {
         "limit": LIMIT,
@@ -14,7 +18,7 @@ def _get_txs_legacy(wallet_address, from_id):
     }
     url = f"https://api.cosmostation.io/v1/account/new_txs/{wallet_address}"
 
-    logging.info("Requesting url=%s", url)
+    logging.info("Requesting url=%s?%s", url, urlencode(query_params))
     response = requests.get(url, query_params)
     data = response.json()
     time.sleep(1)
@@ -22,11 +26,13 @@ def _get_txs_legacy(wallet_address, from_id):
     return data
 
 
-def get_txs_legacy(wallet_address, from_id=INITIAL_ID):
+def get_txs_legacy(wallet_address, from_id=None):
+    if from_id is None:
+        from_id = INITIAL_ID
     data = _get_txs_legacy(wallet_address, from_id)
 
-    # Filter to only cosmoshub-3 transactions
-    elems = [datum["data"] for datum in data if datum["header"]["chain_id"] == "cosmoshub-3"]
+    # Filter to only cosmoshub-1, cosmoshub-2, cosmoshub-3 transactions
+    elems = [datum["data"] for datum in data if datum["header"]["chain_id"] in ["cosmoshub-1", "cosmoshub-2", "cosmoshub-3"]]
 
     # Get id argument to be used in subsequent query
     next_id = data[-1]["header"]["id"] if len(elems) == LIMIT else None

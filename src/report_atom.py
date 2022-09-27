@@ -66,7 +66,8 @@ def txone(wallet_address, txid):
 
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
     txinfo = atom.processor.process_tx(wallet_address, elem, exporter)
-    txinfo.print()
+    if txinfo:
+        txinfo.print()
     return exporter
 
 
@@ -129,39 +130,6 @@ def _fetch_txs_legacy(wallet_address, progress):
             break
 
     return out
-
-
-"""
-def _fetch_txs(wallet_address, progress):
-    if localconfig.debug:
-        debug_file = f"_reports/testatom.{wallet_address}.json"
-        if os.path.exists(debug_file):
-            with open(debug_file, "r") as f:
-                return json.load(f)
-
-    out = []
-    current_page = 0
-    # Two passes: is_sender=True (message.sender events) and is_sender=False (transfer.recipient events)
-    for is_sender in (True, False):
-        offset = 0
-        for _ in range(0, _max_pages()):
-            message = "Fetching page {} for {}".format(current_page + 1, "sender" if is_sender else "recipient")
-            progress.report(current_page, message)
-            current_page += 1
-
-            elems, offset, _ = atom.api_lcd.get_txs(wallet_address, is_sender, offset)
-
-            out.extend(elems)
-            if offset is None:
-                break
-
-    # Debugging only
-    if localconfig.debug:
-        with open(debug_file, "w") as f:
-            json.dump(out, f, indent=4)
-        logging.info("Wrote to %s for debugging", debug_file)
-    return out
-"""
 
 
 def _remove_duplicates(elems):

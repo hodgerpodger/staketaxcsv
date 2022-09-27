@@ -43,7 +43,7 @@ def process_tx(wallet_address, elem, exporter):
             handle_simple_tx(exporter, txinfo, TX_TYPE_UNKNOWN)
 
             if localconfig.debug:
-                raise (e)
+                raise e
 
 
 def _handle_tx(msg_type, exporter, txinfo, elem, txid, i):
