@@ -18,7 +18,7 @@ from common.ExporterTypes import (
     TX_TYPE_UNKNOWN,
     TX_TYPE_VOTE,
 )
-from common.make_tx import make_simple_tx, make_transfer_out_tx
+from common.make_tx import make_simple_tx, make_transfer_out_tx, make_spend_fee_tx
 
 
 def process_tx(wallet_address, elem, exporter):
@@ -51,7 +51,10 @@ def process_tx(wallet_address, elem, exporter):
 def _handle_tx(msg_type, exporter, txinfo, elem, txid, i):
     if not elem["logs"][0]["success"]:
         logging.info("Detected failed transaction")
-        handle_simple_tx(exporter, txinfo, TX_TYPE_UNKNOWN)
+
+        row = make_spend_fee_tx(txinfo, txinfo.fee, CUR_ATOM)
+        row.comment = "Fee for failed transaction"
+        exporter.ingest_row(row)
         return
 
     if msg_type in ("MsgSend", "MsgCreateVestingAccount"):
