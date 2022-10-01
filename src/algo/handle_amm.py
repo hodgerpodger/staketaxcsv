@@ -56,10 +56,29 @@ def is_simple_swap_group(wallet_address, group):
 
 
 def is_simple_lp_add_group(wallet_address, group):
-    if len(group) != 3:
+    length = len(group)
+    if length != 3 and length != 4:
         return False
 
-    transaction = group[0]
+    i = 0
+    transaction = group[i]
+    txtype = transaction["tx-type"]
+    # Opt-in transaction
+    if (txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
+            and transaction["sender"] == transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
+        i += 1
+
+    transaction = group[i]
+    txtype = transaction["tx-type"]
+    if txtype != co.TRANSACTION_TYPE_PAYMENT and txtype != co.TRANSACTION_TYPE_ASSET_TRANSFER:
+        return False
+
+    i += 1
+    txsender = transaction["sender"]
+    if txsender != wallet_address:
+        return False
+
+    transaction = group[i]
     txtype = transaction["tx-type"]
     if txtype != co.TRANSACTION_TYPE_PAYMENT and txtype != co.TRANSACTION_TYPE_ASSET_TRANSFER:
         return False
@@ -68,16 +87,8 @@ def is_simple_lp_add_group(wallet_address, group):
     if txsender != wallet_address:
         return False
 
-    transaction = group[1]
-    txtype = transaction["tx-type"]
-    if txtype != co.TRANSACTION_TYPE_PAYMENT and txtype != co.TRANSACTION_TYPE_ASSET_TRANSFER:
-        return False
-
-    txsender = transaction["sender"]
-    if txsender != wallet_address:
-        return False
-
-    transaction = group[2]
+    i += 1
+    transaction = group[i]
     txtype = transaction["tx-type"]
     if txtype != co.TRANSACTION_TYPE_APP_CALL:
         return False
@@ -99,11 +110,20 @@ def is_simple_lp_add_group(wallet_address, group):
 
 
 def is_simple_lp_remove_group(wallet_address, group):
-    if len(group) != 2:
+    length = len(group)
+    if length < 2 or length > 4:
         return False
 
-    transaction = group[0]
+    i = 0
+    transaction = group[i]
     txtype = transaction["tx-type"]
+    # Opt-in transactions
+    while (txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
+            and transaction["sender"] == transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
+        i += 1
+        transaction = group[i]
+        txtype = transaction["tx-type"]
+
     if txtype != co.TRANSACTION_TYPE_PAYMENT and txtype != co.TRANSACTION_TYPE_ASSET_TRANSFER:
         return False
 
@@ -111,7 +131,8 @@ def is_simple_lp_remove_group(wallet_address, group):
     if txsender != wallet_address:
         return False
 
-    transaction = group[1]
+    i += 1
+    transaction = group[i]
     txtype = transaction["tx-type"]
     if txtype != co.TRANSACTION_TYPE_APP_CALL:
         return False
@@ -232,11 +253,23 @@ def handle_lp_add(amm, group, exporter, txinfo):
 
 
 def handle_lp_remove(amm, group, exporter, txinfo):
-    send_transaction = group[0]
+    i = 0
+    fee_amount = 0
+    send_transaction = group[i]
+    txtype = send_transaction["tx-type"]
+    # Opt-in transactions
+    while (txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
+            and send_transaction["sender"] == send_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
+        fee_amount += send_transaction["fee"]
+        i += 1
+        send_transaction = group[i]
+        txtype = send_transaction["tx-type"]
+
     fee_amount = send_transaction["fee"]
     lp_asset = get_transfer_asset(send_transaction)
 
-    app_transaction = group[1]
+    i += 1
+    app_transaction = group[i]
     fee_amount += app_transaction["fee"]
     inner_transactions = app_transaction.get("inner-txns", [])
     if len(inner_transactions) == 2:
