@@ -31,7 +31,16 @@ def get_txs_legacy(wallet_address, from_id=None):
         from_id = INITIAL_ID
     data = _get_txs_legacy(wallet_address, from_id)
 
-    elems = [datum["data"] for datum in data]
+    # Transform to data structure congruent to LCD endpoints
+    elems = []
+    for datum in data:
+        elem = datum["data"]
+
+        # Add timestamp field if missing in "normal" spot (for really old transactions)
+        if "timestamp" not in elem:
+            elem["timestamp"] = datum["header"]["timestamp"]
+
+        elems.append(elem)
 
     # Get id argument to be used in subsequent query
     next_id = data[-1]["header"]["id"] if len(elems) == LIMIT else None
