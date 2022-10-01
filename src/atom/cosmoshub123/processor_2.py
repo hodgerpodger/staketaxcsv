@@ -1,5 +1,5 @@
 """
-Transactions processor for cosmoshub1, cosmoshub2 transactions.
+Transactions processor for cosmoshub2 transactions.
 """
 
 
@@ -12,9 +12,6 @@ from atom.cosmoshub123.make_tx import make_atom_reward_tx, make_transfer_receive
 from atom.TxInfoAtom import TxInfoAtom
 from common.ErrorCounter import ErrorCounter
 from common.ExporterTypes import (
-    TX_TYPE_STAKING_DELEGATE,
-    TX_TYPE_STAKING_REDELEGATE,
-    TX_TYPE_STAKING_UNDELEGATE,
     TX_TYPE_UNKNOWN,
     TX_TYPE_VOTE,
 )

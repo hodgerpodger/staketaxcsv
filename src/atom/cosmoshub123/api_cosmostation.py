@@ -31,7 +31,7 @@ def get_txs_legacy(wallet_address, from_id=None):
         from_id = INITIAL_ID
     data = _get_txs_legacy(wallet_address, from_id)
 
-    # Transform to data structure congruent to LCD endpoints
+    # Transform to data structure congruent to LCD endpoint data
     elems = []
     for datum in data:
         elem = datum["data"]
@@ -55,5 +55,9 @@ def get_tx(txid):
     response = requests.get(url)
     data = response.json()
     time.sleep(1)
+
+    # Add timestamp field so that data structure is congruent to LCD endpoint data
+    if "timestamp" not in data["data"]:
+        data["data"]["timestamp"] = data["header"]["timestamp"]
 
     return data["data"]

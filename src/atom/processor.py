@@ -5,8 +5,9 @@ from settings_csv import ATOM_NODE
 import common.ibc.processor
 import common.ibc.handle
 import atom.constants as co
+import atom.cosmoshub123.processor_1
+import atom.cosmoshub123.processor_2
 import atom.cosmoshub123.processor_3
-import atom.cosmoshub123.processor_12
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -14,17 +15,30 @@ def process_txs(wallet_address, elems, exporter):
         process_tx(wallet_address, elem, exporter)
 
 
-def _is_legacy_format_cosmoshub12(elem):
-    return "value" in elem["tx"] and elem["logs"] and "events" not in elem["logs"][0]
+def _is_legacy_format_cosmoshub1(elem):
+    return "value" in elem["tx"] and "logs" not in elem
+
+
+def _is_legacy_format_cosmoshub2(elem):
+    return ("value" in elem["tx"] and
+            "logs" in elem and
+            elem["logs"] and
+            "events" not in elem["logs"][0])
 
 
 def _is_legacy_format_cosmoshub3(elem):
-    return "value" in elem["tx"] and elem["logs"] and "events" in elem["logs"][0]
+    return ("value" in elem["tx"] and
+           "logs" in elem and
+            elem["logs"] and
+            "events" in elem["logs"][0])
 
 
 def process_tx(wallet_address, elem, exporter):
-    if _is_legacy_format_cosmoshub12(elem):
-        atom.cosmoshub123.processor_12.process_tx(wallet_address, elem, exporter)
+    if _is_legacy_format_cosmoshub1(elem):
+        atom.cosmoshub123.processor_1.process_tx(wallet_address, elem, exporter)
+        return
+    if _is_legacy_format_cosmoshub2(elem):
+        atom.cosmoshub123.processor_2.process_tx(wallet_address, elem, exporter)
         return
     if _is_legacy_format_cosmoshub3(elem):
         atom.cosmoshub123.processor_3.process_tx(wallet_address, elem, exporter)
