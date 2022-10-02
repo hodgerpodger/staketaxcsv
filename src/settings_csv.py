@@ -17,6 +17,7 @@ HUAHUA_NODE = os.environ.get("STAKETAX_HUAHUA_NODE", "")
 JUNO_NODE = os.environ.get("STAKETAX_JUNO_NODE", "")
 KUJI_NODE = os.environ.get("STAKETAX_KUJI_NODE", "")
 OSMO_NODE = os.environ.get("STAKETAX_OSMO_NODE", "https://lcd.osmosis.zone")
+REGEN_NODE = os.environ.get("STAKETAX_REGEN_NODE", "")
 STARS_NODE = os.environ.get("STAKETAX_STARS_NODE", "")
 SOL_NODE = os.environ.get("STAKETAX_SOL_NODE", "https://api.mainnet-beta.solana.com")
 TERRA_LCD_NODE = os.environ.get("STAKETAX_TERRA_LCD_NODE", "")
@@ -41,6 +42,7 @@ TICKER_KUJI = "KUJI"
 TICKER_LUNA1 = "LUNA1"
 TICKER_LUNA2 = "LUNA2"
 TICKER_OSMO = "OSMO"
+TICKER_REGEN = "REGEN"
 TICKER_SOL = "SOL"
 TICKER_STARS = "STARS"
 
