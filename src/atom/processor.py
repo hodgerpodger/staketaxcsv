@@ -1,13 +1,13 @@
-import common.ibc.api_lcd
-from atom.config_atom import localconfig
-from atom.cosmoshub123.make_tx import make_atom_reward_tx
-from settings_csv import ATOM_NODE
-import common.ibc.processor
-import common.ibc.handle
-import atom.constants as co
-import atom.cosmoshub123.processor_1
-import atom.cosmoshub123.processor_2
-import atom.cosmoshub123.processor_3
+import staketaxcsv.atom.constants as co
+import staketaxcsv.atom.cosmoshub123.processor_1
+import staketaxcsv.atom.cosmoshub123.processor_2
+import staketaxcsv.atom.cosmoshub123.processor_3
+import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.common.ibc.handle
+import staketaxcsv.common.ibc.processor
+from staketaxcsv.atom.config_atom import localconfig
+from staketaxcsv.atom.cosmoshub123.make_tx import make_atom_reward_tx
+from staketaxcsv.settings_csv import ATOM_NODE
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -20,17 +20,11 @@ def _is_legacy_format_cosmoshub1(elem):
 
 
 def _is_legacy_format_cosmoshub2(elem):
-    return ("value" in elem["tx"] and
-            "logs" in elem and
-            elem["logs"] and
-            "events" not in elem["logs"][0])
+    return "value" in elem["tx"] and "logs" in elem and elem["logs"] and "events" not in elem["logs"][0]
 
 
 def _is_legacy_format_cosmoshub3(elem):
-    return ("value" in elem["tx"] and
-           "logs" in elem and
-            elem["logs"] and
-            "events" in elem["logs"][0])
+    return "value" in elem["tx"] and "logs" in elem and elem["logs"] and "events" in elem["logs"][0]
 
 
 def process_tx(wallet_address, elem, exporter):
@@ -45,7 +39,8 @@ def process_tx(wallet_address, elem, exporter):
         return
 
     txinfo = common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_ATOM, localconfig.ibc_addresses, ATOM_NODE)
+        wallet_address, elem, co.MINTSCAN_LABEL_ATOM, localconfig.ibc_addresses, ATOM_NODE
+    )
 
     for msginfo in txinfo.msgs:
         result = common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)

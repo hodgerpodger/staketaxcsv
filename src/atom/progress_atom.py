@@ -1,5 +1,5 @@
-from atom.config_atom import localconfig
-from common.progress import Progress
+from staketaxcsv.atom.config_atom import localconfig
+from staketaxcsv.common.progress import Progress
 
 SECONDS_PER_PAGE = 5
 
