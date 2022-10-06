@@ -8,6 +8,9 @@ import common.ibc.util_ibc
 
 COIN_RECEIVED = "coin_received"
 COIN_SPENT = "coin_spent"
+RECEIVER = "receiver"
+SPENDER = "spender"
+AMOUNT = "amount"
 
 
 class MsgInfoIBC:
@@ -80,8 +83,18 @@ class MsgInfoIBC:
 
             if event_type == COIN_RECEIVED:
                 for i in range(0, len(attributes), self._num_keys(attributes)):
-                    receiver = attributes[i]["value"]
-                    amount_string = attributes[i + 1]["value"]
+                    first_key = attributes[i]["key"]
+
+                    if first_key == AMOUNT:
+                        # Special case in JUNO only as of 10/4/2022
+                        amount_string = attributes[i]["value"]
+                        receiver = attributes[i + 1]["value"]
+                    elif first_key == RECEIVER:
+                        receiver = attributes[i]["value"]
+                        amount_string = attributes[i + 1]["value"]
+                    else:
+                        raise Exception("Unexpected format in coin_received event")
+
                     if receiver == self.wallet_address:
                         for amount, currency in self.amount_currency(amount_string):
                             transfers_in.append((amount, currency))
@@ -97,8 +110,17 @@ class MsgInfoIBC:
 
             if event_type == COIN_SPENT:
                 for i in range(0, len(attributes), self._num_keys(attributes)):
-                    spender = attributes[i]["value"]
-                    amount_string = attributes[i + 1]["value"]
+                    first_key = attributes[i]["key"]
+
+                    if first_key == AMOUNT:
+                        # Special case in JUNO only as of 10/4/2022
+                        amount_string = attributes[i]["value"]
+                        spender = attributes[i + 1]["value"]
+                    elif first_key == SPENDER:
+                        spender = attributes[i]["value"]
+                        amount_string = attributes[i + 1]["value"]
+                    else:
+                        raise Exception("Unexpected format in coin_spent event")
 
                     if spender == self.wallet_address:
                         for amount, currency in self.amount_currency(amount_string):
@@ -122,9 +144,17 @@ class MsgInfoIBC:
 
                 # Handle all other cases
                 for i in range(0, len(attributes), self._num_keys(attributes)):
-                    recipient = attributes[i]["value"]
-                    sender = attributes[i + 1]["value"]
-                    amount_string = attributes[i + 2]["value"]
+                    first_key = attributes[i]["key"]
+
+                    if first_key == AMOUNT:
+                        # Special case in JUNO only as of 10/4/2022
+                        amount_string = attributes[i]["value"]
+                        recipient = attributes[i + 1]["value"]
+                        sender = attributes[i + 2]["value"]
+                    else:
+                        recipient = attributes[i]["value"]
+                        sender = attributes[i + 1]["value"]
+                        amount_string = attributes[i + 2]["value"]
 
                     if recipient == self.wallet_address:
                         for amount, currency in self.amount_currency(amount_string):
