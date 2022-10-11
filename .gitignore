@@ -14,3 +14,8 @@ sample.env
 
 koinly_null_map.json
 .DS_Store
+
+# setup.py related
+build/*
+dist/*
+staketaxcsv.egg-info/*
