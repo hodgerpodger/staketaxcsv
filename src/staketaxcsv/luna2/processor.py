@@ -9,9 +9,12 @@ import staketaxcsv.luna2.contracts.valkyrie
 from staketaxcsv.common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI
 from staketaxcsv.luna2.config_luna2 import localconfig
 
-# Import contract handler functions
+# These imports add to CONTRACTS dict
 from staketaxcsv.luna2.contracts.config import CONTRACTS
 from staketaxcsv.settings_csv import LUNA2_LCD_NODE
+import staketaxcsv.luna2.contracts.astroport
+import staketaxcsv.luna2.contracts.general
+import staketaxcsv.luna2.contracts.valkyrie
 
 CONTRACT_VKR_TOKEN = "terra1gy73st560m2j0esw5c5rjmr899hvtv4rhh4seeajt3clfhr4aupszjss4j"
 CONTRACTS_USE_SECOND_MESSAGE = set([

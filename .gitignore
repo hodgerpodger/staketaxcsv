@@ -5,8 +5,8 @@ __pycache__/
 
 # application ignores
 env/*
-src/_reports/*
-src/sol/data_staking_rewards/*.csv
+src/staketaxcsv/_reports/*
+src/staketaxcsv/sol/data_staking_rewards/*.csv
 sample.env
 
 # pycharm

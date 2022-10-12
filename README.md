@@ -22,16 +22,16 @@
   cd src
   
   # Create default CSV
-  python3 report_atom.py <wallet_address>
+  python3 staketaxcsv/report_atom.py <wallet_address>
   
   # Create all CSV formats (i.e. koinly, cointracking, etc.)
-  python3 report_atom.py <wallet_address> --format all
+  python3 staketaxcsv/report_atom.py <wallet_address> --format all
   
   # Show CSV result for single transaction (great for development/debugging)
-  python3 report_atom.py <wallet_address> --txid <txid>
+  python3 staketaxcsv/report_atom.py <wallet_address> --txid <txid>
   
   # Show CSV result for single transaction in debug mode (great for development/debugging)
-  python3 report_atom.py <wallet_address> --txid <txid> --debug
+  python3 staketaxcsv/report_atom.py <wallet_address> --txid <txid> --debug
   ```
   
   
@@ -41,7 +41,7 @@
   1. Install python 3.9 ([one way](README_reference.md#installing-python-39-on-macos))
   1. Install pip packages
 
-     ```sh
+     ```
      pip3 install -r requirements.txt
      ```
 
@@ -55,9 +55,9 @@ See [Docker](README_reference.md#docker) to alternatively install/run in docker 
 * Providing a sample txid will expedite a pull request (email support@stake.tax,
   DM @staketax, etc.):
 
-  ```sh
+  ```
   # For a given txid, your PR (most commonly) should print different output before/after:
-  python3 report_osmo.py <wallet_address> --txid <txid>
+  python3 staketaxcsv/report_osmo.py <wallet_address> --txid <txid>
   ```
 
 # Reference

@@ -233,8 +233,5 @@ def _execute_type(elem, txinfo, index=0):
     elif "submit_order" in execute_msg:
         return EXECUTE_TYPE_SUBMIT_ORDER
 
-    logging.error("Unable to determine execute type for txid=%s", txid, extra={
-        "txid": txid,
-        "execute_msg": execute_msg
-    })
+    logging.error("Unable to determine execute type for txid=%s, %s", txid, execute_msg)
     return EXECUTE_TYPE_UNKNOWN

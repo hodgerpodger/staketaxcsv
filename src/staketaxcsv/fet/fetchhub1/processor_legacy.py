@@ -20,14 +20,14 @@ def process_tx_legacy(wallet_address, elem, exporter, node):
     try:
         if txinfo.is_execute_contract():
             # Handle transaction with execute contract message(s)
-            fet.handle_contract.handle_contract(exporter, txinfo)
+            staketaxcsv.fet.handle_contract.handle_contract(exporter, txinfo)
         else:
             # Handle all other transactions
             handle_tx(exporter, txinfo)
     except Exception as e:
         logging.error(
             "Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
-        common.ibc.handle.handle_unknown_detect_transfers_tx(exporter, txinfo)
+        staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers_tx(exporter, txinfo)
         if localconfig.debug:
             raise e
 

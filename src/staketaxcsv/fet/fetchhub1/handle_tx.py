@@ -2,7 +2,6 @@
 import staketaxcsv.common.ibc.handle
 import staketaxcsv.fet.fetchhub1.constants as co2
 from staketaxcsv.common.ibc import make_tx
-from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 from staketaxcsv.common.make_tx import ingest_rows, make_spend_fee_tx
 
 
@@ -27,7 +26,7 @@ def handle_tx(exporter, txinfo):
             result = _handle_transfer(exporter, txinfo, msginfo)
 
         else:
-            common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+            staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
             result = None
 
         if result:
@@ -60,7 +59,7 @@ def _handle_transfer(exporter, txinfo, msginfo):
         row = make_tx.make_transfer_out_tx(txinfo, msginfo, amount, currency)
         return [row]
     else:
-        common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+        staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
         return []
 
 

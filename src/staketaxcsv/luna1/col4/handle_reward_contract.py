@@ -83,7 +83,7 @@ def _detect_contract_fee(txinfo, elem):
 
 
 def _extract_amount(elem, index, currency):
-    # Get amount
+    # Get amount from execute_msg element
     try:
         execute_msg = util_terra._execute_msg(elem, index)
         amount = util_terra._float_amount(execute_msg["claim"]["amount"], currency)
@@ -91,10 +91,13 @@ def _extract_amount(elem, index, currency):
     except Exception:
         pass
 
+    # Get amount from from_contract element
     try:
         from_contract = (
             util_terra._event_with_action(elem, "from_contract", "claim")
-            or util_terra._event_with_action(elem, "from_contract", "claim phase 1"))
+            or util_terra._event_with_action(elem, "from_contract", "claim phase 1")
+            or util_terra._event_with_action(elem, "from_contract", "Airdrop::ExecuteMsg::Claim")
+        )
 
         amounts = (from_contract.get("amount", None)
                    or from_contract.get("claim_amount", None))
@@ -103,7 +106,7 @@ def _extract_amount(elem, index, currency):
             action = actions[i]
             amount = amounts[i]
 
-            if action in ["claim", "claim phase 1"]:
+            if action in ["claim", "claim phase 1", "Airdrop::ExecuteMsg::Claim"]:
                 return util_terra._float_amount(amount, currency)
     except Exception:
         pass

@@ -61,11 +61,9 @@ def process_tx(wallet_address, elem, exporter):
             if staketaxcsv.luna1.col5.handle.can_handle(exporter, elem, txinfo):
                 # THIS SHOULD BE FIRST CHOICE TO ADD NEW HANDLERS
                 staketaxcsv.luna1.col5.handle.handle(exporter, elem, txinfo)
-                logging.debug("Used col5 handler")
             else:
                 # Legacy handlers
                 staketaxcsv.luna1.col4.handle.handle(exporter, elem, txinfo)
-                logging.debug("Used col4 handler")
         else:
             logging.error("Unknown msgtype for txid=%s", txid)
             ErrorCounter.increment("unknown_msgtype", txid)

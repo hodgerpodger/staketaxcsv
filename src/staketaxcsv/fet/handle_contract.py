@@ -13,16 +13,16 @@ def handle_contract(exporter, txinfo):
     if contract in [CONTRACT_BRIDGE_V1, CONTRACT_BRIDGE_V2]:
         rows = _handle_bridge_transfer_v1(exporter, txinfo)
     else:
-        common.ibc.handle.handle_unknown_detect_transfers_tx(exporter, txinfo)
+        staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers_tx(exporter, txinfo)
         return
 
     if rows:
-        common.make_tx.ingest_rows(exporter, txinfo, rows)
+        staketaxcsv.common.make_tx.ingest_rows(exporter, txinfo, rows)
 
 
 def _handle_bridge_transfer_v1(exporter, txinfo):
     if len(txinfo.msgs) != 1:
-        common.ibc.handle.handle_unknown_detect_transfers_tx(exporter, txinfo)
+        staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers_tx(exporter, txinfo)
         return
 
     msginfo = txinfo.msgs[0]
@@ -46,5 +46,5 @@ def _handle_bridge_transfer_v1(exporter, txinfo):
         row.comment = comment
         return [row]
     else:
-        common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+        staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
         return []

@@ -1,9 +1,11 @@
-import staketaxcsv.common.make_tx
-import staketaxcsv.luna1.col5.contracts.astroport
-import staketaxcsv.luna1.col5.contracts.terraswap_route_swap
-import staketaxcsv.luna1.col5.contracts.wormhole
 from staketaxcsv.luna1 import util_terra
 from staketaxcsv.luna1.col5.contracts.config import CONTRACTS
+from staketaxcsv.common import make_tx
+
+# These imports add to CONTRACTS dict
+import staketaxcsv.luna1.col5.contracts.astroport
+import staketaxcsv.luna1.col5.contracts.wormhole
+import staketaxcsv.luna1.col5.contracts.terraswap_route_swap
 
 
 def can_handle(exporter, elem, txinfo):
@@ -25,4 +27,4 @@ def handle(exporter, elem, txinfo):
     rows = handler_func(elem, txinfo)
 
     # Add row(s) to CSV
-    common.make_tx.ingest_rows(exporter, txinfo, rows)
+    make_tx.ingest_rows(exporter, txinfo, rows)
