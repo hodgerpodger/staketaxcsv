@@ -3,10 +3,29 @@ import datetime
 import logging
 import os
 
+import staketaxcsv.api
 from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS
 from staketaxcsv.settings_csv import REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL
+from staketaxcsv.algo.api_nfdomains import NFDomainsAPI
 
 ALL = "all"
+
+
+def main_default(ticker):
+    wallet_address, export_format, txid, options = parse_args(ticker)
+
+    run_report(ticker, wallet_address, export_format, txid, options)
+
+
+def run_report(ticker, wallet_address, export_format, txid, options):
+    if txid:
+        path = "{}/{}.{}.csv".format(REPORTS_DIR, txid, export_format)
+        staketaxcsv.api.transaction(ticker, wallet_address, txid, export_format, path, options)
+    elif export_format == ALL:
+        staketaxcsv.api.csv_all(ticker, wallet_address, REPORTS_DIR)
+    else:
+        path = "{}/{}.{}.{}.csv".format(REPORTS_DIR, ticker, wallet_address, export_format)
+        staketaxcsv.api.csv(ticker, wallet_address, export_format, path, options)
 
 
 def parse_args(ticker):

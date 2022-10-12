@@ -14,7 +14,6 @@ import staketaxcsv.iotex.processor
 from staketaxcsv.common import report_util
 from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
 from staketaxcsv.iotex import constants as co
 from staketaxcsv.iotex.api_graphql import IoTexGraphQL
 from staketaxcsv.iotex.api_iotexscan import IoTexScan
@@ -24,17 +23,7 @@ from staketaxcsv.settings_csv import TICKER_IOTEX
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_IOTEX)
-
-    if txid:
-        _read_options(options)
-        exporter = txone(wallet_address, txid)
-        exporter.export_print()
-        if export_format != FORMAT_DEFAULT:
-            report_util.export_format_for_txid(exporter, export_format, txid)
-    else:
-        exporter = txhistory(wallet_address, options)
-        report_util.run_exports(TICKER_IOTEX, wallet_address, exporter, export_format)
+    report_util.main_default(TICKER_IOTEX)
 
 
 def _read_options(options):

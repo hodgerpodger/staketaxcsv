@@ -15,7 +15,6 @@ import staketaxcsv.dvpn.processor
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
 from staketaxcsv.common.ibc.api_rpc import RpcAPI
 from staketaxcsv.dvpn.config_dvpn import localconfig
 from staketaxcsv.dvpn.progress_dvpn import LCD_SECONDS_PER_PAGE, ProgressDvpn
@@ -23,17 +22,7 @@ from staketaxcsv.settings_csv import DVPN_LCD_NODE, DVPN_RPC_NODE, TICKER_DVPN
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_DVPN)
-
-    if txid:
-        _read_options(options)
-        exporter = txone(wallet_address, txid)
-        exporter.export_print()
-        if export_format != FORMAT_DEFAULT:
-            report_util.export_format_for_txid(exporter, export_format, txid)
-    else:
-        exporter = txhistory(wallet_address, options)
-        report_util.run_exports(TICKER_DVPN, wallet_address, exporter, export_format)
+    report_util.main_default(TICKER_DVPN)
 
 
 def _read_options(options):

@@ -16,12 +16,13 @@ import math
 import os
 import pprint
 
+import staketaxcsv.api
 import staketaxcsv.luna1.processor
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, LP_TREATMENT_TRANSFERS
+from staketaxcsv.common.ExporterTypes import LP_TREATMENT_TRANSFERS
 from staketaxcsv.luna1.api_fcd import LIMIT_FCD, FcdAPI
 from staketaxcsv.luna1.api_lcd import LcdAPI
 from staketaxcsv.luna1.config_luna1 import localconfig
@@ -30,17 +31,7 @@ from staketaxcsv.settings_csv import TICKER_LUNA1
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_LUNA1)
-
-    if txid:
-        _read_options(options)
-        exporter = txone(wallet_address, txid)
-        exporter.export_print()
-        if export_format != FORMAT_DEFAULT:
-            report_util.export_format_for_txid(exporter, export_format, txid)
-    else:
-        exporter = txhistory(wallet_address, options)
-        report_util.run_exports(TICKER_LUNA1, wallet_address, exporter, export_format)
+    report_util.main_default(TICKER_LUNA1)
 
 
 def _read_options(options):

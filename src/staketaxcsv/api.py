@@ -72,6 +72,7 @@ def csv(ticker, wallet_address, csv_format, path=None, options=None, logs=True):
 
     # Run report
     module = REPORT_MODULES[ticker]
+    module._read_options(options)
     exporter = module.txhistory(wallet_address, options)
     exporter.sort_rows()
 
@@ -83,22 +84,23 @@ def csv(ticker, wallet_address, csv_format, path=None, options=None, logs=True):
     exporter.export_format(csv_format, path)
 
 
-def csv_all(ticker, wallet_address, pathdir=None, options=None, logs=True):
+def csv_all(ticker, wallet_address, dirpath=None, options=None, logs=True):
     """ Writes CSV files, for this wallet address, in all CSV formats.
 
     :param ticker: ALGO|ATOM|LUNA1|LUNA2|...   [see staketaxcsv.tickers()]
     :param wallet_address: <string wallet address>
-    :params pathdir: (optional) <string directory path> directory where CSV files written to
+    :params dirpath: (optional) <string directory path> directory where CSV files written to
     :param options: (optional)
     :params logs: (optional) show logging.  Defaults to True.
     """
-    pathdir = pathdir if pathdir else "."
+    dirpath = dirpath if dirpath else "."
     options = options if options else {}
     if logs:
         logging.basicConfig(level=logging.INFO)
 
     # Run report
     module = REPORT_MODULES[ticker]
+    module._read_options(options)
     exporter = module.txhistory(wallet_address, options)
     exporter.sort_rows()
 
@@ -108,21 +110,23 @@ def csv_all(ticker, wallet_address, pathdir=None, options=None, logs=True):
 
     # Write CSVs
     for cur_format in FORMATS:
-        path = "{}/{}.{}.{}.csv".format(pathdir, ticker, wallet_address, cur_format)
+        path = "{}/{}.{}.{}.csv".format(dirpath, ticker, wallet_address, cur_format)
         exporter.export_format(cur_format, path)
 
 
-def transaction(ticker, wallet_address, txid, csv_format=None, options=None):
+def transaction(ticker, wallet_address, txid, csv_format="", path="", options=None):
     """ Print transaction to console.  If csv_format specified, writes CSV file of single transaction.
 
     :param ticker: ALGO|ATOM|LUNA1|LUNA2|...   [see staketaxcsv.tickers()]
     :param wallet_address: <string wallet address>
     :param txid: <string transaction id>
     :param csv_format: (optional) default|accointing|koinly|cointracking|... [see staketaxcsv.formats()]
+    :param path: (optional) <string file path>
     :param options: (optional) dictionary [documentation not in great state; see parse_args() in
            https://github.com/hodgerpodger/staketaxcsv/blob/main/src/staketaxcsv/common/report_util.py]
     """
     logging.basicConfig(level=logging.INFO)
+    options = options if options else {}
 
     # Run report for single transaction
     module = REPORT_MODULES[ticker]
@@ -133,5 +137,5 @@ def transaction(ticker, wallet_address, txid, csv_format=None, options=None):
     exporter.export_print()
 
     if csv_format:
-        path = "{}.{}.csv".format(txid, csv_format)
+        path = path if path else "{}.{}.csv".format(txid, csv_format)
         exporter.export_format(csv_format, path)

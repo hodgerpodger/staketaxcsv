@@ -14,7 +14,6 @@ from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
 from staketaxcsv.settings_csv import MESSAGE_ADDRESS_NOT_FOUND, MESSAGE_STAKING_ADDRESS_FOUND, SOL_NODE, TICKER_SOL
 from staketaxcsv.sol import staking_rewards
 from staketaxcsv.sol.api_rpc import RpcAPI
@@ -29,17 +28,7 @@ ABSOLUTE_MAX_QUERIES = 100
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_SOL)
-
-    if txid:
-        _read_options(options)
-        exporter = txone(wallet_address, txid)
-        exporter.export_print()
-        if export_format != FORMAT_DEFAULT:
-            report_util.export_format_for_txid(exporter, export_format, txid)
-    else:
-        exporter = txhistory(wallet_address, options)
-        report_util.run_exports(TICKER_SOL, wallet_address, exporter, export_format)
+    report_util.main_default(TICKER_SOL)
 
 
 def _read_options(options):

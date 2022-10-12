@@ -13,7 +13,6 @@ import staketaxcsv.fet.processor
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
 from staketaxcsv.common.ibc.api_lcd import EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SENDER, EVENTS_TYPE_SIGNER
 from staketaxcsv.fet.config_fet import localconfig
 from staketaxcsv.fet.fetchhub1 import constants as co2
@@ -25,17 +24,7 @@ EVENTS_TYPES_FET = (EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT)
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_FET)
-
-    if txid:
-        _read_options(options)
-        exporter = txone(wallet_address, txid)
-        exporter.export_print()
-        if export_format != FORMAT_DEFAULT:
-            report_util.export_format_for_txid(exporter, export_format, txid)
-    else:
-        exporter = txhistory(wallet_address, options)
-        report_util.run_exports(TICKER_FET, wallet_address, exporter, export_format)
+    report_util.main_default(TICKER_FET)
 
 
 def _read_options(options):

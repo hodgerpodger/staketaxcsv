@@ -14,6 +14,7 @@ import logging
 import math
 import pprint
 
+import staketaxcsv.api
 import staketaxcsv.common.ibc.api_common
 import staketaxcsv.common.ibc.api_lcd
 import staketaxcsv.luna2.genesis_airdrop
@@ -21,7 +22,6 @@ import staketaxcsv.luna2.processor
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
 from staketaxcsv.luna2.api_fcd import LIMIT_FCD, FcdAPI
 from staketaxcsv.luna2.config_luna2 import localconfig
 from staketaxcsv.luna2.progress_luna2 import SECONDS_PER_PAGE, ProgressLuna2
@@ -29,17 +29,7 @@ from staketaxcsv.settings_csv import LUNA2_LCD_NODE, TICKER_LUNA2
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_LUNA2)
-
-    if txid:
-        _read_options(options)
-        exporter = txone(wallet_address, txid)
-        exporter.export_print()
-        if export_format != FORMAT_DEFAULT:
-            report_util.export_format_for_txid(exporter, export_format, txid)
-    else:
-        exporter = txhistory(wallet_address, options)
-        report_util.run_exports(TICKER_LUNA2, wallet_address, exporter, export_format)
+    report_util.main_default(TICKER_LUNA2)
 
 
 def _read_options(options):

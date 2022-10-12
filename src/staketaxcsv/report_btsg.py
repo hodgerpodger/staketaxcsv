@@ -14,22 +14,11 @@ from staketaxcsv.btsg.progress_btsg import SECONDS_PER_PAGE, ProgressBTSG
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
 from staketaxcsv.settings_csv import BTSG_NODE, TICKER_BTSG
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_BTSG)
-
-    if txid:
-        _read_options(options)
-        exporter = txone(wallet_address, txid)
-        exporter.export_print()
-        if export_format != FORMAT_DEFAULT:
-            report_util.export_format_for_txid(exporter, export_format, txid)
-    else:
-        exporter = txhistory(wallet_address, options)
-        report_util.run_exports(TICKER_BTSG, wallet_address, exporter, export_format)
+    report_util.main_default(TICKER_BTSG)
 
 
 def _read_options(options):

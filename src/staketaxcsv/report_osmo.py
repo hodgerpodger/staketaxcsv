@@ -15,7 +15,7 @@ from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, LP_TREATMENT_TRANSFERS
+from staketaxcsv.common.ExporterTypes import LP_TREATMENT_TRANSFERS
 from staketaxcsv.osmo.config_osmo import localconfig
 from staketaxcsv.osmo.lp_rewards import lp_rewards
 from staketaxcsv.osmo.progress_osmo import SECONDS_PER_PAGE, ProgressOsmo
@@ -23,17 +23,7 @@ from staketaxcsv.settings_csv import TICKER_OSMO
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_OSMO)
-
-    if txid:
-        _read_options(options)
-        exporter = txone(wallet_address, txid)
-        exporter.export_print()
-        if export_format != FORMAT_DEFAULT:
-            report_util.export_format_for_txid(exporter, export_format, txid)
-    else:
-        exporter = txhistory(wallet_address, options)
-        report_util.run_exports(TICKER_OSMO, wallet_address, exporter, export_format)
+    report_util.main_default(TICKER_OSMO)
 
 
 def _read_options(options):

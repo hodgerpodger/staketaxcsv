@@ -15,24 +15,13 @@ import staketaxcsv.juno.processor
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
 from staketaxcsv.juno.config_juno import localconfig
 from staketaxcsv.juno.progress_juno import SECONDS_PER_PAGE, ProgressJuno
 from staketaxcsv.settings_csv import JUNO_NODE, TICKER_JUNO
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_JUNO)
-
-    if txid:
-        _read_options(options)
-        exporter = txone(wallet_address, txid)
-        exporter.export_print()
-        if export_format != FORMAT_DEFAULT:
-            report_util.export_format_for_txid(exporter, export_format, txid)
-    else:
-        exporter = txhistory(wallet_address, options)
-        report_util.run_exports(TICKER_JUNO, wallet_address, exporter, export_format)
+    report_util.main_default(TICKER_JUNO)
 
 
 def _read_options(options):

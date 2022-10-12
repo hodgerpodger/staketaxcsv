@@ -29,15 +29,7 @@ def main():
     wallet_address, hex_address = all_address_formats(wallet_address)
     logging.info("wallet_address: %s, hex_address: %s", wallet_address, hex_address)
 
-    if txid:
-        _read_options(options)
-        exporter = txone(wallet_address, txid)
-        exporter.export_print()
-        if export_format != FORMAT_DEFAULT:
-            report_util.export_format_for_txid(exporter, export_format, txid)
-    else:
-        exporter = txhistory(wallet_address, options)
-        report_util.run_exports(TICKER_EVMOS, wallet_address, exporter, export_format)
+    report_util.run_report(TICKER_EVMOS, wallet_address, export_format, txid, options)
 
 
 def all_address_formats(wallet_address):

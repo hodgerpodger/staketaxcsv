@@ -14,6 +14,7 @@ import logging
 import math
 import pprint
 
+import staketaxcsv.api
 import staketaxcsv.atom.api_lcd
 import staketaxcsv.atom.cosmoshub123.api_cosmostation
 import staketaxcsv.atom.processor
@@ -23,24 +24,13 @@ from staketaxcsv.atom.progress_atom import SECONDS_PER_PAGE, ProgressAtom
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
 from staketaxcsv.settings_csv import ATOM_NODE, TICKER_ATOM
 
 LIMIT_PER_QUERY = 50
 
 
 def main():
-    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_ATOM)
-
-    if txid:
-        _read_options(options)
-        exporter = txone(wallet_address, txid)
-        exporter.export_print()
-        if export_format != FORMAT_DEFAULT:
-            report_util.export_format_for_txid(exporter, export_format, txid)
-    else:
-        exporter = txhistory(wallet_address, options)
-        report_util.run_exports(TICKER_ATOM, wallet_address, exporter, export_format)
+    report_util.main_default(TICKER_ATOM)
 
 
 def _read_options(options):

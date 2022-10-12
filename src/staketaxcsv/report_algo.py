@@ -25,27 +25,19 @@ from staketaxcsv.algo.progress_algo import ProgressAlgo
 from staketaxcsv.common import report_util
 from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, LP_TREATMENT_TRANSFERS
+from staketaxcsv.common.ExporterTypes import LP_TREATMENT_TRANSFERS
 from staketaxcsv.settings_csv import TICKER_ALGO
 
 indexer = AlgoIndexerAPI()
 
 
 def main():
-    wallet_address, export_format, txid_or_groupid, options = report_util.parse_args(TICKER_ALGO)
+    wallet_address, export_format, txid, options = report_util.parse_args(TICKER_ALGO)
 
     if wallet_address.endswith(".algo"):
         wallet_address = NFDomainsAPI().get_address(wallet_address)
 
-    if txid_or_groupid:
-        _read_options(options)
-        exporter = txone(wallet_address, txid_or_groupid)
-        exporter.export_print()
-        if export_format != FORMAT_DEFAULT:
-            report_util.export_format_for_txid(exporter, export_format, txid_or_groupid)
-    else:
-        exporter = txhistory(wallet_address, options)
-        report_util.run_exports(TICKER_ALGO, wallet_address, exporter, export_format)
+    report_util.run_report(TICKER_ALGO, wallet_address, export_format, txid, options)
 
 
 def _read_options(options):
