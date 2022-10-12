@@ -6,7 +6,6 @@ import os
 import staketaxcsv.api
 from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS
 from staketaxcsv.settings_csv import REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL
-from staketaxcsv.algo.api_nfdomains import NFDomainsAPI
 
 ALL = "all"
 
@@ -152,11 +151,6 @@ def run_exports(ticker, wallet_address, exporter, export_format):
         # Write one csv
         csvpath = f"{REPORTS_DIR}/{ticker}.{wallet_address}.{cur_format}.csv"
         exporter.export_format(cur_format, csvpath)
-
-
-def export_format_for_txid(exporter, export_format, txid):
-    csvpath = f"{REPORTS_DIR}/{txid}.{export_format}.csv"
-    exporter.export_format(export_format, csvpath)
 
 
 def read_common_options(localconfig, options):
