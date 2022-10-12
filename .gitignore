@@ -5,8 +5,8 @@ __pycache__/
 
 # application ignores
 env/*
-src/_reports/*
-src/sol/data_staking_rewards/*.csv
+src/staketaxcsv/_reports/*
+src/staketaxcsv/sol/data_staking_rewards/*.csv
 sample.env
 
 # pycharm
@@ -14,3 +14,8 @@ sample.env
 
 koinly_null_map.json
 .DS_Store
+
+# setup.py related
+build/*
+dist/*
+staketaxcsv.egg-info/*
