@@ -11,14 +11,17 @@
   
 # Usage
 
-* Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_*.py, etc:
-
-  ```sh
-  # Load environment variables from sample.env (add to ~/.bash_profile or ~/.bashrc to avoid doing every time)
+* Load environment variables (add to ~/.bash_profile or ~/.bashrc to avoid doing every time):
+  
+  ```
   set -o allexport
   source sample.env
   set +o allexport
-  
+  ```
+
+* Usage as CLI
+  * Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_*.py, etc:
+  ```sh
   cd src
   
   # Create default CSV
@@ -33,8 +36,28 @@
   # Show CSV result for single transaction in debug mode (great for development/debugging)
   python3 staketaxcsv/report_atom.py <wallet_address> --txid <txid> --debug
   ```
-  
-  
+
+* Usage as staketaxcsv module
+  ```
+    >>> import staketaxcsv
+    >>> help(staketaxcsv.api)
+    >>>
+    >>> address = "<SOME_ADDRESS>"
+    >>> txid = "<SOME_TXID>"
+    >>>
+    >>> staketaxcsv.formats()
+    ['default', 'balances', 'accointing', 'bitcointax', 'coinledger', 'coinpanda', 'cointelli', 'cointracking', 'cointracker', 'cryptio', 'cryptocom', 'cryptotaxcalculator', 'cryptoworth', 'koinly', 'recap', 'taxbit', 'tokentax', 'zenledger']
+    >>>
+    >>> staketaxcsv.tickers()
+    ['ALGO', 'ATOM', 'BLD', 'BTSG', 'DVPN', 'EVMOS', 'FET', 'HUAHUA', 'IOTX', 'JUNO', 'KUJI', 'LUNA1', 'LUNA2', 'OSMO', 'REGEN', 'SOL', 'STARS']
+    >>>
+    >>> staketaxcsv.transaction("ATOM", address, txid, "koinly")
+    ...
+    >>> staketaxcsv.csv("ATOM", address, "koinly")
+    ...
+    >>> staketaxcsv.csv_all("ATOM", address)
+    ...
+  ```
 
 # Install
 
