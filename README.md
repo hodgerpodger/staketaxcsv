@@ -9,6 +9,16 @@
   * Add cosmo-based-blockchain CSV (i.e. Agoric): [commit](https://github.com/hodgerpodger/staketaxcsv/commit/ff8af30b85ea4416504d043723e91f3edf5c7ee1) 
   * Add new CSV format (i.e. coinledger): [commit](https://github.com/hodgerpodger/staketaxcsv/commit/105b9e50dc08349dc750fd2e3f99298c369b543e) 
   
+
+# Install
+
+  1. Install python 3.9 ([one way](README_reference.md#installing-python-39-on-macos))
+  1. Install pip packages
+
+     ```
+     pip3 install -r requirements.txt
+     ```
+  
 # Usage
 
 * Load environment variables (add to ~/.bash_profile or ~/.bashrc to avoid doing every time):
@@ -64,14 +74,6 @@
     ...
   ```
 
-# Install
-
-  1. Install python 3.9 ([one way](README_reference.md#installing-python-39-on-macos))
-  1. Install pip packages
-
-     ```
-     pip3 install -r requirements.txt
-     ```
 
 # Docker
 
