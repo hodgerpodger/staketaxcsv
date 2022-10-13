@@ -59,13 +59,13 @@ def csv(ticker, wallet_address, csv_format, path=None, options=None, logs=True):
     :param ticker: ALGO|ATOM|LUNA1|LUNA2|...   [see staketaxcsv.tickers()]
     :param wallet_address: <string wallet address>
     :param csv_format: default|accointing|koinly|cointracking|... [see staketaxcsv.formats()]
-    :param path: (optional) <string file path>
+    :param path: (optional) <string file path> .  By default, writes to /tmp .
     :param options: (optional) dictionary [documentation not in great state; see parse_args() in
            https://github.com/hodgerpodger/staketaxcsv/blob/main/src/staketaxcsv/common/report_util.py]
     :params logs: (optional) show logging.  Defaults to True.
 
     """
-    path = path if path else "{}.{}.{}.csv".format(ticker, wallet_address, csv_format)
+    path = path if path else "/tmp/{}.{}.{}.csv".format(ticker, wallet_address, csv_format)
     options = options if options else {}
     if logs:
         logging.basicConfig(level=logging.INFO)
@@ -89,11 +89,12 @@ def csv_all(ticker, wallet_address, dirpath=None, options=None, logs=True):
 
     :param ticker: ALGO|ATOM|LUNA1|LUNA2|...   [see staketaxcsv.tickers()]
     :param wallet_address: <string wallet address>
-    :params dirpath: (optional) <string directory path> directory where CSV files written to
+    :params dirpath: (optional) <string directory path> directory to write CSV files to.
+                     By default, writes to /tmp .
     :param options: (optional)
     :params logs: (optional) show logging.  Defaults to True.
     """
-    dirpath = dirpath if dirpath else "."
+    dirpath = dirpath if dirpath else "/tmp"
     options = options if options else {}
     if logs:
         logging.basicConfig(level=logging.INFO)
@@ -121,7 +122,7 @@ def transaction(ticker, wallet_address, txid, csv_format="", path="", options=No
     :param wallet_address: <string wallet address>
     :param txid: <string transaction id>
     :param csv_format: (optional) default|accointing|koinly|cointracking|... [see staketaxcsv.formats()]
-    :param path: (optional) <string file path>
+    :param path: (optional) <string file path> .  By default, writes to /tmp .
     :param options: (optional) dictionary [documentation not in great state; see parse_args() in
            https://github.com/hodgerpodger/staketaxcsv/blob/main/src/staketaxcsv/common/report_util.py]
     """
@@ -137,5 +138,5 @@ def transaction(ticker, wallet_address, txid, csv_format="", path="", options=No
     exporter.export_print()
 
     if csv_format:
-        path = path if path else "{}.{}.csv".format(txid, csv_format)
+        path = path if path else "/tmp/{}.{}.csv".format(txid, csv_format)
         exporter.export_format(csv_format, path)
