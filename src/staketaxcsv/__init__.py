@@ -24,7 +24,10 @@ Example usage:
     >>> # write all CSVs (koinly, cointracking, etc.)
     >>> staketaxcsv.csv_all("ATOM", address)
     ...
+    >>> # check address is valid
+    >>> staketaxcsv.has_csv("ATOM", address)
+    True
 
 """
 
-from .api import csv, csv_all, formats, tickers, transaction
+from .api import csv, csv_all, formats, tickers, transaction, has_csv

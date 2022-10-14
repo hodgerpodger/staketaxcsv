@@ -53,6 +53,17 @@ def formats():
     return FORMATS
 
 
+def has_csv(ticker, wallet_address):
+    """ Returns True if wallet_address is valid address.
+
+    :param ticker: ALGO|ATOM|LUNA1|LUNA2|...   [see staketaxcsv.tickers()]
+    :param wallet_address: <string wallet address>
+    """
+
+    module = REPORT_MODULES[ticker]
+    return module.wallet_exists(wallet_address)
+
+
 def csv(ticker, wallet_address, csv_format, path=None, options=None, logs=True):
     """ Writes one CSV file, for this wallet address, in this format.
 
