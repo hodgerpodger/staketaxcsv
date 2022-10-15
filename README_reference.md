@@ -50,7 +50,8 @@ source sample.env
 set +o allexport
 
 # Run CSV job with custom high transaction limit
-python3 report_sol.py <wallet_address> --limit 100000 --format all
+cd src
+python3 staketaxcsv/report_sol.py <wallet_address> --limit 100000 --format all
 ```
 
 # Ideal Configuration
@@ -73,7 +74,7 @@ enable caching:
 cd src
 
 # --cache flag requires working implementation of Cache class (common/cache.py)
-python3 report_osmo.py <wallet_address> --cache
+python3 staketaxcsv/report_osmo.py <wallet_address> --cache
 ```
 
 To enable --cache, you must configure an aws connection for the boto3 code found in src/common/Cache.py:
