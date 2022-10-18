@@ -28,6 +28,12 @@ def handle_transfer(exporter, txinfo):
 
     if len(transfers_out) == 1 and len(transfers_in) == 0:
         amount, currency, _, dest = transfers_out[0]
+
+        # For SOL transfers, adjust fee from zero to non-zero if applicable
+        if currency == CURRENCY_SOL and txinfo.fee == "" and txinfo.fee_blockchain > 0:
+            txinfo.fee = txinfo.fee_blockchain
+            amount -= txinfo.fee_blockchain
+
         row = make_transfer_out_tx(txinfo, amount, currency, dest)
         exporter.ingest_row(row)
     elif len(transfers_in) == 1 and len(transfers_out) == 0:
