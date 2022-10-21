@@ -9,7 +9,11 @@ from staketaxcsv.sol.handle_account_misc import (
     is_close_account_tx,
     is_init_account_tx,
 )
-from staketaxcsv.sol.handle_jupiter import handle_jupiter_aggregator_v2
+from staketaxcsv.sol.handle_jupiter import (
+    handle_jupiter_aggregator_v2,
+    handle_jupiter_aggregator_v3,
+    handle_jupiter_aggregator_v4,
+)
 from staketaxcsv.sol.handle_marinade import handle_marinade
 from staketaxcsv.sol.handle_metaplex import handle_metaplex, handle_nft_mint, is_nft_mint
 from staketaxcsv.sol.handle_nft_market import get_nft_program, handle_nft_exchange
@@ -93,6 +97,10 @@ def process_tx(wallet_info, exporter, txid, data):
         # Jupiter Aggregator
         elif co.PROGRAMID_JUPITER_AGGREGATOR_V2 in program_ids:
             handle_jupiter_aggregator_v2(exporter, txinfo)
+        elif co.PROGRAMID_JUPITER_AGGREGATOR_V3 in program_ids:
+            handle_jupiter_aggregator_v3(exporter, txinfo)
+        elif co.PROGRAMID_JUPITER_AGGREGATOR_V4 in program_ids:
+            handle_jupiter_aggregator_v4(exporter, txinfo)
 
         # Metaplex NFT Candy Machinine program
         elif co.PROGRAMID_METAPLEX_CANDY in program_ids:
