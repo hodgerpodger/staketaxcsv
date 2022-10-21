@@ -1041,7 +1041,7 @@ class Exporter:
 
                 line = [
                     cur_type,                                   # Type
-                    row.timestamp,                              # Date
+                    self._recap_timestamp(row.timestamp),       # Date
                     row.received_amount,                        # InOrBuyAmount
                     row.received_currency,                      # InOrBuyCurrency
                     row.sent_amount,                            # OutOrSellAmount
@@ -1054,6 +1054,7 @@ class Exporter:
                 mywriter.writerow(line)
 
         logging.info("Wrote to %s", csvpath)
+
 
     def export_coinpanda_csv(self, csvpath):
         """ Writes CSV, suitable for import into bitcoin.tax """
@@ -1387,6 +1388,11 @@ class Exporter:
         dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
 
         return dt.strftime("%m/%d/%Y %H:%M:%S")
+
+    def _recap_timestamp(self, ts):
+        # Convert "2021-08-04 15:25:43" to "2021-08-04T15:25:43Z"
+        d, t = ts.split(" ")
+        return "{}T{}Z".format(d, t)
 
     def _utc_to_local(self, date_string, timezone_string):
         dt = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
