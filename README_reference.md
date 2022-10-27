@@ -34,6 +34,7 @@ docker build --platform linux/amd64 --tag staketaxcsv .
 docker run --platform linux/amd64 -it --volume $PWD:/staketaxcsv staketaxcsv bash
 
 # See README.md Usage section to run script(s)
+# https://github.com/hodgerpodger/staketaxcsv#usage
 ```
 
 # Run CSV job with no transaction limit
