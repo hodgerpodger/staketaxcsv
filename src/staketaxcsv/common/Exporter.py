@@ -702,6 +702,8 @@ class Exporter:
 
     def koinly_currency(self, currency):
         # Reference: https://app.koinly.io/p/markets?search=STARS
+
+        # Remap per CSV
         remap = {
             TICKER_LUNA1: {
                 "APOLLO": "ID:28478",
@@ -711,9 +713,6 @@ class Exporter:
                 "LUNI": "ID:26855",
                 "MINE": "ID:21256",
                 "PSI": "ID:106376",
-            },
-            TICKER_ATOM: {
-                "STARS": "ID:36899",
             },
             TICKER_ALGO: {
                 "AKITA": "ID:132343",
@@ -728,10 +727,17 @@ class Exporter:
             }
         }
 
+        # Global remap across all CSVs (especially suited for IBC currencies that appear in many CSVs)
+        remap_global = {
+            "STARS": "ID:36899",
+        }
+
         if self._is_koinly_lp(currency):
             return self.koinly_nullmap.get_null_symbol(currency)
         if currency and currency.upper() in remap.get(self.ticker, {}):
             return remap[self.ticker][currency.upper()]
+        if currency and currency.upper() in remap_global:
+            return remap_global[currency.upper()]
         return currency
 
     def _is_koinly_lp(self, currency):
