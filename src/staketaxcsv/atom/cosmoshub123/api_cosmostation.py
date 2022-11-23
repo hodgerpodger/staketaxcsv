@@ -16,10 +16,13 @@ def _get_txs_legacy(wallet_address, from_id):
         "limit": LIMIT,
         "from": from_id,
     }
-    url = f"https://api.cosmostation.io/v1/account/new_txs/{wallet_address}"
+    headers = {
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36'
+    }
+    url = f"https://api-cosmos.cosmostation.io/v1/account/new_txs/{wallet_address}"
 
     logging.info("Requesting url=%s?%s", url, urlencode(query_params))
-    response = requests.get(url, query_params)
+    response = requests.get(url, query_params, headers=headers)
     data = response.json()
     time.sleep(1)
 
@@ -49,7 +52,7 @@ def get_txs_legacy(wallet_address, from_id=None):
 
 
 def get_tx(txid):
-    url = f"https://api.cosmostation.io/v1/tx/hash/{txid}"
+    url = f"https://api-cosmos.cosmostation.io/v1/tx/hash/{txid}"
 
     logging.info("Requesting url=%s", url)
     response = requests.get(url)
