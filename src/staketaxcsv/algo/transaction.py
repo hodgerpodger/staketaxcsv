@@ -26,6 +26,10 @@ def get_transfer_receiver(transaction):
     return None
 
 
+def is_transfer_receiver(wallet_address, transaction):
+    return wallet_address == get_transfer_receiver(transaction)
+
+
 def get_transfer_asset(transaction, asset_map={}):
     amount = 0
     asset_id = 0
@@ -52,15 +56,48 @@ def get_transfer_close_to_asset(transaction, asset_map={}):
     return Asset(asset_map.get(asset_id, asset_id), amount)
 
 
-def get_inner_transfer_asset(transaction, asset_map={}):
+def get_inner_transfer_asset(transaction, asset_map={}, filter=None):
     inner_transactions = transaction.get("inner-txns", [])
     for tx in inner_transactions:
         txtype = tx["tx-type"]
         if txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER or txtype == co.TRANSACTION_TYPE_PAYMENT:
-            return get_transfer_asset(tx, asset_map)
+            if filter is None or filter(tx):
+                return get_transfer_asset(tx, asset_map)
         elif txtype == co.TRANSACTION_TYPE_APP_CALL and "inner-txns" in tx:
-            asset = get_inner_transfer_asset(tx, asset_map)
+            asset = get_inner_transfer_asset(tx, asset_map, filter)
             if asset is not None:
                 return asset
 
     return None
+
+
+def is_asset_optin(transaction):
+    return (transaction["tx-type"] == co.TRANSACTION_TYPE_ASSET_TRANSFER
+            and transaction["sender"] == transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"])
+
+
+def is_transfer(transaction):
+    txtype = transaction["tx-type"]
+    return txtype == co.TRANSACTION_TYPE_PAYMENT or txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
+
+
+def is_app_call(transaction, app_id, app_args=None, foreign_app=None):
+    if transaction["tx-type"] != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    if isinstance(app_id, list) and transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"] not in app_id:
+        return False
+    elif isinstance(app_id, str) and transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"] != app_id:
+        return False
+
+    if isinstance(foreign_app, str) and foreign_app not in transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]:
+        return False
+
+    if isinstance(app_args, str) and app_args not in transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]:
+        return False
+
+    return True
+
+
+def get_fee_amount(wallet_address, group):
+    return sum([transaction["fee"] for transaction in group if wallet_address == transaction["sender"]])

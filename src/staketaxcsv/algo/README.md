@@ -18,6 +18,14 @@
 - Staking and lending rewards
 - Flash loans
 - Liquidations
+- Vault
+
+## AlgoFi v2
+- Swaps
+- Supply, borrow and repay
+- Add and remove from liquidity pools
+- Staking and lending rewards
+- Governance
 
 ## AlgoStake
 - Staking rewards

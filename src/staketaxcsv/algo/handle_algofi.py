@@ -18,7 +18,7 @@ from staketaxcsv.algo.export_tx import (
 )
 from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
 from staketaxcsv.algo.handle_transfer import is_governance_reward_transaction
-from staketaxcsv.algo.util_algo import get_inner_transfer_asset, get_transfer_asset
+from staketaxcsv.algo.transaction import get_inner_transfer_asset, get_transfer_asset
 
 # For reference
 # https://github.com/Algofiorg/algofi-amm-py-sdk

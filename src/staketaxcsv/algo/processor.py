@@ -8,6 +8,7 @@ from staketaxcsv.algo.config_algo import localconfig
 from staketaxcsv.algo.handle_akita import handle_akita_swap_transaction, is_akita_swap_transaction
 from staketaxcsv.algo.handle_algodex import handle_algodex_transaction, is_algodex_transaction
 from staketaxcsv.algo.handle_algofi import handle_algofi_transaction, is_algofi_transaction
+from staketaxcsv.algo.handle_algofiv2 import handle_algofiv2_transaction, is_algofiv2_transaction
 from staketaxcsv.algo.handle_amm import handle_swap, is_simple_swap_group
 from staketaxcsv.algo.handle_folks import (
     handle_folks_galgo_early_claim_transaction,
@@ -103,7 +104,7 @@ def _grouptxinfo(wallet_address, elem):
     txid = groupid
     timestamp = datetime.utcfromtimestamp(elem["round-time"]).strftime('%Y-%m-%d %H:%M:%S')
     fee = Algo(0)
-    url = "https://algoexplorer.io/tx/group/{}".format(urllib.parse.quote(groupid))
+    url = "https://algoexplorer.io/tx/group/{}".format(urllib.parse.quote_plus(groupid))
     txinfo = TxInfo(txid, timestamp, fee, fee.ticker, wallet_address, co.EXCHANGE_ALGORAND_BLOCKCHAIN, url)
 
     return txinfo
@@ -129,8 +130,8 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
         handle_governance_reward_transaction(group, exporter, txinfo)
     elif is_tinyman_transaction(group):
         handle_tinyman_transaction(group, exporter, txinfo)
-    elif is_yieldly_transaction(group):
-        handle_yieldly_transaction(group, exporter, txinfo)
+    elif is_algofiv2_transaction(group):
+        handle_algofiv2_transaction(wallet_address, group, exporter, txinfo)
     elif is_algofi_transaction(group):
         handle_algofi_transaction(wallet_address, group, exporter, txinfo)
     elif is_pact_transaction(group):
@@ -143,6 +144,8 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
         handle_algodex_transaction(wallet_address, group, exporter, txinfo)
     elif is_folks_transaction(wallet_address, group):
         handle_folks_transaction(wallet_address, group, exporter, txinfo)
+    elif is_yieldly_transaction(group):
+        handle_yieldly_transaction(group, exporter, txinfo)
     elif is_gard_transaction(wallet_address, group):
         handle_gard_transaction(wallet_address, group, exporter, txinfo)
     elif is_akita_swap_transaction(group):
