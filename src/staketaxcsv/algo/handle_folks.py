@@ -9,7 +9,7 @@ from staketaxcsv.algo.export_tx import (
     export_withdraw_collateral_tx,
 )
 from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
-from staketaxcsv.algo.util_algo import get_inner_transfer_asset, get_transfer_asset, get_transfer_receiver
+from staketaxcsv.algo.transaction import get_inner_transfer_asset, get_transfer_asset, get_transfer_receiver
 
 # For reference
 # https://github.com/Folks-Finance/folks-finance-js-sdk

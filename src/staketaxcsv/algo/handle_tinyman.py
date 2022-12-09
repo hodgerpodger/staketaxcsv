@@ -8,7 +8,7 @@ from staketaxcsv.algo.export_tx import (
     export_swap_tx,
 )
 from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
-from staketaxcsv.algo.util_algo import get_transfer_asset
+from staketaxcsv.algo.transaction import get_transfer_asset
 
 APPLICATION_ID_TINYMAN_v10 = 350338509
 APPLICATION_ID_TINYMAN_v11 = 552635992

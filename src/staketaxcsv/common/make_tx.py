@@ -29,8 +29,9 @@ def make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_c
                              TX_TYPE_TRADE, txid, empty_fee, z_index)
 
 
-def make_airdrop_tx(txinfo, reward_amount, reward_currency, txid=None, empty_fee=False):
-    return _make_tx_received(txinfo, reward_amount, reward_currency, TX_TYPE_AIRDROP, txid, empty_fee=empty_fee)
+def make_airdrop_tx(txinfo, reward_amount, reward_currency, txid=None, empty_fee=False, z_index=0):
+    return _make_tx_received(
+        txinfo, reward_amount, reward_currency, TX_TYPE_AIRDROP, txid, empty_fee=empty_fee, z_index=z_index)
 
 
 def make_income_tx(txinfo, income_amount, income_currency, txid=None, empty_fee=False, z_index=0):

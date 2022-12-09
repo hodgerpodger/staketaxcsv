@@ -2,6 +2,7 @@
 from staketaxcsv.algo.asset import Algo, Asset
 from staketaxcsv.algo.config_algo import localconfig
 from staketaxcsv.common.make_tx import (
+    make_airdrop_tx,
     make_borrow_tx,
     make_deposit_collateral_tx,
     make_excluded_tx,
@@ -110,6 +111,12 @@ def export_income_tx(exporter, txinfo, receive_asset, fee_amount=0, comment=None
     receive_asset_currency = lp_tickers.get(receive_asset.id, receive_asset.ticker)
 
     row = make_income_tx(txinfo, receive_asset.amount, receive_asset_currency, z_index=z_index)
+    _ingest_row(exporter, row, fee_amount, comment)
+
+
+@exclude_tx
+def export_airdrop_tx(exporter, txinfo, receive_asset, fee_amount=0, comment=None, z_index=0):
+    row = make_airdrop_tx(txinfo, receive_asset.amount, receive_asset.ticker, z_index=z_index)
     _ingest_row(exporter, row, fee_amount, comment)
 
 

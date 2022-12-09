@@ -9,7 +9,7 @@ from staketaxcsv.algo.asset import Algo, Asset
 from staketaxcsv.algo.export_tx import export_receive_tx, export_reward_tx, export_send_tx
 from staketaxcsv.algo.handle_folks import is_folks_escrow_address
 from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
-from staketaxcsv.algo.util_algo import get_transaction_note
+from staketaxcsv.algo.transaction import get_transaction_note
 
 # Algostake escrow wallet: https://algostake.org/litepaper
 ADDRESS_ALGOSTAKE_ESCROW = "4ZK3UPFRJ643ETWSWZ4YJXH3LQTL2FUEI6CIT7HEOVZL6JOECVRMPP34CY"

@@ -12,7 +12,7 @@ from staketaxcsv.algo.handle_amm import (
     is_simple_swap_group,
 )
 from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
-from staketaxcsv.algo.util_algo import get_transaction_note, get_transfer_asset
+from staketaxcsv.algo.transaction import get_transaction_note, get_transfer_asset
 
 HUMBLESWAP_AMM_SYMBOL = "HMB"
 
