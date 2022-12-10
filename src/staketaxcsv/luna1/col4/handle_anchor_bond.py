@@ -43,7 +43,7 @@ def handle_unbond_withdraw(exporter, elem, txinfo):
 
     sent_amount = received_amount
     sent_currency = CUR_BLUNA
-    assert(received_currency == CUR_LUNA)
+    assert (received_currency == CUR_LUNA)
 
     row = make_swap_tx_terra(txinfo, sent_amount, sent_currency, received_amount, received_currency)
     exporter.ingest_row(row)

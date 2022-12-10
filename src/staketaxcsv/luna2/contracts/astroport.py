@@ -79,6 +79,7 @@ def _handle_provide_liquidity(txinfo, msginfo):
 
     return rows
 
+
 def _is_withdraw_liquidity(actions):
     # example action lists:
     # ["send", "withdraw_liquidity", "burn"]

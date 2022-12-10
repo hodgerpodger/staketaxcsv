@@ -54,7 +54,7 @@ def handle_add_to_deposit(exporter, elem, txinfo):
     row = make_nft_deposit(txinfo, sent_amount, sent_currency)
     exporter.ingest_row(row)
 
-    assert(sender == wallet_address)
+    assert (sender == wallet_address)
 
 
 def handle_accept_deposit(exporter, elem, txinfo):
@@ -309,12 +309,12 @@ def handle_execute_order(exporter, elem, txinfo):
 def handle_post_order(exporter, elem, txinfo):
     """ list item from randomearth.io """
     for execute_msg in util_terra._execute_msgs(elem):
-        if("deposit" in execute_msg):
+        if ("deposit" in execute_msg):
             sent_amount, sent_currency = _parse_asset(execute_msg["deposit"]["asset"])
             row = make_nft_offer_deposit(txinfo, sent_amount, sent_currency)
             exporter.ingest_row(row)
 
-        if("post_order" in execute_msg):
+        if ("post_order" in execute_msg):
             order = execute_msg["post_order"]["order"]["order"]
             maker_asset = order["maker_asset"]
             taker_asset = order["taker_asset"]

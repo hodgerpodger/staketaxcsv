@@ -104,7 +104,6 @@ def _get_contract_data(address):
     return data
 
 
-
 def _handle_unknown(exporter, txinfo):
     row = staketaxcsv.common.make_tx.make_unknown_tx(txinfo)
     exporter.ingest_row(row)

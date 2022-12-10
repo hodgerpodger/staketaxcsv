@@ -18,7 +18,7 @@ def handle_deposit_collateral(exporter, elem, txinfo):
     collaterals = execute_msg["lock_collateral"]["collaterals"]
     collateral = collaterals[0]
     currency_address, amount = collateral[0], collateral[1]
-    assert(len(collaterals) == 1)
+    assert (len(collaterals) == 1)
 
     sent_currency = util_terra._lookup_address(currency_address, txid)
     sent_amount = util_terra._float_amount(amount, sent_currency)
