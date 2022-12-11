@@ -41,7 +41,7 @@ def process_tx(wallet_address, elem, exporter):
         handle_unknown(exporter, txinfo)
 
         if localconfig.debug:
-            raise(e)
+            raise (e)
 
 
 def _txinfo(wallet_address, elem):

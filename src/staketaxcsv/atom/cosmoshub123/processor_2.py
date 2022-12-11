@@ -106,7 +106,7 @@ def handle_transfer(exporter, txinfo, elem, msg_index):
 
 def handle_withdraw_reward(exporter, txinfo, elem, msg_index):
     amount_string = elem["tags"][1]["value"]
-    assert(elem["tags"][1]["key"] == "rewards")
+    assert (elem["tags"][1]["key"] == "rewards")
 
     amount, currency = _amount(amount_string)
 

@@ -79,7 +79,7 @@ def process_txs(wallet_address, elems, exporter, progress):
             handle_unknown(exporter, txinfo)
 
             if localconfig.debug:
-                raise(e)
+                raise (e)
 
         if i % 50 == 0:
             progress.report(i + 1, "Processed {} of {} transactions".format(i + 1, length))

@@ -35,11 +35,11 @@ def _handle_raydium_lp(exporter, txinfo):
           and len(transfers_in) == 2
           and len(transfers_out) == 1):
         _handle_raydium_lp_withdraw(exporter, txinfo, transfers_in, transfers_out)
-    elif("process_swap:" in log_string
+    elif ("process_swap:" in log_string
          and len(transfers_in) == 1
          and len(transfers_out) == 1):
         _handle_raydium_swap(exporter, txinfo, transfers_in, transfers_out)
-    elif("process_swap_base_in:" in log_string
+    elif ("process_swap_base_in:" in log_string
          and len(transfers_in) == 1
          and len(transfers_out) == 1):
         _handle_raydium_swap(exporter, txinfo, transfers_in, transfers_out)

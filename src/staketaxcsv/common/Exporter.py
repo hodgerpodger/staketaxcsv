@@ -1061,7 +1061,6 @@ class Exporter:
 
         logging.info("Wrote to %s", csvpath)
 
-
     def export_coinpanda_csv(self, csvpath):
         """ Writes CSV, suitable for import into bitcoin.tax """
         labels = {

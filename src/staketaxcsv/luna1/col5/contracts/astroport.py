@@ -64,8 +64,8 @@ def _is_astroport_swap(msgs):
 def _handle_astroport_swap(elem, txinfo, msgs):
     txid = txinfo.txid
     send_action, swap_action = msgs[0].actions[0], msgs[0].actions[1]
-    assert(send_action["action"] == "send")
-    assert(swap_action["action"] == "swap")
+    assert (send_action["action"] == "send")
+    assert (swap_action["action"] == "swap")
 
     sent_currency = util_terra._asset_to_currency(swap_action["offer_asset"], txid)
     sent_amount = util_terra._float_amount(send_action["amount"], sent_currency)
@@ -98,8 +98,8 @@ def _handle_astro_stake(elem, txinfo, msgs):
 
     assert (send_action["action"] == "send")
     assert (mint_action["action"] == "mint")
-    assert(receive_currency.upper() == co.CUR_XASTRO)
-    assert(sent_currency.upper() == co.CUR_ASTRO)
+    assert (receive_currency.upper() == co.CUR_XASTRO)
+    assert (sent_currency.upper() == co.CUR_ASTRO)
 
     row = make_swap_tx(txinfo, sent_amount, sent_currency, receive_amount, receive_currency)
     return [row]

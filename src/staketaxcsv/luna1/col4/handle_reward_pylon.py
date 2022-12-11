@@ -31,7 +31,7 @@ def handle_airdrop_pylon(exporter, elem, txinfo):
 
             # Error checking
             target = from_contract["target"][count]
-            assert(target == wallet_address)
+            assert (target == wallet_address)
 
             count += 1
 
