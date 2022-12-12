@@ -690,9 +690,19 @@ def _handle_algofiv2_swap(wallet_address, group, exporter, txinfo, z_index=0):
     send_transaction = group[i]
     send_asset = get_transfer_asset(send_transaction)
 
+    receive_transaction = group[i + 3]
+    receive_asset_1 = get_inner_transfer_asset(receive_transaction,
+                                               filter=partial(is_transfer_receiver, wallet_address))
+
     receive_transaction = group[i + 4]
-    receive_asset = get_inner_transfer_asset(receive_transaction,
-                                             filter=partial(is_transfer_receiver, wallet_address))
+    receive_asset_2 = get_inner_transfer_asset(receive_transaction,
+                                               filter=partial(is_transfer_receiver, wallet_address))
+    if receive_asset_1.id == send_asset.id:
+        send_asset -= receive_asset_1
+        receive_asset = receive_asset_2
+    else:
+        send_asset -= receive_asset_2
+        receive_asset = receive_asset_1
 
     export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_ALGOFIV2, z_index)
 
