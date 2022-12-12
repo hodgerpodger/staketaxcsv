@@ -49,6 +49,9 @@
 - Add and remove from liquidity pools
 - Staking rewards
 
+## Vestige
+- Swaps
+
 ## WagmiSwap
 - Swaps
 - Add and remove from liquidity pools
