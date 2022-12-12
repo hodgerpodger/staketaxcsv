@@ -22,6 +22,7 @@ REGEN_NODE = os.environ.get("STAKETAX_REGEN_NODE", "")
 STARS_NODE = os.environ.get("STAKETAX_STARS_NODE", "")
 SOL_NODE = os.environ.get("STAKETAX_SOL_NODE", "https://api.mainnet-beta.solana.com")
 TERRA_LCD_NODE = os.environ.get("STAKETAX_TERRA_LCD_NODE", "")
+TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
 LUNA2_LCD_NODE = os.environ.get("STAKETAX_LUNA2_LCD_NODE", "https://phoenix-lcd.terra.dev")
 
 # Optional environment variables
@@ -47,6 +48,7 @@ TICKER_OSMO = "OSMO"
 TICKER_REGEN = "REGEN"
 TICKER_SOL = "SOL"
 TICKER_STARS = "STARS"
+TICKER_TORI = "TORI"
 
 DONATION_WALLETS = set([v for k, v in os.environ.items() if k.startswith("DONATION_WALLET_")])
 
