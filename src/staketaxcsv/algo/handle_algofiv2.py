@@ -333,6 +333,9 @@ def _is_algofiv2_claim_lending_rewards(group):
         if is_asset_optin(group[i]):
             i += 1
 
+        if i == length:
+            return False
+
         if (not is_app_call(group[i],
                             ALGOFIV2_MARKET_CONTRACTS,
                             ALGOFIV2_TRANSACTION_CLAIM_REWARDS,
