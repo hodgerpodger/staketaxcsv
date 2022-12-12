@@ -39,6 +39,8 @@ def get_transfer_asset(transaction, asset_map={}):
     elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
         amount = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"]
         asset_id = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
+    else:
+        return None
 
     return Asset(asset_map.get(asset_id, asset_id), amount)
 
