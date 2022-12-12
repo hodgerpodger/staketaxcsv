@@ -31,6 +31,7 @@ from staketaxcsv.algo.handle_transfer import (
     has_only_transfer_transactions,
     is_governance_reward_transaction,
 )
+from staketaxcsv.algo.handle_vestige import handle_vestige_transaction, is_vestige_transaction
 from staketaxcsv.algo.handle_wagmiswap import handle_wagmiswap_transaction, is_wagmiswap_transaction
 from staketaxcsv.algo.handle_yieldly import handle_yieldly_transaction, is_yieldly_transaction
 from staketaxcsv.common.ErrorCounter import ErrorCounter
@@ -138,6 +139,8 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
         handle_pact_transaction(group, exporter, txinfo)
     elif is_humbleswap_transaction(group):
         handle_humbleswap_transaction(wallet_address, group, exporter, txinfo)
+    elif is_vestige_transaction(group):
+        handle_vestige_transaction(wallet_address, group, exporter, txinfo)
     elif is_wagmiswap_transaction(group):
         handle_wagmiswap_transaction(group, exporter, txinfo)
     elif is_algodex_transaction(wallet_address, group):
