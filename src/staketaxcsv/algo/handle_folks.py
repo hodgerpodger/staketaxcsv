@@ -99,6 +99,7 @@ FOLKS_TRANSACTION_REWARD_IMMEDIATE_EXCHANGE = "aWU="   # "ie"
 
 FOLKS_TRANSACTION_GOVERNANCE_MINT = "bh9UTw=="
 FOLKS_TRANSACTION_GOVERNANCE_UNMINT = "3c0QwA=="
+FOLKS_TRANSACTION_GOVERNANCE_BURN = "ojqoeg=="
 FOLKS_TRANSACTION_GOVERNANCE_EARLY_CLAIM = "3jMsVA=="
 
 escrow_addresses = []
@@ -187,7 +188,7 @@ def _is_folks_galgo_unmint_transaction(group):
         return False
 
     appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-    return FOLKS_TRANSACTION_GOVERNANCE_UNMINT in appl_args
+    return FOLKS_TRANSACTION_GOVERNANCE_UNMINT in appl_args or FOLKS_TRANSACTION_GOVERNANCE_BURN in appl_args
 
 
 def is_folks_galgo_early_claim_transaction(transaction):
