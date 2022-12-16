@@ -18,7 +18,13 @@ from staketaxcsv.algo.export_tx import (
 )
 from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
 from staketaxcsv.algo.handle_transfer import is_governance_reward_transaction
-from staketaxcsv.algo.transaction import get_inner_transfer_asset, get_transfer_asset
+from staketaxcsv.algo.transaction import (
+    get_inner_transfer_asset,
+    get_transfer_asset,
+    is_app_call,
+    is_asset_optin,
+    is_transfer
+)
 
 # For reference
 # https://github.com/Algofiorg/algofi-amm-py-sdk
@@ -163,10 +169,7 @@ def _is_algofi_zap(group):
         return False
 
     i = 0
-    txtype = group[i]["tx-type"]
-    # Skip opt-in transaction
-    if (txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
-            and group[i]["sender"] == group[i][co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
+    if is_asset_optin(group[i]):
         i += 1
 
     return _is_algofi_swap(group[:i + 2]) and _is_algofi_lp_add(group[i + 2:])
@@ -178,18 +181,16 @@ def _is_algofi_swap(group):
         return False
 
     i = 0
-    txtype = group[i]["tx-type"]
-    # Skip opt-in transaction
-    if (txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
-            and group[i]["sender"] == group[i][co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
+    if is_asset_optin(group[i]):
         i += 1
 
-    transaction = group[i]
-    txtype = transaction["tx-type"]
-    if txtype != co.TRANSACTION_TYPE_PAYMENT and txtype != co.TRANSACTION_TYPE_ASSET_TRANSFER:
+    if not is_transfer(group[i]):
         return False
 
     i += 1
+    if i == length:
+        return False
+
     transaction = group[i]
     txtype = transaction["tx-type"]
     if txtype != co.TRANSACTION_TYPE_APP_CALL:
@@ -208,7 +209,7 @@ def _is_algofi_swap(group):
         return False
 
     i += 1
-    if length < i + 1:
+    if i == length:
         return False
 
     transaction = group[i]
@@ -224,18 +225,10 @@ def _is_algofi_claim_rewards(group):
     if len(group) != ALGOFI_NUM_INIT_TXNS + 1:
         return False
 
-    transaction = group[-1]
-    txtype = transaction["tx-type"]
-    if txtype != co.TRANSACTION_TYPE_APP_CALL:
-        return False
-
-    app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
-    if (app_id not in [APPLICATION_ID_ALGOFI_LENDING_MANAGER, APPLICATION_ID_ALGOFI_STABILITY_MANAGER]
-            and app_id not in ALGOFI_STAKING_CONTRACTS):
-        return False
-
-    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-    return ALGOFI_TRANSACTION_CLAIM_REWARDS in appl_args
+    return is_app_call(group[-1],
+                       ([APPLICATION_ID_ALGOFI_LENDING_MANAGER, APPLICATION_ID_ALGOFI_STABILITY_MANAGER]
+                            + list(ALGOFI_STAKING_CONTRACTS.keys())),
+                       ALGOFI_TRANSACTION_CLAIM_REWARDS)
 
 
 def _is_algofi_lp_add(group):
@@ -558,10 +551,7 @@ def _handle_algofi_swap(group, exporter, txinfo, z_index=0):
     fee_amount = 0
     i = 0
     send_transaction = group[i]
-    txtype = send_transaction["tx-type"]
-    # Opt-in transaction
-    if (txtype == "axfer"
-            and send_transaction["sender"] == send_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
+    if is_asset_optin(group[i]):
         fee_amount += send_transaction["fee"]
         i += 1
 
@@ -607,10 +597,7 @@ def _handle_algofi_lp_add(group, exporter, txinfo, z_index=0):
     i = 0
     send_transaction = group[i]
     fee_amount = send_transaction["fee"]
-    txtype = send_transaction["tx-type"]
-    # Opt-in transaction
-    if (txtype == "axfer"
-            and send_transaction["sender"] == send_transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
+    if is_asset_optin(group[i]):
         i += 1
         send_transaction = group[i]
         fee_amount += send_transaction["fee"]
