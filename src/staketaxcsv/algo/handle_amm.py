@@ -85,9 +85,10 @@ def is_simple_lp_add_group(wallet_address, group):
         return False
 
     i += 1
-    transaction = group[i]
+    if i == length:
+        return False
 
-    receive_asset = get_inner_transfer_asset(group[1],
+    receive_asset = get_inner_transfer_asset(group[i],
                                              filter=partial(is_transfer_receiver, wallet_address))
 
     return receive_asset is not None

@@ -92,6 +92,9 @@ def is_app_call(transaction, app_id, app_args=None, foreign_app=None):
     elif isinstance(app_id, str) and transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"] != app_id:
         return False
 
+    if (isinstance(foreign_app, list)
+            and not any(app in transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"] for app in foreign_app)):
+        return False
     if isinstance(foreign_app, str) and foreign_app not in transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]:
         return False
 

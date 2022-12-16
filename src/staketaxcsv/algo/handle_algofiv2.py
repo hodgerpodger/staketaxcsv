@@ -168,7 +168,7 @@ def _is_algofiv2_deposit_collateral(group):
     if not is_transfer(group[i]):
         return False
 
-    return is_app_call(group[i + 1],
+    return is_app_call(group[-1],
                        ALGOFIV2_MARKET_CONTRACTS,
                        ALGOFIV2_TRANSACTION_ADD_UNDERLYING_COLLATERAL,
                        APPLICATION_ID_ALGOFIV2_LENDING_MANAGER)
@@ -202,7 +202,7 @@ def _is_algofiv2_repay_borrow(group):
     if not is_transfer(group[i]):
         return False
 
-    return is_app_call(group[i + 1],
+    return is_app_call(group[-1],
                        ALGOFIV2_MARKET_CONTRACTS,
                        ALGOFIV2_TRANSACTION_REPAY_BORROW,
                        APPLICATION_ID_ALGOFIV2_LENDING_MANAGER)
