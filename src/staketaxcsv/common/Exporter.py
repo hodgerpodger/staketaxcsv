@@ -720,7 +720,8 @@ class Exporter:
                 "DEGEN": "ID:124845",
                 "DEFLY": "ID:171818",
                 "OCTO": "ID:174045",
-                "GALGO": "ID:5217593"
+                "GALGO": "ID:5217593",
+                "BANK": "ID:7452250",
             },
             TICKER_LUNA2: {
                 "LUNA": "ID:6089",
