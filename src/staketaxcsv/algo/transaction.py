@@ -39,6 +39,8 @@ def get_transfer_asset(transaction, asset_map={}):
     elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
         amount = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["amount"]
         asset_id = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
+    else:
+        return None
 
     return Asset(asset_map.get(asset_id, asset_id), amount)
 
@@ -90,6 +92,9 @@ def is_app_call(transaction, app_id, app_args=None, foreign_app=None):
     elif isinstance(app_id, str) and transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"] != app_id:
         return False
 
+    if (isinstance(foreign_app, list)
+            and not any(app in transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"] for app in foreign_app)):
+        return False
     if isinstance(foreign_app, str) and foreign_app not in transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]:
         return False
 

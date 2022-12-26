@@ -30,6 +30,7 @@
   ```
 
 * Usage as CLI
+  * Remember to add your path to *staketaxcsv/src* to the `PYTHONPATH` environment variable.
   * Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_*.py:
   
   ```sh
