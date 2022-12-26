@@ -1,1 +1,0 @@
-MINTSCAN_LABEL_SECRET = "secret"

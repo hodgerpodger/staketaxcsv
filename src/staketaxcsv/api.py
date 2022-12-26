@@ -3,7 +3,7 @@ import logging
 from staketaxcsv.settings_csv import (
     TICKER_ALGO, TICKER_ATOM, TICKER_BLD, TICKER_BTSG, TICKER_DVPN, TICKER_EVMOS, TICKER_FET,
     TICKER_HUAHUA, TICKER_IOTEX, TICKER_JUNO, TICKER_KUJI, TICKER_LUNA1, TICKER_LUNA2, TICKER_MNTL,
-    TICKER_OSMO, TICKER_REGEN, TICKER_SIFCHAIN, TICKER_SECRET, TICKER_SOL, TICKER_STARS, TICKER_TORI)
+    TICKER_OSMO, TICKER_REGEN, TICKER_SIFCHAIN, TICKER_SCRT, TICKER_SOL, TICKER_STARS, TICKER_TORI)
 from staketaxcsv.common.ExporterTypes import FORMATS
 
 import staketaxcsv.report_algo
@@ -23,7 +23,7 @@ import staketaxcsv.report_mntl
 import staketaxcsv.report_osmo
 import staketaxcsv.report_regen
 import staketaxcsv.report_sifchain
-import staketaxcsv.report_secret
+import staketaxcsv.report_scrt
 import staketaxcsv.report_sol
 import staketaxcsv.report_stars
 import staketaxcsv.report_tori
@@ -46,7 +46,7 @@ REPORT_MODULES = {
     TICKER_OSMO: staketaxcsv.report_osmo,
     TICKER_REGEN: staketaxcsv.report_regen,
     TICKER_SIFCHAIN: staketaxcsv.report_sifchain,
-    TICKER_SECRET: staketaxcsv.report_secret,
+    TICKER_SCRT: staketaxcsv.report_scrt,
     TICKER_SOL: staketaxcsv.report_sol,
     TICKER_STARS: staketaxcsv.report_stars,
     TICKER_TORI: staketaxcsv.report_tori,
