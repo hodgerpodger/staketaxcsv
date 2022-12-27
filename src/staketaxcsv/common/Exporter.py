@@ -722,6 +722,8 @@ class Exporter:
                 "OCTO": "ID:174045",
                 "GALGO": "ID:5217593",
                 "BANK": "ID:7452250",
+                "XET": "ID:80828",
+                "FAME": "ID:197314",
             },
             TICKER_LUNA2: {
                 "LUNA": "ID:6089",
