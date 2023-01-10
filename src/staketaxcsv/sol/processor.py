@@ -10,6 +10,7 @@ from staketaxcsv.sol.handle_account_misc import (
     is_init_account_tx,
 )
 from staketaxcsv.sol.handle_jupiter import (
+    handle_jupiter_aggregator_v1,
     handle_jupiter_aggregator_v2,
     handle_jupiter_aggregator_v3,
     handle_jupiter_aggregator_v4,
@@ -95,6 +96,8 @@ def process_tx(wallet_info, exporter, txid, data):
             handle_saber_farm_ssf(exporter, txinfo)
 
         # Jupiter Aggregator
+        elif co.PROGRAMID_JUPITER_AGGREGATOR_V1 in program_ids:
+            handle_jupiter_aggregator_v1(exporter, txinfo)
         elif co.PROGRAMID_JUPITER_AGGREGATOR_V2 in program_ids:
             handle_jupiter_aggregator_v2(exporter, txinfo)
         elif co.PROGRAMID_JUPITER_AGGREGATOR_V3 in program_ids:
