@@ -54,11 +54,15 @@ class LcdAPI:
     def _get_txs(self, wallet_address, events_type, offset, limit, sleep_seconds):
         uri_path = "/cosmos/tx/v1beta1/txs"
         query_params = {
-            "order_by": "ORDER_BY_DESC",
             "pagination.limit": limit,
             "pagination.offset": offset,
             "pagination.count_total": True,
         }
+        if wallet_address.startswith("evmos"):
+            pass
+        else:
+            query_params["order_by"] = "ORDER_BY_DESC"
+
         if events_type == EVENTS_TYPE_SENDER:
             query_params["events"] = f"message.sender='{wallet_address}'"
         elif events_type == EVENTS_TYPE_RECIPIENT:
@@ -81,7 +85,11 @@ class LcdAPI:
 
         elems = data["tx_responses"]
         next_offset = offset + limit if len(elems) == limit else None
-        total_count_txs = int(data["pagination"]["total"])
+
+        if wallet_address.startswith("evmos"):
+            total_count_txs = int(data["total"])
+        else:
+            total_count_txs = int(data["pagination"]["total"])
         return elems, next_offset, total_count_txs
 
     def _ibc_address_to_denom(self, ibc_address):
