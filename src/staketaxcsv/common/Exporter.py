@@ -2,6 +2,7 @@ import csv
 import io
 import logging
 import time
+import json
 from datetime import datetime
 
 import pandas as pd
@@ -241,6 +242,8 @@ class Exporter:
             return xlsxpath
         elif format == et.FORMAT_BITCOINTAX:
             self.export_bitcointax_csv(csvpath)
+        elif format == et.FORMAT_BITTYTAX:
+            self.export_bittytax_csv(csvpath)
         elif format == et.FORMAT_BLOCKPIT:
             self.export_blockpit_csv(csvpath)
             xlsxpath = csvpath.replace(".csv", ".xlsx")
@@ -1010,6 +1013,79 @@ class Exporter:
                 ]
                 mywriter.writerow(line)
         logging.info("Wrote to %s", csvpath)
+
+    def export_bittytax_csv(self, csvpath):
+        """ Write CSV, suitable for import into BittyTax """
+        bittytax_types = {
+            et.TX_TYPE_STAKING: "Staking",
+            et.TX_TYPE_AIRDROP: "Airdrop",
+            et.TX_TYPE_TRADE: "Trade",
+            et.TX_TYPE_TRANSFER: "_TRANSFER",
+            et.TX_TYPE_SPEND: "Spend",
+            et.TX_TYPE_INCOME: "Income",
+            et.TX_TYPE_BORROW: "_BORROW",
+            et.TX_TYPE_REPAY: "_REPAY",
+            et.TX_TYPE_LP_DEPOSIT: "Trade",
+            et.TX_TYPE_LP_WITHDRAW: "Trade",
+            et.TX_TYPE_MARGIN_TRADE_FEE: "_MARGIN_TRADE_FEE",
+        }
+        self.sort_rows(reverse=False)
+        rows = self.rows
+
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
+            mywriter = csv.writer(f)
+
+            # header row
+            mywriter.writerow(et.BITTYTAX_FIELDS)
+
+            # data rows
+            for row in rows:
+                # Determine type
+                bt_type = bittytax_types.get(row.tx_type, row.tx_type)
+                if row.tx_type == et.TX_TYPE_TRANSFER:
+                    if row.received_amount and not row.sent_amount:
+                        bt_type = "Deposit"
+                    elif row.sent_amount and not row.received_amount:
+                        bt_type = "Withdrawal"
+                    else:
+                        logging.error("Bad condition in export_bittytax_csv(): {}, {}, {}".format(
+                            row.received_amount, row.sent_amount, row.as_array()))
+
+                # Add a dummy sent_amount if fee is on it's own
+                if row.fee and (not row.received_amount and not row.sent_amount):
+                    sent_amount = 0
+                    sent_currency = row.fee_currency
+                else:
+                    sent_amount = row.sent_amount
+                    sent_currency = row.sent_currency
+
+                line = [
+                    bt_type,                                    # Type
+                    row.received_amount,                        # Buy Quantity
+                    row.received_currency,                      # Buy Asset
+                    "",                                         # Buy Value
+                    sent_amount,                                # Sell Quantity
+                    sent_currency,                              # Sell Asset
+                    "",                                         # Sell Value
+                    row.fee,                                    # Fee Quantity
+                    row.fee_currency,                           # Fee Asset
+                    "",                                         # Fee Value
+                    self._bittytax_wallet(row.exchange, row.wallet_address), # Wallet
+                    row.timestamp,                              # Timestamp
+                    row.comment,                                # Note
+                    row.txid,                                   # Tx ID
+                    row.url,                                    # URL
+                    self._bittytax_raw_data(row),               # Raw Data
+                ]
+                mywriter.writerow(line)
+
+        logging.info("Wrote to %s", csvpath)
+
+    def _bittytax_wallet(self, exchange, wallet_address):
+        return "%s-%s" % (exchange.replace('_blockchain', '').capitalize(), wallet_address[0:16])
+
+    def _bittytax_raw_data(self, row):
+        return json.dumps(dict(zip(et.ROW_FIELDS, row.as_array())))
 
     def export_recap_csv(self, csvpath):
         """ Write CSV, suitable for import into Recap """
