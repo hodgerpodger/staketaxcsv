@@ -7,6 +7,7 @@ def handle_jupiter_aggregator_v1(exporter, txinfo):
     txinfo.comment = "jupiter_aggregator_v1"
     _handle_jupiter_aggregator(exporter, txinfo)
 
+
 def handle_jupiter_aggregator_v2(exporter, txinfo):
     txinfo.comment = "jupiter_aggregator_v2"
     _handle_jupiter_aggregator(exporter, txinfo)

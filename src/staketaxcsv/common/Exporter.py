@@ -1070,7 +1070,7 @@ class Exporter:
                     row.fee,                                    # Fee Quantity
                     row.fee_currency,                           # Fee Asset
                     "",                                         # Fee Value
-                    self._bittytax_wallet(row.exchange, row.wallet_address), # Wallet
+                    self._bittytax_wallet(row.exchange, row.wallet_address),  # Wallet
                     row.timestamp,                              # Timestamp
                     row.comment,                                # Note
                     row.txid,                                   # Tx ID
