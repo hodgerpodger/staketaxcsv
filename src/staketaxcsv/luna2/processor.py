@@ -1,5 +1,6 @@
 import logging
 
+from staketaxcsv.settings_csv import TICKER_LUNA2
 import staketaxcsv.common.ibc.handle
 import staketaxcsv.common.ibc.processor
 import staketaxcsv.common.make_tx
@@ -47,7 +48,7 @@ def process_tx(wallet_address, elem, exporter):
 
 def _txinfo(wallet_address, elem):
     txinfo = staketaxcsv.common.ibc.processor.txinfo(
-        wallet_address, elem, "dummy", localconfig.ibc_addresses, LUNA2_LCD_NODE)
+        wallet_address, elem, "luna2", localconfig.ibc_addresses, LUNA2_LCD_NODE)
 
     # Edit url, since terra not in mintscan
     txid = elem["txhash"]
