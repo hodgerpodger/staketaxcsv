@@ -83,10 +83,11 @@ def _handle_provide_liquidity(txinfo, msginfo):
 def _is_withdraw_liquidity(actions):
     # example action lists:
     # ["send", "withdraw_liquidity", "burn"]
+    # ["send", 'withdraw_liquidity", "transfer", "burn"]
 
     action_names = [action["action"] for action in actions]
 
-    if action_names == ["send", "withdraw_liquidity", "burn"]:
+    if "withdraw_liquidity" in action_names:
         return True
     else:
         return False
