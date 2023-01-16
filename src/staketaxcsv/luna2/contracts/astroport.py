@@ -117,9 +117,9 @@ def _handle_withdraw_liquidity(txinfo, msginfo):
 
 
 def _is_swap(actions):
-    # This is a swap transaction if all actions are only "swap" or "transfer"
+    # This is a swap transaction if all actions are only "swap" or ("transfer" or "swap")
     action_names = set([action["action"] for action in actions])
-    return action_names == set(["swap", "transfer"]) or action_names == set(["swap"])
+    return "swap" in action_names
 
 
 def _handle_swap(txinfo, msginfo):
