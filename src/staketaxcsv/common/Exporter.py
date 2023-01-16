@@ -1518,6 +1518,17 @@ class Exporter:
 
         if currency and currency.upper() in remap:
             return remap[currency.upper()]
+
+        # cointracking can't handle more then 8 chars
+        if currency.startswith('LP_'):
+            return ''.join([part[:4] for part in currency[3:].split('_')])
+
+        if len(currency) > 8:
+            # nft 'currency' names are way longer then 8
+            # revese string as every nft cur begins with terra...
+            hash = hashlib.md5(currency[::-1].encode()).hexdigest()
+            return hash[:8]
+
         return currency
 
     def _cointracker_code(self, currency):
