@@ -12,7 +12,7 @@ CONTRACT_ASTROPORT_ROUTER_2 = "terra19hz374h6ruwtzrnm8ytkae782uv79h9yt9tuytgvt94
 
 def is_astroport_pair_contract(contract_data):
     return ("contract_info" in contract_data
-           and contract_data["contract_info"].get("label") in ("Astroport pair", "Astroport LP token"))
+           and contract_data["contract_info"].get("label") in ("Astroport pair", "Astroport LP token", "Astroport Staking Token"))
 
 
 def handle_astroport(elem, txinfo):
@@ -137,19 +137,33 @@ def _handle_swap(txinfo, msginfo):
 
 
 def _is_xastro_staking(actions):
-    if (len(actions) == 2
-         and actions[0]["action"] == "send"
-         and actions[1]["action"] == "mint"):
+    # Deposit
+    if _get_action(actions, "mint") != None:
+        return True
+    # Withdrawal
+    elif _get_action(actions, "burn") != None:
         return True
     else:
         return False
 
 
+def _get_action(actions, *names):
+    for action in actions:
+        print(action["action"])
+        if action["action"] in names:
+            return action
+    
+    return None
+
+
 def _handle_xastro_staking(txinfo, msginfo):
     actions = msginfo.wasm
 
-    sent_amount_raw, sent_asset = actions[0]["amount"], actions[0]["_contract_address"]
-    received_amount_raw, received_asset = actions[1]["amount"], actions[1]["_contract_address"]
+    sent = _get_action(actions, "send")
+    received = _get_action(actions, "transfer", "mint")
+
+    sent_amount_raw, sent_asset = sent["amount"], sent["_contract_address"]
+    received_amount_raw, received_asset = received["amount"], received["_contract_address"]
 
     sent_amount, sent_currency = staketaxcsv.luna2.util_luna2.asset_to_currency(sent_amount_raw, sent_asset)
     received_amount, received_currency = staketaxcsv.luna2.util_luna2.asset_to_currency(received_amount_raw, received_asset)
