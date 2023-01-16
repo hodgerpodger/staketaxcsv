@@ -23,8 +23,6 @@ def handle_astroport(elem, txinfo):
 
         if _is_swap(actions):
             result = _handle_swap(txinfo, msginfo)
-        elif _is_xastro_staking(actions):
-            result = _handle_xastro_staking(txinfo, msginfo)
         elif _is_airdrop(actions):
             result = _handle_airdrop(txinfo, msginfo)
         elif _is_airdrop_vesting_account(actions):
@@ -35,6 +33,8 @@ def handle_astroport(elem, txinfo):
             result = _handle_provide_liquidity(txinfo, msginfo)
         elif _is_withdraw_liquidity(actions):
             result = _handle_withdraw_liquidity(txinfo, msginfo)
+        elif _is_xastro_staking(actions):
+            result = _handle_xastro_staking(txinfo, msginfo)
         else:
             raise Exception("handle_astroport(): Unknown message.  actions={}".format(
                 [action["action"] for action in actions]))
@@ -138,10 +138,10 @@ def _handle_swap(txinfo, msginfo):
 
 def _is_xastro_staking(actions):
     # Deposit
-    if _get_action(actions, "mint") != None:
+    if len(actions) == 2 and _get_action(actions, "mint") != None:
         return True
     # Withdrawal
-    elif _get_action(actions, "burn") != None:
+    elif len(actions) == 3 and _get_action(actions, "burn") != None:
         return True
     else:
         return False
