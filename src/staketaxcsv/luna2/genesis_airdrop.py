@@ -8,27 +8,28 @@ def genesis_airdrop(wallet_address, exporter):
     amount_luna = _genesis_airdrop_luna_amount(wallet_address)
     if amount_luna:
         row = make_genesis_airdrop1_tx(amount_luna, wallet_address)
+        row.txid = row.txid + "." + wallet_address
         exporter.ingest_row(row)
     
     # vesting (locked airdrop)
     amount_luna = _genesis_airdrop_luna_vesting_amount(wallet_address)
     if amount_luna:
         row = make_genesis_airdrop1_tx(amount_luna, wallet_address)
-        row.txid = row.txid + "_vesting"
+        row.txid = row.txid + "." + wallet_address + ".vesting"
         exporter.ingest_row(row)
 
 
 def _genesis_airdrop_luna_vesting_amount(wallet_address):
     data = staketaxcsv.common.ibc.api_lcd.LcdAPI(LUNA2_LCD_NODE)._account_exists(wallet_address)
-    vesting = data["account"]["base_vesting_account"]["original_vesting"]
+    if "base_vesting_account" in data["account"]:
+        vesting = data["account"]["base_vesting_account"]["original_vesting"]
 
-    if len(vesting) == 0:
-        return 0
-
-    denom = vesting[0]["denom"]
-    amount_string = vesting[0]["amount"]
-    assert (denom == "uluna")
-    return float(amount_string) / co.MILLION
+        denom = vesting[0]["denom"]
+        amount_string = vesting[0]["amount"]
+        assert (denom == "uluna")
+        return float(amount_string) / co.MILLION
+    
+    return 0
 
 
 def _genesis_airdrop_luna_amount(wallet_address):
