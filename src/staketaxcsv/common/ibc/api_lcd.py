@@ -57,11 +57,8 @@ class LcdAPI:
             "pagination.limit": limit,
             "pagination.offset": offset,
             "pagination.count_total": True,
+            "order_by": "ORDER_BY_DESC",
         }
-        if wallet_address.startswith("evmos"):
-            pass
-        else:
-            query_params["order_by"] = "ORDER_BY_DESC"
 
         if events_type == EVENTS_TYPE_SENDER:
             query_params["events"] = f"message.sender='{wallet_address}'"
