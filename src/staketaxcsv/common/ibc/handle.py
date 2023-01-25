@@ -4,7 +4,12 @@ from staketaxcsv.common.ibc import make_tx, util_ibc
 
 
 def handle_simple(exporter, txinfo, msginfo):
-    row = make_tx.make_simple_tx(txinfo, msginfo)
+    # row = make_tx.make_simple_tx(txinfo, msginfo)
+
+    if txinfo.fee:
+        row = make_tx.make_spend_tx_fee(txinfo, msginfo)
+    else:
+        row = make_tx.make_simple_tx(txinfo, msginfo)
     exporter.ingest_row(row)
 
 

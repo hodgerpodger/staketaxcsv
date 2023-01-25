@@ -78,9 +78,9 @@ def handle_message(exporter, txinfo, msginfo, debug=False):
             handle.handle_exec(exporter, txinfo, msginfo)
             return True
 
-        # simple transactions, that are typically ignored
+
         if msg_type in [co.MSG_TYPE_VOTE, co.MSG_TYPE_SET_WITHDRAW_ADDRESS]:
-            # 0 transfers
+            # simple transactions with no transfers
             handle.handle_simple(exporter, txinfo, msginfo)
         elif msg_type in [co.MSG_TYPE_SUBMIT_PROPOSAL, co.MSG_TYPE_DEPOSIT]:
             transfers_in, transfers_out = msginfo.transfers

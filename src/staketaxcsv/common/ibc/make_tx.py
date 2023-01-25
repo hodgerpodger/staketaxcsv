@@ -1,4 +1,4 @@
-from staketaxcsv.common.ExporterTypes import TX_TYPE_NOOP, TX_TYPE_STAKING, TX_TYPE_UNKNOWN
+from staketaxcsv.common.ExporterTypes import TX_TYPE_NOOP, TX_TYPE_STAKING, TX_TYPE_UNKNOWN, TX_TYPE_SPEND
 from staketaxcsv.common import make_tx
 
 
@@ -31,6 +31,15 @@ def make_simple_tx_with_transfers(txinfo, msginfo, sent_amount, sent_currency, r
 
 def make_simple_tx(txinfo, msginfo):
     return _make_tx(txinfo, msginfo, "", "", "", "")
+
+
+def make_spend_tx_fee(txinfo, msginfo):
+    row = _make_tx(txinfo, msginfo, txinfo.fee, txinfo.fee_currency, "", "", TX_TYPE_SPEND)
+    row.fee = 0
+    row.fee_currency = ""
+    row.comment = msginfo.msg_type
+
+    return row
 
 
 def make_unknown_tx(txinfo, msginfo):
