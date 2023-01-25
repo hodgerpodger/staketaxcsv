@@ -21,6 +21,8 @@ from staketaxcsv.evmos.config_evmos import localconfig
 from staketaxcsv.evmos.progress_evmos import SECONDS_PER_PAGE, ProgressEVMOS
 from staketaxcsv.settings_csv import EVMOS_NODE, TICKER_EVMOS
 
+TXS_LIMIT_PER_QUERY_EVMOS = 20
+
 
 def main():
     wallet_address, export_format, txid, options = report_util.parse_args(TICKER_EVMOS)
@@ -82,11 +84,13 @@ def txhistory(wallet_address, options):
     exporter = Exporter(wallet_address, localconfig, TICKER_EVMOS)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = staketaxcsv.common.ibc.api_lcd_v2.get_txs_pages_count(EVMOS_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    count_pages = staketaxcsv.common.ibc.api_lcd_v2.get_txs_pages_count(
+        EVMOS_NODE, wallet_address, max_txs, limit=TXS_LIMIT_PER_QUERY_EVMOS, debug=localconfig.debug)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = staketaxcsv.common.ibc.api_lcd_v2.get_txs_all(EVMOS_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
+    elems = staketaxcsv.common.ibc.api_lcd_v2.get_txs_all(
+        EVMOS_NODE, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY_EVMOS, debug=localconfig.debug)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.evmos.processor.process_txs(wallet_address, elems, exporter)
