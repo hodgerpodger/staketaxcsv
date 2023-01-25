@@ -69,7 +69,8 @@ def txone(wallet_address, txid):
 
 def estimate_duration(wallet_address, options):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v2.get_txs_pages_count(EVMOS_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v2.get_txs_pages_count(
+        EVMOS_NODE, wallet_address, max_txs, limit=TXS_LIMIT_PER_QUERY_EVMOS)
 
 
 def txhistory(wallet_address, options):
