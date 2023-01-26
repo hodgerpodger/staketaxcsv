@@ -21,7 +21,7 @@ from staketaxcsv.evmos.config_evmos import localconfig
 from staketaxcsv.evmos.progress_evmos import SECONDS_PER_PAGE, ProgressEVMOS
 from staketaxcsv.settings_csv import EVMOS_NODE, TICKER_EVMOS
 
-TXS_LIMIT_PER_QUERY_EVMOS = 20
+TXS_LIMIT_PER_QUERY_EVMOS = 10
 
 
 def main():

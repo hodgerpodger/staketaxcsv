@@ -198,7 +198,9 @@ class MsgInfoIBC:
         # 'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4'
         # 'uluna'
         # 'aevmos'
-        if currency_raw.startswith("ibc/"):
+        if currency_raw is None:
+            return amount_raw, currency_raw
+        elif currency_raw.startswith("ibc/"):
             # ibc address
             denom = None
             try:

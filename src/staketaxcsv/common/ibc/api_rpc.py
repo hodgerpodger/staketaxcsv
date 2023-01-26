@@ -91,8 +91,16 @@ class RpcAPI:
         return data["result"]["block"]["header"]["time"]
 
 
+def get_tx(node, txid, normalize=True):
+    api = RpcAPI(node)
+    elem = api.get_tx(txid)
+    if normalize and elem:
+        normalize_rpc_txns(node, [elem])
+    return elem
+
+
 def get_txs_all(node, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, debug=False,
-                stage_name="default", events_types=None):
+                stage_name="default", events_types=None, normalize=True):
     api = RpcAPI(node)
     api.debug = debug
     events_types = events_types if events_types else EVENTS_TYPE_LIST_DEFAULT
@@ -113,6 +121,10 @@ def get_txs_all(node, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUE
                 break
 
     out = remove_duplicates(out, tx_hash_key="hash", timestamp_sort=False)
+
+    if normalize:
+        normalize_rpc_txns(node, out)
+
     return out
 
 
@@ -165,8 +177,8 @@ def _decode(elem):
         for kv in event["attributes"]:
             k, v = kv["key"], kv["value"]
 
-            kv["key"] = base64.b64decode(k).decode()
-            kv["value"] = base64.b64decode(v).decode()
+            kv["key"] = base64.b64decode(k).decode() if k else ""
+            kv["value"] = base64.b64decode(v).decode() if v else ""
 
     elem["tx"] = base64.b64decode(elem["tx"])
 

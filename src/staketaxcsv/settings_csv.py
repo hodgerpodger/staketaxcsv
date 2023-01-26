@@ -15,6 +15,11 @@ EVMOS_NODE = os.environ.get("STAKETAX_EVMOS_NODE", "")
 FET_NODE = os.environ.get("STAKETAX_FET_NODE", "https://rest-fetchhub.fetch.ai")
 HUAHUA_NODE = os.environ.get("STAKETAX_HUAHUA_NODE", "")
 JUNO_NODE = os.environ.get("STAKETAX_JUNO_NODE", "")
+JUNO_RPC_NODES = [
+    "https://rpc-archive.junonetwork.io",      # 4136532 to now
+    "https://rpc-v3-archive.junonetwork.io",   # 2578099 to #4136530
+    "https://rpc-v2-archive.junonetwork.io",   # 1 to #2578097
+]
 KUJI_NODE = os.environ.get("STAKETAX_KUJI_NODE", "")
 MNTL_NODE = os.environ.get("STAKETAX_MNTL_NODE", "https://rest.assetmantle.one")
 OSMO_NODE = os.environ.get("STAKETAX_OSMO_NODE", "https://lcd.osmosis.zone")
