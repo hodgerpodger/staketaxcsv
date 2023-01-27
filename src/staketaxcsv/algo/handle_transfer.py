@@ -9,7 +9,7 @@ from staketaxcsv.algo.asset import Algo, Asset
 from staketaxcsv.algo.export_tx import export_receive_tx, export_reward_tx, export_send_tx
 from staketaxcsv.algo.handle_folks import is_folks_escrow_address
 from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
-from staketaxcsv.algo.transaction import get_transaction_note
+from staketaxcsv.algo.transaction import get_transaction_note, is_app_call, is_transfer, is_transfer_participant
 
 # Algostake escrow wallet: https://algostake.org/litepaper
 ADDRESS_ALGOSTAKE_ESCROW = "4ZK3UPFRJ643ETWSWZ4YJXH3LQTL2FUEI6CIT7HEOVZL6JOECVRMPP34CY"
@@ -26,7 +26,7 @@ def is_governance_reward_transaction(wallet_address, group):
         return False
 
     transaction = group[0]
-    if transaction["tx-type"] != "pay":
+    if transaction["tx-type"] != co.TRANSACTION_TYPE_PAYMENT:
         return False
 
     if transaction[co.TRANSACTION_KEY_PAYMENT]["receiver"] != wallet_address:
@@ -51,6 +51,16 @@ def handle_governance_reward_transaction(group, exporter, txinfo):
     export_reward_tx(exporter, txinfo, reward, comment="Governance")
 
 
+def handle_transfer_transaction(wallet_address, transaction, exporter, txinfo):
+    txtype = transaction["tx-type"]
+    if txtype == co.TRANSACTION_TYPE_PAYMENT:
+        handle_payment_transaction(wallet_address, transaction, exporter, txinfo)
+    elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
+        handle_asa_transaction(wallet_address, transaction, exporter, txinfo)
+    else:
+        handle_unknown(exporter, txinfo)
+
+
 def handle_payment_transaction(wallet_address, transaction, exporter, txinfo):
     payment_details = transaction[co.TRANSACTION_KEY_PAYMENT]
     asset_id = 0
@@ -66,20 +76,17 @@ def handle_asa_transaction(wallet_address, transaction, exporter, txinfo):
 
 
 def has_only_transfer_transactions(transactions):
-    return len([tx for tx in transactions
-        if (tx["tx-type"] == co.TRANSACTION_TYPE_PAYMENT
-            or tx["tx-type"] == co.TRANSACTION_TYPE_ASSET_TRANSFER)]) == len(transactions)
+    return len([tx for tx in transactions if is_transfer(tx)]) == len(transactions)
 
 
 def handle_transfer_transactions(wallet_address, transactions, exporter, txinfo):
+    txinfo.comment = "Unknown"
     for transaction in transactions:
-        txtype = transaction["tx-type"]
-        if txtype == co.TRANSACTION_TYPE_PAYMENT:
-            handle_payment_transaction(wallet_address, transaction, exporter, txinfo)
-        elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
-            handle_asa_transaction(wallet_address, transaction, exporter, txinfo)
-        else:
-            handle_unknown(exporter, txinfo)
+        if is_transfer(transaction) and is_transfer_participant(wallet_address, transaction):
+            handle_transfer_transaction(wallet_address, transaction, exporter, txinfo)
+        elif is_app_call(transaction):
+            inner_transactions = transaction.get("inner-txns", [])
+            handle_transfer_transactions(wallet_address, inner_transactions, exporter, txinfo)
 
 
 def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, asset_id):

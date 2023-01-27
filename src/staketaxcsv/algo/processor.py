@@ -21,7 +21,7 @@ from staketaxcsv.algo.handle_folks import (
 from staketaxcsv.algo.handle_gard import handle_gard_transaction, is_gard_transaction
 from staketaxcsv.algo.handle_humbleswap import handle_humbleswap_transaction, is_humbleswap_transaction
 from staketaxcsv.algo.handle_pact import handle_pact_transaction, is_pact_transaction
-from staketaxcsv.algo.handle_simple import handle_unknown, handle_unknown_transactions
+from staketaxcsv.algo.handle_simple import handle_unknown
 from staketaxcsv.algo.handle_tinyman import handle_tinyman_transaction, is_tinyman_transaction
 from staketaxcsv.algo.handle_transfer import (
     handle_asa_transaction,
@@ -153,9 +153,7 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
         handle_gard_transaction(wallet_address, group, exporter, txinfo)
     elif is_akita_swap_transaction(group):
         handle_akita_swap_transaction(group, exporter, txinfo)
-    elif has_only_transfer_transactions(group):
-        handle_transfer_transactions(wallet_address, group, exporter, txinfo)
     elif is_simple_swap_group(wallet_address, group):
         handle_swap(group, exporter, txinfo)
     else:
-        handle_unknown_transactions(group, wallet_address, exporter, txinfo)
+        handle_transfer_transactions(wallet_address, group, exporter, txinfo)
