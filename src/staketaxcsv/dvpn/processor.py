@@ -36,6 +36,10 @@ def process_tx(wallet_address, elem, exporter):
     txinfo = staketaxcsv.common.ibc.processor.txinfo(
         wallet_address, elem, co.MINTSCAN_LABEL_DVPN, localconfig.ibc_addresses, DVPN_LCD_NODE)
 
+    if txinfo.is_failed:
+        staketaxcsv.common.ibc.processor.handle_failed_transaction(exporter, txinfo)
+        return txinfo
+
     for msginfo in txinfo.msgs:
         # Handle sentinel specific messages
         result = _handle_tx(exporter, txinfo, msginfo)

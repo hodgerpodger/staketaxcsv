@@ -31,6 +31,10 @@ def process_txs(wallet_address, elems, exporter):
 def process_tx(wallet_address, elem, exporter):
     txinfo = _txinfo(wallet_address, elem)
 
+    if txinfo.is_failed:
+        staketaxcsv.common.ibc.processor.handle_failed_transaction(exporter, txinfo)
+        return txinfo
+
     if _is_execute_contract(txinfo):
         _handle_execute_contract(exporter, elem, txinfo)
     else:

@@ -23,9 +23,8 @@ def process_tx(wallet_address, elem, exporter):
     txinfo = staketaxcsv.common.ibc.processor.txinfo(
         wallet_address, elem, co.MINTSCAN_LABEL_OSMO, localconfig.ibc_addresses, OSMO_NODE, MsgInfoOsmo)
 
-    # Detect failed transaction
-    if elem["code"] > 0:
-        staketaxcsv.osmo.handle_general.handle_failed_tx(exporter, txinfo)
+    if txinfo.is_failed:
+        staketaxcsv.common.ibc.processor.handle_failed_transaction(exporter, txinfo)
         return txinfo
 
     for msginfo in txinfo.msgs:

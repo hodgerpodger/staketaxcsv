@@ -158,6 +158,10 @@ def normalize_rpc_txns(node, elems):
         # add the txhash field
         elem["txhash"] = elem["hash"]
 
+        # add code field
+        if "code" in elem["tx_result"]:
+            elem["code"] = elem["tx_result"]["code"]
+
         # add the timestamp field
         _add_timestamp_from_block_time(elem, node)
 

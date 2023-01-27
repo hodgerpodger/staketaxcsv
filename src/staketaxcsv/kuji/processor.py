@@ -22,6 +22,10 @@ def process_tx(wallet_address, elem, exporter):
         wallet_address, elem, co.MINTSCAN_LABEL_KUJI, localconfig.ibc_addresses, KUJI_NODE)
     txinfo.url = "https://finder.kujira.app/kaiyo-1/tx/{}".format(txinfo.txid)
 
+    if txinfo.is_failed:
+        staketaxcsv.common.ibc.processor.handle_failed_transaction(exporter, txinfo)
+        return txinfo
+
     if _is_execute_contract(txinfo):
         _handle_execute_contract(exporter, elem, txinfo)
     else:

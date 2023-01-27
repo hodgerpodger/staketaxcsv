@@ -88,6 +88,7 @@ TX_TYPE_DEPOSIT_COLLATERAL = "_DEPOSIT_COLLATERAL"
 TX_TYPE_WITHDRAW_COLLATERAL = "_WITHDRAW_COLLATERAL"
 TX_TYPE_STAKE = "_STAKE"
 TX_TYPE_UNSTAKE = "_UNSTAKE"
+TX_TYPE_FAILED_NO_FEE = "_FAILED_NO_FEE"
 
 # ### LUNA ##########################################################################################
 

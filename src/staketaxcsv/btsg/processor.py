@@ -16,6 +16,10 @@ def process_tx(wallet_address, elem, exporter):
     txinfo = staketaxcsv.common.ibc.processor.txinfo(
         wallet_address, elem, co.MINTSCAN_LABEL_BITSONG, localconfig.ibc_addresses, BTSG_NODE)
 
+    if txinfo.is_failed:
+        staketaxcsv.common.ibc.processor.handle_failed_transaction(exporter, txinfo)
+        return txinfo
+
     for msginfo in txinfo.msgs:
         result = staketaxcsv.common.ibc.processor.handle_message(exporter, txinfo, msginfo, localconfig.debug)
         if result:

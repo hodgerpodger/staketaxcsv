@@ -30,6 +30,10 @@ def process_tx(wallet_address, elem, exporter, node=None):
     txinfo = staketaxcsv.common.ibc.processor.txinfo(
         wallet_address, elem, co.MINTSCAN_LABEL_FET, localconfig.ibc_addresses, FET_NODE)
 
+    if txinfo.is_failed:
+        staketaxcsv.common.ibc.processor.handle_failed_transaction(exporter, txinfo)
+        return txinfo
+
     try:
         if txinfo.is_execute_contract():
             # Handle transaction with execute contract message(s)

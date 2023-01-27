@@ -13,6 +13,8 @@ from staketaxcsv.common.ibc import constants as co
 from staketaxcsv.common.ibc import handle
 from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 from staketaxcsv.common.ibc.TxInfoIBC import TxInfoIBC
+from staketaxcsv.common.make_tx import make_spend_fee_tx, make_simple_tx
+from staketaxcsv.common.ExporterTypes import TX_TYPE_FAILED_NO_FEE
 
 MILLION = 1000000.0
 
@@ -24,8 +26,7 @@ def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, custom
     timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
     fee, fee_currency = _get_fee(wallet_address, elem, lcd_node, ibc_addresses)
     memo = _get_memo(elem)
-
-    # TODO: add boolean field is_failure to detect failed transactions (and subsequent handling by caller)
+    is_failed = ("code" in elem and elem["code"] > 0)
 
     # Construct msgs: list of MsgInfoIBC objects
     msgs = []
@@ -39,7 +40,7 @@ def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, custom
             msginfo = MsgInfoIBC(wallet_address, i, message, log, lcd_node, ibc_addresses)
         msgs.append(msginfo)
 
-    txinfo = TxInfoIBC(txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, memo)
+    txinfo = TxInfoIBC(txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, memo, is_failed)
     return txinfo
 
 
@@ -124,3 +125,19 @@ def handle_message(exporter, txinfo, msginfo, debug=False):
             "Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
         handle.handle_unknown(exporter, txinfo, msginfo)
         return True
+
+
+def handle_failed_transaction(exporter, txinfo):
+    """ Treat failed transaction as spend fee transaction (unless fee is 0). """
+    if txinfo.fee:
+        # Make a spend fee csv row
+        row = make_spend_fee_tx(txinfo, txinfo.fee, txinfo.fee_currency)
+        row.comment = "fee for failed transaction"
+        row.fee = ""
+        row.fee_currency = ""
+        exporter.ingest_row(row)
+    else:
+        # No fee
+        row = make_simple_tx(txinfo, TX_TYPE_FAILED_NO_FEE)
+        row.comment = "failed transaction"
+        exporter.ingest_row(row)
