@@ -30,6 +30,28 @@ def is_transfer_receiver(wallet_address, transaction):
     return wallet_address == get_transfer_receiver(transaction)
 
 
+def generate_transfer_accounts(transaction):
+    yield transaction["sender"]
+
+    txtype = transaction["tx-type"]
+    if txtype == co.TRANSACTION_TYPE_PAYMENT:
+        details = transaction[co.TRANSACTION_KEY_PAYMENT]
+    elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
+        details = transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]
+    else:
+        return
+
+    yield details["receiver"]
+
+    close_to = details.get("close-to", details.get("close-remainder-to", None))
+    if close_to is not None:
+        yield close_to
+
+
+def is_transfer_participant(wallet_address, transaction):
+    return wallet_address in generate_transfer_accounts(transaction)
+
+
 def get_transfer_asset(transaction, asset_map={}):
     amount = 0
     asset_id = 0
@@ -83,7 +105,7 @@ def is_transfer(transaction):
     return txtype == co.TRANSACTION_TYPE_PAYMENT or txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
 
 
-def is_app_call(transaction, app_id, app_args=None, foreign_app=None):
+def is_app_call(transaction, app_id=None, app_args=None, foreign_app=None):
     if transaction["tx-type"] != co.TRANSACTION_TYPE_APP_CALL:
         return False
 

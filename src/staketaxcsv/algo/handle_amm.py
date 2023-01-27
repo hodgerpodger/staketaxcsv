@@ -173,6 +173,9 @@ def handle_swap(group, exporter, txinfo):
         for transaction in inner_transactions:
             if is_transfer(transaction):
                 asset = get_transfer_asset(transaction)
+                if asset is None:
+                    continue
+
                 if asset.id == send_asset.id:
                     send_asset -= asset
                 else:
@@ -215,6 +218,9 @@ def handle_lp_add(amm, group, exporter, txinfo):
     lp_asset = None
     for transaction in inner_transactions:
         asset = get_transfer_asset(transaction)
+        if asset is None:
+            continue
+
         if asset.id == send_asset_1.id:
             send_asset_1 -= asset
         elif asset.id == send_asset_2.id:
