@@ -170,7 +170,13 @@ def normalize_rpc_txns(node, elems):
 
 def _decode(elem):
     """ Modifies transaction data with decoded version """
-    elem["tx_result"]["log"] = ast.literal_eval(elem["tx_result"]["log"])
+    try:
+        elem["tx_result"]["log"] = ast.literal_eval(elem["tx_result"]["log"])
+    except SyntaxError as e:
+        # Occurs with failed transactions.
+        # Sample log element: "failed to execute message; message index: 0: ..."
+        elem["tx_result"]["log_original"] = elem["tx_result"]["log"]
+        elem["tx_result"]["log"] = []
 
     events = elem["tx_result"]["events"]
     for event in events:

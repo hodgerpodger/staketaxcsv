@@ -25,6 +25,8 @@ def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, custom
     fee, fee_currency = _get_fee(wallet_address, elem, lcd_node, ibc_addresses)
     memo = _get_memo(elem)
 
+    # TODO: add boolean field is_failure to detect failed transactions (and subsequent handling by caller)
+
     # Construct msgs: list of MsgInfoIBC objects
     msgs = []
     for i in range(len(elem["logs"])):
