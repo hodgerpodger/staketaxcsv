@@ -26,7 +26,7 @@ def main():
     report_util.main_default(TICKER_OSMO)
 
 
-def _read_options(options):
+def read_options(options):
     report_util.read_common_options(localconfig, options)
 
     localconfig.lp_treatment = options.get("lp_treatment", LP_TREATMENT_TRANSFERS)
@@ -70,7 +70,7 @@ def _pages(wallet_address):
 
 def txhistory(wallet_address, options):
     # Configure localconfig based on options
-    _read_options(options)
+    read_options(options)
     if localconfig.cache:
         cache = Cache()
         _cache_load(cache)

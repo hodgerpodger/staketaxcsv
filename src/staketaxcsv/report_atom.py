@@ -33,7 +33,7 @@ def main():
     report_util.main_default(TICKER_ATOM)
 
 
-def _read_options(options):
+def read_options(options):
     report_util.read_common_options(localconfig, options)
 
     localconfig.legacy = options.get("legacy", False)
@@ -66,7 +66,7 @@ def estimate_duration(wallet_address, options):
 
 def txhistory(wallet_address, options):
     # Configure localconfig based on options
-    _read_options(options)
+    read_options(options)
     if localconfig.cache:
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")

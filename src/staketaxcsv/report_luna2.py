@@ -32,7 +32,7 @@ def main():
     report_util.main_default(TICKER_LUNA2)
 
 
-def _read_options(options):
+def read_options(options):
     report_util.read_common_options(localconfig, options)
     logging.info("localconfig: %s", localconfig.__dict__)
 
@@ -62,7 +62,7 @@ def txone(wallet_address, txid):
 
 def txhistory(wallet_address, options):
     # Configure localconfig based on options
-    _read_options(options)
+    read_options(options)
     if localconfig.cache:
         cache = Cache()
         _cache_load(cache)

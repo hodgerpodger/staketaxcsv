@@ -91,7 +91,7 @@ def csv(ticker, wallet_address, csv_format, path=None, options=None, logs=True):
 
     # Run report
     module = REPORT_MODULES[ticker]
-    module._read_options(options)
+    module.read_options(options)
     exporter = module.txhistory(wallet_address, options)
     exporter.sort_rows()
 
@@ -120,7 +120,7 @@ def csv_all(ticker, wallet_address, dirpath=None, options=None, logs=True):
 
     # Run report
     module = REPORT_MODULES[ticker]
-    module._read_options(options)
+    module.read_options(options)
     exporter = module.txhistory(wallet_address, options)
     exporter.sort_rows()
 
@@ -150,7 +150,7 @@ def transaction(ticker, wallet_address, txid, csv_format="", path="", options=No
 
     # Run report for single transaction
     module = REPORT_MODULES[ticker]
-    module._read_options(options)
+    module.read_options(options)
     exporter = module.txone(wallet_address, txid)
 
     # Print transactions table to console

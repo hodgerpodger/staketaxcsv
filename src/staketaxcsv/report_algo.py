@@ -40,7 +40,7 @@ def main():
     report_util.run_report(TICKER_ALGO, wallet_address, export_format, txid, options)
 
 
-def _read_options(options):
+def read_options(options):
     report_util.read_common_options(localconfig, options)
 
     localconfig.start_date = options.get("start_date", None)
