@@ -107,6 +107,12 @@ def parse_args(ticker):
             type=str,
             help="Exclude transactions for this comma separated list of ASAs",
         )
+        parser.add_argument(
+            "--track_block",
+            action="store_true",
+            default=False,
+            help="Process transactions starting from the latest block in the previous run.",
+        )
 
     args = parser.parse_args()
 
@@ -132,6 +138,8 @@ def parse_args(ticker):
         options["legacy"] = True
     if "exclude_asas" in args and args.exclude_asas:
         options["exclude_asas"] = args.exclude_asas
+    if "track_block" in args and args.track_block:
+        options["track_block"] = True
 
     return args.wallet_address, args.format, args.txid, options
 

@@ -9,3 +9,5 @@ class localconfig(config):
     lp_treatment = et.LP_TREATMENT_DEFAULT
     exclude_asas = []
     algofi_storage_address = None
+    track_block = False
+    min_round = None
