@@ -22,7 +22,7 @@ from staketaxcsv.evmos.progress_evmos import SECONDS_PER_PAGE, ProgressEVMOS
 from staketaxcsv.settings_csv import EVMOS_NODE, TICKER_EVMOS
 
 TXS_LIMIT_PER_QUERY_EVMOS = 50
-TXS_LIMIT_PER_QUERY_EVMOS_SECOND_TRY = 5
+TXS_LIMIT_PER_QUERY_EVMOS_SMALL = 5
 
 
 def main():
@@ -70,8 +70,13 @@ def txone(wallet_address, txid):
 
 def estimate_duration(wallet_address, options):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v2.get_txs_pages_count(
-        EVMOS_NODE, wallet_address, max_txs, limit=TXS_LIMIT_PER_QUERY_EVMOS)
+    try:
+        seconds = SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v2.get_txs_pages_count(
+            EVMOS_NODE, wallet_address, max_txs, limit=TXS_LIMIT_PER_QUERY_EVMOS)
+    except KeyError as e:
+        seconds = SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v2.get_txs_pages_count(
+            EVMOS_NODE, wallet_address, max_txs, limit=TXS_LIMIT_PER_QUERY_EVMOS_SMALL)
+    return seconds
 
 
 def txhistory(wallet_address, options):
@@ -90,7 +95,7 @@ def txhistory(wallet_address, options):
         elems = _count_and_fetch(wallet_address, max_txs, progress, TXS_LIMIT_PER_QUERY_EVMOS)
     except KeyError as e:
         logging.info("Caught KeyError: %s", e)
-        elems = _count_and_fetch(wallet_address, max_txs, progress, TXS_LIMIT_PER_QUERY_EVMOS_SECOND_TRY)
+        elems = _count_and_fetch(wallet_address, max_txs, progress, TXS_LIMIT_PER_QUERY_EVMOS_SMALL)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.evmos.processor.process_txs(wallet_address, elems, exporter)
