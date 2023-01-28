@@ -7,7 +7,7 @@
 * CSV codebase for <https://stake.tax>
 * Contributions/PRs highly encouraged, such as support for new txs, blockchains, or CSV formats.  Examples:
   * Add cosmo-based-blockchain CSV (i.e. Agoric): [commit](https://github.com/hodgerpodger/staketaxcsv/commit/ff8af30b85ea4416504d043723e91f3edf5c7ee1).
-    * Simply use latest main versions of each file and that's basically it
+    * (use latest main versions of each file)
   * Add new CSV format: https://docs.stake.tax/devs/add-new-csv-format-example
   
 
