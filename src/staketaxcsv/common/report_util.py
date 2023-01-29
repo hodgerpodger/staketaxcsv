@@ -144,6 +144,7 @@ def parse_args(ticker):
     return args.wallet_address, args.format, args.txid, options
 
 
+"""
 def run_exports(ticker, wallet_address, exporter, export_format):
     if not os.path.exists(REPORTS_DIR):
         os.mkdir(REPORTS_DIR)
@@ -159,6 +160,7 @@ def run_exports(ticker, wallet_address, exporter, export_format):
         # Write one csv
         csvpath = f"{REPORTS_DIR}/{ticker}.{wallet_address}.{cur_format}.csv"
         exporter.export_format(cur_format, csvpath)
+"""
 
 
 def read_common_options(localconfig, options):
