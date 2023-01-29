@@ -109,8 +109,8 @@ def _handle_withdraw_liquidity(txinfo, msginfo):
 
     # Create CSV rows
     rows = [
-        staketaxcsv.common.make_tx.make_lp_withdraw_tx(txinfo, rec_amount_1, rec_currency_1, lp_amount / 2, lp_currency),
-        staketaxcsv.common.make_tx.make_lp_withdraw_tx(txinfo, rec_amount_2, rec_currency_2, lp_amount / 2, lp_currency)
+        staketaxcsv.common.make_tx.make_lp_withdraw_tx(txinfo, lp_amount / 2, lp_currency, rec_amount_1, rec_currency_1),
+        staketaxcsv.common.make_tx.make_lp_withdraw_tx(txinfo, lp_amount / 2, lp_currency, rec_amount_2, rec_currency_2)
     ]
 
     return rows
