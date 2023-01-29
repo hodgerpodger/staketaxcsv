@@ -3,7 +3,8 @@ import logging
 import requests
 from staketaxcsv.settings_csv import ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE
 
-LIMIT_ALGOINDEXER = 1000
+# https://developer.algorand.org/docs/get-details/indexer/#paginated-results
+LIMIT_ALGOINDEXER = 2000
 
 
 # API documentation: https://algoexplorer.io/api-dev/indexer-v2
@@ -39,13 +40,15 @@ class AlgoIndexerAPI:
         else:
             return None
 
-    def get_transactions(self, address, after_date=None, before_date=None, next=None):
+    def get_transactions(self, address, after_date=None, before_date=None, min_round=None, next=None):
         endpoint = f"v2/accounts/{address}/transactions"
         params = {"limit": LIMIT_ALGOINDEXER}
         if after_date:
             params["after-time"] = after_date.isoformat()
         if before_date:
             params["before-time"] = before_date.isoformat()
+        if min_round:
+            params["min-round"] = min_round
         if next:
             params["next"] = next
 

@@ -26,7 +26,7 @@ def main():
     report_util.main_default(TICKER_IOTEX)
 
 
-def _read_options(options):
+def read_options(options):
     report_util.read_common_options(localconfig, options)
     logging.info("localconfig: %s", localconfig.__dict__)
 
@@ -61,7 +61,7 @@ def _max_queries():
 
 def txhistory(wallet_address, options):
     # Configure localconfig based on options
-    _read_options(options)
+    read_options(options)
 
     progress = ProgressIotex()
     exporter = Exporter(wallet_address, localconfig, TICKER_IOTEX)

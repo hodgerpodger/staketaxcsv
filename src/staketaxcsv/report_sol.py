@@ -31,7 +31,7 @@ def main():
     report_util.main_default(TICKER_SOL)
 
 
-def _read_options(options):
+def read_options(options):
     report_util.read_common_options(localconfig, options)
     localconfig.start_date = options.get("start_date", None)
     logging.info("localconfig: %s", localconfig.__dict__)
@@ -86,7 +86,7 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address, options):
-    _read_options(options)
+    read_options(options)
 
     logging.info("Fetching staking addresses...")
     num_staking_addresses = len(RpcAPI.fetch_staking_addresses(wallet_address))
@@ -104,7 +104,7 @@ def _num_txids(wallet_address):
 
 def txhistory(wallet_address, options):
     # Configure localconfig based on options
-    _read_options(options)
+    read_options(options)
     if localconfig.cache:
         localconfig.blocks = Cache().get_sol_blocks()
         logging.info("Loaded sol blocks info into cache...")

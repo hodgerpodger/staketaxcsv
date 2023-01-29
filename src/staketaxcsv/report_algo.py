@@ -26,7 +26,7 @@ from staketaxcsv.common import report_util
 from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.common.ExporterTypes import LP_TREATMENT_TRANSFERS
-from staketaxcsv.settings_csv import TICKER_ALGO
+from staketaxcsv.settings_csv import REPORTS_DIR, TICKER_ALGO
 
 indexer = AlgoIndexerAPI()
 
@@ -40,7 +40,7 @@ def main():
     report_util.run_report(TICKER_ALGO, wallet_address, export_format, txid, options)
 
 
-def _read_options(options):
+def read_options(options):
     report_util.read_common_options(localconfig, options)
 
     localconfig.start_date = options.get("start_date", None)
@@ -48,8 +48,28 @@ def _read_options(options):
     localconfig.lp_treatment = options.get("lp_treatment", LP_TREATMENT_TRANSFERS)
     if "exclude_asas" in options:
         localconfig.exclude_asas = [asa.strip().lower() for asa in options["exclude_asas"].split(",")]
+    localconfig.track_block = options.get("track_block", False)
 
     logging.info("localconfig: %s", localconfig.__dict__)
+
+
+def _read_persistent_config(wallet_address):
+    config_file = f"{REPORTS_DIR}/config.{TICKER_ALGO}.{wallet_address}.json"
+    if localconfig.track_block and os.path.exists(config_file):
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+            localconfig.min_round = config.get("min_round")
+            logging.info(f"Starting from block {localconfig.min_round}")
+
+
+def _write_persistent_config(wallet_address):
+    if localconfig.track_block:
+        config_file = f"{REPORTS_DIR}/config.{TICKER_ALGO}.{wallet_address}.json"
+        with open(config_file, 'w') as f:
+            config = {
+                "min_round": localconfig.min_round
+            }
+            json.dump(config, f, indent=4)
 
 
 def wallet_exists(wallet_address):
@@ -90,8 +110,7 @@ def _max_queries():
 
 
 def txhistory(wallet_address, options):
-    # Configure localconfig based on options
-    _read_options(options)
+    _read_persistent_config(wallet_address)
 
     progress = ProgressAlgo()
     exporter = Exporter(wallet_address, localconfig, TICKER_ALGO)
@@ -106,6 +125,8 @@ def txhistory(wallet_address, options):
     # Create rows for CSV
     staketaxcsv.algo.processor.process_txs(wallet_address, elems, exporter, progress)
 
+    _write_persistent_config(wallet_address)
+
     # Log error stats if exists
     ErrorCounter.log(TICKER_ALGO, wallet_address)
 
@@ -114,23 +135,26 @@ def txhistory(wallet_address, options):
 
 def _get_txs(wallet_address, account, progress):
     # Debugging only: when --debug flag set, read from cache file
-    DEBUG_FILE = "_reports/debugalgo.{}.json".format(wallet_address)
-    if localconfig.debug and os.path.exists(DEBUG_FILE):
-        with open(DEBUG_FILE, 'r') as f:
+    debug_file = f"{REPORTS_DIR}/debug.{TICKER_ALGO}.{wallet_address}.json"
+    if localconfig.debug and os.path.exists(debug_file):
+        with open(debug_file, 'r') as f:
             out = json.load(f)
             return out
 
     out = _get_address_transactions(wallet_address)
     # Reverse the list so transactions are in chronological order
     out.reverse()
+    if len(out) > 0:
+        localconfig.min_round = out[-1]["confirmed-round"] + 1
 
     if account is not None:
         storage_address = get_algofi_storage_address(account)
         logging.debug("AlgoFi storage address: %s", storage_address)
-        localconfig.algofi_storage_address = storage_address
-        storage_txs = _get_address_transactions(storage_address)
-        out.extend(get_algofi_liquidate_transactions(storage_txs))
-        out.extend(get_algofi_governance_rewards_transactions(storage_txs, storage_address))
+        if storage_address is not None:
+            localconfig.algofi_storage_address = storage_address
+            storage_txs = _get_address_transactions(storage_address)
+            out.extend(get_algofi_liquidate_transactions(storage_txs))
+            out.extend(get_algofi_governance_rewards_transactions(storage_txs, storage_address))
 
     num_tx = len(out)
 
@@ -140,9 +164,9 @@ def _get_txs(wallet_address, account, progress):
 
     # Debugging only: when --debug flat set, write to cache file
     if localconfig.debug:
-        with open(DEBUG_FILE, 'w') as f:
+        with open(debug_file, 'w') as f:
             json.dump(out, f, indent=4)
-        logging.info("Wrote to %s for debugging", DEBUG_FILE)
+        logging.info("Wrote to %s for debugging", debug_file)
 
     return out
 
@@ -158,9 +182,9 @@ def _get_address_transactions(address):
     if localconfig.end_date:
         before_date = datetime.date.fromisoformat(localconfig.end_date) + datetime.timedelta(days=1)
 
-    for i in range(_max_queries()):
+    for _ in range(_max_queries()):
         transactions, next = indexer.get_transactions(
-            address, after_date, before_date, next)
+            address, after_date, before_date, localconfig.min_round, next)
         out.extend(transactions)
 
         if not next:
