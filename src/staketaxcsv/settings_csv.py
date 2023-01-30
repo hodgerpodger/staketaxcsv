@@ -65,5 +65,3 @@ MESSAGE_ADDRESS_NOT_FOUND = "Wallet address not found"
 MESSAGE_STAKING_ADDRESS_FOUND = "Staking address found.  Please input the main wallet address instead."
 
 REPORTS_DIR = os.path.dirname(os.path.realpath(__file__)) + "/_reports"
-if not os.path.exists(REPORTS_DIR):
-    os.mkdir(REPORTS_DIR)
