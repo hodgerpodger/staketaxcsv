@@ -10,6 +10,7 @@ from staketaxcsv.algo.handle_algodex import handle_algodex_transaction, is_algod
 from staketaxcsv.algo.handle_algofi import handle_algofi_transaction, is_algofi_transaction
 from staketaxcsv.algo.handle_algofiv2 import handle_algofiv2_transaction, is_algofiv2_transaction
 from staketaxcsv.algo.handle_amm import handle_swap, is_simple_swap_group
+from staketaxcsv.algo.handle_deflex import handle_deflex_transaction, is_deflex_transaction
 from staketaxcsv.algo.handle_folks import (
     handle_folks_galgo_early_claim_transaction,
     handle_folks_reward_claim_transaction,
@@ -139,6 +140,8 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
         handle_pact_transaction(group, exporter, txinfo)
     elif is_humbleswap_transaction(group):
         handle_humbleswap_transaction(wallet_address, group, exporter, txinfo)
+    elif is_deflex_transaction(wallet_address, group):
+        handle_deflex_transaction(wallet_address, group, exporter, txinfo)
     elif is_vestige_transaction(group):
         handle_vestige_transaction(wallet_address, group, exporter, txinfo)
     elif is_wagmiswap_transaction(group):
