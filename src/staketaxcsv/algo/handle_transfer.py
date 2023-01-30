@@ -80,7 +80,7 @@ def has_only_transfer_transactions(transactions):
 
 
 def handle_transfer_transactions(wallet_address, transactions, exporter, txinfo):
-    txinfo.comment = "Unknown"
+    txinfo.comment = "Unknown App"
     for transaction in transactions:
         if is_transfer(transaction) and is_transfer_participant(wallet_address, transaction):
             handle_transfer_transaction(wallet_address, transaction, exporter, txinfo)
