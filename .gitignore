@@ -5,7 +5,7 @@ __pycache__/
 
 # application ignores
 env/*
-# src/staketaxcsv/_reports/*
+src/staketaxcsv/_reports/*
 src/staketaxcsv/sol/data_staking_rewards/*.csv
 sample.env
 
