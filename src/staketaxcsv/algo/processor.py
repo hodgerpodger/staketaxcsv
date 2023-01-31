@@ -137,15 +137,13 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
     elif is_algofi_transaction(group):
         handle_algofi_transaction(wallet_address, group, exporter, txinfo)
     elif is_pact_transaction(group):
-        handle_pact_transaction(group, exporter, txinfo)
+        handle_pact_transaction(wallet_address, group, exporter, txinfo)
     elif is_humbleswap_transaction(group):
         handle_humbleswap_transaction(wallet_address, group, exporter, txinfo)
     elif is_deflex_transaction(wallet_address, group):
         handle_deflex_transaction(wallet_address, group, exporter, txinfo)
     elif is_vestige_transaction(group):
         handle_vestige_transaction(wallet_address, group, exporter, txinfo)
-    elif is_wagmiswap_transaction(group):
-        handle_wagmiswap_transaction(group, exporter, txinfo)
     elif is_algodex_transaction(wallet_address, group):
         handle_algodex_transaction(wallet_address, group, exporter, txinfo)
     elif is_folks_transaction(wallet_address, group):
@@ -154,9 +152,11 @@ def _handle_transaction_group(wallet_address, group, exporter, txinfo):
         handle_yieldly_transaction(group, exporter, txinfo)
     elif is_gard_transaction(wallet_address, group):
         handle_gard_transaction(wallet_address, group, exporter, txinfo)
+    elif is_wagmiswap_transaction(group):
+        handle_wagmiswap_transaction(wallet_address, group, exporter, txinfo)
     elif is_akita_swap_transaction(group):
         handle_akita_swap_transaction(group, exporter, txinfo)
     elif is_simple_swap_group(wallet_address, group):
-        handle_swap(group, exporter, txinfo)
+        handle_swap(wallet_address, group, exporter, txinfo)
     else:
         handle_transfer_transactions(wallet_address, group, exporter, txinfo)

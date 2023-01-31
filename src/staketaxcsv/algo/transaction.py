@@ -30,6 +30,17 @@ def is_transfer_receiver(wallet_address, transaction):
     return wallet_address == get_transfer_receiver(transaction)
 
 
+def is_transfer_sender(wallet_address, transaction):
+    return wallet_address == transaction["sender"]
+
+
+def is_transfer_receiver_non_zero_asset(wallet_address, transaction):
+    if not is_transfer_receiver(wallet_address, transaction):
+        return False
+    asset = get_transfer_asset(transaction)
+    return asset is not None and not asset.zero()
+
+
 def generate_transfer_accounts(transaction):
     yield transaction["sender"]
 
@@ -121,6 +132,9 @@ def is_app_call(transaction, app_id=None, app_args=None, foreign_app=None):
         return False
 
     if isinstance(app_args, str) and app_args not in transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]:
+        return False
+    if (isinstance(app_args, list)
+            and not any(arg in transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"] for arg in app_args)):
         return False
 
     return True

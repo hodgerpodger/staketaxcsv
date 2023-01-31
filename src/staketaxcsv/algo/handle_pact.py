@@ -32,14 +32,14 @@ def is_pact_transaction(group):
     return False
 
 
-def handle_pact_transaction(group, exporter, txinfo):
+def handle_pact_transaction(wallet_address, group, exporter, txinfo):
     reward = Algo(group[0]["sender-rewards"])
     handle_participation_rewards(reward, exporter, txinfo)
 
     txinfo.comment = "Pact"
     appl_args = group[-1][co.TRANSACTION_KEY_APP_CALL]["application-args"]
     if PACT_TRANSACTION_SWAP in appl_args:
-        handle_swap(group, exporter, txinfo)
+        handle_swap(wallet_address, group, exporter, txinfo)
     elif PACT_TRANSACTION_LP_ADD in appl_args:
         handle_lp_add(PACT_AMM_SYMBOL, group, exporter, txinfo)
     elif PACT_TRANSACTION_LP_REMOVE in appl_args:

@@ -75,7 +75,7 @@ def handle_humbleswap_transaction(wallet_address, group, exporter, txinfo):
 
     txinfo.comment = "Humbleswap"
     if is_simple_swap_group(wallet_address, group):
-        handle_swap(group, exporter, txinfo)
+        handle_swap(wallet_address, group, exporter, txinfo)
     elif is_simple_lp_add_group(wallet_address, group):
         handle_lp_add(HUMBLESWAP_AMM_SYMBOL, group, exporter, txinfo)
     elif is_simple_lp_remove_group(wallet_address, group):
