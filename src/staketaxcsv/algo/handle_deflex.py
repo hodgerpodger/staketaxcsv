@@ -1,6 +1,14 @@
+from functools import partial
 from staketaxcsv.algo.export_tx import export_swap_tx
 from staketaxcsv.algo.handle_simple import handle_unknown
-from staketaxcsv.algo.transaction import get_fee_amount, get_inner_transfer_asset, get_transfer_asset, is_app_call, is_transfer, is_transfer_receiver
+from staketaxcsv.algo.transaction import (
+    get_fee_amount,
+    get_inner_transfer_asset,
+    get_transfer_asset,
+    is_app_call,
+    is_transfer,
+    is_transfer_receiver_non_zero_asset
+)
 
 # For reference:
 # https://docs.deflex.fi/
@@ -60,14 +68,8 @@ def _handle_deflex_routed_swap(wallet_address, group, exporter, txinfo):
     send_asset = get_transfer_asset(send_transaction)
 
     app_transaction = group[1]
-
-    def tx_filter(transaction):
-        if not is_transfer_receiver(wallet_address, transaction):
-            return False
-        asset = get_transfer_asset(transaction)
-        return not asset.zero()
-
-    receive_asset = get_inner_transfer_asset(app_transaction, filter=tx_filter)
+    receive_asset = get_inner_transfer_asset(app_transaction,
+                                             filter=partial(is_transfer_receiver_non_zero_asset, wallet_address))
 
     export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_DEFLEX)
 

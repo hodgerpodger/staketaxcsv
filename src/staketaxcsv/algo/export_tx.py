@@ -26,12 +26,16 @@ from staketaxcsv.common.make_tx import (
 lp_tickers = {}
 
 
-def _ingest_row(exporter, row, fee_amount=0, comment=None):
+def _setup_row(row, fee_amount=0, comment=None):
     if fee_amount:
         fee = Algo(fee_amount)
         row.fee = fee.amount
     if comment:
         row.comment = comment
+
+
+def _ingest_row(exporter, row, fee_amount=0, comment=None):
+    _setup_row(row, fee_amount, comment)
     exporter.ingest_row(row)
 
 
@@ -128,6 +132,19 @@ def export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount=0, co
         receive_asset.amount, receive_asset.ticker,
         z_index=z_index)
     _ingest_row(exporter, row, fee_amount, comment)
+
+
+@exclude_tx
+def create_swap_tx(txinfo, send_asset, receive_asset, fee_amount=0, comment=None, z_index=0):
+    row = make_swap_tx(
+        txinfo,
+        send_asset.amount, send_asset.ticker,
+        receive_asset.amount, receive_asset.ticker,
+        z_index=z_index)
+
+    _setup_row(row, fee_amount, comment)
+
+    return row
 
 
 def export_lp_deposit_tx(

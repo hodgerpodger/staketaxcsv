@@ -199,6 +199,9 @@ def _is_algofiv2_repay_borrow(group):
     if is_asset_optin(group[i]):
         i += 1
 
+    if i == length:
+        return False
+
     if not is_transfer(group[i]):
         return False
 

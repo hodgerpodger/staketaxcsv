@@ -1,14 +1,16 @@
 from functools import partial
 from staketaxcsv.algo import constants as co
-from staketaxcsv.algo.export_tx import export_lp_deposit_tx, export_lp_withdraw_tx, export_swap_tx
+from staketaxcsv.algo.export_tx import create_swap_tx, export_lp_deposit_tx, export_lp_withdraw_tx, export_swap_tx
 from staketaxcsv.algo.handle_simple import handle_unknown
+from staketaxcsv.algo.handle_transfer import handle_transfer_transactions
 from staketaxcsv.algo.transaction import (
     get_inner_transfer_asset,
     get_transfer_asset,
-    get_transfer_receiver,
     is_asset_optin,
     is_transfer,
-    is_transfer_receiver
+    is_transfer_receiver,
+    is_transfer_receiver_non_zero_asset,
+    is_transfer_sender
 )
 
 
@@ -43,17 +45,20 @@ def is_simple_swap_group(wallet_address, group):
         if not is_transfer(transaction):
             return False
 
-        txsender = transaction["sender"]
-        if txsender != wallet_address:
+        if not is_transfer_sender(wallet_address, transaction):
             return False
 
-        receive_asset = get_inner_transfer_asset(group[i + 1],
-                                                filter=partial(is_transfer_receiver, wallet_address))
+        i += 1
+        if i == length:
+            return False
+
+        receive_asset = get_inner_transfer_asset(group[i],
+                                                 filter=partial(is_transfer_receiver_non_zero_asset, wallet_address))
 
         if receive_asset is None:
             return False
 
-        i += 2
+        i += 1
 
     return True
 
@@ -71,8 +76,7 @@ def is_simple_lp_add_group(wallet_address, group):
     if not is_transfer(transaction):
         return False
 
-    txsender = transaction["sender"]
-    if txsender != wallet_address:
+    if not is_transfer_sender(wallet_address, transaction):
         return False
 
     i += 1
@@ -80,8 +84,7 @@ def is_simple_lp_add_group(wallet_address, group):
     if not is_transfer(transaction):
         return False
 
-    txsender = transaction["sender"]
-    if txsender != wallet_address:
+    if not is_transfer_sender(wallet_address, transaction):
         return False
 
     i += 1
@@ -110,8 +113,7 @@ def is_simple_lp_remove_group(wallet_address, group):
     if not is_transfer(transaction):
         return False
 
-    txsender = transaction["sender"]
-    if txsender != wallet_address:
+    if not is_transfer_sender(wallet_address, transaction):
         return False
 
     i += 1
@@ -125,27 +127,23 @@ def is_simple_lp_remove_group(wallet_address, group):
         return False
 
     transaction = inner_transactions[0]
-    txtype = transaction["tx-type"]
-    if txtype != co.TRANSACTION_TYPE_PAYMENT and txtype != co.TRANSACTION_TYPE_ASSET_TRANSFER:
+    if not is_transfer(transaction):
         return False
 
-    txreceiver = get_transfer_receiver(transaction)
-    if txreceiver != wallet_address:
+    if not is_transfer_receiver(wallet_address, transaction):
         return False
 
     transaction = inner_transactions[1]
-    txtype = transaction["tx-type"]
-    if txtype != co.TRANSACTION_TYPE_PAYMENT and txtype != co.TRANSACTION_TYPE_ASSET_TRANSFER:
+    if not is_transfer(transaction):
         return False
 
-    txreceiver = get_transfer_receiver(transaction)
-    if txreceiver != wallet_address:
+    if not is_transfer_receiver(wallet_address, transaction):
         return False
 
     return True
 
 
-def handle_swap(group, exporter, txinfo):
+def handle_swap(wallet_address, group, exporter, txinfo):
     fee_amount = 0
     i = 0
     send_transaction = group[i]
@@ -153,12 +151,13 @@ def handle_swap(group, exporter, txinfo):
         i += 1
         fee_amount += send_transaction["fee"]
 
+    rows = []
     z_offset = 0
     # Handle multiple swaps within the group (usual in triangular arbitrage)
     length = len(group)
     while i < length:
         send_transaction = group[i]
-        if not is_transfer(send_transaction):
+        if not is_transfer(send_transaction) or not is_transfer_sender(wallet_address, send_transaction):
             break
 
         app_transaction = group[i + 1]
@@ -171,9 +170,9 @@ def handle_swap(group, exporter, txinfo):
         inner_transactions = app_transaction.get("inner-txns", [])
         receive_asset = None
         for transaction in inner_transactions:
-            if is_transfer(transaction):
+            if is_transfer(transaction) and is_transfer_receiver(wallet_address, transaction):
                 asset = get_transfer_asset(transaction)
-                if asset is None:
+                if asset is None or asset.zero():
                     continue
 
                 if asset.id == send_asset.id:
@@ -181,18 +180,21 @@ def handle_swap(group, exporter, txinfo):
                 else:
                     receive_asset = asset
 
-        if receive_asset is not None:
-            export_swap_tx(
-                exporter, txinfo, send_asset, receive_asset, fee_amount, co.APPL_ARGS_SWAP[swap_arg], z_offset)
-        else:
+        if receive_asset is None:
             break
+
+        row = create_swap_tx(txinfo, send_asset, receive_asset, fee_amount, co.APPL_ARGS_SWAP[swap_arg], z_offset)
+        rows.append(row)
 
         fee_amount = 0
         i += 2
         z_offset += 1
 
     if i < length:
-        handle_unknown(exporter, txinfo)
+        handle_transfer_transactions(wallet_address, group, exporter, txinfo)
+    else:
+        for row in rows:
+            exporter.ingest_row(row)
 
 
 def handle_lp_add(amm, group, exporter, txinfo):
