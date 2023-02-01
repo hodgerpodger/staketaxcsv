@@ -230,6 +230,7 @@ class MsgInfoIBC:
             "osmo": (co.CUR_OSMO, 6),
             "rowan": ("ROWAN", 18),
             "basecro": (co.CUR_CRO, 8),
+            "uusd": (co.CUR_USTC, 6),
         }
 
         if currency_raw in CURRENCY_RAW_MAP:
