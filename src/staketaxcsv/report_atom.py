@@ -34,6 +34,7 @@ def main():
 
 
 def read_options(options):
+    """ Configure localconfig based on options dictionary. """
     report_util.read_common_options(localconfig, options)
 
     localconfig.legacy = options.get("legacy", False)
@@ -60,13 +61,11 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def estimate_duration(wallet_address, options):
+def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * staketaxcsv.atom.api_lcd.get_txs_count_pages(wallet_address)
 
 
-def txhistory(wallet_address, options):
-    # Configure localconfig based on options
-    read_options(options)
+def txhistory(wallet_address):
     if localconfig.cache:
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")

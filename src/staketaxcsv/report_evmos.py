@@ -48,6 +48,7 @@ def all_address_formats(wallet_address):
 
 
 def read_options(options):
+    """ Configure localconfig based on options dictionary. """
     report_util.read_common_options(localconfig, options)
     logging.info("localconfig: %s", localconfig.__dict__)
 
@@ -68,7 +69,7 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def estimate_duration(wallet_address, options):
+def estimate_duration(wallet_address):
     max_txs = localconfig.limit
     try:
         seconds = SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v2.get_txs_pages_count(
@@ -79,9 +80,7 @@ def estimate_duration(wallet_address, options):
     return seconds
 
 
-def txhistory(wallet_address, options):
-    # Configure localconfig based on options
-    read_options(options)
+def txhistory(wallet_address):
     if localconfig.cache:
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")

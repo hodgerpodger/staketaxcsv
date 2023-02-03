@@ -27,6 +27,7 @@ def main():
 
 
 def read_options(options):
+    """ Configure localconfig based on options dictionary. """
     report_util.read_common_options(localconfig, options)
 
     localconfig.lp_treatment = options.get("lp_treatment", LP_TREATMENT_TRANSFERS)
@@ -53,7 +54,7 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def estimate_duration(wallet_address, options):
+def estimate_duration(wallet_address):
     num_pages = len(_pages(wallet_address))
     return num_pages * SECONDS_PER_PAGE
 
@@ -68,9 +69,7 @@ def _pages(wallet_address):
     return pages
 
 
-def txhistory(wallet_address, options):
-    # Configure localconfig based on options
-    read_options(options)
+def txhistory(wallet_address):
     if localconfig.cache:
         cache = Cache()
         _cache_load(cache)

@@ -27,6 +27,7 @@ def main():
 
 
 def read_options(options):
+    """ Configure localconfig based on options dictionary. """
     report_util.read_common_options(localconfig, options)
     logging.info("localconfig: %s", localconfig.__dict__)
 
@@ -59,10 +60,7 @@ def _max_queries():
     return max_queries
 
 
-def txhistory(wallet_address, options):
-    # Configure localconfig based on options
-    read_options(options)
-
+def txhistory(wallet_address):
     progress = ProgressIotex()
     exporter = Exporter(wallet_address, localconfig, TICKER_IOTEX)
 
@@ -78,7 +76,7 @@ def txhistory(wallet_address, options):
     return exporter
 
 
-def estimate_duration(wallet_address, options):
+def estimate_duration(wallet_address):
     _, _, num_txs = _num_txs(wallet_address)
     return SECONDS_PER_TX * num_txs
 

@@ -32,6 +32,7 @@ def main():
 
 
 def read_options(options):
+    """ Configure localconfig based on options dictionary. """
     report_util.read_common_options(localconfig, options)
     localconfig.start_date = options.get("start_date", None)
     logging.info("localconfig: %s", localconfig.__dict__)
@@ -85,9 +86,7 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def estimate_duration(wallet_address, options):
-    read_options(options)
-
+def estimate_duration(wallet_address):
     logging.info("Fetching staking addresses...")
     num_staking_addresses = len(RpcAPI.fetch_staking_addresses(wallet_address))
 
@@ -102,9 +101,7 @@ def _num_txids(wallet_address):
     return len(txids)
 
 
-def txhistory(wallet_address, options):
-    # Configure localconfig based on options
-    read_options(options)
+def txhistory(wallet_address):
     if localconfig.cache:
         localconfig.blocks = Cache().get_sol_blocks()
         logging.info("Loaded sol blocks info into cache...")

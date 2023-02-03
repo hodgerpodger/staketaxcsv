@@ -16,7 +16,7 @@ class NullMap:
         self.use_cache = localconfig.cache if localconfig else False
         self.json_path = localconfig.koinlynullmap if (localconfig and localconfig.koinlynullmap) else KOINLY_NULL_MAP_JSON
 
-        logging.debug("use_cache=%s, json_path=%s", self.use_cache, self.json_path)
+        logging.info("koinly NullMap: use_cache=%s, json_path=%s", self.use_cache, self.json_path)
 
     def _cache(self):
         if not self.cache:

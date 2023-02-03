@@ -41,6 +41,7 @@ def main():
 
 
 def read_options(options):
+    """ Configure localconfig based on options dictionary. """
     report_util.read_common_options(localconfig, options)
 
     localconfig.start_date = options.get("start_date", None)
@@ -109,7 +110,7 @@ def _max_queries():
     return max_queries
 
 
-def txhistory(wallet_address, options):
+def txhistory(wallet_address):
     _read_persistent_config(wallet_address)
 
     progress = ProgressAlgo()

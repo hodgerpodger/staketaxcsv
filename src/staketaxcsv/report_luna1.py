@@ -35,6 +35,7 @@ def main():
 
 
 def read_options(options):
+    """ Configure localconfig based on options dictionary. """
     report_util.read_common_options(localconfig, options)
 
     localconfig.lp_treatment = options.get("lp_treatment", LP_TREATMENT_TRANSFERS)
@@ -63,7 +64,7 @@ def txone(wallet_address, txid):
     return exporter
 
 
-def estimate_duration(wallet_address, options):
+def estimate_duration(wallet_address):
     return (SECONDS_PER_TX_FETCH + SECONDS_PER_TX_PROCESS) * LcdAPI.num_txs(wallet_address)
 
 
@@ -74,9 +75,7 @@ def _max_queries():
     return max_queries
 
 
-def txhistory(wallet_address, options):
-    # Configure localconfig based on options
-    read_options(options)
+def txhistory(wallet_address):
     if localconfig.cache:
         cache = Cache()
         _cache_load(cache)
