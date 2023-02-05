@@ -1,5 +1,5 @@
 from staketaxcsv.algo import constants as co
-from staketaxcsv.algo.asset import Algo, Asset
+from staketaxcsv.algo.asset import Algo
 from staketaxcsv.algo.export_tx import export_reward_tx, export_stake_tx, export_unstake_tx
 from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
 from staketaxcsv.algo.transaction import get_inner_transfer_asset, get_transfer_asset
@@ -158,7 +158,7 @@ def handle_yieldly_transaction(group, exporter, txinfo):
                 return _handle_yieldly_asa_pool_claim(group, exporter, txinfo)
         elif YIELDLY_TRANSACTION_POOL_CLOSE in appl_args:
             # Claims and legacy closeouts are handled the same way
-            _handle_yieldly_asa_pool_claim(group, exporter, txinfo)
+            return _handle_yieldly_asa_pool_claim(group, exporter, txinfo)
         elif YIELDLY_TRANSACTION_POOL_BAIL in appl_args:
             app_transaction = group[0]
             appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
