@@ -137,6 +137,9 @@ class Asset:
     def zero(self):
         return self._uint_amount == 0
 
+    def is_lp_token(self):
+        return self._ticker in ["TM1POOL", "TMPOOL11", "TMPOOL2", "PLP", "AF-POOL", "HMBL1LT", "HMBL2LT"]
+
 
 class Algo(Asset):
     def __init__(self, amount=0):

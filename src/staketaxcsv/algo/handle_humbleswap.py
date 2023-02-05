@@ -9,10 +9,12 @@ from staketaxcsv.algo.handle_amm import (
     handle_swap,
     is_simple_lp_add_group,
     is_simple_lp_remove_group,
-    is_simple_swap_group,
+    is_swap_group,
 )
 from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
 from staketaxcsv.algo.transaction import get_transaction_note, get_transfer_asset
+
+APPLICATION_ID_HUMBLESWAP_PROXY = 818079669
 
 HUMBLESWAP_AMM_SYMBOL = "HMB"
 
@@ -20,6 +22,8 @@ HUMBLESWAP_LP_TICKER = "HMBL2LT"
 
 HUMBLESWAP_AMM_APPL_ARGS = set(["AA==", "Aw==", "AAAAAAAAAAA="])
 HUMBLESWAP_FARM_APPL_ARGS = set(["AA==", "BA==", "AAAAAAAAAAA="])
+
+HUMBLESWAP_TRANSACTION_PROXY_SWAP = "NS1KHQ=="
 
 reach_pattern = re.compile(r"^Reach \d+\.\d+\.\d+$")
 
@@ -74,7 +78,7 @@ def handle_humbleswap_transaction(wallet_address, group, exporter, txinfo):
     handle_participation_rewards(reward, exporter, txinfo)
 
     txinfo.comment = "Humbleswap"
-    if is_simple_swap_group(wallet_address, group):
+    if is_swap_group(wallet_address, group):
         handle_swap(wallet_address, group, exporter, txinfo)
     elif is_simple_lp_add_group(wallet_address, group):
         handle_lp_add(HUMBLESWAP_AMM_SYMBOL, group, exporter, txinfo)

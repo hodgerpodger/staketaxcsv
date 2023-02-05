@@ -1,7 +1,22 @@
 import base64
+import urllib.parse
+from datetime import datetime
 
 from staketaxcsv.algo import constants as co
-from staketaxcsv.algo.asset import Asset
+from staketaxcsv.algo.asset import Algo, Asset
+from staketaxcsv.common.TxInfo import TxInfo
+
+
+def get_transaction_txinfo(wallet_address, elem):
+    txid = elem["id"]
+    txsender = elem["sender"]
+
+    timestamp = datetime.utcfromtimestamp(elem["round-time"]).strftime('%Y-%m-%d %H:%M:%S')
+    fee = Algo(elem["fee"] if txsender == wallet_address else 0)
+
+    url = "https://algoexplorer.io/tx/{}".format(urllib.parse.quote(txid))
+
+    return TxInfo(txid, timestamp, fee, fee.ticker, wallet_address, co.EXCHANGE_ALGORAND_BLOCKCHAIN, url)
 
 
 def get_transaction_note(transaction):
@@ -107,8 +122,19 @@ def get_inner_transfer_asset(transaction, asset_map={}, filter=None):
 
 
 def is_asset_optin(transaction):
-    return (transaction["tx-type"] == co.TRANSACTION_TYPE_ASSET_TRANSFER
-            and transaction["sender"] == transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"])
+    txtype = transaction["tx-type"]
+    if (txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
+            and transaction["sender"] == transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
+        return True
+
+    if txtype == co.TRANSACTION_TYPE_APP_CALL:
+        inner_transactions = transaction.get("inner-txns", [])
+        if len(inner_transactions) == 0:
+            return False
+
+        return all([is_asset_optin(tx) for tx in inner_transactions])
+
+    return False
 
 
 def is_transfer(transaction):
