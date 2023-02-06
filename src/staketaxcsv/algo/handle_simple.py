@@ -2,8 +2,8 @@ from staketaxcsv.algo.export_tx import export_reward_tx
 from staketaxcsv.common.make_tx import make_unknown_tx
 
 
-def handle_unknown(exporter, txinfo):
-    row = make_unknown_tx(txinfo)
+def handle_unknown(exporter, txinfo, z_index=0):
+    row = make_unknown_tx(txinfo, z_index)
     exporter.ingest_row(row)
 
 

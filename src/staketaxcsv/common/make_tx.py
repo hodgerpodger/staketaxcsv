@@ -160,8 +160,8 @@ def make_simple_tx(txinfo, tx_type, z_index=0):
     return row
 
 
-def make_unknown_tx(txinfo):
-    return make_simple_tx(txinfo, TX_TYPE_UNKNOWN)
+def make_unknown_tx(txinfo, z_index=0):
+    return make_simple_tx(txinfo, TX_TYPE_UNKNOWN, z_index)
 
 
 def make_unknown_tx_with_transfer(txinfo, sent_amount, sent_currency, received_amount,
