@@ -603,7 +603,9 @@ def _handle_algofiv2_lend_unstake(wallet_address, group, exporter, txinfo):
     app_transaction = group[3]
     receive_asset = get_inner_transfer_asset(app_transaction)
     export_unstake_tx(exporter, txinfo, receive_asset, 0, COMMENT_ALGOFIV2, 0)
-    export_income_tx(exporter, txinfo, receive_asset - send_asset, fee_amount, COMMENT_ALGOFIV2, 1)
+    # TODO will need to track cost basis to calculate earnings accurately
+    # https://github.com/hodgerpodger/staketaxcsv/issues/245
+    # export_income_tx(exporter, txinfo, receive_asset - send_asset, fee_amount, COMMENT_ALGOFIV2, 1)
 
 
 def _handle_algofiv2_governance_optin(wallet_address, group, exporter, txinfo):
