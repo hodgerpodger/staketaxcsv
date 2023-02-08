@@ -65,11 +65,12 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_DVPN)
 
     # LCD - fetch count of transactions to estimate progress more accurately
-    lcd_count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(DVPN_LCD_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    lcd_count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(
+        DVPN_LCD_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_lcd_estimate(lcd_count_pages)
     # RPC - fetch count of transactions to estimate progress more accurately
-    rpc_count_pages = staketaxcsv.common.ibc.api_rpc.get_txs_pages_count(DVPN_RPC_NODE, wallet_address, max_txs,
-                                                             debug=localconfig.debug)
+    rpc_count_pages, _ = staketaxcsv.common.ibc.api_rpc.get_txs_pages_count(
+        DVPN_RPC_NODE, wallet_address, max_txs,debug=localconfig.debug)
     progress.set_rpc_estimate(rpc_count_pages)
 
     # LCD - fetch transactions
@@ -88,8 +89,7 @@ def txhistory(wallet_address):
     rpc_elems = staketaxcsv.common.ibc.api_rpc.get_txs_all(DVPN_RPC_NODE, wallet_address, progress, max_txs,
                                                debug=localconfig.debug,
                                                stage_name="rpc",
-                                               events_types=[staketaxcsv.common.ibc.api_common.EVENTS_TYPE_SENDER],
-                                               normalize=False)
+                                               events_types=[staketaxcsv.common.ibc.api_common.EVENTS_TYPE_SENDER])
 
     # See if there were any missing transactions between the LCD and RPC scans
     lcd_tx_hashes = set([e["txhash"] for e in lcd_elems])

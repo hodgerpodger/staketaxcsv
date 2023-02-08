@@ -5,8 +5,6 @@ Prints transactions and writes CSV(s) to _reports/JUNO*.csv
 
 TODO: JUNO CSVs are only in experimental state.  All "execute contract" transactions are still treated as
       unknown transactions.
-
-TODO: progress for rpc data is still inaccurate; need to fix to account for decode stage time
 """
 
 import logging
@@ -20,7 +18,7 @@ from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.juno.config_juno import localconfig
-from staketaxcsv.juno.progress_juno import SECONDS_PER_PAGE, ProgressJuno
+from staketaxcsv.juno.progress_juno import SECONDS_PER_PAGE, ProgressJuno, SECONDS_PER_TX
 from staketaxcsv.settings_csv import JUNO_NODE, TICKER_JUNO, JUNO_RPC_NODES
 
 
@@ -49,8 +47,10 @@ def txone(wallet_address, txid):
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
+    num_pages, num_txs = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
         JUNO_RPC_NODES, wallet_address, max_txs)
+
+    return SECONDS_PER_PAGE * num_pages + SECONDS_PER_TX * num_txs
 
 
 def txhistory(wallet_address):
@@ -62,9 +62,9 @@ def txhistory(wallet_address):
     progress = ProgressJuno()
     exporter = Exporter(wallet_address, localconfig, TICKER_JUNO)
 
-    # Fetch count of transactions to estimate progress more accurately
-    pages_total = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(JUNO_RPC_NODES, wallet_address, max_txs)
-    progress.set_estimate(pages_total)
+    # Fetch count of transactions to estimate progress beforehand
+    staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
+        JUNO_RPC_NODES, wallet_address, max_txs, progress)
 
     # Fetch transactions
     elems = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_all(JUNO_RPC_NODES, wallet_address, progress, max_txs)

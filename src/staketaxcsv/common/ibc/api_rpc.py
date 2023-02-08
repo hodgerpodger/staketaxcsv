@@ -100,7 +100,7 @@ def get_tx(node, txid, normalize=True):
 
 
 def get_txs_all(node, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, debug=False,
-                stage_name="default", events_types=None, normalize=True):
+                stage_name="default", events_types=None):
     api = RpcAPI(node)
     api.debug = debug
     events_types = events_types if events_types else EVENTS_TYPE_LIST_DEFAULT
@@ -122,9 +122,6 @@ def get_txs_all(node, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUE
 
     out = remove_duplicates(out, tx_hash_key="hash", timestamp_sort=False)
 
-    if normalize:
-        normalize_rpc_txns(node, out)
-
     return out
 
 
@@ -135,6 +132,7 @@ def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY, debug
     events_types = events_types if events_types else EVENTS_TYPE_LIST_DEFAULT
 
     total_pages = 0
+    total_txs = 0
     for event_type in events_types:
         _, _, num_pages, num_txs = api.txs_search(address, event_type, 1, limit)
         num_txs = min(num_txs, max_txs)
@@ -142,17 +140,18 @@ def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY, debug
 
         logging.info("event_type: %s, num_txs: %s, num_pages: %s", event_type, num_txs, num_pages)
         total_pages += num_pages
+        total_txs += num_txs
 
-    return total_pages
+    return total_pages, total_txs
 
 
-def normalize_rpc_txns(node, elems):
+def normalize_rpc_txns(node, elems, progress_rpc=None, stage_name=""):
     """
     Normalize the RPC transaction element to have fields a LCD transaction element
     would have.
     Decodes base64 encoded fields as needed.
     """
-    for elem in elems:
+    for i, elem in enumerate(elems):
         elem = _decode(elem)
 
         # add the txhash field
@@ -170,6 +169,12 @@ def normalize_rpc_txns(node, elems):
 
         # add transaction messages
         _add_messages_from_logs(elem)
+
+        if progress_rpc and stage_name and i % 10 == 0:
+            progress_rpc.report(i, "Normalized {} of {} elements...".format(i, len(elems)), stage_name)
+
+    if progress_rpc and stage_name:
+        progress_rpc.report(len(elems), "Normalized {} of {} elements...".format(len(elems), len(elems)), stage_name)
 
 
 def _decode(elem):
