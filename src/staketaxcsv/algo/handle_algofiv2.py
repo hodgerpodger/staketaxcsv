@@ -15,10 +15,10 @@ from staketaxcsv.algo.export_tx import (
     export_reward_tx,
     export_stake_tx,
     export_swap_tx,
+    export_unknown,
     export_unstake_tx,
     export_withdraw_collateral_tx,
 )
-from staketaxcsv.algo.handle_simple import handle_unknown
 from staketaxcsv.algo.transaction import (
     get_fee_amount,
     get_inner_transfer_asset,
@@ -40,8 +40,6 @@ APPLICATION_ID_ALGOFIV2_VALGO_MARKET = 879935316
 APPLICATION_ID_ALGOFIV2_GOVERNANCE_ADMIN = 900653388
 APPLICATION_ID_ALGOFIV2_GOVERNANCE_VOTING_ESCROW = 900653165
 APPLICATION_ID_ALGOFIV2_GOVERNANCE_REWARDS_MANAGER = 900652834
-
-ALGOFIV2_AMM_SYMBOL = "AF2"
 
 ALGOFIV2_TRANSACTION_ADD_UNDERLYING_COLLATERAL = "YXVj"     # "auc"
 ALGOFIV2_TRANSACTION_REMOVE_UNDERLYING_COLLATERAL = "cnVj"  # "ruc"
@@ -515,7 +513,7 @@ def handle_algofiv2_transaction(wallet_address, group, exporter, txinfo):
         _handle_algofiv2_governance_optin(wallet_address, group, exporter, txinfo)
 
     else:
-        handle_unknown(exporter, txinfo)
+        export_unknown(exporter, txinfo)
 
 
 def _handle_algofiv2_deposit_collateral(wallet_address, group, exporter, txinfo):
@@ -735,7 +733,7 @@ def _handle_algofiv2_lp_add(wallet_address, group, exporter, txinfo, z_index=0):
         send_asset_2 -= redeem_asset_2
 
     export_lp_deposit_tx(
-        exporter, txinfo, ALGOFIV2_AMM_SYMBOL,
+        exporter, txinfo,
         send_asset_1, send_asset_2, lp_asset,
         fee_amount, COMMENT_ALGOFIV2, z_index)
 
@@ -756,7 +754,7 @@ def _handle_algofiv2_lp_remove(wallet_address, group, exporter, txinfo):
     receive_asset_2 = get_inner_transfer_asset(group[i + 3],
                                                filter=partial(is_transfer_receiver, wallet_address))
     export_lp_withdraw_tx(
-        exporter, txinfo, ALGOFIV2_AMM_SYMBOL,
+        exporter, txinfo,
         lp_asset, receive_asset_1, receive_asset_2,
         fee_amount, COMMENT_ALGOFIV2)
 

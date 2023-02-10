@@ -1,7 +1,12 @@
 from staketaxcsv.algo import constants as co
 from staketaxcsv.algo.asset import Algo
-from staketaxcsv.algo.export_tx import export_reward_tx, export_stake_tx, export_unstake_tx
-from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
+from staketaxcsv.algo.export_tx import (
+    export_participation_rewards,
+    export_reward_tx,
+    export_stake_tx,
+    export_unknown,
+    export_unstake_tx
+)
 from staketaxcsv.algo.transaction import get_inner_transfer_asset, get_transfer_asset
 
 APPLICATION_ID_YIELDLY = 233725848
@@ -142,7 +147,7 @@ def is_yieldly_transaction(group):
 def handle_yieldly_transaction(group, exporter, txinfo):
     init_transaction = group[0]
     reward = Algo(init_transaction["sender-rewards"])
-    handle_participation_rewards(reward, exporter, txinfo)
+    export_participation_rewards(reward, exporter, txinfo)
 
     app_transaction = group[1]
     txtype = app_transaction["tx-type"]
@@ -184,7 +189,7 @@ def handle_yieldly_transaction(group, exporter, txinfo):
         if YIELDLY_TRANSACTION_POOL_STAKE_T5 in appl_args:
             return _handle_yieldly_t5_pool_stake(group, exporter, txinfo)
 
-    return handle_unknown(exporter, txinfo)
+    return export_unknown(exporter, txinfo)
 
 
 def _handle_yieldly_nll(group, exporter, txinfo):

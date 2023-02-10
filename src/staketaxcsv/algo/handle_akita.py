@@ -1,7 +1,6 @@
 from staketaxcsv.algo import constants as co
 from staketaxcsv.algo.asset import Algo, Asset
-from staketaxcsv.algo.export_tx import export_swap_tx
-from staketaxcsv.algo.handle_simple import handle_participation_rewards
+from staketaxcsv.algo.export_tx import export_participation_rewards, export_swap_tx
 
 APPLICATION_ID_AKITA_SWAP = 537279393
 
@@ -34,7 +33,7 @@ def handle_akita_swap_transaction(group, exporter, txinfo):
     fee_amount = optin_transaction["fee"]
 
     reward = Algo(optin_transaction["sender-rewards"])
-    handle_participation_rewards(reward, exporter, txinfo)
+    export_participation_rewards(reward, exporter, txinfo)
 
     send_transaction = group[1]
     fee_amount += send_transaction["fee"]

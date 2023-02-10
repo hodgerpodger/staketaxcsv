@@ -23,6 +23,7 @@ from staketaxcsv.algo.handle_gard import handle_gard_transaction, is_gard_transa
 from staketaxcsv.algo.handle_humbleswap import handle_humbleswap_transaction, is_humbleswap_transaction
 from staketaxcsv.algo.handle_pact import handle_pact_transaction, is_pact_transaction
 from staketaxcsv.algo.handle_tinyman import handle_tinyman_transaction, is_tinyman_transaction
+from staketaxcsv.algo.handle_tinymanv2 import handle_tinymanv2_transaction, is_tinymanv2_transaction
 from staketaxcsv.algo.handle_transfer import (
     handle_governance_reward_transaction,
     handle_transfer_transactions,
@@ -63,6 +64,9 @@ def handle_transaction_group(wallet_address, group, exporter, txinfo):
 
     elif is_tinyman_transaction(group):
         handle_tinyman_transaction(group, exporter, txinfo)
+
+    elif is_tinymanv2_transaction(wallet_address, group):
+        handle_tinymanv2_transaction(wallet_address, group, exporter, txinfo)
 
     elif is_algofiv2_transaction(group):
         handle_algofiv2_transaction(wallet_address, group, exporter, txinfo)

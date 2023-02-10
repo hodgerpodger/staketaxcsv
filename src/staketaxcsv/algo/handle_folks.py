@@ -3,12 +3,13 @@ from staketaxcsv.algo.asset import Algo
 from staketaxcsv.algo.export_tx import (
     export_borrow_tx,
     export_deposit_collateral_tx,
+    export_participation_rewards,
     export_repay_tx,
     export_reward_tx,
     export_swap_tx,
+    export_unknown,
     export_withdraw_collateral_tx,
 )
-from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
 from staketaxcsv.algo.transaction import get_inner_transfer_asset, get_transfer_asset, get_transfer_receiver
 
 # For reference
@@ -428,7 +429,7 @@ def is_folks_escrow_address(address):
 
 def handle_folks_transaction(wallet_address, group, exporter, txinfo):
     reward = Algo(group[0]["sender-rewards"])
-    handle_participation_rewards(reward, exporter, txinfo)
+    export_participation_rewards(reward, exporter, txinfo)
 
     if _is_folks_galgo3_optin_transaction(group):
         pass
@@ -470,7 +471,7 @@ def handle_folks_transaction(wallet_address, group, exporter, txinfo):
         _handle_folks_reward_staked_exchange_transaction(group, exporter, txinfo)
 
     else:
-        handle_unknown(exporter, txinfo)
+        export_unknown(exporter, txinfo)
 
 
 def _handle_folks_galgo3_mint_transaction(group, exporter, txinfo):

@@ -2,13 +2,17 @@
 # https://developer.algorand.org/docs/get-details/transactions/
 # https://developer.algorand.org/docs/get-details/transactions/transactions/
 # https://github.com/algorand/go-algorand
-import base64
 
 from staketaxcsv.algo import constants as co
 from staketaxcsv.algo.asset import Algo, Asset
-from staketaxcsv.algo.export_tx import export_receive_tx, export_reward_tx, export_send_tx
+from staketaxcsv.algo.export_tx import (
+    export_participation_rewards,
+    export_receive_tx,
+    export_reward_tx,
+    export_send_tx,
+    export_unknown
+)
 from staketaxcsv.algo.handle_folks import is_folks_escrow_address
-from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
 from staketaxcsv.algo.transaction import (
     get_transaction_note,
     is_app_call,
@@ -64,7 +68,7 @@ def handle_transfer_transaction(wallet_address, transaction, exporter, txinfo, z
     elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
         handle_asa_transaction(wallet_address, transaction, exporter, txinfo, z_index)
     else:
-        handle_unknown(exporter, txinfo, z_index)
+        export_unknown(exporter, txinfo, z_index)
 
 
 def handle_payment_transaction(wallet_address, transaction, exporter, txinfo, z_index=0):
@@ -109,7 +113,7 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
     rewards_amount = 0
 
     if wallet_address not in [txsender, txreceiver, close_to]:
-        return handle_unknown(exporter, txinfo, z_index)
+        return export_unknown(exporter, txinfo, z_index)
 
     if txreceiver == wallet_address or close_to == wallet_address:
         receive_amount = 0
@@ -165,4 +169,4 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
                     "Algomint" if txreceiver == ADDRESS_ALGOMINT else None, z_index)
 
     reward = Algo(rewards_amount)
-    handle_participation_rewards(reward, exporter, txinfo)
+    export_participation_rewards(reward, exporter, txinfo)

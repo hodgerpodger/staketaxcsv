@@ -4,10 +4,11 @@ from staketaxcsv.algo.asset import Algo
 from staketaxcsv.algo.export_tx import (
     export_borrow_tx,
     export_deposit_collateral_tx,
+    export_participation_rewards,
     export_repay_tx,
+    export_unknown,
     export_withdraw_collateral_tx,
 )
-from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
 from staketaxcsv.algo.transaction import get_transfer_asset, get_transfer_close_to_asset, get_transfer_receiver
 
 # For reference
@@ -142,7 +143,7 @@ def is_gard_transaction(wallet_address, group):
 
 def handle_gard_transaction(wallet_address, group, exporter, txinfo):
     reward = Algo(group[0]["sender-rewards"])
-    handle_participation_rewards(reward, exporter, txinfo)
+    export_participation_rewards(reward, exporter, txinfo)
 
     if _is_gard_new_cdp_transaction(group):
         _handle_gard_new_cdp(group, exporter, txinfo)
@@ -153,7 +154,7 @@ def handle_gard_transaction(wallet_address, group, exporter, txinfo):
     elif _is_gard_cdp_optin_transaction(wallet_address, group):
         _handle_gard_cdp_optin(group, exporter, txinfo)
     else:
-        handle_unknown(exporter, txinfo)
+        export_unknown(exporter, txinfo)
 
 
 def _handle_gard_new_cdp(group, exporter, txinfo):

@@ -1,5 +1,50 @@
+import re
 from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
 from staketaxcsv.algo.constants import ASSET_ID_ALGO
+
+ASSET_LP_TOKENS = {
+    "TM1POOL": {
+        "pattern": re.compile(r"^Tinyman Pool (?P<asset1>\w*)-(?P<asset2>\w*)$"),
+        "symbol": "TM"
+    },
+    "TMPOOL11": {
+        "pattern": re.compile(r"^TinymanPool1.1 (?P<asset1>\w*)-(?P<asset2>\w*)$"),
+        "symbol": "TM"
+    },
+    "TMPOOL2": {
+        "pattern": re.compile(r"^TinymanPool2.0 (?P<asset1>\w*)-(?P<asset2>\w*)$"),
+        "symbol": "TM"
+    },
+    "PLP": {
+        "pattern": re.compile(r"^(?P<asset1>\w*)\/(?P<asset2>\w*) PACT LP Token$"),
+        "symbol": "P"
+    },
+    "AF-POOL": {
+        "pattern": re.compile(r"^AF-POOL-(?P<asset1>\w*)-(?P<asset2>\w*)-\d+\.\d+BP$"),
+        "symbol": "AF"
+    },
+    "HMBL1LT": {
+        "pattern": re.compile(r"^HUMBLE LP - (?P<asset1>\w*)\/(?P<asset2>\w*)$"),
+        "symbol": "HMB"
+    },
+    "HMBL2LT": {
+        "pattern": re.compile(r"^HUMBLE LP - (?P<asset1>\w*)\/(?P<asset2>\w*)$"),
+        "symbol": "HMB"
+    },
+}
+
+ASSET_AF_LP_TOKENS = {
+    658337286: ("USDC", "STBL"),
+    659677515: ("USDT", "STBL"),
+    659678778: ("USDT", "USDC"),
+    841171328: ("STBL2", "USDC"),
+    855717054: ("STBL2", "ALGO"),
+    870151164: ("STBL2", "goBTC"),
+    870150187: ("STBL2", "goETH"),
+    900924035: ("BANK", "STBL2"),
+    919950894: ("ALGO", "USDC"),
+    962367827: ("ALGO", "BANK"),
+}
 
 
 class Asset:
@@ -29,6 +74,7 @@ class Asset:
         self._decimals = params["decimals"]
         # Remove non-ascii characters from the name
         self._ticker = params["unit-name"].encode('ascii', 'ignore').decode('ascii')
+        self._name = params["name"]
         self._uint_amount = int(amount)
 
     @classmethod
@@ -48,6 +94,10 @@ class Asset:
     @property
     def uint_amount(self):
         return self._uint_amount
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def ticker(self):
@@ -138,7 +188,39 @@ class Asset:
         return self._uint_amount == 0
 
     def is_lp_token(self):
-        return self._ticker in ["TM1POOL", "TMPOOL11", "TMPOOL2", "PLP", "AF-POOL", "HMBL1LT", "HMBL2LT"]
+        return self._ticker in ASSET_LP_TOKENS
+
+    def get_lp_token_currency(self):
+        if self._ticker == "AF-POOL":
+            pattern = ASSET_LP_TOKENS[self._ticker]["pattern"]
+            if self._id in ASSET_AF_LP_TOKENS:
+                asset1 = ASSET_AF_LP_TOKENS[self._id][0]
+                asset2 = ASSET_AF_LP_TOKENS[self._id][1]
+            else:
+                match = pattern.match(self._name)
+                if not match:
+                    return False
+
+                asset1 = match.group("asset1")
+                asset2 = match.group("asset2")
+
+            symbol = ASSET_LP_TOKENS[self._ticker]["symbol"]
+
+            return f"LP_{symbol}_{asset1}_{asset2}"
+
+        elif self._ticker in ASSET_LP_TOKENS:
+            pattern = ASSET_LP_TOKENS[self._ticker]["pattern"]
+            match = pattern.match(self._name)
+            if not match:
+                return False
+
+            symbol = ASSET_LP_TOKENS[self._ticker]["symbol"]
+            asset1 = match.group("asset1")
+            asset2 = match.group("asset2")
+
+            return f"LP_{symbol}_{asset1}_{asset2}"
+
+        return None
 
 
 class Algo(Asset):

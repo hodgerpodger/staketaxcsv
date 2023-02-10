@@ -1,7 +1,11 @@
 from functools import partial
 from staketaxcsv.algo import constants as co
-from staketaxcsv.algo.export_tx import create_swap_tx, export_lp_deposit_tx, export_lp_withdraw_tx
-from staketaxcsv.algo.handle_simple import handle_unknown
+from staketaxcsv.algo.export_tx import (
+    create_swap_tx,
+    export_lp_deposit_tx,
+    export_lp_withdraw_tx,
+    export_unknown
+)
 from staketaxcsv.algo.handle_transfer import handle_transfer_transactions
 from staketaxcsv.algo.transaction import (
     get_inner_transfer_asset,
@@ -56,7 +60,7 @@ def is_swap_group(wallet_address, group):
     return True
 
 
-def is_simple_lp_add_group(wallet_address, group):
+def is_lp_add_group(wallet_address, group):
     length = len(group)
     if length != 3 and length != 4:
         return False
@@ -93,10 +97,13 @@ def is_simple_lp_add_group(wallet_address, group):
     receive_asset = get_inner_transfer_asset(group[i],
                                              filter=partial(is_transfer_receiver, wallet_address))
 
-    return receive_asset is not None
+    if receive_asset is None:
+        return False
+
+    return receive_asset.is_lp_token()
 
 
-def is_simple_lp_remove_group(wallet_address, group):
+def is_lp_remove_group(wallet_address, group):
     length = len(group)
     if length < 2 or length > 4:
         return False
@@ -115,7 +122,14 @@ def is_simple_lp_remove_group(wallet_address, group):
     if not is_transfer_sender(wallet_address, transaction):
         return False
 
+    asset = get_transfer_asset(transaction)
+    if not asset.is_lp_token():
+        return False
+
     i += 1
+    if i == length:
+        return False
+
     transaction = group[i]
     txtype = transaction["tx-type"]
     if txtype != co.TRANSACTION_TYPE_APP_CALL:
@@ -189,7 +203,7 @@ def handle_swap(wallet_address, group, exporter, txinfo):
             exporter.ingest_row(row)
 
 
-def handle_lp_add(amm, group, exporter, txinfo):
+def handle_lp_add(group, exporter, txinfo):
     i = 0
     send_transaction = group[i]
     fee_amount = send_transaction["fee"]
@@ -223,12 +237,12 @@ def handle_lp_add(amm, group, exporter, txinfo):
             lp_asset = asset
 
     if lp_asset is not None:
-        export_lp_deposit_tx(exporter, txinfo, amm, send_asset_1, send_asset_2, lp_asset, fee_amount)
+        export_lp_deposit_tx(exporter, txinfo, send_asset_1, send_asset_2, lp_asset, fee_amount)
     else:
-        handle_unknown(exporter, txinfo)
+        export_unknown(exporter, txinfo)
 
 
-def handle_lp_remove(amm, group, exporter, txinfo):
+def handle_lp_remove(group, exporter, txinfo):
     i = 0
     fee_amount = 0
     send_transaction = group[i]
@@ -251,6 +265,6 @@ def handle_lp_remove(amm, group, exporter, txinfo):
         receive_transaction = inner_transactions[1]
         receive_asset_2 = get_transfer_asset(receive_transaction)
 
-        export_lp_withdraw_tx(exporter, txinfo, amm, lp_asset, receive_asset_1, receive_asset_2, fee_amount)
+        export_lp_withdraw_tx(exporter, txinfo, lp_asset, receive_asset_1, receive_asset_2, fee_amount)
     else:
-        handle_unknown(exporter, txinfo)
+        export_unknown(exporter, txinfo)

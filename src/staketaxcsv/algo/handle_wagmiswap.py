@@ -1,7 +1,7 @@
 from staketaxcsv.algo import constants as co
 from staketaxcsv.algo.asset import Algo
+from staketaxcsv.algo.export_tx import export_participation_rewards, export_unknown
 from staketaxcsv.algo.handle_amm import handle_lp_add, handle_lp_remove, handle_swap
-from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
 from staketaxcsv.algo.transaction import is_app_call
 
 APPLICATION_ID_WAGMISWAP_ORDER_ROUTER = [
@@ -25,7 +25,7 @@ def is_wagmiswap_transaction(group):
 
 def handle_wagmiswap_transaction(wallet_address, group, exporter, txinfo):
     reward = Algo(group[0]["sender-rewards"])
-    handle_participation_rewards(reward, exporter, txinfo)
+    export_participation_rewards(reward, exporter, txinfo)
 
     txinfo.comment = "Wagmiswap"
     appl_args = group[-1][co.TRANSACTION_KEY_APP_CALL]["application-args"]
@@ -36,4 +36,4 @@ def handle_wagmiswap_transaction(wallet_address, group, exporter, txinfo):
     elif WAGMISWAP_TRANSACTION_LP_REMOVE in appl_args:
         handle_lp_remove(group, exporter, txinfo)
     else:
-        handle_unknown(exporter, txinfo)
+        export_unknown(exporter, txinfo)
