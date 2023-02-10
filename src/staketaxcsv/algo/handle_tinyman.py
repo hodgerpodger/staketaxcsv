@@ -4,10 +4,11 @@ from staketaxcsv.algo.export_tx import (
     export_income_tx,
     export_lp_deposit_tx,
     export_lp_withdraw_tx,
+    export_participation_rewards,
     export_reward_tx,
     export_swap_tx,
+    export_unknown,
 )
-from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
 from staketaxcsv.algo.transaction import get_transfer_asset
 
 APPLICATION_ID_TINYMAN_v10 = 350338509
@@ -15,8 +16,6 @@ APPLICATION_ID_TINYMAN_v11 = 552635992
 APPLICATION_ID_TINYMAN_STAKING = 649588853
 
 COMMENT_TINYMAN = "Tinyman"
-
-TINYMAN_AMM_SYMBOL = "TM"
 
 TINYMAN_TRANSACTION_SWAP = "c3dhcA=="           # "swap"
 TINYMAN_TRANSACTION_REDEEM = "cmVkZWVt"         # "redeem"
@@ -85,7 +84,7 @@ def is_tinyman_transaction(group):
 
 def handle_tinyman_transaction(group, exporter, txinfo):
     reward = Algo(group[0]["sender-rewards"])
-    handle_participation_rewards(reward, exporter, txinfo)
+    export_participation_rewards(reward, exporter, txinfo)
 
     if _is_tinyman_swap(group):
         _handle_tinyman_swap(group, exporter, txinfo)
@@ -103,7 +102,7 @@ def handle_tinyman_transaction(group, exporter, txinfo):
         _handle_tinyman_claim(group, exporter, txinfo)
 
     else:
-        handle_unknown(exporter, txinfo)
+        export_unknown(exporter, txinfo)
 
 
 def _handle_tinyman_swap(group, exporter, txinfo):
@@ -146,7 +145,7 @@ def _handle_tinyman_lp_add(group, exporter, txinfo):
     lp_asset = get_transfer_asset(receive_transaction)
 
     export_lp_deposit_tx(
-        exporter, txinfo, TINYMAN_AMM_SYMBOL, send_asset_1, send_asset_2, lp_asset, fee_amount, COMMENT_TINYMAN)
+        exporter, txinfo, send_asset_1, send_asset_2, lp_asset, fee_amount, COMMENT_TINYMAN)
 
 
 def _handle_tinyman_lp_remove(group, exporter, txinfo):
@@ -164,7 +163,7 @@ def _handle_tinyman_lp_remove(group, exporter, txinfo):
     lp_asset = get_transfer_asset(send_transaction)
 
     export_lp_withdraw_tx(
-        exporter, txinfo, TINYMAN_AMM_SYMBOL, lp_asset, receive_asset_1, receive_asset_2, fee_amount, COMMENT_TINYMAN)
+        exporter, txinfo, lp_asset, receive_asset_1, receive_asset_2, fee_amount, COMMENT_TINYMAN)
 
 
 def _handle_tinyman_claim(group, exporter, txinfo):

@@ -1,7 +1,6 @@
 
 from functools import partial
-from staketaxcsv.algo.export_tx import export_swap_tx
-from staketaxcsv.algo.handle_simple import handle_unknown
+from staketaxcsv.algo.export_tx import export_swap_tx, export_unknown
 from staketaxcsv.algo.transaction import (
     get_fee_amount,
     get_inner_transfer_asset,
@@ -38,7 +37,7 @@ def handle_vestige_transaction(wallet_address, group, exporter, txinfo):
         _handle_vestige_swap(wallet_address, group, exporter, txinfo)
 
     else:
-        handle_unknown(exporter, txinfo)
+        export_unknown(exporter, txinfo)
 
 
 def _handle_vestige_swap(wallet_address, group, exporter, txinfo):

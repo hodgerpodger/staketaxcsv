@@ -11,12 +11,13 @@ from staketaxcsv.algo.export_tx import (
     export_lp_stake_tx,
     export_lp_unstake_tx,
     export_lp_withdraw_tx,
+    export_participation_rewards,
     export_repay_tx,
     export_reward_tx,
     export_swap_tx,
+    export_unknown,
     export_withdraw_collateral_tx,
 )
-from staketaxcsv.algo.handle_simple import handle_participation_rewards, handle_unknown
 from staketaxcsv.algo.handle_transfer import is_governance_reward_transaction
 from staketaxcsv.algo.transaction import (
     get_inner_transfer_asset,
@@ -37,8 +38,6 @@ APPLICATION_ID_ALGOFI_NANOSWAP_MANAGER = 658336870
 APPLICATION_ID_ALGOFI_LENDING_MANAGER = 465818260
 APPLICATION_ID_ALGOFI_STABILITY_MANAGER = 705663269
 APPLICATION_ID_ALGOFI_VALGO_MARKET = 465814318
-
-ALGOFI_AMM_SYMBOL = "AF"
 
 # fetch market variables
 # update prices
@@ -492,7 +491,7 @@ def is_algofi_transaction(group):
 
 def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
     reward = Algo(group[0]["sender-rewards"])
-    handle_participation_rewards(reward, exporter, txinfo)
+    export_participation_rewards(reward, exporter, txinfo)
 
     if _is_algofi_zap(group):
         _handle_algofi_zap(group, exporter, txinfo)
@@ -531,7 +530,7 @@ def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
         pass
 
     else:
-        handle_unknown(exporter, txinfo)
+        export_unknown(exporter, txinfo)
 
 
 def _handle_algofi_zap(group, exporter, txinfo):
@@ -628,7 +627,7 @@ def _handle_algofi_lp_add(group, exporter, txinfo, z_index=0):
         send_asset_2 -= redeem_asset_2
 
     export_lp_deposit_tx(
-        exporter, txinfo, ALGOFI_AMM_SYMBOL, send_asset_1, send_asset_2, lp_asset, fee_amount, COMMENT_ALGOFI, z_index)
+        exporter, txinfo, send_asset_1, send_asset_2, lp_asset, fee_amount, COMMENT_ALGOFI, z_index)
 
 
 def _handle_algofi_lp_remove(group, exporter, txinfo):
@@ -646,7 +645,7 @@ def _handle_algofi_lp_remove(group, exporter, txinfo):
     receive_asset_2 = get_inner_transfer_asset(app_transaction)
 
     export_lp_withdraw_tx(
-        exporter, txinfo, ALGOFI_AMM_SYMBOL, lp_asset, receive_asset_1, receive_asset_2, fee_amount, COMMENT_ALGOFI)
+        exporter, txinfo, lp_asset, receive_asset_1, receive_asset_2, fee_amount, COMMENT_ALGOFI)
 
 
 def _handle_algofi_claim_rewards(group, exporter, txinfo):

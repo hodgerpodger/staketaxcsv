@@ -19,11 +19,10 @@ from staketaxcsv.common.make_tx import (
     make_swap_tx,
     make_transfer_in_tx,
     make_transfer_out_tx,
+    make_unknown_tx,
     make_unstake_tx,
     make_withdraw_collateral_tx,
 )
-
-lp_tickers = {}
 
 
 def _setup_row(row, fee_amount=0, comment=None):
@@ -41,9 +40,10 @@ def _ingest_row(exporter, row, fee_amount=0, comment=None):
 
 def _should_exclude_tx(asset_list):
     for asset in asset_list:
-        ticker = asset.ticker if isinstance(asset, Asset) else asset
-        if ticker.lower() in localconfig.exclude_asas:
-            return True
+        if asset is not None:
+            ticker = asset.ticker if isinstance(asset, Asset) else asset
+            if ticker.lower() in localconfig.exclude_asas:
+                return True
     return False
 
 
@@ -71,8 +71,8 @@ def exclude_lp_tx(func):
         txinfo = args[1]
         asset = args[2]
 
-        asset_currency = lp_tickers.get(asset.id, asset.ticker)
-        if asset_currency.startswith("LP_"):
+        asset_currency = asset.get_lp_token_currency()
+        if asset_currency is not None:
             tokens = asset_currency.split("_")
             if _should_exclude_tx(tokens[2:]):
                 return export_exclude_tx(exporter, txinfo)
@@ -112,7 +112,8 @@ def export_spend_tx(exporter, txinfo, send_asset, fee_amount=0, comment=None, z_
 @exclude_tx
 @exclude_lp_tx
 def export_income_tx(exporter, txinfo, receive_asset, fee_amount=0, comment=None, z_index=0):
-    receive_asset_currency = lp_tickers.get(receive_asset.id, receive_asset.ticker)
+    receive_asset_currency = (receive_asset.get_lp_token_currency() if receive_asset.is_lp_token()
+                                else receive_asset.ticker)
 
     row = make_income_tx(txinfo, receive_asset.amount, receive_asset_currency, z_index=z_index)
     _ingest_row(exporter, row, fee_amount, comment)
@@ -148,66 +149,86 @@ def create_swap_tx(txinfo, send_asset, receive_asset, fee_amount=0, comment=None
 
 
 def export_lp_deposit_tx(
-        exporter, txinfo, amm_symbol, send_asset_1, send_asset_2, lp_asset,
+        exporter, txinfo, send_asset_1, send_asset_2, lp_asset,
         fee_amount=0, comment=None, z_index=0):
-    lp_asset_currency = f"LP_{amm_symbol}_{send_asset_1.ticker}_{send_asset_2.ticker}"
-    lp_tickers[lp_asset.id] = lp_asset_currency
+    lp_asset_currency = lp_asset.get_lp_token_currency()
+    if lp_asset_currency is None:
+        return export_unknown(exporter, txinfo, z_index)
+
     if _should_exclude_tx([send_asset_1, send_asset_2, lp_asset]):
         return export_exclude_tx(exporter, txinfo)
 
-    row = make_lp_deposit_tx(
-        txinfo,
-        send_asset_1.amount, send_asset_1.ticker,
-        lp_asset.amount / 2, lp_asset_currency,
-        z_index=z_index)
-    _ingest_row(exporter, row, fee_amount / 2, comment)
+    if send_asset_2 is None:
+        row = make_lp_deposit_tx(
+            txinfo,
+            send_asset_1.amount, send_asset_1.ticker,
+            lp_asset.amount, lp_asset_currency,
+            z_index=z_index)
+        _ingest_row(exporter, row, fee_amount, comment)
+    else:
+        row = make_lp_deposit_tx(
+            txinfo,
+            send_asset_1.amount, send_asset_1.ticker,
+            lp_asset.amount / 2, lp_asset_currency,
+            z_index=z_index)
+        _ingest_row(exporter, row, fee_amount / 2, comment)
 
-    row = make_lp_deposit_tx(
-        txinfo,
-        send_asset_2.amount, send_asset_2.ticker,
-        lp_asset.amount / 2, lp_asset_currency,
-        z_index=z_index + 1)
-    _ingest_row(exporter, row, fee_amount / 2, comment)
+        row = make_lp_deposit_tx(
+            txinfo,
+            send_asset_2.amount, send_asset_2.ticker,
+            lp_asset.amount / 2, lp_asset_currency,
+            z_index=z_index + 1)
+        _ingest_row(exporter, row, fee_amount / 2, comment)
 
 
 def export_lp_withdraw_tx(
-        exporter, txinfo, amm_symbol, lp_asset, receive_asset_1, receive_asset_2,
+        exporter, txinfo, lp_asset, receive_asset_1, receive_asset_2,
         fee_amount=0, comment=None, z_index=0):
-    lp_asset_currency = f"LP_{amm_symbol}_{receive_asset_1.ticker}_{receive_asset_2.ticker}"
-    lp_tickers[lp_asset.id] = lp_asset_currency
+    lp_asset_currency = lp_asset.get_lp_token_currency()
+    if lp_asset_currency is None:
+        return export_unknown(exporter, txinfo, z_index)
+
     if _should_exclude_tx([receive_asset_1, receive_asset_2, lp_asset]):
         return export_exclude_tx(exporter, txinfo)
 
-    row = make_lp_withdraw_tx(
-        txinfo,
-        lp_asset.amount / 2, lp_asset_currency,
-        receive_asset_1.amount, receive_asset_1.ticker,
-        z_index=z_index)
-    _ingest_row(exporter, row, fee_amount / 2, comment)
+    if receive_asset_2 is None:
+        row = make_lp_withdraw_tx(
+            txinfo,
+            lp_asset.amount, lp_asset_currency,
+            receive_asset_1.amount, receive_asset_1.ticker,
+            z_index=z_index)
+        _ingest_row(exporter, row, fee_amount, comment)
+    else:
+        row = make_lp_withdraw_tx(
+            txinfo,
+            lp_asset.amount / 2, lp_asset_currency,
+            receive_asset_1.amount, receive_asset_1.ticker,
+            z_index=z_index)
+        _ingest_row(exporter, row, fee_amount / 2, comment)
 
-    row = make_lp_withdraw_tx(
-        txinfo,
-        lp_asset.amount / 2, lp_asset_currency,
-        receive_asset_2.amount, receive_asset_2.ticker,
-        z_index=z_index + 1)
-    _ingest_row(exporter, row, fee_amount / 2, comment)
+        row = make_lp_withdraw_tx(
+            txinfo,
+            lp_asset.amount / 2, lp_asset_currency,
+            receive_asset_2.amount, receive_asset_2.ticker,
+            z_index=z_index + 1)
+        _ingest_row(exporter, row, fee_amount / 2, comment)
 
 
 @exclude_tx
 @exclude_lp_tx
-def export_lp_stake_tx(exporter, txinfo, send_asset, fee_amount=0, comment=None, z_index=0):
-    send_asset_currency = lp_tickers.get(send_asset.id, send_asset.ticker)
+def export_lp_stake_tx(exporter, txinfo, lp_asset, fee_amount=0, comment=None, z_index=0):
+    lp_asset_currency = lp_asset.get_lp_token_currency()
 
-    row = make_lp_stake_tx(txinfo, send_asset.amount, send_asset_currency, z_index=z_index)
+    row = make_lp_stake_tx(txinfo, lp_asset.amount, lp_asset_currency, z_index=z_index)
     _ingest_row(exporter, row, fee_amount, comment)
 
 
 @exclude_tx
 @exclude_lp_tx
-def export_lp_unstake_tx(exporter, txinfo, receive_asset, fee_amount=0, comment=None, z_index=0):
-    receive_asset_currency = lp_tickers.get(receive_asset.id, receive_asset.ticker)
+def export_lp_unstake_tx(exporter, txinfo, lp_asset, fee_amount=0, comment=None, z_index=0):
+    lp_asset_currency = lp_asset.get_lp_token_currency()
 
-    row = make_lp_unstake_tx(txinfo, receive_asset.amount, receive_asset_currency, z_index=z_index)
+    row = make_lp_unstake_tx(txinfo, lp_asset.amount, lp_asset_currency, z_index=z_index)
     _ingest_row(exporter, row, fee_amount, comment)
 
 
@@ -247,13 +268,26 @@ def export_withdraw_collateral_tx(exporter, txinfo, receive_asset, fee_amount=0,
 
 @exclude_tx
 def export_stake_tx(exporter, txinfo, send_asset, fee_amount=0, comment=None, z_index=0):
-    send_asset_currency = lp_tickers.get(send_asset.id, send_asset.ticker)
-    row = make_stake_tx(txinfo, send_asset.amount, send_asset_currency, z_index)
-    _ingest_row(exporter, row, fee_amount, comment)
+    if send_asset.is_lp_token():
+        export_lp_stake_tx(exporter, txinfo, send_asset, fee_amount, comment, z_index)
+    else:
+        row = make_stake_tx(txinfo, send_asset.amount, send_asset.ticker, z_index)
+        _ingest_row(exporter, row, fee_amount, comment)
 
 
 @exclude_tx
 def export_unstake_tx(exporter, txinfo, receive_asset, fee_amount=0, comment=None, z_index=0):
-    receive_asset_currency = lp_tickers.get(receive_asset.id, receive_asset.ticker)
-    row = make_unstake_tx(txinfo, receive_asset.amount, receive_asset_currency, z_index=z_index)
-    _ingest_row(exporter, row, fee_amount, comment)
+    if receive_asset.is_lp_token():
+        export_lp_unstake_tx(exporter, txinfo, receive_asset, fee_amount, comment, z_index)
+    else:
+        row = make_unstake_tx(txinfo, receive_asset.amount, receive_asset.ticker, z_index=z_index)
+        _ingest_row(exporter, row, fee_amount, comment)
+
+
+def export_unknown(exporter, txinfo, z_index=0):
+    row = make_unknown_tx(txinfo, z_index)
+    exporter.ingest_row(row)
+
+
+def export_participation_rewards(reward, exporter, txinfo):
+    export_reward_tx(exporter, txinfo, reward, comment="Participation Rewards")

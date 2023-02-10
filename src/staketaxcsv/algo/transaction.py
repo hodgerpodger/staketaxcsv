@@ -110,7 +110,7 @@ def get_inner_transfer_asset(transaction, asset_map={}, filter=None):
     inner_transactions = transaction.get("inner-txns", [])
     for tx in inner_transactions:
         txtype = tx["tx-type"]
-        if txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER or txtype == co.TRANSACTION_TYPE_PAYMENT:
+        if is_transfer(tx):
             if filter is None or filter(tx):
                 return get_transfer_asset(tx, asset_map)
         elif txtype == co.TRANSACTION_TYPE_APP_CALL and "inner-txns" in tx:
@@ -119,6 +119,21 @@ def get_inner_transfer_asset(transaction, asset_map={}, filter=None):
                 return asset
 
     return None
+
+
+def get_inner_transfer_count(transaction, depth=1):
+    if depth == 0:
+        return 0
+
+    inner_transactions = transaction.get("inner-txns", [])
+    count = 0
+    for tx in inner_transactions:
+        if is_transfer(tx):
+            count += 1
+        elif tx["tx-type"] == co.TRANSACTION_TYPE_APP_CALL:
+            count += get_inner_transfer_count(tx, depth - 1)
+
+    return count
 
 
 def is_asset_optin(transaction):

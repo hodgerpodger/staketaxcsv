@@ -2,6 +2,7 @@ import logging
 
 from staketaxcsv.algo import constants as co
 from staketaxcsv.algo.config_algo import localconfig
+from staketaxcsv.algo.export_tx import export_unknown
 from staketaxcsv.algo.handle_folks import (
     handle_folks_galgo_early_claim_transaction,
     handle_folks_reward_claim_transaction,
@@ -9,7 +10,6 @@ from staketaxcsv.algo.handle_folks import (
     is_folks_reward_claim_transaction,
 )
 from staketaxcsv.algo.handle_group import get_group_txinfo, get_transaction_group, handle_transaction_group
-from staketaxcsv.algo.handle_simple import handle_unknown
 from staketaxcsv.algo.handle_transfer import (
     handle_asa_transaction,
     handle_payment_transaction,
@@ -49,7 +49,7 @@ def process_txs(wallet_address, transactions, exporter, progress):
                 elif txtype == co.TRANSACTION_TYPE_KEY_REGISTRATION:
                     pass
                 else:
-                    handle_unknown(exporter, txinfo)
+                    export_unknown(exporter, txinfo)
             else:
                 txinfo = get_group_txinfo(wallet_address, transaction)
                 group = get_transaction_group(groupid, i, transactions)
@@ -58,7 +58,7 @@ def process_txs(wallet_address, transactions, exporter, progress):
         except Exception as e:
             logging.error("Exception when handling txid=%s, exception=%s", txid, str(e))
             ErrorCounter.increment("exception", txid)
-            handle_unknown(exporter, txinfo)
+            export_unknown(exporter, txinfo)
 
             if localconfig.debug:
                 raise (e)
