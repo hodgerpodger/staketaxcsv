@@ -21,6 +21,7 @@ from staketaxcsv.algo.handle_algofi import (
     get_algofi_liquidate_transactions,
     get_algofi_storage_address,
 )
+from staketaxcsv.algo.handle_deflex import get_deflex_limit_order_apps
 from staketaxcsv.algo.progress_algo import ProgressAlgo
 from staketaxcsv.common import report_util
 from staketaxcsv.common.ErrorCounter import ErrorCounter
@@ -135,6 +136,10 @@ def txhistory(wallet_address):
 
 
 def _get_txs(wallet_address, account, progress):
+    if account is not None:
+        localconfig.deflex_limit_order_apps = get_deflex_limit_order_apps(account)
+        localconfig.algofi_storage_address = get_algofi_storage_address(account)
+
     # Debugging only: when --debug flag set, read from cache file
     debug_file = f"{REPORTS_DIR}/debug.{TICKER_ALGO}.{wallet_address}.json"
     if localconfig.debug and os.path.exists(debug_file):
@@ -148,14 +153,11 @@ def _get_txs(wallet_address, account, progress):
     if len(out) > 0:
         localconfig.min_round = out[-1]["confirmed-round"] + 1
 
-    if account is not None:
-        storage_address = get_algofi_storage_address(account)
-        logging.debug("AlgoFi storage address: %s", storage_address)
-        if storage_address is not None:
-            localconfig.algofi_storage_address = storage_address
-            storage_txs = _get_address_transactions(storage_address)
-            out.extend(get_algofi_liquidate_transactions(storage_txs))
-            out.extend(get_algofi_governance_rewards_transactions(storage_txs, storage_address))
+    storage_address = localconfig.algofi_storage_address
+    if storage_address is not None:
+        storage_txs = _get_address_transactions(storage_address)
+        out.extend(get_algofi_liquidate_transactions(storage_txs))
+        out.extend(get_algofi_governance_rewards_transactions(storage_txs, storage_address))
 
     num_tx = len(out)
 

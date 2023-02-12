@@ -131,7 +131,7 @@ def export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount=0, co
         txinfo,
         send_asset.amount, send_asset.ticker,
         receive_asset.amount, receive_asset.ticker,
-        z_index=z_index)
+        empty_fee=(fee_amount == 0), z_index=z_index)
     _ingest_row(exporter, row, fee_amount, comment)
 
 
@@ -141,7 +141,7 @@ def create_swap_tx(txinfo, send_asset, receive_asset, fee_amount=0, comment=None
         txinfo,
         send_asset.amount, send_asset.ticker,
         receive_asset.amount, receive_asset.ticker,
-        z_index=z_index)
+        empty_fee=(fee_amount == 0), z_index=z_index)
 
     _setup_row(row, fee_amount, comment)
 
