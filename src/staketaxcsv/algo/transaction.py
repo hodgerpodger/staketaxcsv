@@ -45,7 +45,7 @@ def is_transfer_receiver(wallet_address, transaction):
     return wallet_address == get_transfer_receiver(transaction)
 
 
-def is_transfer_sender(wallet_address, transaction):
+def is_transaction_sender(wallet_address, transaction):
     return wallet_address == transaction["sender"]
 
 
@@ -155,6 +155,14 @@ def is_asset_optin(transaction):
 def is_transfer(transaction):
     txtype = transaction["tx-type"]
     return txtype == co.TRANSACTION_TYPE_PAYMENT or txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
+
+
+def is_algo_transfer(transaction):
+    return transaction["tx-type"] == co.TRANSACTION_TYPE_PAYMENT
+
+
+def is_asa_transfer(transaction):
+    return transaction["tx-type"] == co.TRANSACTION_TYPE_ASSET_TRANSFER
 
 
 def is_app_call(transaction, app_id=None, app_args=None, foreign_app=None):
