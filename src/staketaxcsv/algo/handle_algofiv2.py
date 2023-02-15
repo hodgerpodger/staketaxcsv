@@ -41,6 +41,9 @@ APPLICATION_ID_ALGOFIV2_GOVERNANCE_ADMIN = 900653388
 APPLICATION_ID_ALGOFIV2_GOVERNANCE_VOTING_ESCROW = 900653165
 APPLICATION_ID_ALGOFIV2_GOVERNANCE_REWARDS_MANAGER = 900652834
 
+ALGOFIV2_TRANSACTION_USER_OPTIN = "dW9p"                    # "uoi"
+ALGOFIV2_TRANSACTION_MARKET_OPTIN = "dW1vaQ=="              # "umoi"
+ALGOFIV2_TRANSACTION_VALIDATE_MARKET = "dm0="               # "vm"
 ALGOFIV2_TRANSACTION_ADD_UNDERLYING_COLLATERAL = "YXVj"     # "auc"
 ALGOFIV2_TRANSACTION_REMOVE_UNDERLYING_COLLATERAL = "cnVj"  # "ruc"
 ALGOFIV2_TRANSACTION_BORROW = "Yg=="                        # "b"
@@ -152,6 +155,29 @@ def get_algofiv2_storage_address(account):
                     return encoding.encode_address(base64.b64decode(raw_address.strip()))
 
     return None
+
+
+def _is_algofiv2_user_optin(group):
+    if len(group) != 2:
+        return False
+
+    if not is_transfer(group[0]):
+        return False
+
+    return is_app_call(group[1], APPLICATION_ID_ALGOFIV2_LENDING_MANAGER, ALGOFIV2_TRANSACTION_USER_OPTIN)
+
+
+def _is_algofiv2_market_optin(group):
+    if len(group) != 3:
+        return False
+
+    if not is_transfer(group[0]):
+        return False
+
+    if not is_app_call(group[1], APPLICATION_ID_ALGOFIV2_LENDING_MANAGER, ALGOFIV2_TRANSACTION_VALIDATE_MARKET):
+        return False
+
+    return is_app_call(group[2], APPLICATION_ID_ALGOFIV2_LENDING_MANAGER, ALGOFIV2_TRANSACTION_MARKET_OPTIN)
 
 
 def _is_algofiv2_deposit_collateral(group):
@@ -459,6 +485,8 @@ def is_algofiv2_transaction(group):
                 or _is_algofiv2_lp_add(group)
                 or _is_algofiv2_lp_remove(group)
                 or _is_algofiv2_zap(group)
+                or _is_algofiv2_user_optin(group)
+                or _is_algofiv2_market_optin(group)
                 or _is_algofiv2_governance_optin(group)
                 or _is_algofiv2_governance_increase_lock(group))
 
@@ -505,6 +533,12 @@ def handle_algofiv2_transaction(wallet_address, group, exporter, txinfo):
 
     elif _is_algofiv2_zap(group):
         _handle_algofiv2_zap(wallet_address, group, exporter, txinfo)
+
+    elif _is_algofiv2_user_optin(group):
+        pass
+
+    elif _is_algofiv2_market_optin(group):
+        pass
 
     elif _is_algofiv2_governance_increase_lock(group):
         _handle_algofiv2_governance_increase_lock(wallet_address, group, exporter, txinfo)
