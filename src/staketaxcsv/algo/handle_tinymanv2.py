@@ -23,7 +23,7 @@ from staketaxcsv.algo.transaction import (
     is_asset_optin,
     is_transfer,
     is_transfer_receiver,
-    is_transfer_sender
+    is_transaction_sender
 )
 
 APPLICATION_ID_TINYMANV2_VALIDATOR = 1002541853
@@ -70,7 +70,7 @@ def _is_tinymanv2_lp_add_single(wallet_address, group):
     if not is_transfer(transaction):
         return False
 
-    if not is_transfer_sender(wallet_address, transaction):
+    if not is_transaction_sender(wallet_address, transaction):
         return False
 
     i += 1
@@ -107,7 +107,7 @@ def _is_tinymanv2_lp_remove_single(wallet_address, group):
     if not is_transfer(transaction):
         return False
 
-    if not is_transfer_sender(wallet_address, transaction):
+    if not is_transaction_sender(wallet_address, transaction):
         return False
 
     send_asset = get_transfer_asset(transaction)

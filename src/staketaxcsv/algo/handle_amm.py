@@ -14,7 +14,7 @@ from staketaxcsv.algo.transaction import (
     is_transfer,
     is_transfer_receiver,
     is_transfer_receiver_non_zero_asset,
-    is_transfer_sender
+    is_transaction_sender
 )
 
 
@@ -36,7 +36,7 @@ def is_swap_group(wallet_address, group):
         if not is_transfer(transaction):
             return False
 
-        if not is_transfer_sender(wallet_address, transaction):
+        if not is_transaction_sender(wallet_address, transaction):
             return False
 
         if is_asset_optin(transaction):
@@ -73,7 +73,7 @@ def is_lp_add_group(wallet_address, group):
     if not is_transfer(transaction):
         return False
 
-    if not is_transfer_sender(wallet_address, transaction):
+    if not is_transaction_sender(wallet_address, transaction):
         return False
 
     if is_asset_optin(transaction):
@@ -84,7 +84,7 @@ def is_lp_add_group(wallet_address, group):
     if not is_transfer(transaction):
         return False
 
-    if not is_transfer_sender(wallet_address, transaction):
+    if not is_transaction_sender(wallet_address, transaction):
         return False
 
     if is_asset_optin(transaction):
@@ -119,7 +119,7 @@ def is_lp_remove_group(wallet_address, group):
     if not is_transfer(transaction):
         return False
 
-    if not is_transfer_sender(wallet_address, transaction):
+    if not is_transaction_sender(wallet_address, transaction):
         return False
 
     asset = get_transfer_asset(transaction)

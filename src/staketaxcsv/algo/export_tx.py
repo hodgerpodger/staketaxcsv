@@ -14,7 +14,7 @@ from staketaxcsv.common.make_tx import (
     make_lp_withdraw_tx,
     make_repay_tx,
     make_reward_tx,
-    make_spend_tx,
+    make_spend_fee_tx,
     make_stake_tx,
     make_swap_tx,
     make_transfer_in_tx,
@@ -103,10 +103,9 @@ def export_reward_tx(exporter, txinfo, reward_asset, fee_amount=0, comment=None,
         _ingest_row(exporter, row, fee_amount, comment)
 
 
-@exclude_tx
-def export_spend_tx(exporter, txinfo, send_asset, fee_amount=0, comment=None, z_index=0):
-    row = make_spend_tx(txinfo, send_asset.amount, send_asset.ticker, z_index=z_index)
-    _ingest_row(exporter, row, fee_amount, comment)
+def export_spend_fee_tx(exporter, txinfo, fee_asset, comment=None, z_index=0):
+    row = make_spend_fee_tx(txinfo, fee_asset.amount, fee_asset.ticker, z_index=z_index)
+    _ingest_row(exporter, row, comment=comment)
 
 
 @exclude_tx
