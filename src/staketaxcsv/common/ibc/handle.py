@@ -149,6 +149,34 @@ def handle_exec(exporter, txinfo, msginfo):
     txinfo.fee = ""
     txinfo.fee_currency = ""
 
+    if _is_exec_rpc_data(msginfo):
+        _handle_exec_rpc_data(exporter, txinfo, msginfo)
+    else:
+        _handle_exec_lcd_data(exporter, txinfo, msginfo)
+
+
+def _is_exec_rpc_data(msginfo):
+    message = msginfo.message
+
+    if (
+        msginfo.msg_type == co.MSG_TYPE_EXEC and
+        message.get("@type", None) == "/cosmos.authz.v1beta1.MsgExec" and
+        message.get("module", None) == "staking"
+    ):
+        return True
+    else:
+        return False
+
+
+def _handle_exec_rpc_data(exporter, txinfo, msginfo):
+    transfers_in, transfers_out = msginfo.transfers
+    if len(transfers_in) == 0:
+        pass
+    else:
+        handle_staking(exporter, txinfo, msginfo)
+
+
+def _handle_exec_lcd_data(exporter, txinfo, msginfo):
     msg_types = set(map(lambda x: x["@type"].split(".")[-1], msginfo.message["msgs"]))
 
     # execs can have multiple messages, but the most common are to delegate and withdraw

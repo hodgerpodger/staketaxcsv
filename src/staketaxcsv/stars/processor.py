@@ -26,7 +26,7 @@ def process_tx(wallet_address, elem, exporter):
         if result:
             continue
 
-        if msginfo.msg_type == 'MsgInitialClaim':
+        if msginfo.msg_type in ('MsgInitialClaim', "initial_claim"):
             result_airdrop = handle_airdrop(exporter, txinfo, msginfo)
             if result_airdrop:
                 continue
