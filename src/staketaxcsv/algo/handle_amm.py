@@ -4,12 +4,14 @@ from staketaxcsv.algo.export_tx import (
     create_swap_tx,
     export_lp_deposit_tx,
     export_lp_withdraw_tx,
+    export_spend_fee_tx,
     export_unknown
 )
 from staketaxcsv.algo.handle_transfer import handle_transfer_transactions
 from staketaxcsv.algo.transaction import (
     get_inner_transfer_asset,
     get_transfer_asset,
+    get_transfer_receiver,
     is_asset_optin,
     is_transfer,
     is_transfer_receiver,
@@ -44,7 +46,7 @@ def is_swap_group(wallet_address, group):
 
         i += 1
         if i == length:
-            return False
+            return get_transfer_receiver(transaction) == co.ADDRESS_PERA
 
         receive_asset = get_inner_transfer_asset(group[i],
                                                  filter=partial(is_transfer_receiver_non_zero_asset, wallet_address))
@@ -171,9 +173,15 @@ def handle_swap(wallet_address, group, exporter, txinfo):
             fee_amount += group[i]["fee"]
 
         send_transaction = group[i]
-        app_transaction = group[i + 1]
-        fee_amount += send_transaction["fee"] + app_transaction["fee"]
+        fee_amount += send_transaction["fee"]
         send_asset = get_transfer_asset(send_transaction)
+        i += 1
+        if i == length:
+            if get_transfer_receiver(send_transaction) == co.ADDRESS_PERA:
+                export_spend_fee_tx(exporter, txinfo, send_asset + fee_amount, "Pera Swap Fee", z_offset)
+            break
+        app_transaction = group[i]
+        fee_amount += app_transaction["fee"]
         inner_transactions = app_transaction.get("inner-txns", [])
         receive_asset = None
         for transaction in inner_transactions:
@@ -193,7 +201,7 @@ def handle_swap(wallet_address, group, exporter, txinfo):
         row = create_swap_tx(txinfo, send_asset, receive_asset, fee_amount, z_index=z_offset)
         rows.append(row)
 
-        i += 2
+        i += 1
         z_offset += 1
 
     if i < length:

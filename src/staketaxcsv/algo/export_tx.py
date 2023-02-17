@@ -30,7 +30,7 @@ def _setup_row(row, fee_amount=0, comment=None):
         fee = Algo(fee_amount)
         row.fee = fee.amount
     if comment:
-        row.comment = comment
+        row.comment = (comment[:30] + '...') if len(comment) > 32 else comment
 
 
 def _ingest_row(exporter, row, fee_amount=0, comment=None):
