@@ -19,6 +19,7 @@ from staketaxcsv.algo.transaction import (
     get_inner_transfer_asset,
     get_inner_transfer_count,
     get_transfer_asset,
+    get_transfer_receiver,
     is_app_call,
     is_asset_optin,
     is_transfer,
@@ -39,13 +40,20 @@ TINYMANV2_TRANSACTION_REMOVE_LIQUIDITY = "cmVtb3ZlX2xpcXVpZGl0eQ=="           # 
 
 
 def _is_tinymanv2_swap(wallet_address, group):
-    if len(group) != 2:
+    length = len(group)
+    if length < 2 or length > 3:
         return False
 
     if not is_swap_group(wallet_address, group):
         return False
 
-    return is_app_call(group[-1], APPLICATION_ID_TINYMANV2_VALIDATOR, TINYMANV2_TRANSACTION_SWAP)
+    transaction = group[-1]
+    if is_transfer(transaction):
+        if get_transfer_receiver(transaction) != co.ADDRESS_PERA:
+            return False
+        transaction = group[-2]
+
+    return is_app_call(transaction, APPLICATION_ID_TINYMANV2_VALIDATOR, TINYMANV2_TRANSACTION_SWAP)
 
 
 def _is_tinymanv2_lp_add(wallet_address, group):

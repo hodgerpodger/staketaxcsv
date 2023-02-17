@@ -10,6 +10,7 @@ from staketaxcsv.algo.export_tx import (
     export_receive_tx,
     export_reward_tx,
     export_send_tx,
+    export_spend_fee_tx,
     export_unknown
 )
 from staketaxcsv.algo.handle_folks import is_folks_escrow_address
@@ -20,15 +21,6 @@ from staketaxcsv.algo.transaction import (
     is_transfer,
     is_transfer_participant
 )
-
-# Algostake escrow wallet: https://algostake.org/litepaper
-ADDRESS_ALGOSTAKE_ESCROW = "4ZK3UPFRJ643ETWSWZ4YJXH3LQTL2FUEI6CIT7HEOVZL6JOECVRMPP34CY"
-
-ADDRESS_ALGOMINT = "ETGSQKACKC56JWGMDAEP5S2JVQWRKTQUVKCZTMPNUGZLDVCWPY63LSI3H4"
-
-ADDRESS_PACT_REWARDS = "PACTC5CQVKK6F43TPYII2WED72BXYIQ5OF7DKQREDOY4UXCYJRMGGQ5IQQ"
-
-ADDRESS_FOLKS_REWARDS = "OW3VJ3YSECTNTJ73GNQE2LYOQUMMAV577NDNF53SXRKB33OST6NNTPRD4Y"
 
 
 def is_governance_reward_transaction(wallet_address, group):
@@ -115,6 +107,7 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
     if wallet_address not in [txsender, txreceiver, close_to]:
         return export_unknown(exporter, txinfo, z_index)
 
+    note = get_transaction_note(transaction)
     if txreceiver == wallet_address or close_to == wallet_address:
         receive_amount = 0
         send_amount = 0
@@ -135,20 +128,19 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
         receive_asset = Asset(asset_id, receive_amount - send_amount)
         if not receive_asset.zero():
             row = None
-            if txsender == ADDRESS_ALGOSTAKE_ESCROW:
+            if txsender == co.ADDRESS_ALGOSTAKE_ESCROW:
                 export_reward_tx(exporter, txinfo, receive_asset, fee_amount, "Algostake", z_index)
-            elif txsender == ADDRESS_PACT_REWARDS:
+            elif txsender == co.ADDRESS_PACT_REWARDS:
                 export_reward_tx(exporter, txinfo, receive_asset, fee_amount, "Pact", z_index)
             else:
-                note = get_transaction_note(transaction)
                 if note is not None and "tinymanStaking/v1" in note:
                     export_reward_tx(exporter, txinfo, receive_asset, fee_amount, "Tinyman", z_index)
-                elif txsender == ADDRESS_FOLKS_REWARDS and note == "Folks Finance fStaking rewards":
+                elif txsender == co.ADDRESS_FOLKS_REWARDS and note == "Folks Finance fStaking rewards":
                     export_reward_tx(exporter, txinfo, receive_asset, fee_amount, "Folks Finance", z_index)
                 else:
                     export_receive_tx(
                         exporter, txinfo, receive_asset, fee_amount,
-                        "Algomint" if txsender == ADDRESS_ALGOMINT else None, z_index)
+                        "Algomint" if txsender == co.ADDRESS_ALGOMINT else note, z_index)
     else:
         rewards_amount += transaction["sender-rewards"]
         if close_to and txreceiver != close_to:
@@ -163,10 +155,12 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
             send_asset = Asset(asset_id, details["amount"] + details["close-amount"])
 
             # Ignore Folks transactions to increase collateral with fTokens
+            if txreceiver == co.ADDRESS_PERA and note == "Pera Swap Fee":
+                export_spend_fee_tx(exporter, txinfo, send_asset + transaction["fee"], note)
             if not is_folks_escrow_address(txreceiver):
                 export_send_tx(
                     exporter, txinfo, send_asset, transaction["fee"], txreceiver,
-                    "Algomint" if txreceiver == ADDRESS_ALGOMINT else None, z_index)
+                    "Algomint" if txreceiver == co.ADDRESS_ALGOMINT else note, z_index)
 
     reward = Algo(rewards_amount)
     export_participation_rewards(reward, exporter, txinfo)
