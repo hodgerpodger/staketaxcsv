@@ -32,6 +32,7 @@ from staketaxcsv.algo.handle_transfer import (
 from staketaxcsv.algo.handle_vestige import handle_vestige_transaction, is_vestige_transaction
 from staketaxcsv.algo.handle_wagmiswap import handle_wagmiswap_transaction, is_wagmiswap_transaction
 from staketaxcsv.algo.handle_yieldly import handle_yieldly_transaction, is_yieldly_transaction
+from staketaxcsv.algo.transaction import is_transfer
 from staketaxcsv.common.TxInfo import TxInfo
 
 
@@ -57,6 +58,14 @@ def get_group_txinfo(wallet_address, transaction):
     return txinfo
 
 
+def has_only_transfer_transactions(group):
+    return all(is_transfer(tx) for tx in group)
+
+
+def has_app_transactions(group):
+    return any(tx["tx-type"] == co.TRANSACTION_TYPE_APP_CALL for tx in group)
+
+
 def handle_transaction_group(wallet_address, group, exporter, txinfo):
     if (is_governance_reward_transaction(wallet_address, group)
             or is_governance_reward_transaction(localconfig.algofi_storage_address, group)):
@@ -74,7 +83,7 @@ def handle_transaction_group(wallet_address, group, exporter, txinfo):
     elif is_algofi_transaction(group):
         handle_algofi_transaction(wallet_address, group, exporter, txinfo)
 
-    elif is_pact_transaction(group):
+    elif is_pact_transaction(wallet_address, group):
         handle_pact_transaction(wallet_address, group, exporter, txinfo)
 
     elif is_humbleswap_transaction(group):
@@ -108,4 +117,9 @@ def handle_transaction_group(wallet_address, group, exporter, txinfo):
         handle_swap(wallet_address, group, exporter, txinfo)
 
     else:
+        if localconfig.debug:
+            if has_app_transactions(group):
+                txinfo.comment = "Unknown App"
+            else:
+                txinfo.comment = "Unknown Group"
         handle_transfer_transactions(wallet_address, group, exporter, txinfo)

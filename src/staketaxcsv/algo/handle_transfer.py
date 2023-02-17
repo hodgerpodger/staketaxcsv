@@ -77,13 +77,8 @@ def handle_asa_transaction(wallet_address, transaction, exporter, txinfo, z_inde
     _handle_transfer(wallet_address, transaction, transfer_details, exporter, txinfo, asset_id, z_index)
 
 
-def has_only_transfer_transactions(transactions):
-    return len([tx for tx in transactions if is_transfer(tx)]) == len(transactions)
-
-
 def handle_transfer_transactions(wallet_address, transactions, exporter, txinfo, z_index=0):
     num_transfers = 0
-    txinfo.comment = "Unknown App"
     for transaction in transactions:
         if (is_transfer(transaction)
                 and not is_asset_optin(transaction)
