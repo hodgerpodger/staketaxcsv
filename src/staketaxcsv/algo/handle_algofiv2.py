@@ -33,7 +33,7 @@ from staketaxcsv.algo.transaction import (
 # https://github.com/Algofiorg/algofi-python-sdk
 # https://github.com/Algofiorg/algofi-javascript-sdk
 
-COMMENT_ALGOFIV2 = "AlgoFi v2"
+COMMENT_ALGOFIV2 = "AlgoFi"
 
 APPLICATION_ID_ALGOFIV2_LENDING_MANAGER = 818176933
 APPLICATION_ID_ALGOFIV2_VALGO_MARKET = 879935316

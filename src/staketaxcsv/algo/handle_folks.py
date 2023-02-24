@@ -14,7 +14,7 @@ from staketaxcsv.algo.transaction import get_inner_transfer_asset, get_transfer_
 
 # For reference
 # https://github.com/Folks-Finance/folks-finance-js-sdk
-# https://docs.folks.finance/developer/contracts
+# https://v1.docs.folks.finance/developer/contracts
 
 COMMENT_FOLKS = "Folks Finance"
 

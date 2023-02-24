@@ -26,7 +26,8 @@ APPLICATION_ID_DEFLEX_ORDER_ROUTER = [
     989365103,
     956739264,
     951874839,
-    892463450
+    892463450,
+    1032513697,  # Folks Finance
 ]
 APPLICATION_ID_DEFLEX_REGISTRY = 949209670
 
@@ -58,16 +59,23 @@ def get_deflex_limit_order_apps(account):
 
 
 def _is_deflex_routed_swap(wallet_address, group):
-    if len(group) != 2:
+    length = len(group)
+    if length < 2 or length > 3:
         return False
 
     transaction = group[0]
     if not is_transfer(transaction):
         return False
-    if wallet_address != transaction["sender"]:
+
+    if not is_transaction_sender(wallet_address, transaction):
         return False
 
-    return is_app_call(group[1], APPLICATION_ID_DEFLEX_ORDER_ROUTER, DEFLEX_TRANSACTION_SWAP_FINALIZE)
+    i = 1
+    transaction = group[i]
+    if is_algo_transfer(transaction) and is_transaction_sender(wallet_address, transaction):
+        i += 1
+
+    return is_app_call(group[i], APPLICATION_ID_DEFLEX_ORDER_ROUTER, DEFLEX_TRANSACTION_SWAP_FINALIZE)
 
 
 def _is_deflex_limit_order_fill(group):
@@ -138,11 +146,16 @@ def handle_deflex_transaction(wallet_address, group, exporter, txinfo):
 def _handle_deflex_routed_swap(wallet_address, group, exporter, txinfo):
     fee_amount = get_fee_amount(wallet_address, group)
 
-    send_transaction = group[0]
-    send_asset = get_transfer_asset(send_transaction)
+    send_asset = get_transfer_asset(group[0])
 
-    app_transaction = group[1]
-    receive_asset = get_inner_transfer_asset(app_transaction,
+    i = 1
+    transaction = group[i]
+    if is_algo_transfer(transaction) and is_transaction_sender(wallet_address, transaction):
+        fee_asset = get_transfer_asset(transaction)
+        fee_amount += fee_asset.uint_amount
+        i += 1
+
+    receive_asset = get_inner_transfer_asset(group[i],
                                              filter=partial(is_transfer_receiver_non_zero_asset, wallet_address))
 
     export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_DEFLEX)

@@ -19,16 +19,18 @@ def get_transaction_txinfo(wallet_address, elem):
     return TxInfo(txid, timestamp, fee, fee.ticker, wallet_address, co.EXCHANGE_ALGORAND_BLOCKCHAIN, url)
 
 
-def get_transaction_note(transaction):
+def get_transaction_note(transaction, size=0):
     if "note" not in transaction:
         return None
 
     try:
-        note = base64.b64decode(transaction["note"]).decode("utf-8")
+        note = base64.b64decode(transaction["note"])
+        end = size or len(note)
+        text = note[:end].decode("utf-8")
     except Exception:
         return None
 
-    return note
+    return text
 
 
 def get_transfer_receiver(transaction):
