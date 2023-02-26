@@ -29,7 +29,7 @@ from staketaxcsv.algo.transaction import (
 
 APPLICATION_ID_TINYMANV2_VALIDATOR = 1002541853
 
-COMMENT_TINYMANV2 = "Tinyman v2"
+COMMENT_TINYMANV2 = "Tinyman"
 
 TINYMANV2_TRANSACTION_SWAP = "c3dhcA=="                                       # "swap"
 TINYMANV2_TRANSACTION_ADD_LIQUIDITY = "YWRkX2xpcXVpZGl0eQ=="                  # "add_liquidity"
