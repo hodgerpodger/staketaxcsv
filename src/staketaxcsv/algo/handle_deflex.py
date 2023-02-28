@@ -75,6 +75,9 @@ def _is_deflex_routed_swap(wallet_address, group):
     if is_algo_transfer(transaction) and is_transaction_sender(wallet_address, transaction):
         i += 1
 
+    if i == length:
+        return False
+
     return is_app_call(group[i], APPLICATION_ID_DEFLEX_ORDER_ROUTER, DEFLEX_TRANSACTION_SWAP_FINALIZE)
 
 
