@@ -24,13 +24,13 @@ def get_transaction_note(transaction, size=0):
         return None
 
     try:
-        note = base64.b64decode(transaction["note"])
-        end = size or len(note)
-        text = note[:end].decode("utf-8")
+        note = base64.b64decode(transaction["note"]).decode("ascii", "ignore")
     except Exception:
         return None
 
-    return text
+    end = size or len(note)
+
+    return note[:end]
 
 
 def get_transfer_receiver(transaction):
