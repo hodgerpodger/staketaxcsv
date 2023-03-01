@@ -1,4 +1,5 @@
 import base64
+import string
 import urllib.parse
 from datetime import datetime
 
@@ -25,6 +26,9 @@ def get_transaction_note(transaction, size=0):
 
     try:
         note = base64.b64decode(transaction["note"]).decode("ascii", "ignore")
+        if not note:
+            return None
+        note = "".join([s for s in note if s in string.printable])
     except Exception:
         return None
 
