@@ -227,56 +227,59 @@ class Exporter:
     def export_for_test(self):
         table = [et.TEST_ROW_FIELDS]
         table.extend([row.as_array_short() for row in self.rows])
-
         return tabulate(table)
 
-    def export_format(self, format, csvpath):
-        if format == et.FORMAT_DEFAULT:
+    def export_format(self, csvformat, csvpath):
+        if csvformat == et.FORMAT_DEFAULT:
             self.export_default_csv(csvpath)
-        elif format == et.FORMAT_BALANCES:
+        elif csvformat == et.FORMAT_BALANCES:
             self.export_balances_csv(csvpath)
-        elif format == et.FORMAT_ACCOINTING:
+        elif csvformat == et.FORMAT_ACCOINTING:
             self.export_accointing_csv(csvpath)
             xlsxpath = csvpath.replace(".csv", ".xlsx")
             self.convert_csv_to_xlsx(csvpath, xlsxpath)
             return xlsxpath
-        elif format == et.FORMAT_BITCOINTAX:
+        elif csvformat == et.FORMAT_AWAKENTAX:
+            self.export_awakentax_csv(csvpath)
+        elif csvformat == et.FORMAT_BITCOINTAX:
             self.export_bitcointax_csv(csvpath)
-        elif format == et.FORMAT_BITTYTAX:
+        elif csvformat == et.FORMAT_BITTYTAX:
             self.export_bittytax_csv(csvpath)
-        elif format == et.FORMAT_BLOCKPIT:
+        elif csvformat == et.FORMAT_BLOCKPIT:
             self.export_blockpit_csv(csvpath)
             xlsxpath = csvpath.replace(".csv", ".xlsx")
             self.convert_csv_to_xlsx(csvpath, xlsxpath)
             return xlsxpath
-        elif format == et.FORMAT_COINLEDGER:
+        elif csvformat == et.FORMAT_COINLEDGER:
             self.export_coinledger_csv(csvpath)
-        elif format == et.FORMAT_COINPANDA:
+        elif csvformat == et.FORMAT_COINPANDA:
             self.export_coinpanda_csv(csvpath)
-        elif format == et.FORMAT_COINTELLI:
+        elif csvformat == et.FORMAT_COINTELLI:
             self.export_cointelli_csv(csvpath)
-        elif format == et.FORMAT_COINTRACKING:
+        elif csvformat == et.FORMAT_COINTRACKING:
             self.export_cointracking_csv(csvpath)
-        elif format == et.FORMAT_COINTRACKER:
+        elif csvformat == et.FORMAT_COINTRACKER:
             self.export_cointracker_csv(csvpath)
-        elif format == et.FORMAT_CRYPTIO:
+        elif csvformat == et.FORMAT_CRYPTIO:
             self.export_cryptio_csv(csvpath)
-        elif format == et.FORMAT_CRYPTOCOM:
+        elif csvformat == et.FORMAT_CRYPTOCOM:
             self.export_cryptocom_csv(csvpath)
-        elif format == et.FORMAT_CRYPTOTAXCALCULATOR:
+        elif csvformat == et.FORMAT_CRYPTOTAXCALCULATOR:
             self.export_calculator_csv(csvpath)
-        elif format == et.FORMAT_CRYPTOWORTH:
+        elif csvformat == et.FORMAT_CRYPTOWORTH:
             self.export_cryptoworth_csv(csvpath)
-        elif format == et.FORMAT_KOINLY:
+        elif csvformat == et.FORMAT_KOINLY:
             self.export_koinly_csv(csvpath)
-        elif format == et.FORMAT_RECAP:
+        elif csvformat == et.FORMAT_RECAP:
             self.export_recap_csv(csvpath)
-        elif format == et.FORMAT_TAXBIT:
+        elif csvformat == et.FORMAT_TAXBIT:
             self.export_taxbit_csv(csvpath)
-        elif format == et.FORMAT_TOKENTAX:
+        elif csvformat == et.FORMAT_TOKENTAX:
             self.export_tokentax_csv(csvpath)
-        elif format == et.FORMAT_ZENLEDGER:
+        elif csvformat == et.FORMAT_ZENLEDGER:
             self.export_zenledger_csv(csvpath)
+        else:
+            raise Exception("export_format(): Unknown csvformat={}".format(csvformat))
 
         return csvpath
 
@@ -916,6 +919,10 @@ class Exporter:
         read_file.to_excel(xlsxpath, index=None, header=True)
         logging.info("Wrote to %s", xlsxpath)
 
+    def export_awakentax_csv(self, csvpath):
+        """ Writes CSV, suitable for import into awaken.tax """
+        return self.export_cointracker_csv(csvpath)
+
     def export_zenledger_csv(self, csvpath):
         """ Writes CSV, suitable for import into ZenLedger """
         zen_tx_types = {
@@ -1151,7 +1158,7 @@ class Exporter:
         logging.info("Wrote to %s", csvpath)
 
     def export_coinpanda_csv(self, csvpath):
-        """ Writes CSV, suitable for import into bitcoin.tax """
+        """ Writes CSV, suitable for import into coinpanda.io """
         labels = {
             et.TX_TYPE_AIRDROP: "Airdrop",
             et.TX_TYPE_STAKING: "Staking",
