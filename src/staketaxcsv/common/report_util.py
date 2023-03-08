@@ -5,7 +5,8 @@ import os
 
 import staketaxcsv.api
 from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS
-from staketaxcsv.settings_csv import REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL
+from staketaxcsv.settings_csv import (
+    REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL, TICKER_GENERIC)
 
 ALL = "all"
 
@@ -21,7 +22,7 @@ def run_report(ticker, wallet_address, export_format, txid, options):
         path = "{}/{}.{}.csv".format(REPORTS_DIR, txid, export_format)
         staketaxcsv.api.transaction(ticker, wallet_address, txid, export_format, path, options)
     elif export_format == ALL:
-        staketaxcsv.api.csv_all(ticker, wallet_address, REPORTS_DIR)
+        staketaxcsv.api.csv_all(ticker, wallet_address, REPORTS_DIR, options=options)
     else:
         path = "{}/{}.{}.{}.csv".format(REPORTS_DIR, ticker, wallet_address, export_format)
         staketaxcsv.api.csv(ticker, wallet_address, export_format, path, options)
@@ -113,6 +114,17 @@ def parse_args(ticker):
             default=False,
             help="Process transactions starting from the latest block in the previous run.",
         )
+    if ticker in (TICKER_GENERIC):
+        parser.add_argument(
+            "--generic_node",
+            type=str,
+            help="Full URL of LCD/RPC node (only used in report_generic_*.py)"
+        )
+        parser.add_argument(
+            "--generic_ticker",
+            type=str,
+            help="symbol of token (only used in report_generic_*.py)"
+        )
 
     args = parser.parse_args()
 
@@ -140,6 +152,10 @@ def parse_args(ticker):
         options["exclude_asas"] = args.exclude_asas
     if "track_block" in args and args.track_block:
         options["track_block"] = True
+    if "generic_node" in args:
+        options["generic_node"] = args.generic_node
+    if "generic_ticker" in args:
+        options["generic_ticker"] = args.generic_ticker
 
     return args.wallet_address, args.format, args.txid, options
 

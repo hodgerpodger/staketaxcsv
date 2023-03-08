@@ -1,5 +1,5 @@
 """
-usage: python3 report_rowan.py <walletaddress> [--format all|cointracking|koinly|..]
+usage: python3 staketaxcsv/report_rowan.py <walletaddress> [--format all|cointracking|koinly|..]
 
 Prints transactions and writes CSV(s) to _reports/ROWAN*.csv
 """

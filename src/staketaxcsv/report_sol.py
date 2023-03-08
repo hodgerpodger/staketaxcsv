@@ -1,5 +1,5 @@
 """
-usage: python3 report_sol.py <walletaddress> [--format all|cointracking|koinly|..]
+usage: python3 staketaxcsv/report_sol.py <walletaddress> [--format all|cointracking|koinly|..]
 
 Prints transactions and writes CSV(s) to _reports/SOL*.csv
 """

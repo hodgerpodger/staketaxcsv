@@ -2,8 +2,9 @@ import logging
 
 from staketaxcsv.settings_csv import (
     TICKER_ALGO, TICKER_ATOM, TICKER_BLD, TICKER_BTSG, TICKER_DVPN, TICKER_EVMOS, TICKER_FET,
-    TICKER_HUAHUA, TICKER_IOTEX, TICKER_JUNO, TICKER_KUJI, TICKER_LUNA1, TICKER_LUNA2, TICKER_MNTL,
-    TICKER_OSMO, TICKER_REGEN, TICKER_ROWAN, TICKER_SCRT, TICKER_SOL, TICKER_STARS, TICKER_TORI)
+    TICKER_GENERIC, TICKER_HUAHUA, TICKER_IOTEX, TICKER_JUNO, TICKER_KUJI, TICKER_LUNA1,
+    TICKER_LUNA2, TICKER_MNTL, TICKER_OSMO, TICKER_REGEN, TICKER_ROWAN, TICKER_SCRT,
+    TICKER_SOL, TICKER_STARS, TICKER_TORI)
 from staketaxcsv.common.ExporterTypes import FORMATS
 
 import staketaxcsv.report_algo
@@ -13,6 +14,7 @@ import staketaxcsv.report_btsg
 import staketaxcsv.report_dvpn
 import staketaxcsv.report_evmos
 import staketaxcsv.report_fet
+import staketaxcsv.report_generic_lcd
 import staketaxcsv.report_huahua
 import staketaxcsv.report_iotex
 import staketaxcsv.report_juno
@@ -36,6 +38,7 @@ REPORT_MODULES = {
     TICKER_DVPN: staketaxcsv.report_dvpn,
     TICKER_EVMOS: staketaxcsv.report_evmos,
     TICKER_FET: staketaxcsv.report_fet,
+    TICKER_GENERIC: staketaxcsv.report_generic_lcd,
     TICKER_HUAHUA: staketaxcsv.report_huahua,
     TICKER_IOTEX: staketaxcsv.report_iotex,
     TICKER_JUNO: staketaxcsv.report_juno,

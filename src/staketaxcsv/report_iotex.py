@@ -1,5 +1,5 @@
 """
-usage: python3 report_iotex.py <walletaddress> [--format all|cointracking|koinly|..]
+usage: python3 staketaxcsv/report_iotex.py <walletaddress> [--format all|cointracking|koinly|..]
 
 Prints transactions and writes CSV(s) to _reports/IOTX.<walletaddress>.<format>.csv
 """
