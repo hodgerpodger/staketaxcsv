@@ -16,13 +16,13 @@ import pprint
 
 import staketaxcsv.common.ibc.api_lcd
 import staketaxcsv.generic.processor
-from settings_csv import TICKER_GENERIC
+from staketaxcsv.settings_csv import TICKER_GENERIC
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.generic.config_generic import localconfig
 from staketaxcsv.generic.progress_generic import SECONDS_PER_PAGE, ProgressGeneric
-from common.ibc.constants import MINTSCAN_LABELS
+from staketaxcsv.common.ibc.constants import MINTSCAN_LABELS
 
 
 def main():
