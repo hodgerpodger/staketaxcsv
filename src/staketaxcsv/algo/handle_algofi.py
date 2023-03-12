@@ -23,6 +23,8 @@ from staketaxcsv.algo.transaction import (
     get_inner_transfer_asset,
     get_transfer_asset,
     is_app_call,
+    is_app_clear,
+    is_app_optin,
     is_asset_optin,
     is_transfer
 )
@@ -38,6 +40,14 @@ APPLICATION_ID_ALGOFI_NANOSWAP_MANAGER = 658336870
 APPLICATION_ID_ALGOFI_LENDING_MANAGER = 465818260
 APPLICATION_ID_ALGOFI_STABILITY_MANAGER = 705663269
 APPLICATION_ID_ALGOFI_VALGO_MARKET = 465814318
+
+
+APPLICATION_ID_ALGOFI_MANAGERS = [
+    APPLICATION_ID_ALGOFI_AMM_MANAGER,
+    APPLICATION_ID_ALGOFI_NANOSWAP_MANAGER,
+    APPLICATION_ID_ALGOFI_LENDING_MANAGER,
+    APPLICATION_ID_ALGOFI_STABILITY_MANAGER
+]
 
 # fetch market variables
 # update prices
@@ -65,6 +75,8 @@ ALGOFI_TRANSACTION_REPAY_BORROW = "cmI="            # "rb"
 ALGOFI_TRANSACTION_LIQUIDATE = "bA=="               # "l"
 
 ALGOFI_TRANSACTION_FLASH_LOAN = "Zmw="              # "fl"
+
+ALGOFI_TRANSACTION_OPT_OUT = "b28="                 # "oo"
 
 ALGOFI_TRANSACTION_SYNC_VAULT = "c3Y="              # "sv"
 
@@ -474,6 +486,37 @@ def _is_algofi_sync_vault(group):
     return APPLICATION_ID_ALGOFI_LENDING_MANAGER in foreign_apps
 
 
+def _is_algofi_manager_optin(group):
+    if len(group) != 2:
+        return False
+
+    if not is_transfer(group[0]):
+        return False
+
+    if is_asset_optin(group[0]):
+        return False
+
+    contracts = APPLICATION_ID_ALGOFI_MANAGERS
+    contracts.extend(ALGOFI_STAKING_CONTRACTS)
+    if not is_app_call(group[1], contracts):
+        return False
+
+    return is_app_optin(group[1])
+
+
+def _is_algofi_manager_optout(group):
+    if len(group) != 2:
+        return False
+
+    if not is_app_call(group[0], app_args=ALGOFI_TRANSACTION_OPT_OUT, foreign_app=APPLICATION_ID_ALGOFI_MANAGERS):
+        return False
+
+    if not is_app_call(group[1], APPLICATION_ID_ALGOFI_MANAGERS):
+        return False
+
+    return is_app_clear(group[1])
+
+
 def is_algofi_transaction(group):
     return (_is_algofi_zap(group)
                 or _is_algofi_swap(group)
@@ -486,7 +529,9 @@ def is_algofi_transaction(group):
                 or _is_algofi_remove_collateral(group)
                 or _is_algofi_liquidate(group)
                 or _is_algofi_flash_loan(group)
-                or _is_algofi_sync_vault(group))
+                or _is_algofi_sync_vault(group)
+                or _is_algofi_manager_optin(group)
+                or _is_algofi_manager_optout(group))
 
 
 def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
@@ -527,6 +572,12 @@ def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
         _handle_algofi_flash_loan(group, exporter, txinfo)
 
     elif _is_algofi_sync_vault(group):
+        pass
+
+    elif _is_algofi_manager_optin(group):
+        pass
+
+    elif _is_algofi_manager_optout(group):
         pass
 
     else:

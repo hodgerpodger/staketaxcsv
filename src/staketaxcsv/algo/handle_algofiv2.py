@@ -20,13 +20,16 @@ from staketaxcsv.algo.export_tx import (
     export_withdraw_collateral_tx,
 )
 from staketaxcsv.algo.transaction import (
+    generate_inner_transfer_assets,
     get_fee_amount,
     get_inner_transfer_asset,
     get_transfer_asset,
+    is_algo_transfer,
     is_app_call,
     is_asset_optin,
     is_transfer,
-    is_transfer_receiver
+    is_transfer_receiver,
+    is_transfer_receiver_non_zero_asset
 )
 
 # For reference
@@ -36,6 +39,7 @@ from staketaxcsv.algo.transaction import (
 COMMENT_ALGOFIV2 = "AlgoFi"
 
 APPLICATION_ID_ALGOFIV2_LENDING_MANAGER = 818176933
+APPLICATION_ID_ALGOFIV2_LENDING_POOL_MANAGER = 841165954
 APPLICATION_ID_ALGOFIV2_VALGO_MARKET = 879935316
 APPLICATION_ID_ALGOFIV2_GOVERNANCE_ADMIN = 900653388
 APPLICATION_ID_ALGOFIV2_GOVERNANCE_VOTING_ESCROW = 900653165
@@ -64,9 +68,12 @@ ALGOFIV2_TRANSACTION_INCREASE_LOCK_AMOUNT = "aWxh"          # "ila"
 
 ALGOFIV2_TRANSACTION_SWAP_STEP_1 = "c3dhcF9zdGVwXzE="       # "swap_step_1"
 ALGOFIV2_TRANSACTION_SWAP_STEP_2 = "c3dhcF9zdGVwXzI="       # "swap_step_2"
+ALGOFIV2_TRANSACTION_SWAP_STEP_3 = "c3dhcF9zdGVwXzM="       # "swap_step_3"
 ALGOFIV2_TRANSACTION_SWAP_STEP_4 = "c3dhcF9zdGVwXzQ="       # "swap_step_4"
 ALGOFIV2_TRANSACTION_SWAP_STEP_5 = "c3dhcF9zdGVwXzU="       # "swap_step_5"
 ALGOFIV2_TRANSACTION_POOL_STEP_1 = "cG9vbF9zdGVwXzE="       # "pool_step_1"
+ALGOFIV2_TRANSACTION_POOL_STEP_2 = "cG9vbF9zdGVwXzI="       # "pool_step_2"
+ALGOFIV2_TRANSACTION_POOL_STEP_3 = "cG9vbF9zdGVwXzM="       # "pool_step_3"
 ALGOFIV2_TRANSACTION_POOL_STEP_5 = "cG9vbF9zdGVwXzU="       # "pool_step_5"
 ALGOFIV2_TRANSACTION_POOL_STEP_6 = "cG9vbF9zdGVwXzY="       # "pool_step_6"
 ALGOFIV2_TRANSACTION_POOL_STEP_7 = "cG9vbF9zdGVwXzc="       # "pool_step_7"
@@ -296,8 +303,10 @@ def _is_algofiv2_lend_unstake(group):
 
 
 def _is_algofiv2_governance_optin(group):
-    length = len(group)
-    if length != 7 and length != 8:
+    if len(group) != 5:
+        return False
+
+    if not is_algo_transfer(group[0]):
         return False
 
     if not is_app_call(group[1], APPLICATION_ID_ALGOFIV2_GOVERNANCE_ADMIN, ALGOFIV2_TRANSACTION_STORAGE_OPTIN):
@@ -311,7 +320,15 @@ def _is_algofiv2_governance_optin(group):
                         foreign_app=APPLICATION_ID_ALGOFIV2_GOVERNANCE_REWARDS_MANAGER)):
         return False
 
-    if not is_app_call(group[4], APPLICATION_ID_ALGOFIV2_GOVERNANCE_REWARDS_MANAGER, ALGOFIV2_TRANSACTION_USER_OPTIN):
+    return is_app_call(group[4], APPLICATION_ID_ALGOFIV2_GOVERNANCE_REWARDS_MANAGER, ALGOFIV2_TRANSACTION_USER_OPTIN)
+
+
+def _is_algofiv2_governance_airdrop(group):
+    length = len(group)
+    if length != 7 and length != 8:
+        return False
+
+    if not _is_algofiv2_governance_optin(group[:5]):
         return False
 
     return is_app_call(group[-1], APPLICATION_ID_ALGOFIV2_GOVERNANCE_VOTING_ESCROW, ALGOFIV2_TRANSACTION_LOCK)
@@ -326,7 +343,7 @@ def _is_algofiv2_governance_increase_lock(group):
 
     return is_app_call(group[1],
                        APPLICATION_ID_ALGOFIV2_GOVERNANCE_VOTING_ESCROW,
-                       ALGOFIV2_TRANSACTION_INCREASE_LOCK_AMOUNT)
+                       [ALGOFIV2_TRANSACTION_INCREASE_LOCK_AMOUNT, ALGOFIV2_TRANSACTION_LOCK])
 
 
 def _is_algofiv2_claim_staking_rewards(group):
@@ -374,7 +391,7 @@ def _is_algofiv2_claim_lending_rewards(group):
     return True
 
 
-def _is_algofiv2_swap(group):
+def _is_algofiv2_lend_swap(group):
     length = len(group)
     if length < 5 or length > 7:
         return False
@@ -402,7 +419,36 @@ def _is_algofiv2_swap(group):
     return is_app_call(group[i + 4], ALGOFIV2_LENDING_CONTRACTS, ALGOFIV2_TRANSACTION_SWAP_STEP_5)
 
 
-def _is_algofiv2_lp_add(group):
+def _is_algofiv2_pool_swap(group):
+    length = len(group)
+    if length < 4 or length > 6:
+        return False
+
+    i = 0
+    if is_asset_optin(group[i]):
+        i += 1
+    if is_asset_optin(group[i]):
+        i += 1
+
+    if not is_transfer(group[i]):
+        return False
+
+    if not is_app_call(group[i + 1],
+                       app_args=ALGOFIV2_TRANSACTION_SWAP_STEP_1,
+                       foreign_app=APPLICATION_ID_ALGOFIV2_LENDING_MANAGER):
+        return False
+
+    if not is_app_call(group[i + 2],
+                       app_args=ALGOFIV2_TRANSACTION_SWAP_STEP_2,
+                       foreign_app=APPLICATION_ID_ALGOFIV2_LENDING_POOL_MANAGER):
+        return False
+
+    return is_app_call(group[i + 3],
+                       app_args=ALGOFIV2_TRANSACTION_SWAP_STEP_3,
+                       foreign_app=APPLICATION_ID_ALGOFIV2_LENDING_MANAGER)
+
+
+def _is_algofiv2_lend_lp_add(group):
     length = len(group)
     if length < 6 or length > 7:
         return False
@@ -431,7 +477,37 @@ def _is_algofiv2_lp_add(group):
     return is_app_call(group[i + 5], ALGOFIV2_LENDING_CONTRACTS, ALGOFIV2_TRANSACTION_POOL_STEP_7)
 
 
-def _is_algofiv2_lp_remove(group):
+def _is_algofiv2_pool_lp_add(group):
+    length = len(group)
+    if length < 5 or length > 6:
+        return False
+
+    i = 0
+    if is_asset_optin(group[i]):
+        i += 1
+
+    if not is_transfer(group[i]):
+        return False
+
+    if not is_transfer(group[i + 1]):
+        return False
+
+    if not is_app_call(group[i + 2],
+                       app_args=ALGOFIV2_TRANSACTION_POOL_STEP_1,
+                       foreign_app=APPLICATION_ID_ALGOFIV2_LENDING_MANAGER):
+        return False
+
+    if not is_app_call(group[i + 3],
+                       app_args=ALGOFIV2_TRANSACTION_POOL_STEP_2,
+                       foreign_app=APPLICATION_ID_ALGOFIV2_LENDING_POOL_MANAGER):
+        return False
+
+    return is_app_call(group[i + 4],
+                       app_args=ALGOFIV2_TRANSACTION_POOL_STEP_3,
+                       foreign_app=APPLICATION_ID_ALGOFIV2_LENDING_MANAGER)
+
+
+def _is_algofiv2_lend_lp_remove(group):
     length = len(group)
     if length < 4 or length > 6:
         return False
@@ -445,6 +521,10 @@ def _is_algofiv2_lp_remove(group):
     if not is_transfer(group[i]):
         return False
 
+    asset = get_transfer_asset(group[i])
+    if not asset.is_lp_token():
+        return False
+
     if not is_app_call(group[i + 1], ALGOFIV2_LENDING_CONTRACTS, ALGOFIV2_TRANSACTION_BURN_STEP_1):
         return False
 
@@ -456,7 +536,35 @@ def _is_algofiv2_lp_remove(group):
     return is_app_call(group[i + 3], ALGOFIV2_LENDING_CONTRACTS, ALGOFIV2_TRANSACTION_BURN_STEP_4)
 
 
-def _is_algofiv2_zap(group):
+def _is_algofiv2_pool_lp_remove(group):
+    length = len(group)
+    if length < 3 or length > 5:
+        return False
+
+    i = 0
+    if is_asset_optin(group[i]):
+        i += 1
+    if is_asset_optin(group[i]):
+        i += 1
+
+    if not is_transfer(group[i]):
+        return False
+
+    asset = get_transfer_asset(group[i])
+    if not asset.is_lp_token():
+        return False
+
+    if not is_app_call(group[i + 1],
+                       app_args=ALGOFIV2_TRANSACTION_BURN_STEP_1,
+                       foreign_app=APPLICATION_ID_ALGOFIV2_LENDING_POOL_MANAGER):
+        return False
+
+    return is_app_call(group[i + 2],
+                       app_args=ALGOFIV2_TRANSACTION_BURN_STEP_2,
+                       foreign_app=APPLICATION_ID_ALGOFIV2_LENDING_POOL_MANAGER)
+
+
+def _is_algofiv2_lend_zap(group):
     length = len(group)
     if length < 11 or length > 14:
         return False
@@ -467,11 +575,26 @@ def _is_algofiv2_zap(group):
     if is_asset_optin(group[i]):
         i += 1
 
-    return _is_algofiv2_swap(group[:i + 5]) and _is_algofiv2_lp_add(group[i + 5:])
+    return _is_algofiv2_lend_swap(group[:i + 5]) and _is_algofiv2_lend_lp_add(group[i + 5:])
+
+
+def _is_algofiv2_pool_zap(group):
+    length = len(group)
+    if length < 9 or length > 12:
+        return False
+
+    i = 0
+    if is_asset_optin(group[i]):
+        i += 1
+    if is_asset_optin(group[i]):
+        i += 1
+
+    return _is_algofiv2_pool_swap(group[:i + 4]) and _is_algofiv2_pool_lp_add(group[i + 4:])
 
 
 def is_algofiv2_transaction(group):
-    return (_is_algofiv2_swap(group)
+    return (_is_algofiv2_lend_swap(group)
+                or _is_algofiv2_pool_swap(group)
                 or _is_algofiv2_claim_staking_rewards(group)
                 or _is_algofiv2_claim_lending_rewards(group)
                 or _is_algofiv2_deposit_collateral(group)
@@ -482,18 +605,25 @@ def is_algofiv2_transaction(group):
                 or _is_algofiv2_farm_unstake(group)
                 or _is_algofiv2_lend_stake(group)
                 or _is_algofiv2_lend_unstake(group)
-                or _is_algofiv2_lp_add(group)
-                or _is_algofiv2_lp_remove(group)
-                or _is_algofiv2_zap(group)
+                or _is_algofiv2_lend_lp_add(group)
+                or _is_algofiv2_pool_lp_add(group)
+                or _is_algofiv2_lend_lp_remove(group)
+                or _is_algofiv2_pool_lp_remove(group)
+                or _is_algofiv2_lend_zap(group)
+                or _is_algofiv2_pool_zap(group)
                 or _is_algofiv2_user_optin(group)
                 or _is_algofiv2_market_optin(group)
+                or _is_algofiv2_governance_airdrop(group)
                 or _is_algofiv2_governance_optin(group)
                 or _is_algofiv2_governance_increase_lock(group))
 
 
 def handle_algofiv2_transaction(wallet_address, group, exporter, txinfo):
-    if _is_algofiv2_swap(group):
-        _handle_algofiv2_swap(wallet_address, group, exporter, txinfo)
+    if _is_algofiv2_lend_swap(group):
+        _handle_algofiv2_lend_swap(wallet_address, group, exporter, txinfo)
+
+    elif _is_algofiv2_pool_swap(group):
+        _handle_algofiv2_pool_swap(wallet_address, group, exporter, txinfo)
 
     elif _is_algofiv2_claim_staking_rewards(group):
         _handle_algofiv2_claim_staking_rewards(group, exporter, txinfo)
@@ -525,14 +655,23 @@ def handle_algofiv2_transaction(wallet_address, group, exporter, txinfo):
     elif _is_algofiv2_lend_unstake(group):
         _handle_algofiv2_lend_unstake(wallet_address, group, exporter, txinfo)
 
-    elif _is_algofiv2_lp_add(group):
-        _handle_algofiv2_lp_add(wallet_address, group, exporter, txinfo)
+    elif _is_algofiv2_lend_lp_add(group):
+        _handle_algofiv2_lend_lp_add(wallet_address, group, exporter, txinfo)
 
-    elif _is_algofiv2_lp_remove(group):
-        _handle_algofiv2_lp_remove(wallet_address, group, exporter, txinfo)
+    elif _is_algofiv2_pool_lp_add(group):
+        _handle_algofiv2_pool_lp_add(wallet_address, group, exporter, txinfo)
 
-    elif _is_algofiv2_zap(group):
-        _handle_algofiv2_zap(wallet_address, group, exporter, txinfo)
+    elif _is_algofiv2_lend_lp_remove(group):
+        _handle_algofiv2_lend_lp_remove(wallet_address, group, exporter, txinfo)
+
+    elif _is_algofiv2_pool_lp_remove(group):
+        _handle_algofiv2_pool_lp_remove(wallet_address, group, exporter, txinfo)
+
+    elif _is_algofiv2_lend_zap(group):
+        _handle_algofiv2_lend_zap(wallet_address, group, exporter, txinfo)
+
+    elif _is_algofiv2_pool_zap(group):
+        _handle_algofiv2_pool_zap(wallet_address, group, exporter, txinfo)
 
     elif _is_algofiv2_user_optin(group):
         pass
@@ -543,8 +682,11 @@ def handle_algofiv2_transaction(wallet_address, group, exporter, txinfo):
     elif _is_algofiv2_governance_increase_lock(group):
         _handle_algofiv2_governance_increase_lock(wallet_address, group, exporter, txinfo)
 
+    elif _is_algofiv2_governance_airdrop(group):
+        _handle_algofiv2_governance_airdrop(wallet_address, group, exporter, txinfo)
+
     elif _is_algofiv2_governance_optin(group):
-        _handle_algofiv2_governance_optin(wallet_address, group, exporter, txinfo)
+        pass
 
     else:
         export_unknown(exporter, txinfo)
@@ -640,7 +782,7 @@ def _handle_algofiv2_lend_unstake(wallet_address, group, exporter, txinfo):
     # export_income_tx(exporter, txinfo, receive_asset - send_asset, fee_amount, COMMENT_ALGOFIV2, 1)
 
 
-def _handle_algofiv2_governance_optin(wallet_address, group, exporter, txinfo):
+def _handle_algofiv2_governance_airdrop(wallet_address, group, exporter, txinfo):
     fee_amount = get_fee_amount(wallet_address, group)
 
     receive_transaction = group[5]
@@ -716,23 +858,18 @@ def _handle_algofiv2_claim_lending_rewards(group, exporter, txinfo):
         z_index += 1
 
 
-def _handle_algofiv2_swap(wallet_address, group, exporter, txinfo, z_index=0):
+def _handle_algofiv2_lend_swap(wallet_address, group, exporter, txinfo, z_index=0):
     fee_amount = get_fee_amount(wallet_address, group)
 
     i = 0
-    if is_asset_optin(group[i]):
+    while is_asset_optin(group[i]):
         i += 1
-    if is_asset_optin(group[i]):
-        i += 1
-    send_transaction = group[i]
-    send_asset = get_transfer_asset(send_transaction)
+    send_asset = get_transfer_asset(group[i])
 
-    receive_transaction = group[i + 3]
-    receive_asset_1 = get_inner_transfer_asset(receive_transaction,
+    receive_asset_1 = get_inner_transfer_asset(group[i + 3],
                                                filter=partial(is_transfer_receiver, wallet_address))
 
-    receive_transaction = group[i + 4]
-    receive_asset_2 = get_inner_transfer_asset(receive_transaction,
+    receive_asset_2 = get_inner_transfer_asset(group[i + 4],
                                                filter=partial(is_transfer_receiver, wallet_address))
     if receive_asset_1.id == send_asset.id:
         send_asset -= receive_asset_1
@@ -744,7 +881,33 @@ def _handle_algofiv2_swap(wallet_address, group, exporter, txinfo, z_index=0):
     export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_ALGOFIV2, z_index)
 
 
-def _handle_algofiv2_lp_add(wallet_address, group, exporter, txinfo, z_index=0):
+def _handle_algofiv2_pool_swap(wallet_address, group, exporter, txinfo, z_index=0):
+    fee_amount = get_fee_amount(wallet_address, group)
+
+    i = 0
+    while is_asset_optin(group[i]):
+        i += 1
+
+    send_asset = get_transfer_asset(group[i])
+
+    receive_assets = list(generate_inner_transfer_assets(
+        group[i + 3], filter=partial(is_transfer_receiver_non_zero_asset, wallet_address)))
+
+    if len(receive_assets) > 2:
+        export_unknown(exporter, txinfo)
+        return
+
+    receive_asset = None
+    for asset in receive_assets:
+        if asset.id == send_asset.id:
+            send_asset -= asset
+        else:
+            receive_asset = asset
+
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_ALGOFIV2, z_index)
+
+
+def _handle_algofiv2_lend_lp_add(wallet_address, group, exporter, txinfo, z_index=0):
     fee_amount = get_fee_amount(wallet_address, group)
 
     i = 0
@@ -772,13 +935,42 @@ def _handle_algofiv2_lp_add(wallet_address, group, exporter, txinfo, z_index=0):
         fee_amount, COMMENT_ALGOFIV2, z_index)
 
 
-def _handle_algofiv2_lp_remove(wallet_address, group, exporter, txinfo):
+def _handle_algofiv2_pool_lp_add(wallet_address, group, exporter, txinfo, z_index=0):
     fee_amount = get_fee_amount(wallet_address, group)
 
     i = 0
     if is_asset_optin(group[i]):
         i += 1
-    if is_asset_optin(group[i]):
+
+    send_asset_1 = get_transfer_asset(group[i])
+    send_asset_2 = get_transfer_asset(group[i + 1])
+
+    lp_asset = get_inner_transfer_asset(group[i + 3], filter=partial(is_transfer_receiver, wallet_address))
+
+    redeem_assets = list(generate_inner_transfer_assets(
+        group[i + 4], filter=partial(is_transfer_receiver_non_zero_asset, wallet_address)))
+
+    if len(redeem_assets) > 2:
+        export_unknown(exporter, txinfo)
+        return
+
+    for asset in redeem_assets:
+        if asset.id == send_asset_1.id:
+            send_asset_1 -= asset
+        elif asset.id == send_asset_2.id:
+            send_asset_2 -= asset
+
+    export_lp_deposit_tx(
+        exporter, txinfo,
+        send_asset_1, send_asset_2, lp_asset,
+        fee_amount, COMMENT_ALGOFIV2, z_index)
+
+
+def _handle_algofiv2_lend_lp_remove(wallet_address, group, exporter, txinfo):
+    fee_amount = get_fee_amount(wallet_address, group)
+
+    i = 0
+    while is_asset_optin(group[i]):
         i += 1
 
     lp_asset = get_transfer_asset(group[i])
@@ -793,12 +985,40 @@ def _handle_algofiv2_lp_remove(wallet_address, group, exporter, txinfo):
         fee_amount, COMMENT_ALGOFIV2)
 
 
-def _handle_algofiv2_zap(wallet_address, group, exporter, txinfo):
+def _handle_algofiv2_pool_lp_remove(wallet_address, group, exporter, txinfo):
+    fee_amount = get_fee_amount(wallet_address, group)
+
     i = 0
-    if is_asset_optin(group[i]):
-        i += 1
-    if is_asset_optin(group[i]):
+    while is_asset_optin(group[i]):
         i += 1
 
-    _handle_algofiv2_swap(wallet_address, group[:i + 5], exporter, txinfo, 0)
-    _handle_algofiv2_lp_add(wallet_address, group[i + 5:], exporter, txinfo, 1)
+    lp_asset = get_transfer_asset(group[i])
+
+    receive_assets = list(generate_inner_transfer_assets(group[i + 2],
+                                                         filter=partial(is_transfer_receiver, wallet_address)))
+    if len(receive_assets) != 2:
+        export_unknown(exporter, txinfo)
+        return
+
+    export_lp_withdraw_tx(
+        exporter, txinfo,
+        lp_asset, receive_assets[0], receive_assets[1],
+        fee_amount, COMMENT_ALGOFIV2)
+
+
+def _handle_algofiv2_lend_zap(wallet_address, group, exporter, txinfo):
+    i = 0
+    while is_asset_optin(group[i]):
+        i += 1
+
+    _handle_algofiv2_lend_swap(wallet_address, group[:i + 5], exporter, txinfo, 0)
+    _handle_algofiv2_lend_lp_add(wallet_address, group[i + 5:], exporter, txinfo, 1)
+
+
+def _handle_algofiv2_pool_zap(wallet_address, group, exporter, txinfo):
+    i = 0
+    while is_asset_optin(group[i]):
+        i += 1
+
+    _handle_algofiv2_pool_swap(wallet_address, group[:i + 4], exporter, txinfo, 0)
+    _handle_algofiv2_pool_lp_add(wallet_address, group[i + 4:], exporter, txinfo, 1)
