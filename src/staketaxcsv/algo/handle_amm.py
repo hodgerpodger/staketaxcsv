@@ -44,6 +44,10 @@ def is_swap_group(wallet_address, group):
         if is_asset_optin(transaction):
             return False
 
+        asset = get_transfer_asset(transaction)
+        if asset.is_lp_token():
+            return False
+
         i += 1
         if i == length:
             return get_transfer_receiver(transaction) == co.ADDRESS_PERA

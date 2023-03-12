@@ -12,11 +12,7 @@ from staketaxcsv.algo.handle_algofiv2 import handle_algofiv2_transaction, is_alg
 from staketaxcsv.algo.handle_amm import handle_swap, is_swap_group
 from staketaxcsv.algo.handle_deflex import handle_deflex_transaction, is_deflex_transaction
 from staketaxcsv.algo.handle_folks import (
-    handle_folks_galgo_early_claim_transaction,
-    handle_folks_reward_claim_transaction,
     handle_folks_transaction,
-    is_folks_galgo_early_claim_transaction,
-    is_folks_reward_claim_transaction,
     is_folks_transaction,
 )
 from staketaxcsv.algo.handle_folksv2 import handle_folksv2_transaction, is_folksv2_transaction
@@ -121,9 +117,6 @@ def handle_transaction_group(wallet_address, group, exporter, txinfo):
         handle_swap(wallet_address, group, exporter, txinfo)
 
     else:
-        if localconfig.debug:
-            if has_app_transactions(group):
-                txinfo.comment = "Unknown App"
-            else:
-                txinfo.comment = "Unknown Group"
+        if localconfig.debug and has_app_transactions(group):
+            txinfo.comment = "Unknown App"
         handle_transfer_transactions(wallet_address, group, exporter, txinfo)
