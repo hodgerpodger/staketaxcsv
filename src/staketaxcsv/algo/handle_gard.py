@@ -48,6 +48,9 @@ def _is_gard_new_cdp_transaction(group):
 
 
 def _is_gard_close_cdp_transaction(wallet_address, group):
+    if len(group) != 2:
+        return False
+
     transaction = group[0]
     asset = get_transfer_asset(transaction)
     if asset is None or asset.id != ASSET_ID_GARD:
@@ -67,6 +70,9 @@ def _is_gard_close_cdp_transaction(wallet_address, group):
 
 
 def _is_gard_add_to_cdp_transaction(wallet_address, group):
+    if len(group) != 2:
+        return False
+
     transaction = group[0]
     asset = get_transfer_asset(transaction)
     if asset is None or asset.id != co.ASSET_ID_ALGO:

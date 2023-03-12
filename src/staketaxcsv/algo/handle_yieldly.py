@@ -7,7 +7,7 @@ from staketaxcsv.algo.export_tx import (
     export_unknown,
     export_unstake_tx
 )
-from staketaxcsv.algo.transaction import get_inner_transfer_asset, get_transfer_asset
+from staketaxcsv.algo.transaction import get_inner_transfer_asset, get_transfer_asset, is_app_call
 
 APPLICATION_ID_YIELDLY = 233725848
 APPLICATION_ID_YIELDLY_NLL = 233725844
@@ -41,6 +41,7 @@ YIELDLY_APPLICATIONS = [
     593270704,  # APPLICATION_ID_YIELDLY_YLDY_TINY_POOL
     593289960,  # APPLICATION_ID_YIELDLY_YLDY_TREES_POOL
     596950925,  # APPLICATION_ID_YIELDLY_YLDY_HDL_POOL
+    596947890,  # APPLICATION_ID_YIELDLY_HDL_HDL_POOL
     593324268,  # APPLICATION_ID_YIELDLY_YLDY_BLOCK_POOL
     604219363,  # APPLICATION_ID_YIELDLY_YLDY_RIO_POOL
     604373501,  # APPLICATION_ID_YIELDLY_YLDY_AO_POOL
@@ -129,12 +130,24 @@ YIELDLY_TRANSACTION_POOL_BAIL = "YmFpbA=="      # "bail"
 YIELDLY_TRANSACTION_POOL_CLAIM_T5 = "Y2xhaW0="  # "claim"
 YIELDLY_TRANSACTION_POOL_STAKE_T5 = "c3Rha2U="  # "stake"
 YIELDLY_TRANSACTION_POOL_WITHDRAW_T5 = "d2l0aGRyYXc="  # "withdraw"
+YIELDLY_TRANSACTION_POOL_WITHDRAW_ALL_T5 = "d2l0aGRyYXdfYWxs"  # "withdraw_all"
 YIELDLY_TRANSACTION_POOL_STAKE = "Uw=="         # "S"
 YIELDLY_TRANSACTION_POOL_WITHDRAW = "Vw=="      # "W"
 YIELDLY_TRANSACTION_POOL_DEPOSIT = "RA=="       # "D"
 
 
+def _is_yieldly_withdraw_all(group):
+    if len(group) != 1:
+        return False
+
+    return is_app_call(group[0], YIELDLY_APPLICATIONS, YIELDLY_TRANSACTION_POOL_WITHDRAW_ALL_T5)
+
+
 def is_yieldly_transaction(group):
+    if _is_yieldly_withdraw_all(group):
+        return True
+
+    # TODO clean up transaction check
     length = len(group)
     if length < 2 or length > 6:
         return False
@@ -154,6 +167,9 @@ def handle_yieldly_transaction(group, exporter, txinfo):
     init_transaction = group[0]
     reward = Algo(init_transaction["sender-rewards"])
     export_participation_rewards(reward, exporter, txinfo)
+
+    if _is_yieldly_withdraw_all(group):
+        return _handle_yieldly_t5_pool_withdraw(group, exporter, txinfo)
 
     app_transaction = group[1]
     txtype = app_transaction["tx-type"]
