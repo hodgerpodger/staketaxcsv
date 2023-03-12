@@ -112,6 +112,16 @@ def get_transfer_close_to_asset(transaction, asset_map={}):
     return Asset(asset_map.get(asset_id, asset_id), amount)
 
 
+def generate_inner_transfer_assets(transaction, asset_map={}, filter=None):
+    inner_transactions = transaction.get("inner-txns", [])
+    for tx in inner_transactions:
+        if is_transfer(tx):
+            if filter is None or filter(tx):
+                yield get_transfer_asset(tx, asset_map)
+        elif is_app_call(tx):
+            generate_inner_transfer_assets(tx, asset_map, filter)
+
+
 def get_inner_transfer_asset(transaction, asset_map={}, filter=None):
     inner_transactions = transaction.get("inner-txns", [])
     for tx in inner_transactions:
@@ -193,6 +203,20 @@ def is_app_call(transaction, app_id=None, app_args=None, foreign_app=None):
         return False
 
     return True
+
+
+def is_app_optin(transaction):
+    if transaction["tx-type"] != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    return transaction[co.TRANSACTION_KEY_APP_CALL].get("on-completion") == "optin"
+
+
+def is_app_clear(transaction):
+    if transaction["tx-type"] != co.TRANSACTION_TYPE_APP_CALL:
+        return False
+
+    return transaction[co.TRANSACTION_KEY_APP_CALL].get("on-completion") == "clear"
 
 
 def get_fee_amount(wallet_address, group):
