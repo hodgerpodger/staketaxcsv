@@ -1,4 +1,6 @@
 import logging
+import os.path
+from tempfile import gettempdir
 
 from staketaxcsv.settings_csv import (
     TICKER_ALGO, TICKER_ATOM, TICKER_BLD, TICKER_BTSG, TICKER_DVPN, TICKER_EVMOS, TICKER_FET,
@@ -87,7 +89,7 @@ def csv(ticker, wallet_address, csv_format, path=None, options=None, logs=True):
     :params logs: (optional) show logging.  Defaults to True.
 
     """
-    path = path if path else "/tmp/{}.{}.{}.csv".format(ticker, wallet_address, csv_format)
+    path = path if path else os.path.join(gettempdir(), "{}.{}.{}.csv".format(ticker, wallet_address, csv_format))
     options = options if options else {}
     if logs:
         logging.basicConfig(level=logging.INFO)
@@ -104,6 +106,8 @@ def csv(ticker, wallet_address, csv_format, path=None, options=None, logs=True):
 
     # Write CSV
     exporter.export_format(csv_format, path)
+
+    return path
 
 
 def csv_all(ticker, wallet_address, dirpath=None, options=None, logs=True):
