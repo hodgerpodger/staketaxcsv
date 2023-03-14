@@ -14,18 +14,18 @@ ALL = "all"
 def main_default(ticker):
     wallet_address, export_format, txid, options = parse_args(ticker)
 
-    run_report(ticker, wallet_address, export_format, txid, options)
+    return run_report(ticker, wallet_address, export_format, txid, options)
 
 
 def run_report(ticker, wallet_address, export_format, txid, options):
     if txid:
         path = "{}/{}.{}.csv".format(REPORTS_DIR, txid, export_format)
-        staketaxcsv.api.transaction(ticker, wallet_address, txid, export_format, path, options)
+        return staketaxcsv.api.transaction(ticker, wallet_address, txid, export_format, path, options)
     elif export_format == ALL:
-        staketaxcsv.api.csv_all(ticker, wallet_address, REPORTS_DIR, options=options)
+        return staketaxcsv.api.csv_all(ticker, wallet_address, REPORTS_DIR, options=options)
     else:
-        path = "{}/{}.{}.{}.csv".format(REPORTS_DIR, ticker, wallet_address, export_format)
-        staketaxcsv.api.csv(ticker, wallet_address, export_format, path, options)
+        path = None #"{}/{}.{}.{}.csv".format(REPORTS_DIR, ticker, wallet_address, export_format)
+        return staketaxcsv.api.csv(ticker, wallet_address, export_format, path, options)
 
 
 def parse_args(ticker):
