@@ -15,7 +15,7 @@ class Tickers:
     def _load(cls):
         if cls.loaded is False:
             logging.info("Loading {}".format(PATH_JSON))
-            with open(PATH_JSON) as f:
+            with open(PATH_JSON, encoding='utf-8') as f:
                 data = json.load(f)
                 for info in data["tokens"]:
                     address = info["address"]

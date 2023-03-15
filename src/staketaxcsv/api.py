@@ -100,9 +100,9 @@ def csv(ticker, wallet_address, csv_format, path=None, options=None, logs=True):
     exporter = module.txhistory(wallet_address)
     exporter.sort_rows()
 
-    # Print transactions table to console
-    if logs:
-        exporter.export_print()
+    # # Print transactions table to console
+    # if logs:
+    #     exporter.export_print()
 
     # Write CSV
     exporter.export_format(csv_format, path)
