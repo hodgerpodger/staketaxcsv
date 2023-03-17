@@ -46,7 +46,7 @@ def account_exists(wallet_address):
 def _get_txs(wallet_address, is_sender, offset, sleep_seconds):
     uri_path = "/cosmos/tx/v1beta1/txs"
     query_params = {
-        "order_by": "2",
+        "order_by": 2,
         "pagination.limit": LIMIT_PER_QUERY,
         "pagination.offset": offset,
         "pagination.count_total": True,

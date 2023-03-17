@@ -38,7 +38,7 @@ class LcdAPI:
     def _get_txs(cls, wallet_address, events_type, offset, limit, sleep_seconds):
         uri_path = "/cosmos/tx/v1beta1/txs"
         query_params = {
-            "order_by": "2",
+            "order_by": 2,
             "pagination.limit": limit,
             "pagination.offset": offset,
             "pagination.count_total": True,
