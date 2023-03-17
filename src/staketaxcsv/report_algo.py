@@ -150,8 +150,8 @@ def _get_txs(wallet_address, account, progress):
     out = _get_address_transactions(wallet_address)
     # Reverse the list so transactions are in chronological order
     out.reverse()
-    if len(out) > 0:
-        localconfig.min_round = out[-1]["confirmed-round"] + 1
+    # if len(out) > 0:
+    #     localconfig.min_round = out[-1]["confirmed-round"] + 1
 
     storage_address = localconfig.algofi_storage_address
     if storage_address is not None:
