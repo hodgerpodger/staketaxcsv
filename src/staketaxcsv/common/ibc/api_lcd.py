@@ -57,7 +57,7 @@ class LcdAPI:
             "pagination.limit": limit,
             "pagination.offset": offset,
             "pagination.count_total": True,
-            "order_by": "ORDER_BY_DESC",
+            "order_by": "2",
         }
 
         if events_type == EVENTS_TYPE_SENDER:
