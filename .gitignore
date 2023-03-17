@@ -19,3 +19,4 @@ koinly_null_map.json
 build/*
 dist/*
 staketaxcsv.egg-info/*
+webapp/__pycache__/*

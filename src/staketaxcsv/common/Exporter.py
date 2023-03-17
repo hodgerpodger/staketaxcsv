@@ -5,13 +5,13 @@ import time
 import json
 from datetime import datetime
 
-import pandas as pd
+#import pandas as pd
 import pytz
 from pytz import timezone
 from staketaxcsv.common import ExporterTypes as et
 from staketaxcsv.common.exporter_koinly import NullMap
 from staketaxcsv.settings_csv import TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TICKER_LUNA2
-from tabulate import tabulate
+#from tabulate import tabulate
 
 
 class Row:
