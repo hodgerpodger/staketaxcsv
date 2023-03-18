@@ -36,7 +36,7 @@ def _is_humbleswap_amm_transaction(group):
         return False
 
     note = get_transaction_note(transaction)
-    if note is None:
+    if not note:
         return False
 
     if not reach_pattern.match(note):
@@ -56,7 +56,7 @@ def _is_humbleswap_farm_transaction(group):
         return False
 
     note = get_transaction_note(transaction)
-    if note is None:
+    if not note:
         return False
 
     if not reach_pattern.match(note):
