@@ -2,7 +2,7 @@ import logging
 
 import staketaxcsv.common.ibc.handle
 import staketaxcsv.common.ibc.processor
-from staketaxcsv.generic.config_generic import localconfig
+from staketaxcsv.cosmosplus.config_cosmosplus import localconfig
 
 
 def process_txs(wallet_address, elems, exporter):
