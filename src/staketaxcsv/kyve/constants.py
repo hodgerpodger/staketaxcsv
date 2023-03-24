@@ -1,1 +1,1 @@
-MINTSCAN_LABEL_BLD = "bld"
+MINTSCAN_LABEL_KYVE = "kyve"

@@ -1,10 +1,10 @@
 import logging
 
-import staketaxcsv.bld.constants as co
+import staketaxcsv.kyve.constants as co
 import staketaxcsv.common.ibc.handle
 import staketaxcsv.common.ibc.processor
-from staketaxcsv.bld.config_bld import localconfig
-from staketaxcsv.settings_csv import BLD_NODE
+from staketaxcsv.kyve.config_kyve import localconfig
+from staketaxcsv.settings_csv import KYVE_NODE
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -14,7 +14,7 @@ def process_txs(wallet_address, elems, exporter):
 
 def process_tx(wallet_address, elem, exporter):
     txinfo = staketaxcsv.common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_BLD, localconfig.ibc_addresses, BLD_NODE)
+        wallet_address, elem, co.MINTSCAN_LABEL_KYVE, localconfig.ibc_addresses, KYVE_NODE)
     txinfo.url = "https://agoric.bigdipper.live/transactions/{}".format(txinfo.txid)
 
     if txinfo.is_failed:

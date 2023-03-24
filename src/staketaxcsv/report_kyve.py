@@ -7,18 +7,18 @@ Prints transactions and writes CSV(s) to _reports/BLD*.csv
 import logging
 import pprint
 
-import staketaxcsv.bld.processor
+import staketaxcsv.kyve.processor
 import staketaxcsv.common.ibc.api_lcd
-from staketaxcsv.bld.config_bld import localconfig
-from staketaxcsv.bld.progress_bld import SECONDS_PER_PAGE, ProgressBld
+from staketaxcsv.kyve.config_kyve import localconfig
+from staketaxcsv.kyve.progress_kyve import SECONDS_PER_PAGE, ProgressKYVE
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.settings_csv import BLD_NODE, TICKER_BLD
+from staketaxcsv.settings_csv import KYVE_NODE, TICKER_KYVE
 
 
 def main():
-    report_util.main_default(TICKER_BLD)
+    report_util.main_default(TICKER_KYVE)
 
 
 def read_options(options):
@@ -27,24 +27,24 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd.LcdAPI(BLD_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd.LcdAPI(KYVE_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(BLD_NODE).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(KYVE_NODE).get_tx(txid)
 
     print("Transaction data:")
     pprint.pprint(elem)
 
-    exporter = Exporter(wallet_address, localconfig, TICKER_BLD)
-    txinfo = staketaxcsv.bld.processor.process_tx(wallet_address, elem, exporter)
+    exporter = Exporter(wallet_address, localconfig, TICKER_KYVE)
+    txinfo = staketaxcsv.kyve.processor.process_tx(wallet_address, elem, exporter)
     txinfo.print()
     return exporter
 
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(BLD_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(KYVE_NODE, wallet_address, max_txs)
 
 
 def txhistory(wallet_address):
@@ -54,18 +54,20 @@ def txhistory(wallet_address):
         logging.info("Loaded ibc_addresses from cache ...")
 
     max_txs = localconfig.limit
-    progress = ProgressBld()
-    exporter = Exporter(wallet_address, localconfig, TICKER_BLD)
+    progress = ProgressKYVE()
+    exporter = Exporter(wallet_address, localconfig, TICKER_KYVE)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(BLD_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(KYVE_NODE, wallet_address, max_txs,
+                                                                     debug=localconfig.debug)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = staketaxcsv.common.ibc.api_lcd.get_txs_all(BLD_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
+    elems = staketaxcsv.common.ibc.api_lcd.get_txs_all(KYVE_NODE, wallet_address, progress, max_txs,
+                                                       debug=localconfig.debug)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
-    staketaxcsv.bld.processor.process_txs(wallet_address, elems, exporter)
+    staketaxcsv.kyve.processor.process_txs(wallet_address, elems, exporter)
 
     if localconfig.cache:
         Cache().set_ibc_addresses(localconfig.ibc_addresses)
