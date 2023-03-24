@@ -57,7 +57,7 @@ class LcdAPI:
             "pagination.limit": limit,
             "pagination.offset": offset,
             "pagination.count_total": True,
-            "order_by": "ORDER_BY_DESC",
+            "order_by": "2",
         }
 
         if events_type == EVENTS_TYPE_SENDER:
@@ -83,7 +83,7 @@ class LcdAPI:
         elems = data["tx_responses"]
         next_offset = offset + limit if len(elems) == limit else None
 
-        if wallet_address.startswith("evmos"):
+        if data["pagination"] is None:
             total_count_txs = int(data["total"])
         else:
             total_count_txs = int(data["pagination"]["total"])
