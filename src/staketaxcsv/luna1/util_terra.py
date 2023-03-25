@@ -56,7 +56,7 @@ def _execute_msgs_keys(elem):
 def _execute_msg(elem, index=0):
     msg = _execute_msg_field(elem, index)
     if "ledger_proxy" in msg and "msg" in msg["ledger_proxy"]:
-        return msg["ledger_proxy"]["msg"]
+        return json.loads(msg["ledger_proxy"]["msg"])
     return msg
 
 

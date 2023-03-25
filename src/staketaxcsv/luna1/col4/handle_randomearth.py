@@ -30,9 +30,8 @@ def handle_randomearth(exporter, elem, txinfo):
         if len(execute_msgs_keys) == 2 and execute_msgs_keys[1] == ex.EXECUTE_TYPE_TRANSFER_NFT:
             handle_transfer_nft(exporter, elem, txinfo, 1)
         return
-    elif execute_type == ex.EXECUTE_TYPE_DEPOSIT:
+    elif execute_type in [ex.EXECUTE_TYPE_DEPOSIT, ex.EXECUTE_TYPE_POST_ORDER]:
         return handle_post_order(exporter, elem, txinfo)
-
     elif execute_type == ex.EXECUTE_TYPE_CANCEL_ORDER:
         return handle_cancel_order(exporter, elem, txinfo)
     else:
