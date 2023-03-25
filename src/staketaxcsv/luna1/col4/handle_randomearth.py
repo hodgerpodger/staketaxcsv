@@ -25,11 +25,13 @@ def handle_randomearth(exporter, elem, txinfo):
 
     if ex.EXECUTE_TYPE_EXECUTE_ORDER in execute_msgs_keys:
         return handle_execute_order(exporter, elem, txinfo)
-    elif execute_type == ex.EXECUTE_TYPE_WITHDRAW:
+    elif execute_type in ex.EXECUTE_TYPE_WITHDRAW:
         handle_withdraw(exporter, elem, txinfo)
         if len(execute_msgs_keys) == 2 and execute_msgs_keys[1] == ex.EXECUTE_TYPE_TRANSFER_NFT:
             handle_transfer_nft(exporter, elem, txinfo, 1)
         return
+    elif execute_type == ex.EXECUTE_TYPE_WITHDRAW_NFT:
+        handle_withdraw_nft(exporter, elem, txinfo)
     elif execute_type in [ex.EXECUTE_TYPE_DEPOSIT, ex.EXECUTE_TYPE_POST_ORDER]:
         return handle_post_order(exporter, elem, txinfo)
     elif execute_type == ex.EXECUTE_TYPE_CANCEL_ORDER:
@@ -344,6 +346,20 @@ def handle_withdraw(exporter, elem, txinfo, index=0):
         asset = execute_msg["withdraw"]["asset"]
         received_amount, received_currency = _parse_asset(asset)
         row = make_nft_withdraw(txinfo, received_amount, received_currency)
+        exporter.ingest_row(row)
+
+def handle_withdraw_nft(exporter, elem, txinfo, index=0):
+    """ withdraw nft or sell proceeds from randomearth.io """
+    wallet_address = txinfo.wallet_address
+    execute_msg = util_terra._execute_msg(elem)
+
+    # Check if wallet is sender (can be receiver of later transfer_nft msg)
+    sender = elem["tx"]["value"]["msg"][index]["value"]["sender"]
+    from_contract = elem["logs"][0]["events_by_type"]["from_contract"]
+    if sender == wallet_address:
+        nft_contract_addr = from_contract["contract_address"][1]
+        nft_id = execute_msg["withdraw_nft"]["token_id"]
+        row = make_nft_withdraw(txinfo, 1, "{}_{}".format(nft_contract_addr, nft_id))
         exporter.ingest_row(row)
 
 
