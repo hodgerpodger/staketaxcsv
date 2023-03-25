@@ -1,10 +1,11 @@
-from staketaxcsv.common.make_tx import make_airdrop_tx, make_swap_tx
+from staketaxcsv.common.make_tx import make_airdrop_tx, make_swap_tx, make_income_tx, make_lp_unstake_tx
 from staketaxcsv.luna1 import constants as co
 from staketaxcsv.luna1 import util_terra
 from staketaxcsv.luna1.col5.contracts.config import CONTRACTS
 from staketaxcsv.luna1.constants import CUR_ASTRO
 
 CONTRACT_ASTROPORT_AIRDROP = "terra1dpe2aqykm2vnakcz4vgpha0agxnlkjvgfahhk7"
+CONTRACT_ASTROPORT_LOCKDROP = "terra1tvld5k6pus2yh7pcu7xuwyjedn7mjxfkkkjjap"
 
 CURRENCY_ADDRESS_ASTRO = "terra1xj49zyqrwpv5k928jwfpfy2ha668nwdgkwlrg3"
 CURRENCY_ADDRESS_XASTRO = "terra14lpnyzc9z4g3ugr4lhm8s4nle0tq8vcltkhzh7"
@@ -60,6 +61,24 @@ def _is_astroport_swap(msgs):
                 return True
     return False
 
+
+def handle_astro_lockdrop(elem, txinfo):
+    txid = txinfo.txid
+    msgs = txinfo.msgs
+    txinfo.comment = "ASTRO lockdrop claim"
+    rows = []
+
+    transfers_in, _ = util_terra._transfers_from_actions(msgs[0], txinfo.wallet_address)
+    for amount, currency in transfers_in:
+        currency = util_terra._asset_to_currency(currency, txid)
+        amount = util_terra._float_amount(amount, currency)
+
+        if currency == CUR_ASTRO:
+            rows.append(make_income_tx(txinfo, amount, currency))
+        else:
+            rows.append(make_lp_unstake_tx(txinfo, amount, currency))
+
+    return rows
 
 def _handle_astroport_swap(elem, txinfo, msgs):
     txid = txinfo.txid
@@ -145,3 +164,7 @@ CONTRACTS[CURRENCY_ADDRESS_ASTRO] = handle_astro
 
 # unstake ASTRO
 CONTRACTS[CURRENCY_ADDRESS_XASTRO] = handle_xastro
+
+# Astroport Lockdrop
+CONTRACTS[CONTRACT_ASTROPORT_LOCKDROP] = handle_astro_lockdrop
+

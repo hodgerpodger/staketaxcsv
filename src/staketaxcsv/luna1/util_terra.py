@@ -122,6 +122,23 @@ def _transfers(elem, wallet_address, txid, multicurrency=False):
 
     return transfers_in, transfers_out
 
+def _transfers_from_actions(msg, wallet_address, multicurrency=False):
+    transfers_in = []
+    transfers_out = []
+
+    for action in msg.actions:
+        if "action" in action and action["action"] == "transfer":
+            currency = action["contract_address"]
+            amount = action["amount"]
+            recipient = action["to"]
+            sender = action["from"]
+
+            if recipient == wallet_address:
+                transfers_in.append([amount, currency])
+            elif sender == wallet_address:
+                transfers_out.append([amount, currency])
+
+    return transfers_in, transfers_out
 
 def _transfers_log(log, wallet_address, multicurrency=False):
     transfers_in = []
