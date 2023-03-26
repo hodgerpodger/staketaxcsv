@@ -10,6 +10,7 @@ from staketaxcsv.common.ExporterTypes import (
 EDGE_CONTRACT = "terra13zggcrrf5cytnsmv33uwrtf56c258vqrhckkj6"
 
 def handle_edge_repay(elem, txinfo):
+    print("HERE")
     txid = txinfo.txid
     txinfo.comment = "EDGE repay"
     rows = []

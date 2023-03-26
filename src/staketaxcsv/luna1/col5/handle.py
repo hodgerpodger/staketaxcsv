@@ -4,6 +4,8 @@ from staketaxcsv.common import make_tx
 
 # These imports add to CONTRACTS dict
 import staketaxcsv.luna1.col5.contracts.astroport
+import staketaxcsv.luna1.col5.contracts.edge
+import staketaxcsv.luna1.col5.contracts.mars
 import staketaxcsv.luna1.col5.contracts.pylon
 import staketaxcsv.luna1.col5.contracts.wormhole
 import staketaxcsv.luna1.col5.contracts.terraswap_route_swap
@@ -11,18 +13,25 @@ import staketaxcsv.luna1.col5.contracts.terraswap_route_swap
 
 def can_handle(exporter, elem, txinfo):
     # Has wasm event in every message
-    for log in elem["logs"]:
-        if "wasm" not in log["events_by_type"] and log["events_by_type"]["message"]["module"] != ["wasm"]:
-            return False
+    if "logs" in elem:
+      for log in elem["logs"]:
+          if "wasm" not in log["events_by_type"] and log["events_by_type"]["message"]["module"] != ["wasm"]:
+              return False
 
-    contract = util_terra._contract(elem, 0)
-    return contract in CONTRACTS
+    # TODO: REMOVE?
+    # contract = util_terra._contract(elem, 0)
+    return util_terra._any_contracts(CONTRACTS, elem)
 
 
-def handle(exporter, elem, txinfo):
+def handle(exporter, elem, txinfo, index = 0):
     # Lookup handler function from luna1.col5.contracts.*
-    contract = util_terra._contract(elem, 0)
-    handler_func = CONTRACTS[contract]
+    try:
+      contract = util_terra._contract(elem, index)
+      handler_func = CONTRACTS[contract]
+    except:
+      print("First contract not found in CONTRACTS dict. Trying next contract".format(txinfo.txid))
+      handle(exporter, elem, txinfo, index + 1)
+      return
 
     # Parse transaction data
     rows = handler_func(elem, txinfo)
