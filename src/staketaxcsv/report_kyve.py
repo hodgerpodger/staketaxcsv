@@ -8,7 +8,7 @@ import logging
 import pprint
 
 import staketaxcsv.kyve.processor
-import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd_v2
 from staketaxcsv.kyve.config_kyve import localconfig
 from staketaxcsv.kyve.progress_kyve import SECONDS_PER_PAGE, ProgressKYVE
 from staketaxcsv.common import report_util
@@ -27,11 +27,11 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd.LcdAPI(KYVE_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd_v2.LcdAPI(KYVE_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(KYVE_NODE).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd_v2.LcdAPI(KYVE_NODE).get_tx(txid)
 
     print("Transaction data:")
     pprint.pprint(elem)
@@ -44,7 +44,7 @@ def txone(wallet_address, txid):
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(KYVE_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v2.get_txs_pages_count(KYVE_NODE, wallet_address, max_txs)
 
 
 def txhistory(wallet_address):
@@ -58,12 +58,12 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_KYVE)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(KYVE_NODE, wallet_address, max_txs,
+    count_pages = staketaxcsv.common.ibc.api_lcd_v2.get_txs_pages_count(KYVE_NODE, wallet_address, max_txs,
                                                                      debug=localconfig.debug)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = staketaxcsv.common.ibc.api_lcd.get_txs_all(KYVE_NODE, wallet_address, progress, max_txs,
+    elems = staketaxcsv.common.ibc.api_lcd_v2.get_txs_all(KYVE_NODE, wallet_address, progress, max_txs,
                                                        debug=localconfig.debug)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
