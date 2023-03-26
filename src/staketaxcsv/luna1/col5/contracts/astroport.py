@@ -65,7 +65,6 @@ def _is_astroport_swap(msgs):
 
 def _handle_astro_claim_msg(msg, txinfo):
     txid = txinfo.txid
-    txinfo.comment = "ASTRO claim"
     rows = []
 
     transfers_in, _ = util_terra._transfers_from_actions(msg, txinfo.wallet_address)
@@ -73,7 +72,10 @@ def _handle_astro_claim_msg(msg, txinfo):
     for amount, currency in transfers_in:
         currency = util_terra._asset_to_currency(currency, txid)
         amount = util_terra._float_amount(amount, currency)
-        rows.append(make_income_tx(txinfo, amount, currency))
+        if "LP" in str(currency):
+            rows.append(make_lp_unstake_tx(txinfo, amount, currency))  
+        else:
+            rows.append(make_income_tx(txinfo, amount, currency))
     
     return rows
 
