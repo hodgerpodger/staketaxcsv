@@ -174,7 +174,7 @@ def _handle_deflex_limit_order_fill(wallet_address, group, exporter, txinfo):
     if not full_group:
         return export_unknown(exporter, txinfo)
 
-    transaction = next((tx for tx in full_group 
+    transaction = next((tx for tx in full_group
         if is_app_call(tx, localconfig.deflex_limit_order_apps, DEFLEX_TRANSACTION_FILL_ORDER_INIT)), None)
     if transaction is None:
         return export_unknown(exporter, txinfo)

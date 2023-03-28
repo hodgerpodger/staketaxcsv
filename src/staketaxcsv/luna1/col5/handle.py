@@ -9,7 +9,6 @@ import staketaxcsv.luna1.col5.contracts.wormhole
 import staketaxcsv.luna1.col5.contracts.terraswap_route_swap
 
 
-
 def can_handle(exporter, elem, txinfo):
     # Has wasm event in every message
     for log in elem["logs"]:
