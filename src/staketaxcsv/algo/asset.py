@@ -20,6 +20,10 @@ ASSET_LP_TOKENS = {
         "pattern": re.compile(r"^(?P<asset1>\w*)\/(?P<asset2>\w*) PACT LP Token$"),
         "symbol": "P"
     },
+    "SIPLP": {
+        "pattern": re.compile(r"^(?P<asset1>\w*)\/(?P<asset2>\w*) \[SI\] PACT LP TKN$"),
+        "symbol": "P"
+    },
     "AF-POOL": {
         "pattern": re.compile(r"^AF-POOL-(?P<asset1>\w*)-(?P<asset2>\w*)-\d+\.\d+BP$"),
         "symbol": "AF"
