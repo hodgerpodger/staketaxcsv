@@ -22,6 +22,7 @@ JUNO_RPC_NODES = [
     "https://rpc-v2-archive.junonetwork.io",   # 1 to #2578097
 ]
 KUJI_NODE = os.environ.get("STAKETAX_KUJI_NODE", "")
+KYVE_NODE = os.environ.get("STAKETAX_KYVE_NODE", "https://api-eu-1.kyve.network")
 MNTL_NODE = os.environ.get("STAKETAX_MNTL_NODE", "https://rest.assetmantle.one")
 OSMO_NODE = os.environ.get("STAKETAX_OSMO_NODE", "https://lcd.osmosis.zone")
 REGEN_NODE = os.environ.get("STAKETAX_REGEN_NODE", "")
@@ -52,6 +53,7 @@ TICKER_HUAHUA = "HUAHUA"
 TICKER_IOTEX = "IOTX"
 TICKER_JUNO = "JUNO"
 TICKER_KUJI = "KUJI"
+TICKER_KYVE = "KYVE"
 TICKER_LUNA1 = "LUNA1"
 TICKER_LUNA2 = "LUNA2"
 TICKER_MNTL = "MNTL"
