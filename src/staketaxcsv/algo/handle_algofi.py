@@ -721,7 +721,7 @@ def _handle_algofi_borrow(group, exporter, txinfo, z_index=0):
     app_transaction = group[-1]
     receive_asset = get_inner_transfer_asset(app_transaction)
 
-    export_borrow_tx(exporter, txinfo, receive_asset, fee_amount, COMMENT_ALGOFI)
+    export_borrow_tx(exporter, txinfo, receive_asset, fee_amount, COMMENT_ALGOFI + " Borrow")
 
 
 def _handle_algofi_repay_borrow(group, exporter, txinfo, z_index=0):
@@ -742,7 +742,7 @@ def _handle_algofi_repay_borrow(group, exporter, txinfo, z_index=0):
             if residual_asset is not None:
                 send_asset -= residual_asset
 
-    export_repay_tx(exporter, txinfo, send_asset, fee_amount, COMMENT_ALGOFI, z_index + z_offset)
+    export_repay_tx(exporter, txinfo, send_asset, fee_amount, COMMENT_ALGOFI + " Repay", z_index + z_offset)
 
 
 def _handle_algofi_liquidate(wallet_address, group, exporter, txinfo):

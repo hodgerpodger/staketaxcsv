@@ -725,7 +725,7 @@ def _handle_algofiv2_borrow(wallet_address, group, exporter, txinfo):
     app_transaction = group[-1]
     receive_asset = get_inner_transfer_asset(app_transaction)
 
-    export_borrow_tx(exporter, txinfo, receive_asset, fee_amount, COMMENT_ALGOFIV2)
+    export_borrow_tx(exporter, txinfo, receive_asset, fee_amount, COMMENT_ALGOFIV2 + " Borrow")
 
 
 def _handle_algofiv2_repay_borrow(wallet_address, group, exporter, txinfo):
@@ -736,7 +736,7 @@ def _handle_algofiv2_repay_borrow(wallet_address, group, exporter, txinfo):
     if redeem_asset is not None:
         send_asset -= redeem_asset
 
-    export_repay_tx(exporter, txinfo, send_asset, fee_amount, COMMENT_ALGOFIV2)
+    export_repay_tx(exporter, txinfo, send_asset, fee_amount, COMMENT_ALGOFIV2 + " Repay")
 
 
 def _handle_algofiv2_farm_stake(wallet_address, group, exporter, txinfo):

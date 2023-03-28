@@ -26,13 +26,17 @@ from staketaxcsv.algo.transaction import (
 COMMENT_FOLKS = "Folks Finance"
 
 ADDRESS_FOLKS_GOVERNANCE_ALGO = [
-    "EPYLSPIP3OOKRBFFWKZJWDSPGCYEKUPYBB677GWC2TFYTMU6QP3JZ7OMOQ"
+    "EPYLSPIP3OOKRBFFWKZJWDSPGCYEKUPYBB677GWC2TFYTMU6QP3JZ7OMOQ",
+    "2NBWLB4ZYRC6IKOEJT4HKVG7YCDEBRIOUSW7T2C7UKJFMMMCINDMIAQMME",
+    "3TMAFSWEIAHUYGT4P34SW5LIMAXRFPC4HQVF5AF2SJTOVACRXONLMTQCFY",
 ]
 
 APPLICATION_ID_FOLKS_LENDING_MANAGER = 465818260
 APPLICATION_ID_FOLKS_GOVERNANCE_3 = 694427622
 APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR = [
-    793119270
+    793119270,  # Distributor G4
+    887391617,  # Distributor G5A
+    902731930,  # Distributor G5B
 ]
 APPLICATION_ID_FOLKS_ORACLE_ADAPTERS = [
     689185988,
@@ -187,6 +191,7 @@ FOLKS_TRANSACTION_GOVERNANCE_MINT = "bh9UTw=="
 FOLKS_TRANSACTION_GOVERNANCE_UNMINT = "3c0QwA=="
 FOLKS_TRANSACTION_GOVERNANCE_BURN = "ojqoeg=="
 FOLKS_TRANSACTION_GOVERNANCE_EARLY_CLAIM = "3jMsVA=="
+FOLKS_TRANSACTION_GOVERNANCE_CLAIM = "2wMoWg=="
 
 escrow_addresses = []
 
@@ -302,6 +307,13 @@ def _is_folks_galgo_early_claim_transaction(group):
 
     appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
     return FOLKS_TRANSACTION_GOVERNANCE_EARLY_CLAIM in appl_args
+
+
+def _is_folks_galgo_claim_transaction(group):
+    if len(group) > 2:
+        return False
+
+    return is_app_call(group[0], APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR, FOLKS_TRANSACTION_GOVERNANCE_CLAIM)
 
 
 def _is_folks_deposit_transaction(group):
@@ -535,6 +547,7 @@ def is_folks_transaction(wallet_address, group):
                 or _is_folks_galgo3_claim_rewards_transaction(group)
                 or _is_folks_galgo_mint_transaction(group)
                 or _is_folks_galgo_unmint_transaction(group)
+                or _is_folks_galgo_claim_transaction(group)
                 or _is_folks_deposit_transaction(group)
                 or _is_folks_withdraw_transaction(group)
                 or _is_folks_add_escrow_transaction(wallet_address, group)
@@ -574,6 +587,9 @@ def handle_folks_transaction(wallet_address, group, exporter, txinfo):
 
     elif _is_folks_galgo_unmint_transaction(group):
         _handle_folks_galgo_unmint_transaction(group, exporter, txinfo)
+
+    elif _is_folks_galgo_claim_transaction(group):
+        _handle_folks_galgo_claim_transaction(group, exporter, txinfo)
 
     elif _is_folks_deposit_transaction(group):
         _handle_folks_deposit_transaction(group, exporter, txinfo)
@@ -680,6 +696,13 @@ def _handle_folks_galgo_early_claim_transaction(group, exporter, txinfo):
     export_reward_tx(exporter, txinfo, reward_asset, fee_amount, COMMENT_FOLKS)
 
 
+def _handle_folks_galgo_claim_transaction(group, exporter, txinfo):
+    for transaction in group:
+        fee_amount = transaction["fee"]
+        reward_asset = get_inner_transfer_asset(transaction)
+        export_reward_tx(exporter, txinfo, reward_asset, fee_amount, COMMENT_FOLKS)
+
+
 # Note: For the moment we are ignoring fTokens as they are
 # iliquid tokens that represent a deposit
 def _handle_folks_deposit_transaction(group, exporter, txinfo):
@@ -713,7 +736,7 @@ def _handle_folks_borrow_transaction(group, exporter, txinfo):
     app_transaction = group[2]
     receive_asset = get_inner_transfer_asset(app_transaction)
 
-    export_borrow_tx(exporter, txinfo, receive_asset, fee_amount, COMMENT_FOLKS)
+    export_borrow_tx(exporter, txinfo, receive_asset, fee_amount, COMMENT_FOLKS + " Borrow")
 
 
 def _handle_folks_repay_borrow_transaction(group, exporter, txinfo):
@@ -723,7 +746,7 @@ def _handle_folks_repay_borrow_transaction(group, exporter, txinfo):
     send_transaction = group[3]
     send_asset = get_transfer_asset(send_transaction)
 
-    export_repay_tx(exporter, txinfo, send_asset, fee_amount, COMMENT_FOLKS)
+    export_repay_tx(exporter, txinfo, send_asset, fee_amount, COMMENT_FOLKS + " Repay")
 
 
 def _handle_folks_increase_collateral_transaction(group, exporter, txinfo):

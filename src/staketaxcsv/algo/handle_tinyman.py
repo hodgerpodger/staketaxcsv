@@ -1,10 +1,10 @@
 from staketaxcsv.algo import constants as co
 from staketaxcsv.algo.asset import Algo
 from staketaxcsv.algo.export_tx import (
-    export_income_tx,
     export_lp_deposit_tx,
     export_lp_withdraw_tx,
     export_participation_rewards,
+    export_receive_tx,
     export_reward_tx,
     export_swap_tx,
     export_unknown,
@@ -126,7 +126,7 @@ def _handle_tinyman_redeem(group, exporter, txinfo):
     receive_transaction = group[2]
     receive_asset = get_transfer_asset(receive_transaction)
 
-    export_income_tx(exporter, txinfo, receive_asset, fee_amount, COMMENT_TINYMAN)
+    export_receive_tx(exporter, txinfo, receive_asset, fee_amount, COMMENT_TINYMAN + " Redeem")
 
 
 def _handle_tinyman_lp_add(group, exporter, txinfo):

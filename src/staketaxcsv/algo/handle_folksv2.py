@@ -47,6 +47,9 @@ APPLICATION_ID_FOLKSV2_POOLS = [
     971373611,   # goETH
     1044267181,  # OPUL
 ]
+APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR = [
+    991196662,  # Distributor G6
+]
 
 NOTE_FOLKSV2_DEPOSIT_APP = "da"
 NOTE_FOLKSV2_LOAN_APP = "la"
@@ -55,6 +58,8 @@ NOTE_FOLKSV2_LOAN_NAME = "ff-name"
 FOLKSV2_TRANSACTION_DEPOSIT_ESCROW_OPTIN = "sx8Gbg=="       # "opt_escrow_into_asset" ABI selector
 FOLKSV2_TRANSACTION_DEPOSIT = "udVC+w=="                    # "deposit" ABI selector
 FOLKSV2_TRANSACTION_DEPOSIT_WITHDRAW = "ruOUyw=="           # "withdraw" ABI selector
+FOLKSV2_TRANSACTION_FLASH_LOAN_BEGIN = "JGiTsw=="           # "flash_loan_begin" ABI selector
+FOLKSV2_TRANSACTION_FLASH_LOAN_END = "Kgiw7Q=="             # "flash_loan_end" ABI selector
 FOLKSV2_TRANSACTION_LOAN_ADD_COLLATERAL = "aV6pHw=="        # "add_collateral" ABI selector
 FOLKSV2_TRANSACTION_LOAN_SYNC_COLLATERAL = "YLBwBQ=="       # "sync_collateral" ABI selector
 FOLKSV2_TRANSACTION_LOAN_BORROW = "l9QG5g=="                # "borrow" ABI selector
@@ -64,6 +69,9 @@ FOLKSV2_TRANSACTION_LOAN_REMOVE_COLLATERAL = "Iq24qQ=="     # "remove_collateral
 FOLKSV2_TRANSACTION_LOAN_REMOVE_LOAN = "UL3+hg=="           # "remove_loan" ABI selector
 FOLKSV2_TRANSACTION_LOAN_SWAP_BEGIN = "GIPo0w=="            # "swap_collateral_begin" ABI selector
 FOLKSV2_TRANSACTION_LOAN_SWAP_END = "SBn0/w=="              # "swap_collateral_end" ABI selector
+FOLKSV2_TRANSACTION_GOVERNANCE_MINT = "bh9UTw=="            # "mint" ABI selector
+FOLKSV2_TRANSACTION_GOVERNANCE_CLAIM_PREMINT = "kZDyNg=="   # "claim_premint" ABI selector
+FOLKSV2_TRANSACTION_GOVERNANCE_UNMINT = "3c0QwA=="          # "mint" ABI selector
 
 APPLICATION_ID_DEFLEX_ORDER_ROUTER = 989365103
 DEFLEX_TRANSACTION_SWAP_FINALIZE = "tTD7Hw=="  # "User_swap_finalize" ABI selector
@@ -141,16 +149,14 @@ def _is_folksv2_move_to_collateral(wallet_address, group):
 
 
 def _is_folksv2_borrow(group):
-    if len(group) != 3:
+    length = len(group)
+    if length < 2 or length > 3:
         return False
 
-    if not is_app_call(group[0], APPLICATION_ID_FOLKSV2_OP_UP):
+    if not is_app_call(group[-2], APPLICATION_ID_FOLKSV2_ORACLE_ADAPTER):
         return False
 
-    if not is_app_call(group[1], APPLICATION_ID_FOLKSV2_ORACLE_ADAPTER):
-        return False
-
-    return is_app_call(group[2], APPLICATION_ID_FOLKSV2_LOANS, FOLKSV2_TRANSACTION_LOAN_BORROW)
+    return is_app_call(group[-1], APPLICATION_ID_FOLKSV2_LOANS, FOLKSV2_TRANSACTION_LOAN_BORROW)
 
 
 def _is_folksv2_repay_with_txn(wallet_address, group):
@@ -194,16 +200,14 @@ def _is_folksv2_reduce_collateral(group):
 
 
 def _is_folksv2_remove_loan(group):
-    if len(group) != 3:
+    length = len(group)
+    if length < 2 or length > 3:
         return False
 
-    if not is_app_call(group[0], APPLICATION_ID_FOLKSV2_LOANS, FOLKSV2_TRANSACTION_LOAN_REMOVE_COLLATERAL):
+    if not is_app_call(group[-2], APPLICATION_ID_FOLKSV2_LOANS, FOLKSV2_TRANSACTION_LOAN_REMOVE_LOAN):
         return False
 
-    if not is_app_call(group[1], APPLICATION_ID_FOLKSV2_LOANS, FOLKSV2_TRANSACTION_LOAN_REMOVE_LOAN):
-        return False
-
-    return is_transfer(group[2])
+    return is_transfer(group[-1])
 
 
 def _is_folksv2_swap_collateral(wallet_address, group):
@@ -251,6 +255,70 @@ def _is_folksv2_swap_repay(wallet_address, group):
     return _is_folksv2_repay_with_txn(wallet_address, group[2:])
 
 
+def _is_folksv2_governance_mint(wallet_address, group):
+    length = len(group)
+    if length < 2 or length > 3:
+        return False
+
+    if not is_app_call(group[-1], APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR, FOLKSV2_TRANSACTION_GOVERNANCE_MINT):
+        return False
+
+    if not is_transfer(group[-2]):
+        return False
+
+    return is_transaction_sender(wallet_address, group[-2])
+
+
+def _is_folksv2_governance_claim_premint(group):
+    if len(group) != 1:
+        return False
+
+    return is_app_call(group[0],
+                       APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR,
+                       FOLKSV2_TRANSACTION_GOVERNANCE_CLAIM_PREMINT)
+
+
+def _is_folksv2_governance_unmint(wallet_address, group):
+    if len(group) != 2:
+        return False
+
+    if not is_transfer(group[0]):
+        return False
+
+    if not is_transaction_sender(wallet_address, group[0]):
+        return False
+
+    return is_app_call(group[1], APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR, FOLKSV2_TRANSACTION_GOVERNANCE_UNMINT)
+
+
+def _is_folksv2_governance_leveraged_commit(wallet_address, group):
+    if len(group) != 14:
+        return False
+
+    if not is_app_call(group[0], APPLICATION_ID_FOLKSV2_POOLS, FOLKSV2_TRANSACTION_FLASH_LOAN_BEGIN):
+        return False
+
+    if not _is_folksv2_create_loan(wallet_address, group[1:3]):
+        return False
+
+    if not _is_folksv2_governance_mint(wallet_address, group[3:5]):
+        return False
+
+    if not _is_folksv2_deposit(wallet_address, group[6:8]):
+        return False
+
+    if not _is_folksv2_borrow(group[10:12]):
+        return False
+
+    if not is_transfer(group[-2]):
+        return False
+
+    if not is_transaction_sender(wallet_address, group[-2]):
+        return False
+
+    return is_app_call(group[-1], APPLICATION_ID_FOLKSV2_POOLS, FOLKSV2_TRANSACTION_FLASH_LOAN_END)
+
+
 def is_folksv2_transaction(wallet_address, group):
     return (_is_folksv2_deposit(wallet_address, group)
                 or _is_folksv2_withdraw(group)
@@ -262,7 +330,11 @@ def is_folksv2_transaction(wallet_address, group):
                 or _is_folksv2_swap_collateral(wallet_address, group)
                 or _is_folksv2_increase_collateral(wallet_address, group)
                 or _is_folksv2_reduce_collateral(group)
-                or _is_folksv2_remove_loan(group))
+                or _is_folksv2_remove_loan(group)
+                or _is_folksv2_governance_mint(wallet_address, group)
+                or _is_folksv2_governance_claim_premint(group)
+                or _is_folksv2_governance_unmint(wallet_address, group)
+                or _is_folksv2_governance_leveraged_commit(wallet_address, group))
 
 
 def handle_folksv2_transaction(wallet_address, group, exporter, txinfo):
@@ -273,10 +345,10 @@ def handle_folksv2_transaction(wallet_address, group, exporter, txinfo):
         _handle_folksv2_withdraw(wallet_address, group, exporter, txinfo)
 
     elif _is_folksv2_create_loan(wallet_address, group):
-        _handle_folksv2_fees(wallet_address, group, exporter, txinfo, COMMENT_FOLKSV2 + " create loan")
+        pass
 
     elif _is_folksv2_move_to_collateral(wallet_address, group):
-        _handle_folksv2_fees(wallet_address, group, exporter, txinfo, COMMENT_FOLKSV2 + " move to collateral")
+        pass
 
     elif _is_folksv2_borrow(group):
         _handle_folksv2_borrow(wallet_address, group, exporter, txinfo)
@@ -297,18 +369,30 @@ def handle_folksv2_transaction(wallet_address, group, exporter, txinfo):
         _handle_folksv2_reduce_collateral(wallet_address, group, exporter, txinfo)
 
     elif _is_folksv2_remove_loan(group):
-        _handle_folksv2_fees(wallet_address, group, exporter, txinfo, COMMENT_FOLKSV2 + " remove loan")
+        pass
+
+    elif _is_folksv2_governance_mint(wallet_address, group):
+        _handle_folksv2_governance_mint(wallet_address, group, exporter, txinfo)
+
+    elif _is_folksv2_governance_claim_premint(group):
+        _handle_folksv2_governance_claim_premint(wallet_address, group, exporter, txinfo)
+
+    elif _is_folksv2_governance_unmint(wallet_address, group):
+        _handle_folksv2_governance_unmint(wallet_address, group, exporter, txinfo)
+
+    elif _is_folksv2_governance_leveraged_commit(wallet_address, group):
+        _handle_folksv2_governance_leveraged_commit(wallet_address, group, exporter, txinfo)
 
     else:
         export_unknown(exporter, txinfo)
 
 
-def _handle_folksv2_deposit(wallet_address, group, exporter, txinfo):
+def _handle_folksv2_deposit(wallet_address, group, exporter, txinfo, z_index=0):
     fee_amount = get_fee_amount(wallet_address, group)
 
     send_asset = get_transfer_asset(group[-2])
 
-    export_deposit_collateral_tx(exporter, txinfo, send_asset, fee_amount, COMMENT_FOLKSV2)
+    export_deposit_collateral_tx(exporter, txinfo, send_asset, fee_amount, COMMENT_FOLKSV2, z_index)
 
 
 def _handle_folksv2_withdraw(wallet_address, group, exporter, txinfo):
@@ -321,18 +405,13 @@ def _handle_folksv2_withdraw(wallet_address, group, exporter, txinfo):
     export_withdraw_collateral_tx(exporter, txinfo, receive_asset, fee_amount, COMMENT_FOLKSV2)
 
 
-def _handle_folksv2_fees(wallet_address, group, exporter, txinfo, comment):
-    fee_amount = get_fee_amount(wallet_address, group)
-    export_spend_fee_tx(exporter, txinfo, Algo(fee_amount), comment)
-
-
-def _handle_folksv2_borrow(wallet_address, group, exporter, txinfo):
+def _handle_folksv2_borrow(wallet_address, group, exporter, txinfo, z_index=0):
     fee_amount = get_fee_amount(wallet_address, group)
 
-    receive_asset = get_inner_transfer_asset(group[2],
+    receive_asset = get_inner_transfer_asset(group[-1],
                                              filter=partial(is_transfer_receiver, wallet_address))
 
-    export_borrow_tx(exporter, txinfo, receive_asset, fee_amount, COMMENT_FOLKSV2)
+    export_borrow_tx(exporter, txinfo, receive_asset, fee_amount, COMMENT_FOLKSV2 + " Borrow", z_index)
 
 
 def _handle_folksv2_repay_with_txn(wallet_address, group, exporter, txinfo):
@@ -344,7 +423,7 @@ def _handle_folksv2_repay_with_txn(wallet_address, group, exporter, txinfo):
     if receive_asset is not None:
         send_asset -= receive_asset
 
-    export_repay_tx(exporter, txinfo, send_asset, fee_amount, COMMENT_FOLKSV2)
+    export_repay_tx(exporter, txinfo, send_asset, fee_amount, COMMENT_FOLKSV2 + " Repay")
 
 
 def _handle_folksv2_reduce_collateral(wallet_address, group, exporter, txinfo):
@@ -378,3 +457,46 @@ def _handle_folksv2_swap_collateral(wallet_address, group, exporter, txinfo):
     export_withdraw_collateral_tx(exporter, txinfo, send_asset, 0, COMMENT_FOLKSV2, 0)
     export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_FOLKSV2, 1)
     export_deposit_collateral_tx(exporter, txinfo, receive_asset, 0, COMMENT_FOLKSV2, 2)
+
+
+def _handle_folksv2_governance_mint(wallet_address, group, exporter, txinfo, z_index=0):
+    fee_amount = get_fee_amount(wallet_address, group)
+
+    send_asset = get_transfer_asset(group[-2])
+    receive_asset = get_inner_transfer_asset(group[-1])
+    if receive_asset is not None:
+        export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_FOLKSV2, z_index)
+
+
+def _handle_folksv2_governance_claim_premint(wallet_address, group, exporter, txinfo):
+    fee_amount = get_fee_amount(wallet_address, group)
+
+    receive_asset = get_inner_transfer_asset(group[0])
+
+    send_asset = Algo(receive_asset.uint_amount)
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_FOLKSV2)
+
+
+def _handle_folksv2_governance_unmint(wallet_address, group, exporter, txinfo):
+    fee_amount = get_fee_amount(wallet_address, group)
+
+    send_asset = get_transfer_asset(group[0])
+    receive_asset = get_inner_transfer_asset(group[1])
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_FOLKSV2)
+
+
+def _handle_folksv2_governance_leveraged_commit(wallet_address, group, exporter, txinfo):
+    transaction = group[0]
+    fee_amount = transaction["fee"]
+    receive_asset = get_inner_transfer_asset(transaction)
+    export_borrow_tx(exporter, txinfo, receive_asset, fee_amount, COMMENT_FOLKSV2 + " Borrow", 0)
+
+    _handle_folksv2_governance_mint(wallet_address, group[3:5], exporter, txinfo, 1)
+    _handle_folksv2_deposit(wallet_address, group[6:8], exporter, txinfo, 2)
+    _handle_folksv2_borrow(wallet_address, group[10:12], exporter, txinfo, 3)
+
+    transaction = group[-1]
+    fee_amount = transaction["fee"]
+    transaction = group[-2]
+    send_asset = get_transfer_asset(transaction)
+    export_repay_tx(exporter, txinfo, send_asset, fee_amount, COMMENT_FOLKSV2 + " Repay", 4)
