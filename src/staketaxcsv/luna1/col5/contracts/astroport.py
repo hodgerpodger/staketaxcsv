@@ -67,7 +67,7 @@ def _handle_astro_claim_msg(msg, txinfo):
     txid = txinfo.txid
     rows = []
 
-    transfers_in, _ = util_terra._transfers_from_actions(msg, txinfo.wallet_address)
+    transfers_in, _ = util_terra._transfers_from_actions(msg, txinfo.wallet_address, txid)
 
     for amount, currency in transfers_in:
         currency = util_terra._asset_to_currency(currency, txid)
@@ -104,7 +104,7 @@ def handle_astro_lockdrop(elem, txinfo):
     txinfo.comment = "ASTRO lockdrop claim"
     rows = []
 
-    transfers_in, _ = util_terra._transfers_from_actions(msgs[0], txinfo.wallet_address)
+    transfers_in, _ = util_terra._transfers_from_actions(msgs[0], txinfo.wallet_address, txid)
     for amount, currency in transfers_in:
         currency = util_terra._asset_to_currency(currency, txid)
         amount = util_terra._float_amount(amount, currency)

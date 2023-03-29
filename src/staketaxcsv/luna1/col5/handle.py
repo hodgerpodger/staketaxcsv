@@ -3,13 +3,14 @@ from staketaxcsv.luna1.col5.contracts.config import CONTRACTS
 from staketaxcsv.common import make_tx
 
 # These imports add to CONTRACTS dict
+import staketaxcsv.luna1.col5.contracts.anchor
 import staketaxcsv.luna1.col5.contracts.astroport
 import staketaxcsv.luna1.col5.contracts.edge
 import staketaxcsv.luna1.col5.contracts.mars
 import staketaxcsv.luna1.col5.contracts.pylon
 import staketaxcsv.luna1.col5.contracts.wormhole
 import staketaxcsv.luna1.col5.contracts.terraswap_route_swap
-
+import staketaxcsv.luna1.col5.contracts.terranado
 
 def can_handle(exporter, elem, txinfo):
     # Has wasm event in every message

@@ -16,6 +16,7 @@ from staketaxcsv.luna1.make_tx import (
     make_nft_transfer_in_tx,
     make_nft_transfer_out_tx,
     make_nft_withdraw,
+    make_submit_bid_tx
 )
 
 
@@ -25,6 +26,8 @@ def handle_randomearth(exporter, elem, txinfo):
 
     if ex.EXECUTE_TYPE_EXECUTE_ORDER in execute_msgs_keys:
         return handle_execute_order(exporter, elem, txinfo)
+    elif execute_type == ex.EXECUTE_TYPE_SUBMIT_BID:
+        return handle_submit_bid(exporter, elem, txinfo)
     elif execute_type in ex.EXECUTE_TYPE_WITHDRAW:
         handle_withdraw(exporter, elem, txinfo)
         if len(execute_msgs_keys) == 2 and execute_msgs_keys[1] == ex.EXECUTE_TYPE_TRANSFER_NFT:
@@ -39,6 +42,13 @@ def handle_randomearth(exporter, elem, txinfo):
     else:
         handle_unknown(exporter, txinfo)
 
+def handle_submit_bid(exporter, elem, txinfo):
+    _, transfers_out = util_terra._transfers(elem, txinfo.wallet_address, txinfo.txid)
+
+    for transfer in transfers_out:
+        print(transfer)
+        row = make_submit_bid_tx(txinfo, transfer[0], transfer[1])
+        exporter.ingest_row(row)
 
 def handle_add_whitelist(exporter, elem, txinfo):
     handle_simple(exporter, txinfo, TX_TYPE_NFT_WHITELIST)

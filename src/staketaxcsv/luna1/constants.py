@@ -45,7 +45,8 @@ CONTRACTS_MIRROR = [
 
 CONTRACTS_RANDOMEARTH = [
     "terra10t4pgfs6s3qeykqgfq9r74s89jmu7zx5gfkga5",
-    "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t"
+    "terra1eek0ymmhyzja60830xhzm7k7jkrk99a60q2z2t",
+    "terra12v8vrgntasf37xpj282szqpdyad7dgmkgnq60j",
 ]
 
 CHAIN_ID = "columbus-5"

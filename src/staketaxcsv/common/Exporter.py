@@ -791,8 +791,11 @@ class Exporter:
                 "BETH": "ID:30493",
                 "LOOP": "ID:10933",
                 "LUNI": "ID:26855",
+                "MARS": "ID:41838",
                 "MINE": "ID:21256",
+                "MKO": "ID:42777",
                 "PSI": "ID:106376",
+                "PYLONDP": "ID:3649656",
             },
             TICKER_ALGO: {
                 "AKITA": "ID:132343",
