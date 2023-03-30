@@ -53,7 +53,7 @@ def handle_pylon_withdraw(exporter, elem, txinfo):
 
         row = make_withdraw_collateral_tx(txinfo, received_amount, received_currency)
     except Exception:
-        txinfo.comment = "failed Pylon withdraw transaction"
+        txinfo.comment += "failed Pylon withdraw transaction"
         row = make_unknown_tx(txinfo)
 
     exporter.ingest_row(row)

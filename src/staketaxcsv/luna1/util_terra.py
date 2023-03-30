@@ -127,7 +127,7 @@ def _transfers_from_actions(msg, wallet_address, txid, multicurrency=False):
     transfers_out = []
 
     for action in msg.actions:
-        if "action" in action and action["action"] == "transfer":
+        if "action" in action and action["action"] in ["transfer", "send"]:
             currency_contract = action["contract_address"]
             currency = _asset_to_currency(currency_contract, txid)
             amount = _float_amount(action["amount"], currency)

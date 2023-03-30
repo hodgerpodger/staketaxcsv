@@ -7,7 +7,7 @@ LIQUIDATION_REMEDIATION_CONTRACT = "terra13v4ln23tmfs2zk4nh5dw5mzufckekp4fpafpcy
 
 def handle_remediation_claim(elem, txinfo):
     txid = txinfo.txid
-    txinfo.comment = "Remediation claim"
+    txinfo.comment += "Remediation claim"
     rows = []
 
     transfers_in, transfers_out = util_terra._transfers_from_actions(txinfo.msgs[0], txinfo.wallet_address, txid)

@@ -22,7 +22,7 @@ def handle_transfer(exporter, elem, txinfo):
             amount_string = amount["amount"]
 
             if to_address == SHUTTLE_BRIDGE:
-                txinfo.comment = "Shuttle bridge deposit. {}".format(memo)
+                txinfo.comment += "Shuttle bridge deposit. {}".format(memo)
 
             currency = util_terra._denom_to_currency(denom)
             amount = util_terra._float_amount(amount_string, None)

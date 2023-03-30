@@ -21,7 +21,7 @@ def handle_anchor_earn_deposit(exporter, elem, txinfo):
     ust = util_terra._float_amount(deposit_amount, CUR_UST)
     aust = util_terra._float_amount(mint_amount, CUR_AUST)
 
-    txinfo.comment = "earn_deposit [1 aUST = {} UST]".format(_exchange_rate(ust, aust))
+    txinfo.comment += "earn_deposit [1 aUST = {} UST]".format(_exchange_rate(ust, aust))
     row = make_swap_tx_terra(txinfo, ust, CUR_UST, aust, CUR_AUST)
     exporter.ingest_row(row)
 
@@ -44,7 +44,7 @@ def handle_anchor_earn_withdraw(exporter, elem, txinfo):
         burn_amount = from_contract["burn_amount"][0]
         amount_aust = util_terra._float_amount(burn_amount, CUR_AUST)
 
-    txinfo.comment = "earn_withdraw [1 aUST = {} UST]".format(_exchange_rate(amount_ust, amount_aust))
+    txinfo.comment += "earn_withdraw [1 aUST = {} UST]".format(_exchange_rate(amount_ust, amount_aust))
     row = make_swap_tx_terra(txinfo, amount_aust, CUR_AUST, amount_ust, CUR_UST)
 
     exporter.ingest_row(row)
