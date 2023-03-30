@@ -7,6 +7,7 @@ import staketaxcsv.luna1.col5.contracts.anchor
 import staketaxcsv.luna1.col5.contracts.astroport
 import staketaxcsv.luna1.col5.contracts.edge
 import staketaxcsv.luna1.col5.contracts.mars
+import staketaxcsv.luna1.col5.contracts.prism
 import staketaxcsv.luna1.col5.contracts.pylon
 import staketaxcsv.luna1.col5.contracts.wormhole
 import staketaxcsv.luna1.col5.contracts.terraswap_route_swap
@@ -26,6 +27,10 @@ def can_handle(exporter, elem, txinfo):
 
 def handle(exporter, elem, txinfo, index = 0):
     # Lookup handler function from luna1.col5.contracts.*
+
+    if len(txinfo.msgs) > 1:
+      txinfo.comment += "Multiple msgs in tx. Count: {}".format(len(txinfo.msgs))
+
     try:
       contract = util_terra._contract(elem, index)
       handler_func = CONTRACTS[contract]

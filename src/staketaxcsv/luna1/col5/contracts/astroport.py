@@ -70,21 +70,19 @@ def _handle_astro_claim_msg(msg, txinfo):
     transfers_in, _ = util_terra._transfers_from_actions(msg, txinfo.wallet_address, txid)
 
     for amount, currency in transfers_in:
-        currency = util_terra._asset_to_currency(currency, txid)
-        amount = util_terra._float_amount(amount, currency)
         if "LP" in str(currency):
             rows.append(make_lp_unstake_tx(txinfo, amount, currency))  
         else:
-            rows.append(make_income_tx(txinfo, amount, currency))
+            rows.append(make_income_tx(txinfo, amount, currency, txid))
     
     return rows
 
 def handle_astro_claim_all(elem, txinfo):
     msgs = txinfo.msgs
     if len(msgs) > 1:
-      txinfo.comment = "ASTRO multi-claim all rewards"
+      txinfo.comment += "ASTRO multi-claim all rewards"
     else:
-      txinfo.comment = "ASTRO rewards claim"
+      txinfo.comment += "ASTRO rewards claim"
 
     rows = []
 
@@ -95,20 +93,18 @@ def handle_astro_claim_all(elem, txinfo):
     for sublist in rows:
         for item in sublist:
             flattened_rows.append(item)
-    
+
     return flattened_rows
 
 def handle_astro_lockdrop(elem, txinfo):
     txid = txinfo.txid
     msgs = txinfo.msgs
-    txinfo.comment = "ASTRO lockdrop claim"
+    txinfo.comment += "ASTRO lockdrop claim"
     rows = []
 
     transfers_in, _ = util_terra._transfers_from_actions(msgs[0], txinfo.wallet_address, txid)
-    for amount, currency in transfers_in:
-        currency = util_terra._asset_to_currency(currency, txid)
-        amount = util_terra._float_amount(amount, currency)
 
+    for amount, currency in transfers_in:
         if currency == CUR_ASTRO:
             rows.append(make_income_tx(txinfo, amount, currency))
         else:
