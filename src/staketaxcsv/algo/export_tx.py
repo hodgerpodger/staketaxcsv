@@ -29,6 +29,7 @@ def _setup_row(row, fee_amount=0, comment=None):
     if fee_amount:
         fee = Algo(fee_amount)
         row.fee = fee.amount
+        row.fee_currency = fee.ticker
     if comment:
         row.comment = (comment[:30] + '...') if len(comment) > 32 else comment
 
@@ -90,9 +91,12 @@ def export_send_tx(exporter, txinfo, send_asset, fee_amount=0, dest_address=None
 
 
 @exclude_tx
+@exclude_lp_tx
 def export_receive_tx(exporter, txinfo, receive_asset, fee_amount=0, comment=None, z_index=0):
     if not receive_asset.zero():
-        row = make_transfer_in_tx(txinfo, receive_asset.amount, receive_asset.ticker, z_index=z_index)
+        receive_asset_currency = (receive_asset.get_lp_token_currency() if receive_asset.is_lp_token()
+                                    else receive_asset.ticker)
+        row = make_transfer_in_tx(txinfo, receive_asset.amount, receive_asset_currency, z_index=z_index)
         _ingest_row(exporter, row, fee_amount, comment)
 
 
@@ -134,8 +138,10 @@ def export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount=0, co
     _ingest_row(exporter, row, fee_amount, comment)
 
 
-@exclude_tx
 def create_swap_tx(txinfo, send_asset, receive_asset, fee_amount=0, comment=None, z_index=0):
+    if _should_exclude_tx([send_asset, receive_asset]):
+        return make_excluded_tx(txinfo)
+
     row = make_swap_tx(
         txinfo,
         send_asset.amount, send_asset.ticker,

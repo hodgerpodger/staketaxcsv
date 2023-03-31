@@ -5,6 +5,7 @@ from datetime import datetime
 
 from staketaxcsv.algo import constants as co
 from staketaxcsv.algo.asset import Algo, Asset
+from staketaxcsv.algo.util import b64_decode_ascii
 from staketaxcsv.common.TxInfo import TxInfo
 
 
@@ -22,16 +23,9 @@ def get_transaction_txinfo(wallet_address, elem):
 
 def get_transaction_note(transaction, size=0):
     if "note" not in transaction:
-        return None
+        return ""
 
-    try:
-        note = base64.b64decode(transaction["note"]).decode("ascii", "ignore")
-        if not note:
-            return None
-        note = "".join([s for s in note if s in string.printable])
-    except Exception:
-        return None
-
+    note = b64_decode_ascii(transaction["note"])
     end = size or len(note)
 
     return note[:end]

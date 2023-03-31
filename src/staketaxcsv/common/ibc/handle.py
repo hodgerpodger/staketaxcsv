@@ -159,9 +159,9 @@ def _is_exec_rpc_data(msginfo):
     message = msginfo.message
 
     if (
-        msginfo.msg_type == co.MSG_TYPE_EXEC and
-        message.get("@type", None) == "/cosmos.authz.v1beta1.MsgExec" and
-        message.get("module", None) == "staking"
+        msginfo.msg_type == co.MSG_TYPE_EXEC
+        and message.get("@type", None) == "/cosmos.authz.v1beta1.MsgExec"
+        and message.get("module", None) == "staking"
     ):
         return True
     else:

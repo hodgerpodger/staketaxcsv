@@ -35,9 +35,6 @@ def is_governance_reward_transaction(wallet_address, group):
         return False
 
     note = get_transaction_note(transaction)
-    if note is None:
-        return False
-
     if "af/gov" not in note:
         return False
 
@@ -122,13 +119,12 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
             fee_amount = transaction["fee"]
         receive_asset = Asset(asset_id, receive_amount - send_amount)
         if not receive_asset.zero():
-            row = None
             if txsender == co.ADDRESS_ALGOSTAKE_ESCROW:
                 export_reward_tx(exporter, txinfo, receive_asset, fee_amount, "Algostake", z_index)
             elif txsender == co.ADDRESS_PACT_REWARDS:
                 export_reward_tx(exporter, txinfo, receive_asset, fee_amount, "Pact", z_index)
             else:
-                if note is not None and "tinymanStaking/v1" in note:
+                if "tinymanStaking/v1" in note:
                     export_reward_tx(exporter, txinfo, receive_asset, fee_amount, "Tinyman", z_index)
                 elif txsender == co.ADDRESS_FOLKS_REWARDS and note == "Folks Finance fStaking rewards":
                     export_reward_tx(exporter, txinfo, receive_asset, fee_amount, "Folks Finance", z_index)

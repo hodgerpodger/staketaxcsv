@@ -70,7 +70,7 @@ def txhistory(wallet_address):
     progress.set_lcd_estimate(lcd_count_pages)
     # RPC - fetch count of transactions to estimate progress more accurately
     rpc_count_pages, _ = staketaxcsv.common.ibc.api_rpc.get_txs_pages_count(
-        DVPN_RPC_NODE, wallet_address, max_txs,debug=localconfig.debug)
+        DVPN_RPC_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_rpc_estimate(rpc_count_pages)
 
     # LCD - fetch transactions

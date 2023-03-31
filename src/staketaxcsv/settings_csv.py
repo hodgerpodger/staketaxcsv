@@ -4,6 +4,7 @@ import os
 
 ALGO_HIST_INDEXER_NODE = os.environ.get("STAKETAX_ALGO_HIST_INDEXER_NODE", "https://indexer.algoexplorerapi.io")
 ALGO_INDEXER_NODE = os.environ.get("STAKETAX_ALGO_INDEXER_NODE", "https://algoindexer.algoexplorerapi.io")
+ALGO_ALT_INDEXER_NODE = os.environ.get("STAKETAX_ALGO_ALT_INDEXER_NODE", "https://mainnet-idx.algonode.cloud")
 ALGO_NFDOMAINS = os.environ.get("STAKETAX_ALGO_NFDOMAINS", "https://api.nf.domains")
 ATOM_NODE = os.environ.get("STAKETAX_ATOM_NODE", "https://api.cosmos.network")
 BLD_NODE = os.environ.get("STAKETAX_BLD_NODE", "https://main.api.agoric.net")
@@ -21,6 +22,7 @@ JUNO_RPC_NODES = [
     "https://rpc-v2-archive.junonetwork.io",   # 1 to #2578097
 ]
 KUJI_NODE = os.environ.get("STAKETAX_KUJI_NODE", "")
+KYVE_NODE = os.environ.get("STAKETAX_KYVE_NODE", "https://api-eu-1.kyve.network")
 MNTL_NODE = os.environ.get("STAKETAX_MNTL_NODE", "https://rest.assetmantle.one")
 OSMO_NODE = os.environ.get("STAKETAX_OSMO_NODE", "https://lcd.osmosis.zone")
 REGEN_NODE = os.environ.get("STAKETAX_REGEN_NODE", "")
@@ -30,7 +32,7 @@ SOL_NODE = os.environ.get("STAKETAX_SOL_NODE", "https://api.mainnet-beta.solana.
 STARS_NODE = os.environ.get("STAKETAX_STARS_NODE", "")
 STARS_RPC_NODE = os.environ.get("STAKETAX_STARS_RPC_NODE", "")
 STARS_RPC_NODES = [STARS_RPC_NODE]
-TERRA_LCD_NODE = os.environ.get("STAKETAX_TERRA_LCD_NODE", "")
+TERRA_LCD_NODE = os.environ.get("STAKETAX_TERRA_LCD_NODE", "https://lcd.terra.dev")
 TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
 LUNA2_LCD_NODE = os.environ.get("STAKETAX_LUNA2_LCD_NODE", "https://phoenix-lcd.terra.dev")
 
@@ -46,11 +48,12 @@ TICKER_BTSG = "BTSG"
 TICKER_DVPN = "DVPN"
 TICKER_EVMOS = "EVMOS"
 TICKER_FET = "FET"
-TICKER_GENERIC = "GENERIC"
+TICKER_COSMOSPLUS = "COSMOSPLUS"
 TICKER_HUAHUA = "HUAHUA"
 TICKER_IOTEX = "IOTX"
 TICKER_JUNO = "JUNO"
 TICKER_KUJI = "KUJI"
+TICKER_KYVE = "KYVE"
 TICKER_LUNA1 = "LUNA1"
 TICKER_LUNA2 = "LUNA2"
 TICKER_MNTL = "MNTL"

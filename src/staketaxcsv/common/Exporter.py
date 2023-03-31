@@ -130,7 +130,7 @@ class Exporter:
         self.sort_rows(reverse)
         rows = filter(lambda row: row.tx_type in et.TX_TYPES_CSVEXPORT, self.rows)
 
-        if format in [et.FORMAT_KOINLY, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI]:
+        if format in [et.FORMAT_KOINLY, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI, et.FORMAT_DIVLY]:
             return rows
 
         # For non-koinly CSVs, convert LP_DEPOSIT/LP_WITHDRAW into transfers/omit/trades
@@ -268,6 +268,8 @@ class Exporter:
             self.export_calculator_csv(csvpath)
         elif csvformat == et.FORMAT_CRYPTOWORTH:
             self.export_cryptoworth_csv(csvpath)
+        elif csvformat == et.FORMAT_DIVLY:
+            self.export_divly_csv(csvpath)
         elif csvformat == et.FORMAT_KOINLY:
             self.export_koinly_csv(csvpath)
         elif csvformat == et.FORMAT_RECAP:
@@ -635,6 +637,78 @@ class Exporter:
         # Convert "2021-08-04 15:25:43" to "08/14/2021 15:25:43"
         dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
         return dt.strftime("%m/%d/%Y %H:%M:%S")
+
+    def export_divly_csv(self, csvpath):
+        """Write CSV, suitable for import into Divly """
+        rows = self._rows_export(et.FORMAT_DIVLY, reverse=False)
+
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
+            mywriter = csv.writer(f)
+
+            # header row
+            mywriter.writerow(et.DIVLY_FIELDS)
+
+            # data rows
+            for row in rows:
+                if row.tx_type == et.TX_TYPE_TRADE:
+                    label = ""
+                    transaction_type = "Trade"
+                elif row.tx_type == et.TX_TYPE_AIRDROP:
+                    label = "Airdrop"
+                    transaction_type = "Deposit"
+                elif row.tx_type == et.TX_TYPE_STAKING:
+                    label = "Staking Reward"
+                    transaction_type = "Deposit"
+                elif row.tx_type == et.TX_TYPE_INCOME:
+                    label = "Income"
+                    transaction_type = "Deposit"
+                elif row.tx_type in [et.TX_TYPE_SPEND, et.TX_TYPE_MARGIN_TRADE_FEE]:
+                    label = "Other Expense"
+                    transaction_type = "Withdrawal"
+                elif row.tx_type == et.TX_TYPE_BORROW:
+                    label = ""
+                    transaction_type = "Deposit"
+                elif row.tx_type == et.TX_TYPE_REPAY:
+                    label = ""
+                    transaction_type = "Withdrawal"
+                elif row.tx_type == et.TX_TYPE_TRANSFER:
+                    label = ""
+                    if row.received_amount and not row.sent_amount:
+                        transaction_type = "Deposit"
+                    elif row.sent_amount and not row.received_amount:
+                        transaction_type = "Withdrawal"
+                    else:
+                        transaction_type = "Unknown transaction type"
+                elif row.tx_type == et.TX_TYPE_LP_DEPOSIT:
+                    label = "Liquidity In"
+                    transaction_type = "Deposit"
+                elif row.tx_type == et.TX_TYPE_LP_WITHDRAW:
+                    label = "Liquidity Out"
+                    transaction_type = "Withdrawal"
+                else:
+                    logging.error("divly: unable to handle tx_type=%s", row.tx_type)
+
+                # Description field
+                description = f"{row.exchange} {row.tx_type.lower()}: {row.comment}"
+                transaction_date, transaction_time = row.timestamp.split(" ")
+
+                line = [
+                    transaction_date,  # date
+                    transaction_time,  # time (UTC)
+                    transaction_type,  # transaction_type
+                    label,             # label
+                    row.sent_amount,   # sent_amount
+                    row.sent_currency,  # sent_currency
+                    row.received_amount,  # received_amount
+                    row.received_currency,  # received_currency
+                    row.fee,  # fee_amount
+                    row.fee_currency,  # fee_currency
+                    description,  # custom_description
+                    row.txid  # tx_hash
+                ]
+                mywriter.writerow(line)
+
+        logging.info("Wrote to %s", csvpath)
 
     def export_koinly_csv(self, csvpath):
         """ Write CSV, suitable for import into Koinly """

@@ -4,6 +4,7 @@ from staketaxcsv.common import make_tx
 
 # These imports add to CONTRACTS dict
 import staketaxcsv.luna1.col5.contracts.astroport
+import staketaxcsv.luna1.col5.contracts.pylon
 import staketaxcsv.luna1.col5.contracts.wormhole
 import staketaxcsv.luna1.col5.contracts.terraswap_route_swap
 
@@ -11,7 +12,7 @@ import staketaxcsv.luna1.col5.contracts.terraswap_route_swap
 def can_handle(exporter, elem, txinfo):
     # Has wasm event in every message
     for log in elem["logs"]:
-        if "wasm" not in log["events_by_type"]:
+        if "wasm" not in log["events_by_type"] and log["events_by_type"]["message"]["module"] != ["wasm"]:
             return False
 
     contract = util_terra._contract(elem, 0)

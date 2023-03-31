@@ -6,7 +6,7 @@ import os
 import staketaxcsv.api
 from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS
 from staketaxcsv.settings_csv import (
-    REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL, TICKER_GENERIC)
+    REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL, TICKER_COSMOSPLUS)
 
 ALL = "all"
 
@@ -114,16 +114,16 @@ def parse_args(ticker):
             default=False,
             help="Process transactions starting from the latest block in the previous run.",
         )
-    if ticker in (TICKER_GENERIC):
+    if ticker in (TICKER_COSMOSPLUS):
         parser.add_argument(
-            "--generic_node",
+            "--cosmosplus_node",
             type=str,
-            help="Full URL of LCD/RPC node (only used in report_generic_*.py)"
+            help="Full URL of LCD/RPC node (only used in report_cosmoplus_*.py)"
         )
         parser.add_argument(
-            "--generic_ticker",
+            "--cosmosplus_ticker",
             type=str,
-            help="symbol of token (only used in report_generic_*.py)"
+            help="symbol of token (only used in report_cosmosplus_*.py)"
         )
 
     args = parser.parse_args()
@@ -152,10 +152,10 @@ def parse_args(ticker):
         options["exclude_asas"] = args.exclude_asas
     if "track_block" in args and args.track_block:
         options["track_block"] = True
-    if "generic_node" in args:
-        options["generic_node"] = args.generic_node
-    if "generic_ticker" in args:
-        options["generic_ticker"] = args.generic_ticker
+    if "cosmosplus_node" in args:
+        options["cosmosplus_node"] = args.cosmosplus_node
+    if "cosmosplus_ticker" in args:
+        options["cosmosplus_ticker"] = args.cosmosplus_ticker
 
     return args.wallet_address, args.format, args.txid, options
 

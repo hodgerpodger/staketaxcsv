@@ -47,7 +47,7 @@ def is_algodex_transaction(wallet_address, group):
             return False
 
     note = get_transaction_note(transaction)
-    if note is None:
+    if not note:
         if txtype == co.TRANSACTION_TYPE_APP_CALL:
             appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
             return ALGODEX_TRANSACTION_ORDER_EXECUTE in appl_args
@@ -75,7 +75,7 @@ def handle_algodex_transaction(wallet_address, group, exporter, txinfo):
     transaction = group[0]
     txtype = transaction["tx-type"]
     note = get_transaction_note(transaction)
-    if note is None:
+    if not note:
         if txtype == co.TRANSACTION_TYPE_APP_CALL:
             appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
             if ALGODEX_TRANSACTION_ORDER_EXECUTE in appl_args:

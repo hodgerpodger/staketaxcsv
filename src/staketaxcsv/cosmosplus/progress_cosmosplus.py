@@ -1,10 +1,10 @@
 from staketaxcsv.common.progress import Progress
-from staketaxcsv.generic.config_generic import localconfig
+from staketaxcsv.cosmosplus.config_cosmosplus import localconfig
 
 SECONDS_PER_PAGE = 4
 
 
-class ProgressGeneric(Progress):
+class ProgressCosmosPlus(Progress):
 
     def __init__(self):
         super().__init__(localconfig)

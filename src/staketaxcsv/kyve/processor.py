@@ -1,8 +1,10 @@
 import logging
 
+import staketaxcsv.kyve.constants as co
 import staketaxcsv.common.ibc.handle
 import staketaxcsv.common.ibc.processor
-from staketaxcsv.generic.config_generic import localconfig
+from staketaxcsv.kyve.config_kyve import localconfig
+from staketaxcsv.settings_csv import KYVE_NODE
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -12,7 +14,8 @@ def process_txs(wallet_address, elems, exporter):
 
 def process_tx(wallet_address, elem, exporter):
     txinfo = staketaxcsv.common.ibc.processor.txinfo(
-        wallet_address, elem, localconfig.mintscan_label, localconfig.ibc_addresses, localconfig.node)
+        wallet_address, elem, co.MINTSCAN_LABEL_KYVE, localconfig.ibc_addresses, KYVE_NODE)
+    txinfo.url = "https://www.mintscan.io/kyve/txs/{}".format(txinfo.txid)
 
     if txinfo.is_failed:
         staketaxcsv.common.ibc.processor.handle_failed_transaction(exporter, txinfo)

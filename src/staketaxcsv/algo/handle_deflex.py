@@ -2,9 +2,13 @@ import base64
 from functools import partial
 import hashlib
 from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
-from staketaxcsv.algo.asset import Algo
 from staketaxcsv.algo.config_algo import localconfig
-from staketaxcsv.algo.export_tx import export_deposit_collateral_tx, export_spend_fee_tx, export_swap_tx, export_unknown, export_withdraw_collateral_tx
+from staketaxcsv.algo.export_tx import (
+    export_deposit_collateral_tx,
+    export_swap_tx,
+    export_unknown,
+    export_withdraw_collateral_tx
+)
 from staketaxcsv.algo.transaction import (
     get_fee_amount,
     get_inner_transfer_asset,
@@ -92,7 +96,7 @@ def _is_deflex_limit_order_fill(group):
 
 
 def _is_deflex_limit_order_create(wallet_address, group):
-    if len(group) < 5:
+    if len(group) < 4:
         return False
 
     if not is_app_call(group[-1], localconfig.deflex_limit_order_apps, DEFLEX_TRANSACTION_CREATE_ORDER):
@@ -170,7 +174,7 @@ def _handle_deflex_limit_order_fill(wallet_address, group, exporter, txinfo):
     if not full_group:
         return export_unknown(exporter, txinfo)
 
-    transaction = next((tx for tx in full_group 
+    transaction = next((tx for tx in full_group
         if is_app_call(tx, localconfig.deflex_limit_order_apps, DEFLEX_TRANSACTION_FILL_ORDER_INIT)), None)
     if transaction is None:
         return export_unknown(exporter, txinfo)
@@ -197,8 +201,7 @@ def _handle_deflex_limit_order_create(wallet_address, group, exporter, txinfo):
     fee_amount += fee_asset.uint_amount
 
     comment = COMMENT_DEFLEX + " Create Order"
-    export_spend_fee_tx(exporter, txinfo, Algo(fee_amount), comment, 0)
-    export_deposit_collateral_tx(exporter, txinfo, send_asset, 0, comment, 1)
+    export_deposit_collateral_tx(exporter, txinfo, send_asset, fee_amount, comment, 1)
 
 
 def _handle_deflex_limit_order_cancel(wallet_address, group, exporter, txinfo):

@@ -1,6 +1,7 @@
 import re
 from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
 from staketaxcsv.algo.constants import ASSET_ID_ALGO
+from staketaxcsv.algo.util import b64_decode_ascii
 
 ASSET_LP_TOKENS = {
     "TM1POOL": {
@@ -17,6 +18,10 @@ ASSET_LP_TOKENS = {
     },
     "PLP": {
         "pattern": re.compile(r"^(?P<asset1>\w*)\/(?P<asset2>\w*) PACT LP Token$"),
+        "symbol": "P"
+    },
+    "SIPLP": {
+        "pattern": re.compile(r"^(?P<asset1>\w*)\/(?P<asset2>\w*) \[SI\] PACT LP TKN$"),
         "symbol": "P"
     },
     "AF-POOL": {
@@ -47,6 +52,19 @@ ASSET_AF_LP_TOKENS = {
 }
 
 
+def _parse_asset(asset):
+    if "name" in asset and "unit-name" in asset:
+        return {key: asset[key] for key in ["name", "unit-name", "decimals"]}
+    elif "name-b64" in asset and "unit-name-b64" in asset:
+        return {
+            "name": b64_decode_ascii(asset["name-b64"]),
+            "unit-name": b64_decode_ascii(asset["unit-name-b64"]),
+            "decimals": asset["decimals"]
+        }
+    else:
+        return None
+
+
 class Asset:
     asset_list = {
         ASSET_ID_ALGO: {
@@ -67,10 +85,12 @@ class Asset:
         if id in self.asset_list:
             params = self.asset_list[id]
         else:
-            params = self.indexer.get_asset(id)
-            self.asset_list[id] = {key: params[key] for key in ["name", "unit-name", "decimals"]}
+            resp = self.indexer.get_asset(id)
+            params = _parse_asset(resp)
+            if params is not None:
+                self.asset_list[id] = params
         if params is None:
-            raise ValueError("invalid asset id")
+            raise ValueError(f"Invalid asset: id {id}")
         self._decimals = params["decimals"]
         # Remove non-ascii characters from the name
         self._ticker = params["unit-name"].encode('ascii', 'ignore').decode('ascii')
@@ -80,8 +100,9 @@ class Asset:
     @classmethod
     def load_assets(cls, assets):
         for asset in assets:
-            id = asset["asset-id"]
-            cls.asset_list[id] = {key: asset[key] for key in ["name", "unit-name", "decimals"]}
+            if "unit-name" in asset:
+                id = asset["asset-id"]
+                cls.asset_list[id] = {key: asset[key] for key in ["name", "unit-name", "decimals"]}
 
     @property
     def id(self):

@@ -20,3 +20,4 @@ build/*
 dist/*
 staketaxcsv.egg-info/*
 webapp/__pycache__/*
+.env

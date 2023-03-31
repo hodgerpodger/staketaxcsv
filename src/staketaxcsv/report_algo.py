@@ -12,7 +12,7 @@ import os
 import pprint
 
 import staketaxcsv.algo.processor
-from staketaxcsv.algo.api_algoindexer import LIMIT_ALGOINDEXER, AlgoIndexerAPI
+from staketaxcsv.algo.api_algoindexer import ALGOINDEXER_LIMIT, AlgoIndexerAPI
 from staketaxcsv.algo.api_nfdomains import NFDomainsAPI
 from staketaxcsv.algo.asset import Asset
 from staketaxcsv.algo.config_algo import localconfig
@@ -106,7 +106,7 @@ def txone(wallet_address, txid_or_groupid):
 
 def _max_queries():
     max_txs = localconfig.limit
-    max_queries = math.ceil(max_txs / LIMIT_ALGOINDEXER)
+    max_queries = math.ceil(max_txs / ALGOINDEXER_LIMIT)
     logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
     return max_queries
 
