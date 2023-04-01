@@ -14,6 +14,7 @@ from staketaxcsv.common.ibc.api_common import (
     TXS_LIMIT_PER_QUERY,
     remove_duplicates,
 )
+from staketaxcsv.common.ibc.util_ibc import retry
 from staketaxcsv.settings_csv import REPORTS_DIR
 
 
@@ -24,6 +25,7 @@ class LcdAPI:
     def __init__(self, node):
         self.node = node
 
+    @retry(max_retries = 7)
     def _query(self, uri_path, query_params, sleep_seconds=0):
         url = f"{self.node}{uri_path}"
         logging.info("Requesting url %s?%s ...", url, urlencode(query_params))
