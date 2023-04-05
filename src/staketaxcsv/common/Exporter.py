@@ -787,6 +787,7 @@ class Exporter:
         remap = {
             TICKER_LUNA1: {
                 "APOLLO": "ID:28478",
+                "AUST": "ID:81473",
                 "ASTRO": "ID:48993",
                 "BETH": "ID:30493",
                 "LOOP": "ID:10933",

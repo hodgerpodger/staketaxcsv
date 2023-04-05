@@ -64,6 +64,8 @@ def process_tx(wallet_address, elem, exporter):
             else:
                 # Legacy handlers
                 staketaxcsv.luna1.col4.handle.handle(exporter, elem, txinfo)
+        elif msgtype == "wasm/MsgMigrateContract":
+            staketaxcsv.luna1.col5.handle.handle(exporter, elem, txinfo)
         else:
             logging.error("Unknown msgtype for txid=%s", txid)
             ErrorCounter.increment("unknown_msgtype", txid)
