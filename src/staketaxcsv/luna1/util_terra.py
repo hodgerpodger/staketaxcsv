@@ -4,7 +4,7 @@ import base64
 import json
 import logging
 
-import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd_v1
 from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 from staketaxcsv.luna1.api_lcd import LcdAPI
 from staketaxcsv.luna1.config_luna1 import localconfig

@@ -1,7 +1,7 @@
 import logging
 import math
 
-from staketaxcsv.common.ibc.api_lcd import LcdAPI_v1
+from staketaxcsv.common.ibc.api_lcd_v1 import LcdAPI_v1
 from staketaxcsv.settings_csv import REPORTS_DIR
 from staketaxcsv.common.debug_util import use_debug_files
 from staketaxcsv.common.ibc.api_common import (

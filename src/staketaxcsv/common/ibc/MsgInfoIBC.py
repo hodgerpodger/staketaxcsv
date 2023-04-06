@@ -2,7 +2,7 @@ import logging
 import re
 
 import staketaxcsv.common.ibc.constants as co
-from staketaxcsv.common.ibc.api_lcd import ibc_address_to_denom
+from staketaxcsv.common.ibc.api_lcd_v1 import ibc_address_to_denom
 
 COIN_RECEIVED = "coin_received"
 COIN_SPENT = "coin_spent"

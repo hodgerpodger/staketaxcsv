@@ -8,7 +8,7 @@ import logging
 import pprint
 
 import staketaxcsv.bld.processor
-import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd_v1
 from staketaxcsv.bld.config_bld import localconfig
 from staketaxcsv.bld.progress_bld import SECONDS_PER_PAGE, ProgressBld
 from staketaxcsv.common import report_util
@@ -27,11 +27,11 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd.LcdAPI_v1(BLD_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(BLD_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI_v1(BLD_NODE).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(BLD_NODE).get_tx(txid)
 
     print("Transaction data:")
     pprint.pprint(elem)
@@ -44,7 +44,7 @@ def txone(wallet_address, txid):
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(BLD_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(BLD_NODE, wallet_address, max_txs)
 
 
 def txhistory(wallet_address):
@@ -58,11 +58,11 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_BLD)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(BLD_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    count_pages = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(BLD_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = staketaxcsv.common.ibc.api_lcd.get_txs_all(BLD_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
+    elems = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(BLD_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.bld.processor.process_txs(wallet_address, elems, exporter)
