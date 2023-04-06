@@ -17,7 +17,8 @@ from staketaxcsv.common.ibc.api_common import (
 from staketaxcsv.settings_csv import REPORTS_DIR
 
 
-class LcdAPI:
+class LcdAPI_v1:
+    """ <= v0.45.x (cosmos sdk version) """
     session = requests.Session()
     debug = False
 
@@ -115,8 +116,8 @@ class LcdAPI:
 
 def get_txs_all(node, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, sleep_seconds=1,
                 debug=False, stage_name="default", events_types=None):
-    LcdAPI.debug = debug
-    api = LcdAPI(node)
+    LcdAPI_v1.debug = debug
+    api = LcdAPI_v1(node)
     events_types = events_types if events_types else EVENTS_TYPE_LIST_DEFAULT
     max_pages = math.ceil(max_txs / limit)
 
@@ -142,8 +143,8 @@ def get_txs_all(node, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUE
 
 def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY, debug=False,
                         events_types=None, sleep_seconds=1):
-    LcdAPI.debug = debug
-    api = LcdAPI(node)
+    LcdAPI_v1.debug = debug
+    api = LcdAPI_v1(node)
     events_types = events_types if events_types else EVENTS_TYPE_LIST_DEFAULT
 
     total_pages = 0
@@ -167,7 +168,7 @@ def ibc_address_to_denom(node, ibc_address, ibc_addresses):
     if ibc_address in ibc_addresses:
         return ibc_addresses[ibc_address]
 
-    denom = LcdAPI(node).ibc_address_to_denom(ibc_address)
+    denom = LcdAPI_v1(node).ibc_address_to_denom(ibc_address)
 
     ibc_addresses[ibc_address] = denom
     return denom

@@ -39,7 +39,7 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd.LcdAPI(LUNA2_LCD_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd.LcdAPI_v1(LUNA2_LCD_NODE).account_exists(wallet_address)
 
 
 def estimate_duration(wallet_address):

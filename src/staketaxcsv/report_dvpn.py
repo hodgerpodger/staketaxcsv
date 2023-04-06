@@ -32,7 +32,7 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd.LcdAPI(DVPN_LCD_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd.LcdAPI_v1(DVPN_LCD_NODE).account_exists(wallet_address)
 
 
 def estimate_duration(wallet_address):
@@ -41,7 +41,7 @@ def estimate_duration(wallet_address):
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(DVPN_LCD_NODE).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI_v1(DVPN_LCD_NODE).get_tx(txid)
     if not elem:
         elem = RpcAPI(DVPN_RPC_NODE).get_tx(txid)
         staketaxcsv.common.ibc.api_rpc.normalize_rpc_txns(DVPN_RPC_NODE, [elem])

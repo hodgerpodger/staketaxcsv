@@ -32,7 +32,7 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd.LcdAPI(STARS_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd.LcdAPI_v1(STARS_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):

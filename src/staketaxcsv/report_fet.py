@@ -34,7 +34,7 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd.LcdAPI(FET_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd.LcdAPI_v1(FET_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
@@ -57,19 +57,19 @@ def txone(wallet_address, txid):
 def _query_tx(txid):
     # fetchhub-4
     node = FET_NODE
-    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(node).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI_v1(node).get_tx(txid)
     if elem:
         return elem, node
 
     # fetchhub-3
     node = co2.FET_FETCHUB3_NODE
-    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(node).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI_v1(node).get_tx(txid)
     if elem:
         return elem, node
 
     # fetchhub-2
     node = co2.FET_FETCHUB2_NODE
-    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(node).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI_v1(node).get_tx(txid)
     if elem:
         return elem, node
 
