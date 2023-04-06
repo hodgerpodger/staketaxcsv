@@ -1,10 +1,13 @@
-from staketaxcsv.common.make_tx import make_airdrop_tx, make_swap_tx
+from staketaxcsv.common.make_tx import make_airdrop_tx, make_swap_tx, make_income_tx, make_lp_unstake_tx
 from staketaxcsv.luna1 import constants as co
 from staketaxcsv.luna1 import util_terra
 from staketaxcsv.luna1.col5.contracts.config import CONTRACTS
 from staketaxcsv.luna1.constants import CUR_ASTRO
 
 CONTRACT_ASTROPORT_AIRDROP = "terra1dpe2aqykm2vnakcz4vgpha0agxnlkjvgfahhk7"
+CONTRACT_ASTROPORT_LOCKDROP = "terra1tvld5k6pus2yh7pcu7xuwyjedn7mjxfkkkjjap"
+CONTRACT_ASTROPORT_REWARDS_GENERATOR = "terra1zgrx9jjqrfye8swykfgmd6hpde60j0nszzupp9"
+CONTRACT_ASTROPORT_REWARDS_BOOTSTRAP = "terra1627ldjvxatt54ydd3ns6xaxtd68a2vtyu7kakj"
 
 CURRENCY_ADDRESS_ASTRO = "terra1xj49zyqrwpv5k928jwfpfy2ha668nwdgkwlrg3"
 CURRENCY_ADDRESS_XASTRO = "terra14lpnyzc9z4g3ugr4lhm8s4nle0tq8vcltkhzh7"
@@ -60,6 +63,54 @@ def _is_astroport_swap(msgs):
                 return True
     return False
 
+def _handle_astro_claim_msg(msg, txinfo):
+    txid = txinfo.txid
+    rows = []
+
+    transfers_in, _ = util_terra._transfers_from_actions(msg, txinfo.wallet_address, txid)
+
+    for amount, currency in transfers_in:
+        if "LP" in str(currency):
+            rows.append(make_lp_unstake_tx(txinfo, amount, currency))  
+        else:
+            rows.append(make_income_tx(txinfo, amount, currency, txid))
+    
+    return rows
+
+def handle_astro_claim_all(elem, txinfo):
+    msgs = txinfo.msgs
+    if len(msgs) > 1:
+      txinfo.comment += "ASTRO multi-claim all rewards"
+    else:
+      txinfo.comment += "ASTRO rewards claim"
+
+    rows = []
+
+    for msg in msgs:
+        rows.append(_handle_astro_claim_msg(msg, txinfo))
+
+    flattened_rows = []
+    for sublist in rows:
+        for item in sublist:
+            flattened_rows.append(item)
+
+    return flattened_rows
+
+def handle_astro_lockdrop(elem, txinfo):
+    txid = txinfo.txid
+    msgs = txinfo.msgs
+    txinfo.comment += "ASTRO lockdrop claim"
+    rows = []
+
+    transfers_in, _ = util_terra._transfers_from_actions(msgs[0], txinfo.wallet_address, txid)
+
+    for amount, currency in transfers_in:
+        if currency == CUR_ASTRO:
+            rows.append(make_income_tx(txinfo, amount, currency))
+        else:
+            rows.append(make_lp_unstake_tx(txinfo, amount, currency))
+
+    return rows
 
 def _handle_astroport_swap(elem, txinfo, msgs):
     txid = txinfo.txid
@@ -145,3 +196,10 @@ CONTRACTS[CURRENCY_ADDRESS_ASTRO] = handle_astro
 
 # unstake ASTRO
 CONTRACTS[CURRENCY_ADDRESS_XASTRO] = handle_xastro
+
+# Astroport lockdrop
+CONTRACTS[CONTRACT_ASTROPORT_LOCKDROP] = handle_astro_lockdrop
+
+# Astroport rewards claim
+CONTRACTS[CONTRACT_ASTROPORT_REWARDS_GENERATOR] = handle_astro_claim_all
+CONTRACTS[CONTRACT_ASTROPORT_REWARDS_BOOTSTRAP] = handle_astro_claim_all

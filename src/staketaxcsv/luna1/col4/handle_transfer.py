@@ -3,10 +3,12 @@ from staketaxcsv.common.make_tx import make_transfer_in_tx, make_transfer_out_tx
 from staketaxcsv.luna1 import util_terra
 from staketaxcsv.luna1.col4.handle_simple import handle_unknown, handle_unknown_detect_transfers
 
+SHUTTLE_BRIDGE = "terra1rtn03a9l3qsc0a9verxwj00afs93mlm0yr7chk"
 
 def handle_transfer(exporter, elem, txinfo):
     wallet_address = txinfo.wallet_address
 
+    memo = elem["tx"]["value"]["memo"]
     msgs = elem["tx"]["value"]["msg"]
     for msg in msgs:
         if msg["type"] != "bank/MsgSend":
@@ -18,6 +20,9 @@ def handle_transfer(exporter, elem, txinfo):
         for amount in msg["value"]["amount"]:
             denom = amount["denom"]
             amount_string = amount["amount"]
+
+            if to_address == SHUTTLE_BRIDGE:
+                txinfo.comment += "Shuttle bridge deposit. {}".format(memo)
 
             currency = util_terra._denom_to_currency(denom)
             amount = util_terra._float_amount(amount_string, None)

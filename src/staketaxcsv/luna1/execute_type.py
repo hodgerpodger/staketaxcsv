@@ -73,6 +73,8 @@ EXECUTE_TYPE_DISTRIBUTE = "distribute"
 EXECUTE_TYPE_INCREASE_LOCKUP = "increase_lockup"
 EXECUTE_TYPE_UNSTAKE_AND_CLAIM = "unstake_and_claim"
 EXECUTE_TYPE_SUBMIT_ORDER = "submit_order"
+EXECUTE_TYPE_WITHDRAW_NFT = "withdraw_nft"
+EXECUTE_TYPE_ADD_BALANCE = "add_balance"
 
 
 def _execute_type(elem, txinfo, index=0):
@@ -232,6 +234,12 @@ def _execute_type(elem, txinfo, index=0):
         return EXECUTE_TYPE_DISTRIBUTE
     elif "submit_order" in execute_msg:
         return EXECUTE_TYPE_SUBMIT_ORDER
+    elif "withdraw_nft" in execute_msg:
+        return EXECUTE_TYPE_WITHDRAW_NFT
+    elif "place_bid" in execute_msg:
+        return EXECUTE_TYPE_SUBMIT_BID
+    elif "add_balance" in execute_msg:
+        return EXECUTE_TYPE_ADD_BALANCE
 
     logging.error("Unable to determine execute type for txid=%s, %s", txid, execute_msg)
     return EXECUTE_TYPE_UNKNOWN

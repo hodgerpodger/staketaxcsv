@@ -16,7 +16,7 @@ def handle_failed_tx(exporter, elem, txinfo):
 
             txinfo.fee = ""
             txinfo.fee_currency = ""
-            txinfo.comment = "failed tx transaction fee"
+            txinfo.comment += "failed tx transaction fee"
 
             row = make_spend_fee_tx(txinfo, fee_amount, fee_currency)
             exporter.ingest_row(row)
