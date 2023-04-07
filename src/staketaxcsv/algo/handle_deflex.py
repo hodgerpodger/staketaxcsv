@@ -82,7 +82,7 @@ def _is_deflex_routed_swap(wallet_address, group):
     if i == length:
         return False
 
-    return is_app_call(group[i], APPLICATION_ID_DEFLEX_ORDER_ROUTER, DEFLEX_TRANSACTION_SWAP_FINALIZE)
+    return is_app_call(group[i], app_args=DEFLEX_TRANSACTION_SWAP_FINALIZE)
 
 
 def _is_deflex_limit_order_fill(group):
