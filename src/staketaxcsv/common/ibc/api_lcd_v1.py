@@ -34,6 +34,26 @@ class LcdAPI_v1:
             time.sleep(sleep_seconds)
         return response.json()
 
+    def _node_info(self):
+        uri_path = f"/cosmos/base/tendermint/v1beta1/node_info"
+        data = self._query(uri_path, {}, sleep_seconds=0)
+        return data
+
+    def cosmos_sdk_version(self):
+        """ i.e. "0.45.13" """
+        data = self._node_info()
+        version = data["application_version"]["cosmos_sdk_version"]
+
+        # i.e. "v0.45.13-ics" -> "0.45.13"
+        prefix = "v"
+        if version.startswith(prefix):
+            version = version[len(prefix):]
+        hyphen_index = version.find('-')
+        if hyphen_index != -1:
+            version = version[:hyphen_index]
+
+        return version
+
     def get_tx(self, txid):
         uri_path = f"/cosmos/tx/v1beta1/txs/{txid}"
         data = self._query(uri_path, {}, sleep_seconds=1)
@@ -114,7 +134,7 @@ class LcdAPI_v1:
         return data
 
 
-def get_txs_all(node, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, sleep_seconds=1,
+def get_txs_all(node, address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, sleep_seconds=1,
                 debug=False, stage_name="default", events_types=None):
     LcdAPI_v1.debug = debug
     api = LcdAPI_v1(node)
@@ -131,7 +151,7 @@ def get_txs_all(node, wallet_address, progress, max_txs, limit=TXS_LIMIT_PER_QUE
             progress.report(page_for_progress, message, stage_name)
             page_for_progress += 1
 
-            elems, offset, _ = api.get_txs(wallet_address, events_type, offset, limit, sleep_seconds)
+            elems, offset, _ = api.get_txs(address, events_type, offset, limit, sleep_seconds)
 
             out.extend(elems)
             if offset is None:
