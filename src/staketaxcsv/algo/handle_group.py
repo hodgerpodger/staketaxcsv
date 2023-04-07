@@ -7,7 +7,6 @@ from staketaxcsv.algo.asset import Algo
 from staketaxcsv.algo.config_algo import localconfig
 from staketaxcsv.algo.handle_akita import handle_akita_swap_transaction, is_akita_swap_transaction
 from staketaxcsv.algo.handle_algodex import handle_algodex_transaction, is_algodex_transaction
-from staketaxcsv.algo.handle_algofi import handle_algofi_transaction, is_algofi_transaction
 from staketaxcsv.algo.handle_algofiv2 import handle_algofiv2_transaction, is_algofiv2_transaction
 from staketaxcsv.algo.handle_amm import handle_swap, is_swap_group
 from staketaxcsv.algo.handle_deflex import handle_deflex_transaction, is_deflex_transaction
@@ -63,9 +62,12 @@ def has_app_transactions(group):
     return any(tx["tx-type"] == co.TRANSACTION_TYPE_APP_CALL for tx in group)
 
 
-def handle_transaction_group(wallet_address, group, exporter, txinfo):
-    if (is_governance_reward_transaction(wallet_address, group)
-            or is_governance_reward_transaction(localconfig.algofi_storage_address, group)):
+def handle_transaction_group(wallet_address, dapps, group, exporter, txinfo):
+    for app in dapps:
+        if app.is_dapp_transaction(group):
+            return app.handle_dapp_transaction(group, txinfo)
+
+    if (is_governance_reward_transaction(wallet_address, group)):
         handle_governance_reward_transaction(group, exporter, txinfo)
 
     elif is_tinyman_transaction(group):
@@ -76,9 +78,6 @@ def handle_transaction_group(wallet_address, group, exporter, txinfo):
 
     elif is_algofiv2_transaction(group):
         handle_algofiv2_transaction(wallet_address, group, exporter, txinfo)
-
-    elif is_algofi_transaction(group):
-        handle_algofi_transaction(wallet_address, group, exporter, txinfo)
 
     elif is_pact_transaction(wallet_address, group):
         handle_pact_transaction(wallet_address, group, exporter, txinfo)

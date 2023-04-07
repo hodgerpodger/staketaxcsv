@@ -580,7 +580,7 @@ def handle_folks_transaction(wallet_address, group, exporter, txinfo):
         _handle_folks_galgo3_burn_transaction(group, exporter, txinfo)
 
     elif _is_folks_galgo3_claim_rewards_transaction(group):
-        _handle_folks_galgo3_claim_rewards_transaction
+        _handle_folks_galgo3_claim_rewards_transaction(group, exporter, txinfo)
 
     elif _is_folks_galgo_mint_transaction(group):
         _handle_folks_galgo_mint_transaction(group, exporter, txinfo)
