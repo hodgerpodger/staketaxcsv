@@ -10,6 +10,8 @@ class localconfig(config):
 
     # caches
     ibc_addresses = {}
-    currency_addresses = {}  # <currency_address> -> <currency_symbol>
+    currency_addresses = {
+      'terra1t9ul45l7m6jw6sxgvnp8e5hj8xzkjsg82g84ap': 'wstSOL',
+    }  # <currency_address> -> <currency_symbol>
     decimals = {}  # <currency_symbol> -> <number_of_decimals>
     lp_currency_addresses = {}  # <lp_currency_address> -> <lp_currency_symbol>

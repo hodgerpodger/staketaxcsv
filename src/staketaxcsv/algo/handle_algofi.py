@@ -20,6 +20,7 @@ from staketaxcsv.algo.export_tx import (
 )
 from staketaxcsv.algo.handle_transfer import is_governance_reward_transaction
 from staketaxcsv.algo.transaction import (
+    get_fee_amount,
     get_inner_transfer_asset,
     get_transfer_asset,
     is_app_call,
@@ -186,9 +187,9 @@ def _is_algofi_zap(group):
     return _is_algofi_swap(group[:i + 2]) and _is_algofi_lp_add(group[i + 2:])
 
 
-def _is_algofi_swap(group):
+def _is_algofi_swap_exact_for(group):
     length = len(group)
-    if length < 2:
+    if length < 2 or length > 3:
         return False
 
     i = 0
@@ -202,34 +203,37 @@ def _is_algofi_swap(group):
     if i == length:
         return False
 
-    transaction = group[i]
-    txtype = transaction["tx-type"]
-    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+    return is_app_call(group[-1],
+                       app_args=ALGOFI_TRANSACTION_SWAP_EXACT_FOR,
+                       foreign_app=[APPLICATION_ID_ALGOFI_AMM_MANAGER, APPLICATION_ID_ALGOFI_NANOSWAP_MANAGER])
+
+
+def _is_algofi_swap_for_exact(group):
+    length = len(group)
+    if length < 3 or length > 4:
         return False
 
-    foreign_apps = transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]
-    if (APPLICATION_ID_ALGOFI_AMM_MANAGER not in foreign_apps
-            and APPLICATION_ID_ALGOFI_NANOSWAP_MANAGER not in foreign_apps):
-        return False
+    i = 0
+    if is_asset_optin(group[i]):
+        i += 1
 
-    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-    if ALGOFI_TRANSACTION_SWAP_EXACT_FOR in appl_args:
-        return True
-
-    if ALGOFI_TRANSACTION_SWAP_FOR_EXACT not in appl_args:
+    if not is_transfer(group[i]):
         return False
 
     i += 1
     if i == length:
         return False
 
-    transaction = group[i]
-    txtype = transaction["tx-type"]
-    if txtype != co.TRANSACTION_TYPE_APP_CALL:
+    if not is_app_call(group[i],
+                       app_args=ALGOFI_TRANSACTION_SWAP_FOR_EXACT,
+                       foreign_app=[APPLICATION_ID_ALGOFI_AMM_MANAGER, APPLICATION_ID_ALGOFI_NANOSWAP_MANAGER]):
         return False
 
-    appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-    return ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL in appl_args
+    return is_app_call(group[-1], app_args=ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL)
+
+
+def _is_algofi_swap(group):
+    return _is_algofi_swap_exact_for(group) or _is_algofi_swap_for_exact(group)
 
 
 def _is_algofi_claim_rewards(group):
@@ -539,10 +543,10 @@ def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
     export_participation_rewards(reward, exporter, txinfo)
 
     if _is_algofi_zap(group):
-        _handle_algofi_zap(group, exporter, txinfo)
+        _handle_algofi_zap(wallet_address, group, exporter, txinfo)
 
     elif _is_algofi_swap(group):
-        _handle_algofi_swap(group, exporter, txinfo)
+        _handle_algofi_swap(wallet_address, group, exporter, txinfo)
 
     elif _is_algofi_claim_rewards(group):
         _handle_algofi_claim_rewards(group, exporter, txinfo)
@@ -569,7 +573,7 @@ def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
         _handle_algofi_liquidate(wallet_address, group, exporter, txinfo)
 
     elif _is_algofi_flash_loan(group):
-        _handle_algofi_flash_loan(group, exporter, txinfo)
+        _handle_algofi_flash_loan(wallet_address, group, exporter, txinfo)
 
     elif _is_algofi_sync_vault(group):
         pass
@@ -584,7 +588,7 @@ def handle_algofi_transaction(wallet_address, group, exporter, txinfo):
         export_unknown(exporter, txinfo)
 
 
-def _handle_algofi_zap(group, exporter, txinfo):
+def _handle_algofi_zap(wallet_address, group, exporter, txinfo):
     i = 0
     txtype = group[i]["tx-type"]
     # Skip opt-in transaction
@@ -592,55 +596,26 @@ def _handle_algofi_zap(group, exporter, txinfo):
             and group[i]["sender"] == group[i][co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
         i += 1
 
-    _handle_algofi_swap(group[:i + 2], exporter, txinfo, 0)
+    _handle_algofi_swap(wallet_address, group[:i + 2], exporter, txinfo, 0)
     _handle_algofi_lp_add(group[i + 2:], exporter, txinfo, 1)
 
 
-def _handle_algofi_swap(group, exporter, txinfo, z_index=0):
-    txinfo.comment = COMMENT_ALGOFI
-    fee_amount = 0
+def _handle_algofi_swap(wallet_address, group, exporter, txinfo, z_index=0):
+    fee_amount = get_fee_amount(wallet_address, group)
+
     i = 0
-    send_transaction = group[i]
     if is_asset_optin(group[i]):
-        fee_amount += send_transaction["fee"]
         i += 1
 
-    z_offset = 0
-    # Handle multiple swaps within the group (usual in triangular arbitrage)
-    length = len(group)
-    while i < length:
-        send_transaction = group[i]
-        txtype = send_transaction["tx-type"]
-        if txtype != co.TRANSACTION_TYPE_PAYMENT and txtype != co.TRANSACTION_TYPE_ASSET_TRANSFER:
-            break
+    send_asset = get_transfer_asset(group[i])
+    receive_asset = get_inner_transfer_asset(group[i + 1])
 
-        app_transaction = group[i + 1]
-        txtype = app_transaction["tx-type"]
-        if txtype != co.TRANSACTION_TYPE_APP_CALL:
-            break
-        appl_args = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-        if (ALGOFI_TRANSACTION_SWAP_EXACT_FOR not in appl_args
-                and ALGOFI_TRANSACTION_SWAP_FOR_EXACT not in appl_args):
-            break
-        fee_amount += send_transaction["fee"] + app_transaction["fee"]
-        send_asset = get_transfer_asset(send_transaction)
-        receive_asset = get_inner_transfer_asset(app_transaction)
+    if is_app_call(group[-1], app_args=ALGOFI_TRANSACTION_REDEEM_SWAP_RESIDUAL):
+        redeem_asset = get_inner_transfer_asset(group[-1])
+        if redeem_asset is not None:
+            send_asset -= redeem_asset
 
-        if ALGOFI_TRANSACTION_SWAP_FOR_EXACT in appl_args:
-            app_transaction = group[i + 2]
-            fee_amount += app_transaction["fee"]
-            redeem_asset = get_inner_transfer_asset(app_transaction)
-            if redeem_asset is not None:
-                send_asset -= redeem_asset
-            i += 3
-        else:
-            i += 2
-
-        export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_ALGOFI, z_index + z_offset)
-        z_offset += 1
-        fee_amount = 0
-
-    return i
+    export_swap_tx(exporter, txinfo, send_asset, receive_asset, fee_amount, COMMENT_ALGOFI, z_index)
 
 
 def _handle_algofi_lp_add(group, exporter, txinfo, z_index=0):
@@ -764,9 +739,9 @@ def _handle_algofi_liquidate(wallet_address, group, exporter, txinfo):
         export_repay_tx(exporter, txinfo, repay_asset, fee_amount, COMMENT_ALGOFI + " liquidation")
 
 
-def _handle_algofi_flash_loan(group, exporter, txinfo):
+def _handle_algofi_flash_loan(wallet_address, group, exporter, txinfo):
     _handle_algofi_borrow(group[:1], exporter, txinfo, 0)
-    _handle_algofi_swap(group[1:-1], exporter, txinfo, 1)
+    _handle_algofi_swap(wallet_address, group[1:-1], exporter, txinfo, 1)
     _handle_algofi_repay_borrow(group[-1:], exporter, txinfo, 2)
 
 

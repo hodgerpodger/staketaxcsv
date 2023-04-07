@@ -6,7 +6,7 @@ Transactions processor for cosmoshub3 transactions.
 import logging
 from datetime import datetime
 
-import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd_v1
 from staketaxcsv.atom.config_atom import localconfig
 from staketaxcsv.atom.constants import CHAIN_ID_COSMOSHUB3, CHAIN_ID_COSMOSHUB4, CUR_ATOM, MILLION
 from staketaxcsv.atom.cosmoshub123.make_tx import make_atom_reward_tx, make_transfer_receive_tx
@@ -247,7 +247,7 @@ def _amount(amount_string):
     if "ibc/" in amount_string:
         amount, address = amount_string.split("ibc/", 1)
         ibc_address = "ibc/{}".format(address)
-        # currency = common.ibc.api_lcd.ibc_address_to_denom(ATOM_NODE, ibc_address, localconfig.ibc_addresses)
+        # currency = common.ibc.api_lcd_v1.ibc_address_to_denom(ATOM_NODE, ibc_address, localconfig.ibc_addresses)
         # amount = float(amount) / MILLION
 
         return MsgInfoIBC.amount_currency_from_raw(amount, ibc_address, ATOM_NODE, localconfig.ibc_addresses)

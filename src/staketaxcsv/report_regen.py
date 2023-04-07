@@ -14,7 +14,7 @@ from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import TICKER_REGEN, REGEN_NODE
 import staketaxcsv.regen.processor
-import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd_v1
 
 
 def main():
@@ -28,11 +28,11 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd.LcdAPI(REGEN_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(REGEN_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(REGEN_NODE).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(REGEN_NODE).get_tx(txid)
 
     print("Transaction data:")
     pprint.pprint(elem)
@@ -45,7 +45,7 @@ def txone(wallet_address, txid):
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(
+    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(
         REGEN_NODE, wallet_address, max_txs)
 
 
@@ -59,12 +59,12 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_REGEN)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(
+    count_pages = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(
         REGEN_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = staketaxcsv.common.ibc.api_lcd.get_txs_all(
+    elems = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(
         REGEN_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")

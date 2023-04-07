@@ -9,7 +9,7 @@ import logging
 import pprint
 
 import staketaxcsv.common.ibc.api_common
-import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.common.ibc.api_rpc
 import staketaxcsv.dvpn.processor
 from staketaxcsv.common import report_util
@@ -32,16 +32,16 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd.LcdAPI(DVPN_LCD_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(DVPN_LCD_NODE).account_exists(wallet_address)
 
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return LCD_SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(DVPN_LCD_NODE, wallet_address, max_txs)
+    return LCD_SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(DVPN_LCD_NODE, wallet_address, max_txs)
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(DVPN_LCD_NODE).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(DVPN_LCD_NODE).get_tx(txid)
     if not elem:
         elem = RpcAPI(DVPN_RPC_NODE).get_tx(txid)
         staketaxcsv.common.ibc.api_rpc.normalize_rpc_txns(DVPN_RPC_NODE, [elem])
@@ -65,7 +65,7 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_DVPN)
 
     # LCD - fetch count of transactions to estimate progress more accurately
-    lcd_count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(
+    lcd_count_pages = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(
         DVPN_LCD_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_lcd_estimate(lcd_count_pages)
     # RPC - fetch count of transactions to estimate progress more accurately
@@ -74,7 +74,7 @@ def txhistory(wallet_address):
     progress.set_rpc_estimate(rpc_count_pages)
 
     # LCD - fetch transactions
-    lcd_elems = staketaxcsv.common.ibc.api_lcd.get_txs_all(DVPN_LCD_NODE, wallet_address, progress, max_txs,
+    lcd_elems = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(DVPN_LCD_NODE, wallet_address, progress, max_txs,
                                                debug=localconfig.debug,
                                                stage_name="lcd")
 

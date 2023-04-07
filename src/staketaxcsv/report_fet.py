@@ -7,13 +7,13 @@ Prints transactions and writes CSV(s) to _reports/FET*.csv
 import logging
 import pprint
 
-import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.fet.fetchhub1.processor_legacy
 import staketaxcsv.fet.processor
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ibc.api_lcd import EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SENDER, EVENTS_TYPE_SIGNER
+from staketaxcsv.common.ibc.api_lcd_v1 import EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SENDER, EVENTS_TYPE_SIGNER
 from staketaxcsv.fet.config_fet import localconfig
 from staketaxcsv.fet.fetchhub1 import constants as co2
 from staketaxcsv.fet.fetchhub1.api_rpc import FetRpcAPI
@@ -34,7 +34,7 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd.LcdAPI(FET_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(FET_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
@@ -57,19 +57,19 @@ def txone(wallet_address, txid):
 def _query_tx(txid):
     # fetchhub-4
     node = FET_NODE
-    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(node).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(node).get_tx(txid)
     if elem:
         return elem, node
 
     # fetchhub-3
     node = co2.FET_FETCHUB3_NODE
-    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(node).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(node).get_tx(txid)
     if elem:
         return elem, node
 
     # fetchhub-2
     node = co2.FET_FETCHUB2_NODE
-    elem = staketaxcsv.common.ibc.api_lcd.LcdAPI(node).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(node).get_tx(txid)
     if elem:
         return elem, node
 
@@ -84,7 +84,7 @@ def _query_tx(txid):
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(FET_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(FET_NODE, wallet_address, max_txs)
 
 
 def txhistory(wallet_address):
@@ -99,11 +99,11 @@ def txhistory(wallet_address):
     # Fetch count of pages/transactions to estimate progress more accurately
     pages_fet1, txs_fet1 = staketaxcsv.fet.fetchhub1.api_rpc.get_txs_pages_count(
         co2.FET_FETCHUB1_NODE, wallet_address, max_txs, debug=localconfig.debug, events_types=EVENTS_TYPES_FET)
-    pages_fet2 = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(
+    pages_fet2 = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(
         co2.FET_FETCHUB2_NODE, wallet_address, max_txs, debug=localconfig.debug, events_types=EVENTS_TYPES_FET)
-    pages_fet3 = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(
+    pages_fet3 = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(
         co2.FET_FETCHUB3_NODE, wallet_address, max_txs, debug=localconfig.debug, events_types=EVENTS_TYPES_FET)
-    pages_fet4 = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(
+    pages_fet4 = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(
         FET_NODE, wallet_address, max_txs, debug=localconfig.debug, events_types=EVENTS_TYPES_FET)
     progress.set_estimate_fet1(pages_fet1, txs_fet1)
     progress.set_estimate_fet2(pages_fet2)
@@ -120,21 +120,21 @@ def txhistory(wallet_address):
     staketaxcsv.fet.processor.process_txs(wallet_address, elems_1, exporter, co2.FET_FETCHUB1_NODE, progress)
 
     # fetchhub2
-    elems_2 = staketaxcsv.common.ibc.api_lcd.get_txs_all(
+    elems_2 = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(
         co2.FET_FETCHUB2_NODE, wallet_address, progress, max_txs, debug=localconfig.debug,
         stage_name=progress.STAGE_FET2, events_types=EVENTS_TYPES_FET)
     progress.report_message(f"Processing {len(elems_2)} transactions for fetchhub-2... ")
     staketaxcsv.fet.processor.process_txs(wallet_address, elems_2, exporter, co2.FET_FETCHUB2_NODE)
 
     # fetchhub3
-    elems_3 = staketaxcsv.common.ibc.api_lcd.get_txs_all(
+    elems_3 = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(
         co2.FET_FETCHUB3_NODE, wallet_address, progress, max_txs, debug=localconfig.debug,
         stage_name=progress.STAGE_FET3, events_types=EVENTS_TYPES_FET)
     progress.report_message(f"Processing {len(elems_3)} transactions for fetchhub-3... ")
     staketaxcsv.fet.processor.process_txs(wallet_address, elems_3, exporter, co2.FET_FETCHUB3_NODE)
 
     # fetchhub4
-    elems_4 = staketaxcsv.common.ibc.api_lcd.get_txs_all(
+    elems_4 = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(
         FET_NODE, wallet_address, progress, max_txs, debug=localconfig.debug, stage_name=progress.STAGE_FET4,
         events_types=EVENTS_TYPES_FET
     )

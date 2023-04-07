@@ -30,7 +30,7 @@ from staketaxcsv.luna1.col4 import (
 )
 from staketaxcsv.luna1.col4.handle_simple import handle_simple, handle_unknown_detect_transfers
 from staketaxcsv.luna1.constants import (
-    CONTRACT_RANDOMEARTH,
+    CONTRACTS_RANDOMEARTH,
     CONTRACTS_APOLLO,
     CONTRACTS_ASTROPORT,
     CONTRACTS_LOOP,
@@ -73,7 +73,7 @@ def handle(exporter, elem, txinfo):
             return handle_reward_pylon.handle_pylon_withdraw(exporter, elem, txinfo)
         else:
             return handle_unknown_detect_transfers(exporter, txinfo, elem)
-    elif contract == CONTRACT_RANDOMEARTH:
+    elif util_terra._any_contracts(CONTRACTS_RANDOMEARTH, elem):
         return handle_randomearth.handle_randomearth(exporter, elem, txinfo)
     elif util_terra._any_contracts(CONTRACTS_APOLLO, elem):
         return handle_reward_contract.handle_airdrop(exporter, elem, txinfo)

@@ -4,15 +4,13 @@ usage: python3 staketaxcsv/report_algo.py <walletaddress> [--format all|cointrac
 Prints transactions and writes CSV(s) to _reports/ALGO.<walletaddress>.<format>.csv
 """
 
-import datetime
 import json
 import logging
-import math
 import os
 import pprint
 
 import staketaxcsv.algo.processor
-from staketaxcsv.algo.api_algoindexer import ALGOINDEXER_LIMIT, AlgoIndexerAPI
+from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
 from staketaxcsv.algo.api_nfdomains import NFDomainsAPI
 from staketaxcsv.algo.asset import Asset
 from staketaxcsv.algo.config_algo import localconfig
@@ -104,13 +102,6 @@ def txone(wallet_address, txid_or_groupid):
     return exporter
 
 
-def _max_queries():
-    max_txs = localconfig.limit
-    max_queries = math.ceil(max_txs / ALGOINDEXER_LIMIT)
-    logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
-    return max_queries
-
-
 def txhistory(wallet_address):
     _read_persistent_config(wallet_address)
 
@@ -140,14 +131,7 @@ def _get_txs(wallet_address, account, progress):
         localconfig.deflex_limit_order_apps = get_deflex_limit_order_apps(account)
         localconfig.algofi_storage_address = get_algofi_storage_address(account)
 
-    # Debugging only: when --debug flag set, read from cache file
-    debug_file = f"{REPORTS_DIR}/debug.{TICKER_ALGO}.{wallet_address}.json"
-    if localconfig.debug and os.path.exists(debug_file):
-        with open(debug_file, 'r') as f:
-            out = json.load(f)
-            return out
-
-    out = _get_address_transactions(wallet_address)
+    out = indexer.get_all_transactions(wallet_address)
     # Reverse the list so transactions are in chronological order
     out.reverse()
     # if len(out) > 0:
@@ -155,7 +139,7 @@ def _get_txs(wallet_address, account, progress):
 
     storage_address = localconfig.algofi_storage_address
     if storage_address is not None:
-        storage_txs = _get_address_transactions(storage_address)
+        storage_txs = indexer.get_all_transactions(storage_address)
         out.extend(get_algofi_liquidate_transactions(storage_txs))
         out.extend(get_algofi_governance_rewards_transactions(storage_txs, storage_address))
 
@@ -164,34 +148,6 @@ def _get_txs(wallet_address, account, progress):
     progress.set_estimate(num_tx)
     message = "Retrieved total {} txids...".format(num_tx)
     progress.report_message(message)
-
-    # Debugging only: when --debug flat set, write to cache file
-    if localconfig.debug:
-        with open(debug_file, 'w') as f:
-            json.dump(out, f, indent=4)
-        logging.info("Wrote to %s for debugging", debug_file)
-
-    return out
-
-
-def _get_address_transactions(address):
-    next = None
-    out = []
-
-    after_date = None
-    before_date = None
-    if localconfig.start_date:
-        after_date = datetime.date.fromisoformat(localconfig.start_date)
-    if localconfig.end_date:
-        before_date = datetime.date.fromisoformat(localconfig.end_date) + datetime.timedelta(days=1)
-
-    for _ in range(_max_queries()):
-        transactions, next = indexer.get_transactions(
-            address, after_date, before_date, localconfig.min_round, next)
-        out.extend(transactions)
-
-        if not next:
-            break
 
     return out
 

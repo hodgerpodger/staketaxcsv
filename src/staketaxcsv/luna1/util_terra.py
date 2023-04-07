@@ -4,7 +4,7 @@ import base64
 import json
 import logging
 
-import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd_v1
 from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 from staketaxcsv.luna1.api_lcd import LcdAPI
 from staketaxcsv.luna1.config_luna1 import localconfig
@@ -56,7 +56,7 @@ def _execute_msgs_keys(elem):
 def _execute_msg(elem, index=0):
     msg = _execute_msg_field(elem, index)
     if "ledger_proxy" in msg and "msg" in msg["ledger_proxy"]:
-        return msg["ledger_proxy"]["msg"]
+        return json.loads(msg["ledger_proxy"]["msg"])
     return msg
 
 
@@ -122,6 +122,24 @@ def _transfers(elem, wallet_address, txid, multicurrency=False):
 
     return transfers_in, transfers_out
 
+def _transfers_from_actions(msg, wallet_address, txid, multicurrency=False):
+    transfers_in = []
+    transfers_out = []
+
+    for action in msg.actions:
+        if "action" in action and action["action"] in ["transfer", "send"]:
+            currency_contract = action["contract_address"]
+            currency = _asset_to_currency(currency_contract, txid)
+            amount = _float_amount(action["amount"], currency)
+            recipient = action["to"]
+            sender = action["from"]
+
+            if recipient == wallet_address:
+                transfers_in.append([amount, currency])
+            elif sender == wallet_address:
+                transfers_out.append([amount, currency])
+
+    return transfers_in, transfers_out
 
 def _transfers_log(log, wallet_address, multicurrency=False):
     transfers_in = []
@@ -386,9 +404,12 @@ def _query_lp_address(addr, txid):
         for i, asset_info in enumerate(init_msg["asset_infos"]):
             if "token" in asset_info:
                 contract_addr = asset_info["token"]["contract_addr"]
-                init_msg2 = _query_wasm(contract_addr)
-                currency = init_msg2["symbol"]
-                out[i] = currency
+                if contract_addr in localconfig.currency_addresses:
+                    out[i] = localconfig.currency_addresses[contract_addr]
+                else:
+                    init_msg2 = _query_wasm(contract_addr)
+                    currency = init_msg2["symbol"]
+                    out[i] = currency
             elif "native_token" in asset_info:
                 currency = _denom_to_currency(asset_info["native_token"]["denom"])
                 out[i] = currency

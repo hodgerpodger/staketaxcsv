@@ -1,4 +1,3 @@
-
 from staketaxcsv.luna1 import util_terra
 from staketaxcsv.luna1.col5.contracts.config import CONTRACTS
 from staketaxcsv.luna1.make_tx import make_swap_tx_terra, make_gov_stake_tx, make_gov_unstake_tx

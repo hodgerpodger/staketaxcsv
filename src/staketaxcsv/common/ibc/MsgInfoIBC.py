@@ -2,7 +2,7 @@ import logging
 import re
 
 import staketaxcsv.common.ibc.constants as co
-from staketaxcsv.common.ibc.api_lcd import ibc_address_to_denom
+from staketaxcsv.common.ibc.api_lcd_v1 import ibc_address_to_denom
 
 COIN_RECEIVED = "coin_received"
 COIN_SPENT = "coin_spent"
@@ -89,7 +89,7 @@ class MsgInfoIBC:
                         receiver = attributes[i + 1]["value"]
                     elif first_key == RECEIVER:
                         receiver = attributes[i]["value"]
-                        amount_string = attributes[i + 1]["value"]
+                        amount_string = attributes[i + 1].get("value", "")
                     else:
                         raise Exception("Unexpected format in coin_received event")
 
@@ -116,7 +116,7 @@ class MsgInfoIBC:
                         spender = attributes[i + 1]["value"]
                     elif first_key == SPENDER:
                         spender = attributes[i]["value"]
-                        amount_string = attributes[i + 1]["value"]
+                        amount_string = attributes[i + 1].get("value", "")
                     else:
                         raise Exception("Unexpected format in coin_spent event")
 
@@ -152,7 +152,7 @@ class MsgInfoIBC:
                     else:
                         recipient = attributes[i]["value"]
                         sender = attributes[i + 1]["value"]
-                        amount_string = attributes[i + 2]["value"]
+                        amount_string = attributes[i + 2].get("value", "")
 
                     if recipient == self.wallet_address:
                         for amount, currency in self.amount_currency(amount_string):
