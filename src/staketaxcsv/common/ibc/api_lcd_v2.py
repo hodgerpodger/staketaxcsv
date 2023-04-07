@@ -1,7 +1,7 @@
 import logging
 import math
 
-from staketaxcsv.common.ibc.api_lcd import LcdAPI
+from staketaxcsv.common.ibc.api_lcd_v1 import LcdAPI_v1
 from staketaxcsv.settings_csv import REPORTS_DIR
 from staketaxcsv.common.debug_util import use_debug_files
 from staketaxcsv.common.ibc.api_common import (
@@ -15,8 +15,8 @@ from staketaxcsv.common.ibc.api_common import (
 TXS_LIMIT_PER_QUERY = 100
 
 
-class LcdAPI_v2(LcdAPI):
-    """ post v0.46.x , around 2023-01 """
+class LcdAPI_v2(LcdAPI_v1):
+    """ >= v0.46.x (cosmos sdk version), around 2023-01 """
 
     @use_debug_files(None, REPORTS_DIR)
     def _get_txs(self, wallet_address, events_type, page, limit, sleep_seconds):

@@ -1,9 +1,9 @@
 import logging
 
-from staketaxcsv.common.ibc.api_lcd import LcdAPI
+from staketaxcsv.common.ibc.api_lcd_v1 import LcdAPI_v1
 
 
-class CosmWasmLcdAPI(LcdAPI):
+class CosmWasmLcdAPI(LcdAPI_v1):
 
     def contract_history(self, contract):
         uri_path = "/cosmwasm/wasm/v1/contract/{}/history".format(contract)

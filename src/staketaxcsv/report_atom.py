@@ -18,7 +18,7 @@ import staketaxcsv.api
 import staketaxcsv.atom.api_lcd
 import staketaxcsv.atom.cosmoshub123.api_cosmostation
 import staketaxcsv.atom.processor
-import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd_v1
 from staketaxcsv.atom.config_atom import localconfig
 from staketaxcsv.atom.progress_atom import SECONDS_PER_PAGE, ProgressAtom
 from staketaxcsv.common import report_util
@@ -85,7 +85,7 @@ def txhistory(wallet_address):
 
     # Fetch transactions
     elems.extend(
-        staketaxcsv.common.ibc.api_lcd.get_txs_all(
+        staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(
             ATOM_NODE, wallet_address, progress, max_txs, debug=localconfig.debug
         )
     )

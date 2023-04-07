@@ -10,7 +10,7 @@ TODO: STARS CSVs are only in experimental state.  All "execute contract" transac
 import logging
 import pprint
 
-import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.common.ibc.api_rpc_multinode
 import staketaxcsv.stars.processor
 from staketaxcsv.common import report_util
@@ -32,7 +32,7 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd.LcdAPI(STARS_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(STARS_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):

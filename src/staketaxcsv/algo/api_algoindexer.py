@@ -1,10 +1,14 @@
+import datetime
 from itertools import cycle
 import logging
+import math
 from random import sample
 from requests import Session
 from requests.adapters import HTTPAdapter, Retry
 
-from staketaxcsv.settings_csv import ALGO_ALT_INDEXER_NODE, ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE
+from staketaxcsv.algo.config_algo import localconfig
+from staketaxcsv.common.debug_util import use_debug_files
+from staketaxcsv.settings_csv import ALGO_ALT_INDEXER_NODE, ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE, REPORTS_DIR
 
 # https://developer.algorand.org/docs/get-details/indexer/#paginated-results
 ALGOINDEXER_LIMIT = 2000
@@ -39,6 +43,7 @@ class AlgoIndexerAPI:
 
         return status_code == 200
 
+    @use_debug_files(localconfig, REPORTS_DIR)
     def get_account(self, address):
         endpoint = f"v2/accounts/{address}"
         params = {"include-all": True}
@@ -85,6 +90,32 @@ class AlgoIndexerAPI:
             return data["transactions"], data.get("next-token")
         else:
             return [], None
+
+    @use_debug_files(localconfig, REPORTS_DIR)
+    def get_all_transactions(self, address):
+        next = None
+        out = []
+
+        max_txs = localconfig.limit
+        max_queries = math.ceil(max_txs / ALGOINDEXER_LIMIT)
+        logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
+
+        after_date = None
+        before_date = None
+        if localconfig.start_date:
+            after_date = datetime.date.fromisoformat(localconfig.start_date)
+        if localconfig.end_date:
+            before_date = datetime.date.fromisoformat(localconfig.end_date) + datetime.timedelta(days=1)
+
+        for _ in range(max_queries):
+            transactions, next = self.get_transactions(
+                address, after_date, before_date, localconfig.min_round, next)
+            out.extend(transactions)
+
+            if not next:
+                break
+
+        return out
 
     def get_transactions_by_group(self, group_id):
         endpoint = "v2/transactions"

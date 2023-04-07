@@ -10,7 +10,7 @@ TODO: JUNO CSVs are only in experimental state.  All "execute contract" transact
 import logging
 import pprint
 
-import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.common.ibc.api_rpc
 import staketaxcsv.common.ibc.api_rpc_multinode
 import staketaxcsv.juno.processor
@@ -33,7 +33,7 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd.LcdAPI(JUNO_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(JUNO_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):

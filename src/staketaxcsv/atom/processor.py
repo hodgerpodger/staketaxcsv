@@ -2,7 +2,7 @@ import staketaxcsv.atom.constants as co
 import staketaxcsv.atom.cosmoshub123.processor_1
 import staketaxcsv.atom.cosmoshub123.processor_2
 import staketaxcsv.atom.cosmoshub123.processor_3
-import staketaxcsv.common.ibc.api_lcd
+import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.common.ibc.handle
 import staketaxcsv.common.ibc.processor
 from staketaxcsv.atom.config_atom import localconfig
