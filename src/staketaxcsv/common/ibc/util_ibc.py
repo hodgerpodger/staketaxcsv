@@ -27,5 +27,6 @@ def retry(max_retries: int = 5):
                 except JSONDecodeError as exc:
                     logging.warning(f'Jsondecode error: {exc}. Retrying: {i + 1}')
 
+            raise exc
         return _inner2
     return _inner1
