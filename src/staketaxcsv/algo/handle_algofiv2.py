@@ -47,6 +47,7 @@ APPLICATION_ID_ALGOFIV2_GOVERNANCE_REWARDS_MANAGER = 900652834
 
 ALGOFIV2_TRANSACTION_USER_OPTIN = "dW9p"                    # "uoi"
 ALGOFIV2_TRANSACTION_MARKET_OPTIN = "dW1vaQ=="              # "umoi"
+ALGOFIV2_TRANSACTION_MARKET_CLOSEOUT = "dW1jbw=="           # "umco"
 ALGOFIV2_TRANSACTION_VALIDATE_MARKET = "dm0="               # "vm"
 ALGOFIV2_TRANSACTION_ADD_UNDERLYING_COLLATERAL = "YXVj"     # "auc"
 ALGOFIV2_TRANSACTION_REMOVE_UNDERLYING_COLLATERAL = "cnVj"  # "ruc"
@@ -592,6 +593,13 @@ def _is_algofiv2_pool_zap(group):
     return _is_algofiv2_pool_swap(group[:i + 4]) and _is_algofiv2_pool_lp_add(group[i + 4:])
 
 
+def _is_algofiv2_market_closeout(group):
+    if len(group) != 1:
+        return False
+
+    return is_app_call(group[0], APPLICATION_ID_ALGOFIV2_LENDING_MANAGER, ALGOFIV2_TRANSACTION_MARKET_CLOSEOUT)
+
+
 def is_algofiv2_transaction(group):
     return (_is_algofiv2_lend_swap(group)
                 or _is_algofiv2_pool_swap(group)
@@ -613,6 +621,7 @@ def is_algofiv2_transaction(group):
                 or _is_algofiv2_pool_zap(group)
                 or _is_algofiv2_user_optin(group)
                 or _is_algofiv2_market_optin(group)
+                or _is_algofiv2_market_closeout(group)
                 or _is_algofiv2_governance_airdrop(group)
                 or _is_algofiv2_governance_optin(group)
                 or _is_algofiv2_governance_increase_lock(group))
@@ -677,6 +686,9 @@ def handle_algofiv2_transaction(wallet_address, group, exporter, txinfo):
         pass
 
     elif _is_algofiv2_market_optin(group):
+        pass
+
+    elif _is_algofiv2_market_closeout(group):
         pass
 
     elif _is_algofiv2_governance_increase_lock(group):
