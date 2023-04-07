@@ -14,7 +14,7 @@ DVPN_LCD_NODE = os.environ.get("STAKETAX_DVPN_LCD_NODE", "https://lcd.sentinel.c
 DVPN_RPC_NODE = os.environ.get("STAKETAX_DVPN_RPC_NODE", "https://rpc.sentinel.co")
 EVMOS_NODE = os.environ.get("STAKETAX_EVMOS_NODE", "")
 FET_NODE = os.environ.get("STAKETAX_FET_NODE", "https://rest-fetchhub.fetch.ai")
-HUAHUA_NODE = os.environ.get("STAKETAX_HUAHUA_NODE", "")
+HUAHUA_NODE = os.environ.get("STAKETAX_HUAHUA_NODE", "https://rest-chihuahua.ecostake.com")
 JUNO_NODE = os.environ.get("STAKETAX_JUNO_NODE", "")
 JUNO_RPC_NODES = [
     "https://rpc-archive.junonetwork.io",      # 4136532 to now

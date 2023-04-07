@@ -1,3 +1,6 @@
+import logging
+
+from requests import JSONDecodeError
 
 
 def _ingest_rows(exporter, txinfo, msginfo, rows, comment):
@@ -13,3 +16,17 @@ def _ingest_rows(exporter, txinfo, msginfo, rows, comment):
             row.fee_currency = ""
 
         exporter.ingest_row(row)
+
+
+def retry(max_retries: int = 5):
+    def _inner1(method):
+        def _inner2(self, *args, **kwargs):
+            for i in range(max_retries):
+                try:
+                    return method.__call__(self, *args, **kwargs)
+                except JSONDecodeError as exc:
+                    logging.warning(f'Jsondecode error: {exc}. Retrying: {i + 1}')
+
+            raise exc
+        return _inner2
+    return _inner1
