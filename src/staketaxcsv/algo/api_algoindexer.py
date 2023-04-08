@@ -3,6 +3,7 @@ from itertools import cycle
 import logging
 import math
 from random import sample
+from typing import Optional, Tuple
 from requests import Session
 from requests.adapters import HTTPAdapter, Retry
 
@@ -44,7 +45,17 @@ class AlgoIndexerAPI:
         return status_code == 200
 
     @use_debug_files(localconfig, REPORTS_DIR)
-    def get_account(self, address):
+    def get_account(self, address: str) -> Optional[dict]:
+        """
+        This function retrieves account information for a given address.
+
+        Args:
+          address (str): The address of the Algorand account that we want to retrieve information for.
+
+        Returns:
+          A dictionary containing information about the account if successful, `None` otherwise. 
+          See account schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Account
+        """
         endpoint = f"v2/accounts/{address}"
         params = {"include-all": True}
 
@@ -58,8 +69,18 @@ class AlgoIndexerAPI:
         else:
             return None
 
-    def get_transaction(self, txhash):
-        endpoint = f"v2/transactions/{txhash}"
+    def get_transaction(self, txid: str) -> Optional[dict]:
+        """
+        This function retrieves a transaction with a given ID.
+
+        Args:
+          txid (str): The ID of the transaction ID that is being requested.
+
+        Returns:
+          A dictionary containing information about a transaction if successful, `None` otherwise.
+          See transaction schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Transaction
+        """
+        endpoint = f"v2/transactions/{txid}"
 
         data, status_code = self._query(self._select_node(), endpoint)
 
@@ -68,7 +89,30 @@ class AlgoIndexerAPI:
         else:
             return None
 
-    def get_transactions(self, address, after_date=None, before_date=None, min_round=None, next=None):
+    def get_transactions(self,
+                         address: str,
+                         after_date: Optional[datetime.date] = None,
+                         before_date: Optional[datetime.date] = None,
+                         min_round: Optional[int] = None,
+                         next: Optional[str] = None) -> Tuple[list, Optional[str]]:
+        """
+        This function retrieves transactions for a given address with optional filters and pagination.
+
+        Args:
+          address (str): The Algorand address for which to retrieve transactions.
+          after_date (Optional[datetime.date]): Include results after the given date.
+          before_date (Optional[datetime.date]): Include results before the given date.
+          min_round (Optional[int]): The minimum round number for transactions to be included in the
+        results. Transactions with a round number lower than this value will be excluded.
+          next (Optional[str]): An optional string that represents a token used to
+        retrieve the next page of results in a multi-page request. It is returned in the response of the
+        previous request and can be passed as a parameter to this function to retrieve the next page of
+        transactions.
+
+        Returns:
+          a tuple containing a list of transactions and an optional string representing the next token for
+        pagination. See transaction schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Transaction
+        """
         endpoint = f"v2/accounts/{address}/transactions"
         params = {"limit": ALGOINDEXER_LIMIT}
         if after_date:
@@ -92,7 +136,17 @@ class AlgoIndexerAPI:
             return [], None
 
     @use_debug_files(localconfig, REPORTS_DIR)
-    def get_all_transactions(self, address):
+    def get_all_transactions(self, address: str) -> list:
+        """
+        This function retrieves all transactions for a given address within a specified date range and
+        minimum round, using a maximum number of queries and transactions per query. The transactions are
+        obtained by making multiple queries to the indexer API, with a maximum number of transactions per
+        query determined by the `localconfig.limit` parameter.
+
+        Returns:
+            list: List of transaction objects that match the specified criteria,
+                see schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Transaction
+        """
         next = None
         out = []
 
@@ -117,7 +171,17 @@ class AlgoIndexerAPI:
 
         return out
 
-    def get_transactions_by_group(self, group_id):
+    def get_transactions_by_group(self, group_id: str) -> list[dict]:
+        """
+        This function retrieves a list of transactions associated with a specific group ID.
+
+        Args:
+          group_id (str): The group ID. More details on transaction groups\
+          at https://developer.algorand.org/docs/get-details/atomic_transfers/
+
+        Returns:
+          This function returns a list of dictionaries containing transaction data for a specific group ID.
+        """
         endpoint = "v2/transactions"
         params = {"group-id": group_id}
 
@@ -128,7 +192,17 @@ class AlgoIndexerAPI:
         else:
             return []
 
-    def get_asset(self, id):
+    def get_asset(self, id: int) -> Optional[dict]:
+        """
+        This function retrieves asset information.
+
+        Args:
+          id (int): Algorand Standard Asset (ASA) id.
+
+        Returns:
+          A dictionary containing the parameters of the asset if successful, `None` otherwise.
+          See asset params schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/AssetParams
+        """
         endpoint = f"v2/assets/{id}"
 
         data, status_code = self._query(self._select_node(), endpoint)

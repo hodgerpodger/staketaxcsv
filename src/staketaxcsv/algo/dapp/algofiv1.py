@@ -143,11 +143,11 @@ ALGOFI_STAKING_CONTRACTS = {
 
 
 class AlgofiV1(Dapp):
-    def __init__(self, indexer: AlgoIndexerAPI, wallet_address: str, account: dict, exporter: Exporter) -> None:
-        super().__init__(indexer, wallet_address, account, exporter)
+    def __init__(self, indexer: AlgoIndexerAPI, user_address: str, account: dict, exporter: Exporter) -> None:
+        super().__init__(indexer, user_address, account, exporter)
         self.storage_address = self._get_algofi_storage_address(account)
         self.indexer = indexer
-        self.wallet_address = wallet_address
+        self.user_address = user_address
         self.exporter = exporter
 
     @property
@@ -454,7 +454,7 @@ class AlgofiV1(Dapp):
         self._handle_algofi_lp_add(group[i + 2:], txinfo, 1)
 
     def _handle_algofi_swap(self, group, txinfo, z_index=0):
-        fee_amount = get_fee_amount(self.wallet_address, group)
+        fee_amount = get_fee_amount(self.user_address, group)
 
         i = 0
         if is_asset_optin(group[i]):
@@ -471,7 +471,7 @@ class AlgofiV1(Dapp):
         export_swap_tx(self.exporter, txinfo, send_asset, receive_asset, fee_amount, self.name, z_index)
 
     def _handle_algofi_lp_add(self, group, txinfo, z_index=0):
-        fee_amount = get_fee_amount(self.wallet_address, group)
+        fee_amount = get_fee_amount(self.user_address, group)
 
         i = 0
         if is_asset_optin(group[i]):
@@ -499,7 +499,7 @@ class AlgofiV1(Dapp):
             self.exporter, txinfo, send_asset_1, send_asset_2, lp_asset, fee_amount, self.name, z_index)
 
     def _handle_algofi_lp_remove(self, group, txinfo):
-        fee_amount = get_fee_amount(self.wallet_address, group)
+        fee_amount = get_fee_amount(self.user_address, group)
 
         lp_asset = get_transfer_asset(group[0])
 
@@ -511,7 +511,7 @@ class AlgofiV1(Dapp):
             self.exporter, txinfo, lp_asset, receive_asset_1, receive_asset_2, fee_amount, self.name)
 
     def _handle_algofi_claim_rewards(self, group, txinfo):
-        fee_amount = get_fee_amount(self.wallet_address, group)
+        fee_amount = get_fee_amount(self.user_address, group)
 
         app_transaction = group[-1]
         inner_transactions = app_transaction.get("inner-txns", [])
@@ -522,14 +522,14 @@ class AlgofiV1(Dapp):
             export_reward_tx(self.exporter, txinfo, reward, fee_amount / length, self.name)
 
     def _handle_algofi_borrow(self, group, txinfo, z_index=0):
-        fee_amount = get_fee_amount(self.wallet_address, group)
+        fee_amount = get_fee_amount(self.user_address, group)
 
         receive_asset = get_inner_transfer_asset(group[-1])
 
         export_borrow_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name + " Borrow", z_index)
 
     def _handle_algofi_repay_borrow(self, group, txinfo, z_index=0):
-        fee_amount = get_fee_amount(self.wallet_address, group)
+        fee_amount = get_fee_amount(self.user_address, group)
 
         send_asset = get_transfer_asset(group[-1])
 
@@ -542,8 +542,8 @@ class AlgofiV1(Dapp):
 
     def _handle_algofi_liquidate(self, group, txinfo):
         app_transaction = group[-1]
-        if is_transaction_sender(self.wallet_address, app_transaction):
-            fee_amount = get_fee_amount(self.wallet_address, group)
+        if is_transaction_sender(self.user_address, app_transaction):
+            fee_amount = get_fee_amount(self.user_address, group)
 
             send_asset = get_transfer_asset(group[-2])
 
@@ -560,7 +560,7 @@ class AlgofiV1(Dapp):
         self._handle_algofi_repay_borrow(group[-1:], txinfo, 2)
 
     def _handle_algofi_deposit_collateral(self, group, txinfo):
-        fee_amount = get_fee_amount(self.wallet_address, group)
+        fee_amount = get_fee_amount(self.user_address, group)
 
         send_asset = get_transfer_asset(group[-1])
 
@@ -575,7 +575,7 @@ class AlgofiV1(Dapp):
             export_deposit_collateral_tx(self.exporter, txinfo, send_asset, fee_amount, comment)
 
     def _handle_algofi_withdraw_collateral(self, group, txinfo):
-        fee_amount = get_fee_amount(self.wallet_address, group)
+        fee_amount = get_fee_amount(self.user_address, group)
 
         app_transaction = group[-1]
         receive_asset = get_inner_transfer_asset(app_transaction)
