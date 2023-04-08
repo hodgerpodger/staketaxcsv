@@ -16,10 +16,13 @@ from staketaxcsv.algo.export_tx import (
 from staketaxcsv.algo.handle_folks import is_folks_escrow_address
 from staketaxcsv.algo.transaction import (
     get_transaction_note,
+    get_transfer_sender,
+    is_algo_transfer,
     is_app_call,
     is_asset_optin,
     is_transfer,
-    is_transfer_participant
+    is_transfer_participant,
+    is_transfer_receiver
 )
 
 
@@ -28,17 +31,14 @@ def is_governance_reward_transaction(wallet_address, group):
         return False
 
     transaction = group[0]
-    if transaction["tx-type"] != co.TRANSACTION_TYPE_PAYMENT:
+    if not is_algo_transfer(transaction):
         return False
 
-    if transaction[co.TRANSACTION_KEY_PAYMENT]["receiver"] != wallet_address:
+    if not is_transfer_receiver(wallet_address, transaction):
         return False
 
-    note = get_transaction_note(transaction)
-    if "af/gov" not in note:
-        return False
-
-    return True
+    sender = get_transfer_sender(transaction)
+    return sender in co.ADDRESS_GOVERNANCE_REWARDS_POOLS
 
 
 def handle_governance_reward_transaction(group, exporter, txinfo):

@@ -41,12 +41,16 @@ def get_transfer_receiver(transaction):
     return None
 
 
+def get_transfer_sender(transaction):
+    return transaction["sender"]
+
+
 def is_transfer_receiver(wallet_address, transaction):
     return wallet_address == get_transfer_receiver(transaction)
 
 
 def is_transaction_sender(wallet_address, transaction):
-    return wallet_address == transaction["sender"]
+    return wallet_address == get_transfer_sender(transaction)
 
 
 def is_transfer_receiver_non_zero_asset(wallet_address, transaction):

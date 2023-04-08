@@ -7,7 +7,6 @@ from staketaxcsv.algo.asset import Algo
 from staketaxcsv.algo.config_algo import localconfig
 from staketaxcsv.algo.handle_akita import handle_akita_swap_transaction, is_akita_swap_transaction
 from staketaxcsv.algo.handle_algodex import handle_algodex_transaction, is_algodex_transaction
-from staketaxcsv.algo.handle_algofiv2 import handle_algofiv2_transaction, is_algofiv2_transaction
 from staketaxcsv.algo.handle_amm import handle_swap, is_swap_group
 from staketaxcsv.algo.handle_deflex import handle_deflex_transaction, is_deflex_transaction
 from staketaxcsv.algo.handle_folks import (
@@ -75,9 +74,6 @@ def handle_transaction_group(wallet_address, dapps, group, exporter, txinfo):
 
     elif is_tinymanv2_transaction(wallet_address, group):
         handle_tinymanv2_transaction(wallet_address, group, exporter, txinfo)
-
-    elif is_algofiv2_transaction(group):
-        handle_algofiv2_transaction(wallet_address, group, exporter, txinfo)
 
     elif is_pact_transaction(wallet_address, group):
         handle_pact_transaction(wallet_address, group, exporter, txinfo)
