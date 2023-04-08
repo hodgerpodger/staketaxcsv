@@ -13,6 +13,7 @@ from staketaxcsv.algo.export_tx import (
 from staketaxcsv.algo.transaction import (
     get_inner_transfer_asset,
     get_transfer_asset,
+    get_transfer_asset_id,
     get_transfer_receiver,
     is_app_call,
     is_asset_optin,
@@ -458,8 +459,8 @@ def _is_folks_increase_collateral_transaction(group):
     if is_asset_optin(transaction):
         return False
 
-    asset = get_transfer_asset(transaction)
-    if asset.id not in FOLKS_ASSET_ID:
+    asset_id = get_transfer_asset_id(transaction)
+    if asset_id not in FOLKS_ASSET_ID:
         return False
 
     receiver = get_transfer_receiver(transaction)

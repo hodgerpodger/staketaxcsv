@@ -53,12 +53,24 @@ ASSET_AF_LP_TOKENS = {
 
 
 def _parse_asset(asset):
-    if "name" in asset and "unit-name" in asset:
-        return {key: asset[key] for key in ["name", "unit-name", "decimals"]}
-    elif "name-b64" in asset and "unit-name-b64" in asset:
+    name = None
+    if "name" in asset:
+        name = asset["name"]
+    elif "name-b64" in asset:
+        name = b64_decode_ascii(asset["name-b64"])
+
+    unit_name = None
+    if "unit-name" in asset:
+        unit_name = asset["unit-name"]
+    elif "unit-name-b64" in asset:
+        unit_name = b64_decode_ascii(asset["unit-name-b64"])
+    else:
+        unit_name = name
+
+    if name and unit_name:
         return {
-            "name": b64_decode_ascii(asset["name-b64"]),
-            "unit-name": b64_decode_ascii(asset["unit-name-b64"]),
+            "name": name,
+            "unit-name": unit_name,
             "decimals": asset["decimals"]
         }
     else:
@@ -86,7 +98,10 @@ class Asset:
             params = self.asset_list[id]
         else:
             resp = self.indexer.get_asset(id)
-            params = _parse_asset(resp)
+            if resp["deleted"]:
+                resp = self.indexer.get_deleted_asset(id)
+
+            params = _parse_asset(resp["params"])
             if params is not None:
                 self.asset_list[id] = params
         if params is None:
@@ -100,7 +115,7 @@ class Asset:
     @classmethod
     def load_assets(cls, assets):
         for asset in assets:
-            if "unit-name" in asset:
+            if "name" in asset and "unit-name" in asset:
                 id = asset["asset-id"]
                 cls.asset_list[id] = {key: asset[key] for key in ["name", "unit-name", "decimals"]}
 
