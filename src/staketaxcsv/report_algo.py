@@ -15,7 +15,6 @@ from staketaxcsv.algo.api_nfdomains import NFDomainsAPI
 from staketaxcsv.algo.asset import Asset
 from staketaxcsv.algo.config_algo import localconfig
 from staketaxcsv.algo.dapp import Dapp
-from staketaxcsv.algo.handle_deflex import get_deflex_limit_order_apps
 from staketaxcsv.algo.progress_algo import ProgressAlgo
 from staketaxcsv.common import report_util
 from staketaxcsv.common.ErrorCounter import ErrorCounter
@@ -136,14 +135,12 @@ def txhistory(wallet_address):
 
 
 def _get_txs(wallet_address, dapps, account, progress):
-    if account is not None:
-        localconfig.deflex_limit_order_apps = get_deflex_limit_order_apps(account)
-
     out = indexer.get_all_transactions(wallet_address)
+
     # Reverse the list so transactions are in chronological order
     out.reverse()
     last_round = 0
-    if len(out) > 0:
+    if localconfig.track_block and len(out) > 0:
         last_round = out[-1]["confirmed-round"]
 
     for app in dapps:
