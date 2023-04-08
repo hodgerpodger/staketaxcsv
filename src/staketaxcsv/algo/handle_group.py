@@ -1,4 +1,5 @@
 
+import logging
 import urllib.parse
 from datetime import datetime
 
@@ -8,7 +9,6 @@ from staketaxcsv.algo.config_algo import localconfig
 from staketaxcsv.algo.handle_akita import handle_akita_swap_transaction, is_akita_swap_transaction
 from staketaxcsv.algo.handle_algodex import handle_algodex_transaction, is_algodex_transaction
 from staketaxcsv.algo.handle_amm import handle_swap, is_swap_group
-from staketaxcsv.algo.handle_deflex import handle_deflex_transaction, is_deflex_transaction
 from staketaxcsv.algo.handle_folks import (
     handle_folks_transaction,
     is_folks_transaction,
@@ -28,6 +28,7 @@ from staketaxcsv.algo.handle_vestige import handle_vestige_transaction, is_vesti
 from staketaxcsv.algo.handle_wagmiswap import handle_wagmiswap_transaction, is_wagmiswap_transaction
 from staketaxcsv.algo.handle_yieldly import handle_yieldly_transaction, is_yieldly_transaction
 from staketaxcsv.algo.transaction import is_transfer
+from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.TxInfo import TxInfo
 
 
@@ -63,8 +64,13 @@ def has_app_transactions(group):
 
 def handle_transaction_group(wallet_address, dapps, group, exporter, txinfo):
     for app in dapps:
-        if app.is_dapp_transaction(group):
-            return app.handle_dapp_transaction(group, txinfo)
+        try:
+            if app.is_dapp_transaction(group):
+                return app.handle_dapp_transaction(group, txinfo)
+        except Exception as e:
+            logging.error("Exception handling txid=%s with plugin=%s, exception=%s",
+                          txinfo.txid, app.name, str(e))
+            ErrorCounter.increment("exception", txinfo.txid)
 
     if (is_governance_reward_transaction(wallet_address, group)):
         handle_governance_reward_transaction(group, exporter, txinfo)
@@ -80,9 +86,6 @@ def handle_transaction_group(wallet_address, dapps, group, exporter, txinfo):
 
     elif is_humbleswap_transaction(group):
         handle_humbleswap_transaction(wallet_address, group, exporter, txinfo)
-
-    elif is_deflex_transaction(wallet_address, group):
-        handle_deflex_transaction(wallet_address, group, exporter, txinfo)
 
     elif is_vestige_transaction(group):
         handle_vestige_transaction(wallet_address, group, exporter, txinfo)

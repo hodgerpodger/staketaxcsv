@@ -285,6 +285,9 @@ class AlgofiV2(Dapp):
             export_unknown(self.exporter, txinfo)
 
     def _get_algofiv2_storage_address(self, account):
+        if account is None:
+            return None
+
         app_local_state = account.get("apps-local-state", [])
         for app in app_local_state:
             if app["id"] == APPLICATION_ID_ALGOFIV2_LENDING_MANAGER:

@@ -25,7 +25,7 @@ def process_txs(wallet_address, dapps, transactions, exporter, progress):
             handle_transaction_group(wallet_address, dapps, group, exporter, txinfo)
             i += len(group) - 1
         except Exception as e:
-            logging.error("Exception when handling txid=%s, exception=%s", txid, str(e))
+            logging.error("Exception processing txid=%s, exception=%s", txid, str(e))
             ErrorCounter.increment("exception", txid)
             export_unknown(exporter, txinfo)
 
