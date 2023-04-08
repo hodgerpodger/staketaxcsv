@@ -111,8 +111,6 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_ALGO)
 
     account = indexer.get_account(wallet_address)
-    if account is not None:
-        Asset.load_assets(account.get("assets", []))
 
     dapps = []
     for p in Dapp.plugins:

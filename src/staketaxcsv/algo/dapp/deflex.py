@@ -94,9 +94,10 @@ class Deflex(Dapp):
         created_apps = account.get("created-apps", [])
         for app in created_apps:
             approval_program = app.get("params", {}).get("approval-program", "")
-            approval_hash = hashlib.sha256(base64.b64decode(approval_program)).hexdigest()
-            if DEFLEX_LIMIT_ORDER_APPROVAL_HASH == approval_hash:
-                apps.append(app["id"])
+            if approval_program:
+                approval_hash = hashlib.sha256(base64.b64decode(approval_program)).hexdigest()
+                if DEFLEX_LIMIT_ORDER_APPROVAL_HASH == approval_hash:
+                    apps.append(app["id"])
 
         return apps
 

@@ -82,6 +82,16 @@ def is_transfer_participant(wallet_address, transaction):
     return wallet_address in generate_transfer_accounts(transaction)
 
 
+def get_transfer_asset_id(transaction):
+    txtype = transaction["tx-type"]
+    if txtype == co.TRANSACTION_TYPE_PAYMENT:
+        return 0
+    elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
+        return transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
+    else:
+        return None
+
+
 def get_transfer_asset(transaction, asset_map={}):
     amount = 0
     asset_id = 0
