@@ -71,6 +71,8 @@ def handle_transaction_group(wallet_address, dapps, group, exporter, txinfo):
             logging.error("Exception handling txid=%s with plugin=%s, exception=%s",
                           txinfo.txid, app.name, str(e))
             ErrorCounter.increment("exception", txinfo.txid)
+            if localconfig.debug:
+                raise (e)
 
     if (is_governance_reward_transaction(wallet_address, group)):
         handle_governance_reward_transaction(group, exporter, txinfo)

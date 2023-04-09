@@ -175,6 +175,37 @@ class AlgoIndexerAPI:
         else:
             return []
 
+    def get_transactions_by_app(self, address: str, app_id: int, round: Optional[int]) -> list[dict]:
+        """
+        This function retrieves a list of transactions for a specific address and application ID,
+        with an optional round parameter.
+
+        Args:
+          address (str): The address for which transactions are being retrieved.
+          app_id (int): The ID of the application for which transactions are being requested.
+          round (Optional[int]): The round parameter is an optional integer that specifies the round number
+        of the transaction to retrieve. If this parameter is not provided, the function will retrieve
+        transactions for all rounds.
+
+        Returns:
+          This function returns a list of dictionaries containing transactions made with the specified parameters.
+        """
+        endpoint = "v2/transactions"
+        params = {
+            "limit": ALGOINDEXER_LIMIT,
+            "address": address,
+            "application-id": app_id
+        }
+        if round:
+            params["round"] = round
+
+        data, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
+
+        if status_code == 200:
+            return data["transactions"]
+        else:
+            return []
+
     def get_asset(self, id: int) -> Optional[dict]:
         """
         This function retrieves asset information.

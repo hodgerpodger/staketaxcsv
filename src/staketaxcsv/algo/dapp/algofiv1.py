@@ -145,10 +145,10 @@ ALGOFI_STAKING_CONTRACTS = {
 class AlgofiV1(Dapp):
     def __init__(self, indexer: AlgoIndexerAPI, user_address: str, account: dict, exporter: Exporter) -> None:
         super().__init__(indexer, user_address, account, exporter)
-        self.storage_address = self._get_algofi_storage_address(account)
         self.indexer = indexer
         self.user_address = user_address
         self.exporter = exporter
+        self.storage_address = self._get_algofi_storage_address(account)
 
     @property
     def name(self):
@@ -237,13 +237,32 @@ class AlgofiV1(Dapp):
         if account is None:
             return None
 
-        app_local_state = account.get("apps-local-state", [])
-        for app in app_local_state:
-            if app["id"] == APPLICATION_ID_ALGOFI_LENDING_MANAGER:
-                for keyvalue in app.get("key-value", []):
-                    if keyvalue["key"] == ALGOFI_MANAGER_USER_STORAGE_ACCOUNT:
-                        raw_address = keyvalue["value"]["bytes"]
+        local_state = next((app for app in account.get("apps-local-state", [])
+                            if app["id"] == APPLICATION_ID_ALGOFI_LENDING_MANAGER), None)
+        if local_state is None:
+            return None
+
+        if local_state.get("deleted"):
+            transactions = self.indexer.get_transactions_by_app(self.user_address,
+                                                                APPLICATION_ID_ALGOFI_LENDING_MANAGER,
+                                                                local_state.get("opted-in-at-round"))
+            if not transactions:
+                return None
+
+            tx = transactions[0]
+            if not is_app_optin(tx):
+                return None
+
+            for state in tx.get("local-state-delta", []):
+                for delta in state.get("delta", []):
+                    if delta["key"] == ALGOFI_MANAGER_USER_STORAGE_ACCOUNT:
+                        raw_address = delta["value"]["bytes"]
                         return encoding.encode_address(base64.b64decode(raw_address.strip()))
+        else:
+            for keyvalue in local_state.get("key-value", []):
+                if keyvalue["key"] == ALGOFI_MANAGER_USER_STORAGE_ACCOUNT:
+                    raw_address = keyvalue["value"]["bytes"]
+                    return encoding.encode_address(base64.b64decode(raw_address.strip()))
 
         return None
 

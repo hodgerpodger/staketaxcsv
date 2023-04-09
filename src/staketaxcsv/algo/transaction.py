@@ -161,19 +161,14 @@ def get_inner_transfer_count(transaction, depth=1):
 
 
 def is_asset_optin(transaction):
-    txtype = transaction["tx-type"]
-    if (txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
-            and transaction["sender"] == transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
+    if is_transfer(transaction) and get_transfer_sender(transaction) == get_transfer_receiver(transaction):
         return True
 
-    if txtype == co.TRANSACTION_TYPE_APP_CALL:
-        inner_transactions = transaction.get("inner-txns", [])
-        if len(inner_transactions) == 0:
-            return False
+    inner_transactions = transaction.get("inner-txns", [])
+    if not inner_transactions:
+        return False
 
-        return all([is_asset_optin(tx) for tx in inner_transactions])
-
-    return False
+    return all([is_asset_optin(tx) for tx in inner_transactions])
 
 
 def is_transfer(transaction):

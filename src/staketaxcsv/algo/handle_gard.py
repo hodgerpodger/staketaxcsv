@@ -109,8 +109,8 @@ def _is_gard_cdp_optin_transaction(wallet_address, group):
     if txsender != wallet_address:
         return False
 
-    group_id = transaction["group"]
-    if group_id in cdp_addresses:
+    group_id = transaction.get("group")
+    if group_id is not None and group_id in cdp_addresses:
         return True
 
     # Weird, but the opt-in app call is sent from a contract account,
