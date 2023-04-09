@@ -1,5 +1,3 @@
-import base64
-import string
 import urllib.parse
 from datetime import datetime
 
@@ -127,7 +125,7 @@ def generate_inner_transfer_assets(transaction, asset_map={}, filter=None):
             if filter is None or filter(tx):
                 yield get_transfer_asset(tx, asset_map)
         elif is_app_call(tx):
-            generate_inner_transfer_assets(tx, asset_map, filter)
+            yield from generate_inner_transfer_assets(tx, asset_map, filter)
 
 
 def get_inner_transfer_asset(transaction, asset_map={}, filter=None):

@@ -1,6 +1,7 @@
 import datetime
 import logging
 import math
+import time
 from typing import Optional, Tuple
 from requests import Session
 from requests.adapters import HTTPAdapter, Retry
@@ -235,6 +236,10 @@ class AlgoIndexerAPI:
     def _get_asset(self, node_url, id):
         endpoint = f"v2/assets/{id}"
         params = {"include-all": True}
+
+        # Temporarily slow down asset requests until we either cache them
+        # or https://github.com/algorand/go-algorand/issues/5250 is resolved.
+        time.sleep(0.1)
 
         data, status_code = self._query(node_url, endpoint, params)
 

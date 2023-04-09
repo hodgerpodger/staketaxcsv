@@ -1,7 +1,7 @@
 import base64
 
 from algosdk import encoding
-from functools import partial
+from functools import partial, reduce
 from staketaxcsv.algo import constants as co
 from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
 from staketaxcsv.algo.asset import Asset
@@ -32,6 +32,7 @@ from staketaxcsv.algo.transaction import (
     is_app_call,
     is_app_optin,
     is_asset_optin,
+    is_transaction_sender,
     is_transfer,
     is_transfer_receiver,
     is_transfer_receiver_non_zero_asset
@@ -58,6 +59,7 @@ ALGOFIV2_TRANSACTION_ADD_UNDERLYING_COLLATERAL = "YXVj"     # "auc"
 ALGOFIV2_TRANSACTION_REMOVE_UNDERLYING_COLLATERAL = "cnVj"  # "ruc"
 ALGOFIV2_TRANSACTION_BORROW = "Yg=="                        # "b"
 ALGOFIV2_TRANSACTION_REPAY_BORROW = "cmI="                  # "rb"
+ALGOFIV2_TRANSACTION_SEIZE_COLLATERAL = "c2M="              # "sc"
 
 ALGOFIV2_TRANSACTION_MINT_B_ASSET = "bWJh"                  # "mba"
 ALGOFIV2_TRANSACTION_BURN_B_ASSET = "YnI="                  # "br"
@@ -176,6 +178,7 @@ class AlgofiV2(Dapp):
             return txs
 
         storage_txs = self.indexer.get_all_transactions(self.storage_address)
+        txs.extend(self._get_algofiv2_liquidate_transactions(storage_txs))
         txs.extend(self._get_algofiv2_governance_rewards_transactions(storage_txs))
         return txs
 
@@ -198,6 +201,7 @@ class AlgofiV2(Dapp):
                     or self._is_algofiv2_pool_lp_remove(group)
                     or self._is_algofiv2_lend_zap(group)
                     or self._is_algofiv2_pool_zap(group)
+                    or self._is_algofiv2_liquidate(group)
                     or is_governance_reward_transaction(self.storage_address, group)
                     or self._is_algofiv2_user_optin(group)
                     or self._is_algofiv2_market_optin(group)
@@ -260,6 +264,9 @@ class AlgofiV2(Dapp):
 
         elif self._is_algofiv2_pool_zap(group):
             self._handle_algofiv2_pool_zap(group, txinfo)
+    
+        elif self._is_algofiv2_liquidate(group):
+            self._handle_algofiv2_liquidate(group, txinfo)
 
         elif is_governance_reward_transaction(self.storage_address, group):
             handle_governance_reward_transaction(group, self.exporter, txinfo)
@@ -317,6 +324,9 @@ class AlgofiV2(Dapp):
                     return encoding.encode_address(base64.b64decode(raw_address.strip()))
 
         return None
+
+    def _get_algofiv2_liquidate_transactions(self, transactions):
+        return [tx for tx in transactions if self._is_algofiv2_liquidate([tx])]
 
     def _get_algofiv2_governance_rewards_transactions(self, transactions):
         return [tx for tx in transactions if is_governance_reward_transaction(self.storage_address, [tx])]
@@ -726,6 +736,16 @@ class AlgofiV2(Dapp):
 
         return self._is_algofiv2_pool_swap(group[:i + 4]) and self._is_algofiv2_pool_lp_add(group[i + 4:])
 
+    def _is_algofiv2_liquidate(self, group):
+        # Only transactions where the user is the liquidatee, not the liquidator
+        if len(group) != 1:
+            return False
+
+        return is_app_call(group[0],
+                           ALGOFIV2_MARKET_CONTRACTS,
+                           ALGOFIV2_TRANSACTION_SEIZE_COLLATERAL,
+                           APPLICATION_ID_ALGOFIV2_LENDING_MANAGER)
+
     def _is_algofiv2_market_closeout(self, group):
         if len(group) != 1:
             return False
@@ -1043,3 +1063,14 @@ class AlgofiV2(Dapp):
 
         self._handle_algofiv2_pool_swap(group[:i + 4], txinfo, 0)
         self._handle_algofiv2_pool_lp_add(group[i + 4:], txinfo, 1)
+
+    def _handle_algofiv2_liquidate(self, group, txinfo):
+        send_assets = list(generate_inner_transfer_assets(group[0],
+                                                          filter=partial(is_transaction_sender, self.storage_address)))
+
+        if not send_assets:
+            export_unknown(self.exporter, txinfo)
+            return
+
+        repay_asset = reduce(lambda a, b: a + b, send_assets)
+        export_repay_tx(self.exporter, txinfo, repay_asset, 0, self.name + " liquidation")
