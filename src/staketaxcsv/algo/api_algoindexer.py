@@ -169,36 +169,34 @@ class AlgoIndexerAPI:
         endpoint = "v2/transactions"
         params = {"group-id": group_id}
 
-        data, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
+        data, status_code = self._query(ALGO_HIST_INDEXER_NODE, endpoint, params)
 
         if status_code == 200:
             return data["transactions"]
         else:
             return []
 
-    def get_transactions_by_app(self, address: str, app_id: int, round: Optional[int]) -> list[dict]:
+    def get_transactions_by_app(self, app_id: int, round: int, address: Optional[str] = None) -> list[dict]:
         """
-        This function retrieves a list of transactions for a specific address and application ID,
-        with an optional round parameter.
-
+        This function retrieves a list of transactions for a specific application ID, round, and optional
+        address.
+        
         Args:
-          address (str): The address for which transactions are being retrieved.
           app_id (int): The ID of the application for which transactions are being requested.
-          round (Optional[int]): The round parameter is an optional integer that specifies the round number
-        of the transaction to retrieve. If this parameter is not provided, the function will retrieve
-        transactions for all rounds.
-
+          round (int): The round number of the transactions to retrieve.
+          address (Optional[str]): Optional parameter to filter transactions by a specific address.
+        
         Returns:
           This function returns a list of dictionaries containing transactions made with the specified parameters.
         """
         endpoint = "v2/transactions"
         params = {
             "limit": ALGOINDEXER_LIMIT,
-            "address": address,
-            "application-id": app_id
+            "application-id": app_id,
+            "round": round
         }
-        if round:
-            params["round"] = round
+        if address:
+            params["address"] = address
 
         data, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
 
