@@ -3,6 +3,7 @@ from functools import partial
 import hashlib
 
 from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
+from staketaxcsv.algo import constants as co
 from staketaxcsv.algo.dapp import Dapp
 from staketaxcsv.algo.export_tx import (
     export_deposit_collateral_tx,
@@ -179,20 +180,22 @@ class Deflex(Dapp):
         export_swap_tx(self.exporter, txinfo, send_asset, receive_asset, fee_amount, self.name)
 
     def _handle_deflex_limit_order_fill(self, group, txinfo):
-        full_group = self.indexer.get_transactions_by_group(group[0]["group"])
+        receive_transaction = group[0]
+        app_id = receive_transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+        round = receive_transaction["confirmed-round"]
+        full_group = self.indexer.get_transactions_by_app(app_id, round)
 
         if not full_group:
             return export_unknown(self.exporter, txinfo)
 
-        transaction = next((tx for tx in full_group
-            if is_app_call(tx, self.limit_order_apps, DEFLEX_TRANSACTION_FILL_ORDER_INIT)), None)
-        if transaction is None:
+        send_transaction = next((tx for tx in full_group
+            if is_app_call(tx, app_id, DEFLEX_TRANSACTION_FILL_ORDER_INIT)), None)
+        if send_transaction is None:
             return export_unknown(self.exporter, txinfo)
 
-        send_asset = get_inner_transfer_asset(transaction)
+        send_asset = get_inner_transfer_asset(send_transaction)
 
-        transaction = full_group[-2]
-        receive_asset = get_inner_transfer_asset(transaction,
+        receive_asset = get_inner_transfer_asset(receive_transaction,
                                                 filter=partial(is_transfer_receiver_non_zero_asset, self.user_address))
 
         comment = self.name + " Order Fill"

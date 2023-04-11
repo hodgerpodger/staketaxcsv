@@ -243,9 +243,9 @@ class AlgofiV1(Dapp):
             return None
 
         if local_state.get("deleted"):
-            transactions = self.indexer.get_transactions_by_app(self.user_address,
-                                                                APPLICATION_ID_ALGOFI_LENDING_MANAGER,
-                                                                local_state.get("opted-in-at-round"))
+            transactions = self.indexer.get_transactions_by_app(APPLICATION_ID_ALGOFI_LENDING_MANAGER,
+                                                                local_state.get("opted-in-at-round"),
+                                                                self.user_address)
             if not transactions:
                 return None
 
