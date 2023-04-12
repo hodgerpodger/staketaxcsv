@@ -98,7 +98,7 @@ def txone(wallet_address, txid_or_groupid):
     print("")
 
     progress.set_estimate(1)
-    staketaxcsv.algo.processor.process_txs(wallet_address, elems, exporter, progress)
+    staketaxcsv.algo.processor.process_txs(wallet_address, dapps, elems, exporter, progress)
     print("")
 
     return exporter
