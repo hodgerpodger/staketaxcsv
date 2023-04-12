@@ -15,6 +15,7 @@ from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.kuji.config_kuji import localconfig
 from staketaxcsv.kuji.progress_kuji import SECONDS_PER_PAGE, ProgressKuji
 from staketaxcsv.settings_csv import KUJI_NODE, TICKER_KUJI
+LIMIT_PER_QUERY = 25
 
 
 def main():
@@ -45,7 +46,8 @@ def txone(wallet_address, txid):
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(KUJI_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(
+        KUJI_NODE, wallet_address, max_txs, limit=LIMIT_PER_QUERY)
 
 
 def txhistory(wallet_address):
@@ -58,11 +60,13 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_KUJI)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(KUJI_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(
+        KUJI_NODE, wallet_address, max_txs, debug=localconfig.debug, limit=LIMIT_PER_QUERY)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = staketaxcsv.common.ibc.api_lcd.get_txs_all(KUJI_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
+    elems = staketaxcsv.common.ibc.api_lcd.get_txs_all(
+        KUJI_NODE, wallet_address, progress, max_txs, debug=localconfig.debug, limit=LIMIT_PER_QUERY)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.kuji.processor.process_txs(wallet_address, elems, exporter)
