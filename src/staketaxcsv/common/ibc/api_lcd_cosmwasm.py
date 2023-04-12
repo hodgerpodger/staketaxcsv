@@ -5,10 +5,10 @@ from staketaxcsv.common.ibc.api_lcd_v1 import LcdAPI_v1
 
 class CosmWasmLcdAPI(LcdAPI_v1):
 
-    def contract_history(self, contract):
+    def contract_history(self, contract, sleep_seconds=0):
         uri_path = "/cosmwasm/wasm/v1/contract/{}/history".format(contract)
         logging.info("Querying lcd for contract history = %s ...", contract)
-        data = self._query(uri_path, {})
+        data = self._query(uri_path, {}, sleep_seconds=sleep_seconds)
         return data
 
     def contract(self, contract):

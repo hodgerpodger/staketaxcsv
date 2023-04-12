@@ -80,7 +80,7 @@ def _get_contract_history_data(address):
     if address in localconfig.contract_history:
         return localconfig.contract_history[address]
 
-    data = CosmWasmLcdAPI(KUJI_NODE).contract_history(address)
+    data = CosmWasmLcdAPI(KUJI_NODE).contract_history(address, sleep_seconds=0.5)
     msg = extract_msg(data)
 
     localconfig.contract_history[address] = msg
