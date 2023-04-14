@@ -13,7 +13,6 @@ from staketaxcsv.algo.handle_folks import (
     handle_folks_transaction,
     is_folks_transaction,
 )
-from staketaxcsv.algo.handle_folksv2 import handle_folksv2_transaction, is_folksv2_transaction
 from staketaxcsv.algo.handle_gard import handle_gard_transaction, is_gard_transaction
 from staketaxcsv.algo.handle_humbleswap import handle_humbleswap_transaction, is_humbleswap_transaction
 from staketaxcsv.algo.handle_pact import handle_pact_transaction, is_pact_transaction
@@ -91,9 +90,6 @@ def handle_transaction_group(wallet_address, dapps, group, exporter, txinfo):
 
     elif is_vestige_transaction(group):
         handle_vestige_transaction(wallet_address, group, exporter, txinfo)
-
-    elif is_folksv2_transaction(wallet_address, group):
-        handle_folksv2_transaction(wallet_address, group, exporter, txinfo)
 
     elif is_folks_transaction(wallet_address, group):
         handle_folks_transaction(wallet_address, group, exporter, txinfo)

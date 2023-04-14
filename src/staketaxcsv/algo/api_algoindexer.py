@@ -237,7 +237,7 @@ class AlgoIndexerAPI:
 
         # Temporarily slow down asset requests until we either cache them
         # or https://github.com/algorand/go-algorand/issues/5250 is resolved.
-        time.sleep(0.1)
+        # time.sleep(0.1)
 
         data, status_code = self._query(node_url, endpoint, params)
 
