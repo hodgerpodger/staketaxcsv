@@ -8,7 +8,5 @@ class localconfig(config):
     end_date = None
     lp_treatment = et.LP_TREATMENT_DEFAULT
     exclude_asas = []
-    algofi_storage_address = None
-    deflex_limit_order_apps = []
     track_block = False
     min_round = None

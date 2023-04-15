@@ -9,7 +9,7 @@ from staketaxcsv.algo.export_tx import (
     export_unknown,
     export_withdraw_collateral_tx,
 )
-from staketaxcsv.algo.transaction import get_transfer_asset, get_transfer_close_to_asset, get_transfer_receiver
+from staketaxcsv.algo.transaction import get_transfer_asset, get_transfer_close_to_asset, get_transfer_receiver, is_algo_transfer
 
 # For reference
 # https://github.com/Tapera-Finance/GARD-BackEnd
@@ -98,16 +98,19 @@ def _is_gard_cdp_optin_transaction(wallet_address, group):
         return False
 
     transaction = group[0]
+    if not is_algo_transfer(transaction):
+        return False
+
     asset = get_transfer_asset(transaction)
-    if asset is None or asset.id != co.ASSET_ID_ALGO or asset.uint_amount != GARD_OPTIN_AMOUNT:
+    if asset.uint_amount != GARD_OPTIN_AMOUNT:
         return False
 
     txsender = transaction["sender"]
     if txsender != wallet_address:
         return False
 
-    group_id = transaction["group"]
-    if group_id in cdp_addresses:
+    group_id = transaction.get("group")
+    if group_id is not None and group_id in cdp_addresses:
         return True
 
     # Weird, but the opt-in app call is sent from a contract account,

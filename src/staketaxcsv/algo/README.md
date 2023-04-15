@@ -16,9 +16,9 @@
 - Supply, borrow and repay
 - Add and remove from liquidity pools
 - Staking and lending rewards
+- Governance
 - Flash loans
 - Liquidations
-- Vault
 
 ## AlgoFi v2
 - Swaps
@@ -26,13 +26,24 @@
 - Add and remove from liquidity pools
 - Staking and lending rewards
 - Governance
+- Liquidations
 
 ## AlgoStake
 - Staking rewards
 
+## Deflex
+- Routed swaps
+- Limit orders
+
 ## Folks Finance
 - Supply, borrow and repay
 - Staking rewards
+- Liquid Governance
+
+## Folks Finance v2
+- Supply, borrow and repay
+- Swaps
+- Liquid Governance
 
 ## HumbleSwap
 - Swaps
@@ -48,6 +59,10 @@
 - Swaps
 - Add and remove from liquidity pools
 - Staking rewards
+
+## Tinyman v2
+- Swaps
+- Add and remove from liquidity pools
 
 ## Vestige
 - Swaps

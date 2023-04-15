@@ -14,12 +14,7 @@ from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
 from staketaxcsv.algo.api_nfdomains import NFDomainsAPI
 from staketaxcsv.algo.asset import Asset
 from staketaxcsv.algo.config_algo import localconfig
-from staketaxcsv.algo.handle_algofi import (
-    get_algofi_governance_rewards_transactions,
-    get_algofi_liquidate_transactions,
-    get_algofi_storage_address,
-)
-from staketaxcsv.algo.handle_deflex import get_deflex_limit_order_apps
+from staketaxcsv.algo.dapp import Dapp
 from staketaxcsv.algo.progress_algo import ProgressAlgo
 from staketaxcsv.common import report_util
 from staketaxcsv.common.ErrorCounter import ErrorCounter
@@ -78,6 +73,14 @@ def wallet_exists(wallet_address):
 
 def txone(wallet_address, txid_or_groupid):
     progress = ProgressAlgo()
+    exporter = Exporter(wallet_address, localconfig, TICKER_ALGO)
+
+    account = indexer.get_account(wallet_address)
+    dapps = []
+    for p in Dapp.plugins:
+        plugin = p(indexer, wallet_address, account, exporter)
+        logging.info("Loaded plugin for %s", plugin.name)
+        dapps.append(plugin)
 
     elems = None
     data = indexer.get_transaction(txid_or_groupid)
@@ -95,8 +98,7 @@ def txone(wallet_address, txid_or_groupid):
     print("")
 
     progress.set_estimate(1)
-    exporter = Exporter(wallet_address, localconfig, TICKER_ALGO)
-    staketaxcsv.algo.processor.process_txs(wallet_address, elems, exporter, progress)
+    staketaxcsv.algo.processor.process_txs(wallet_address, dapps, elems, exporter, progress)
     print("")
 
     return exporter
@@ -109,14 +111,18 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_ALGO)
 
     account = indexer.get_account(wallet_address)
-    if account is not None:
-        Asset.load_assets(account.get("assets", []))
+
+    dapps = []
+    for p in Dapp.plugins:
+        plugin = p(indexer, wallet_address, account, exporter)
+        logging.info("Loaded plugin for %s", plugin.name)
+        dapps.append(plugin)
 
     # Retrieve data
-    elems = _get_txs(wallet_address, account, progress)
+    elems = _get_txs(wallet_address, dapps, account, progress)
 
     # Create rows for CSV
-    staketaxcsv.algo.processor.process_txs(wallet_address, elems, exporter, progress)
+    staketaxcsv.algo.processor.process_txs(wallet_address, dapps, elems, exporter, progress)
 
     _write_persistent_config(wallet_address)
 
@@ -126,22 +132,16 @@ def txhistory(wallet_address):
     return exporter
 
 
-def _get_txs(wallet_address, account, progress):
-    if account is not None:
-        localconfig.deflex_limit_order_apps = get_deflex_limit_order_apps(account)
-        localconfig.algofi_storage_address = get_algofi_storage_address(account)
-
+def _get_txs(wallet_address, dapps, account, progress):
     out = indexer.get_all_transactions(wallet_address)
+
     # Reverse the list so transactions are in chronological order
     out.reverse()
     # if len(out) > 0:
     #     localconfig.min_round = out[-1]["confirmed-round"] + 1
 
-    storage_address = localconfig.algofi_storage_address
-    if storage_address is not None:
-        storage_txs = indexer.get_all_transactions(storage_address)
-        out.extend(get_algofi_liquidate_transactions(storage_txs))
-        out.extend(get_algofi_governance_rewards_transactions(storage_txs, storage_address))
+    for app in dapps:
+        out.extend(app.get_extra_transactions())
 
     num_tx = len(out)
 

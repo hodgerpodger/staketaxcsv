@@ -1,22 +1,17 @@
 import datetime
-from itertools import cycle
 import logging
 import math
-from random import sample
+import time
+from typing import Optional, Tuple
 from requests import Session
 from requests.adapters import HTTPAdapter, Retry
 
 from staketaxcsv.algo.config_algo import localconfig
 from staketaxcsv.common.debug_util import use_debug_files
-from staketaxcsv.settings_csv import ALGO_ALT_INDEXER_NODE, ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE, REPORTS_DIR
+from staketaxcsv.settings_csv import ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE, REPORTS_DIR
 
 # https://developer.algorand.org/docs/get-details/indexer/#paginated-results
 ALGOINDEXER_LIMIT = 2000
-
-ALGOINDEXER_NODES = [
-    ALGO_INDEXER_NODE,
-    ALGO_ALT_INDEXER_NODE
-]
 
 
 # API documentation: https://algoexplorer.io/api-dev/indexer-v2
@@ -29,46 +24,83 @@ class AlgoIndexerAPI:
             retries = Retry(total=5, backoff_factor=5)
             AlgoIndexerAPI.session.mount("https://", HTTPAdapter(max_retries=retries))
 
-        self._nodes = cycle(sample(ALGOINDEXER_NODES, len(ALGOINDEXER_NODES)))
-        self._txns_node = None
-
-    def _select_node(self):
-        return next(self._nodes)
-
     def account_exists(self, address):
         endpoint = f"v2/accounts/{address}/transactions"
         params = {"limit": 1}
 
-        _, status_code = self._query(self._select_node(), endpoint, params)
+        _, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
 
         return status_code == 200
 
     @use_debug_files(localconfig, REPORTS_DIR)
-    def get_account(self, address):
+    def get_account(self, address: str) -> Optional[dict]:
+        """
+        This function retrieves account information for a given address.
+
+        Args:
+          address (str): The address of the Algorand account that we want to retrieve information for.
+
+        Returns:
+          A dictionary containing information about the account if successful, `None` otherwise. 
+          See account schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Account
+        """
         endpoint = f"v2/accounts/{address}"
         params = {"include-all": True}
 
-        data, status_code = self._query(ALGO_HIST_INDEXER_NODE, endpoint, params)
+        data, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
 
         if status_code == 599:
-            data, status_code = self._query(self._select_node(), endpoint, params)
+            data, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
 
         if status_code == 200:
             return data["account"]
         else:
             return None
 
-    def get_transaction(self, txhash):
-        endpoint = f"v2/transactions/{txhash}"
+    def get_transaction(self, txid: str) -> Optional[dict]:
+        """
+        This function retrieves a transaction with a given ID.
 
-        data, status_code = self._query(self._select_node(), endpoint)
+        Args:
+          txid (str): The ID of the transaction ID that is being requested.
+
+        Returns:
+          A dictionary containing information about a transaction if successful, `None` otherwise.
+          See transaction schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Transaction
+        """
+        endpoint = f"v2/transactions/{txid}"
+
+        data, status_code = self._query(ALGO_INDEXER_NODE, endpoint)
 
         if status_code == 200:
             return data["transaction"]
         else:
             return None
 
-    def get_transactions(self, address, after_date=None, before_date=None, min_round=None, next=None):
+    def get_transactions(self,
+                         address: str,
+                         after_date: Optional[datetime.date] = None,
+                         before_date: Optional[datetime.date] = None,
+                         min_round: Optional[int] = None,
+                         next: Optional[str] = None) -> Tuple[list, Optional[str]]:
+        """
+        This function retrieves transactions for a given address with optional filters and pagination.
+
+        Args:
+          address (str): The Algorand address for which to retrieve transactions.
+          after_date (Optional[datetime.date]): Include results after the given date.
+          before_date (Optional[datetime.date]): Include results before the given date.
+          min_round (Optional[int]): The minimum round number for transactions to be included in the
+        results. Transactions with a round number lower than this value will be excluded.
+          next (Optional[str]): An optional string that represents a token used to
+        retrieve the next page of results in a multi-page request. It is returned in the response of the
+        previous request and can be passed as a parameter to this function to retrieve the next page of
+        transactions.
+
+        Returns:
+          a tuple containing a list of transactions and an optional string representing the next token for
+        pagination. See transaction schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Transaction
+        """
         endpoint = f"v2/accounts/{address}/transactions"
         params = {"limit": ALGOINDEXER_LIMIT}
         if after_date:
@@ -80,11 +112,7 @@ class AlgoIndexerAPI:
         if next:
             params["next"] = next
 
-        # next-token is server specific so can't change node in the middle of multi-page requests
-        if next is None:
-            self._txns_node = self._select_node()
-
-        data, status_code = self._query(self._txns_node, endpoint, params)
+        data, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
 
         if status_code == 200:
             return data["transactions"], data.get("next-token")
@@ -92,7 +120,17 @@ class AlgoIndexerAPI:
             return [], None
 
     @use_debug_files(localconfig, REPORTS_DIR)
-    def get_all_transactions(self, address):
+    def get_all_transactions(self, address: str) -> list:
+        """
+        This function retrieves all transactions for a given address within a specified date range and
+        minimum round, using a maximum number of queries and transactions per query. The transactions are
+        obtained by making multiple queries to the indexer API, with a maximum number of transactions per
+        query determined by the `localconfig.limit` parameter.
+
+        Returns:
+            list: List of transaction objects that match the specified criteria,
+                see schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Transaction
+        """
         next = None
         out = []
 
@@ -117,7 +155,17 @@ class AlgoIndexerAPI:
 
         return out
 
-    def get_transactions_by_group(self, group_id):
+    def get_transactions_by_group(self, group_id: str) -> list[dict]:
+        """
+        This function retrieves a list of transactions associated with a specific group ID.
+
+        Args:
+          group_id (str): The group ID. More details on transaction groups\
+          at https://developer.algorand.org/docs/get-details/atomic_transfers/
+
+        Returns:
+          This function returns a list of dictionaries containing transaction data for a specific group ID.
+        """
         endpoint = "v2/transactions"
         params = {"group-id": group_id}
 
@@ -128,16 +176,76 @@ class AlgoIndexerAPI:
         else:
             return []
 
-    def get_asset(self, id):
-        endpoint = f"v2/assets/{id}"
+    def get_transactions_by_app(self, app_id: int, round: int, address: Optional[str] = None) -> list[dict]:
+        """
+        This function retrieves a list of transactions for a specific application ID, round, and optional
+        address.
+        
+        Args:
+          app_id (int): The ID of the application for which transactions are being requested.
+          round (int): The round number of the transactions to retrieve.
+          address (Optional[str]): Optional parameter to filter transactions by a specific address.
+        
+        Returns:
+          This function returns a list of dictionaries containing transactions made with the specified parameters.
+        """
+        endpoint = "v2/transactions"
+        params = {
+            "limit": ALGOINDEXER_LIMIT,
+            "application-id": app_id,
+            "round": round
+        }
+        if address:
+            params["address"] = address
 
-        data, status_code = self._query(self._select_node(), endpoint)
-
-        if status_code == 599:
-            data, status_code = self._query(self._select_node(), endpoint)
+        data, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
 
         if status_code == 200:
-            return data["asset"]["params"]
+            return data["transactions"]
+        else:
+            return []
+
+    def get_asset(self, id: int) -> Optional[dict]:
+        """
+        This function retrieves asset information.
+
+        Args:
+          id (int): Algorand Standard Asset (ASA) id.
+
+        Returns:
+          A dictionary containing asset details if successful, `None` otherwise.
+          See asset params schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Asset
+        """
+        return self._get_asset(ALGO_INDEXER_NODE, id)
+
+    def get_deleted_asset(self, id: int) -> Optional[dict]:
+        """
+        This function retrieves information for an asset that has been deleted.
+
+        Args:
+          id (int): Algorand Standard Asset (ASA) id.
+
+        Returns:
+          A dictionary containing asset details if successful, `None` otherwise.
+          See asset params schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Asset
+        """
+        return self._get_asset(ALGO_HIST_INDEXER_NODE, id)
+
+    def _get_asset(self, node_url, id):
+        endpoint = f"v2/assets/{id}"
+        params = {"include-all": True}
+
+        # Temporarily slow down asset requests until we either cache them
+        # or https://github.com/algorand/go-algorand/issues/5250 is resolved.
+        time.sleep(0.1)
+
+        data, status_code = self._query(node_url, endpoint, params)
+
+        if status_code == 599:
+            data, status_code = self._query(node_url, endpoint, params)
+
+        if status_code == 200:
+            return data["asset"]
         else:
             return None
 

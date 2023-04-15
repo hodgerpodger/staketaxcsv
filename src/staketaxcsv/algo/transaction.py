@@ -1,5 +1,3 @@
-import base64
-import string
 import urllib.parse
 from datetime import datetime
 
@@ -41,12 +39,16 @@ def get_transfer_receiver(transaction):
     return None
 
 
+def get_transfer_sender(transaction):
+    return transaction["sender"]
+
+
 def is_transfer_receiver(wallet_address, transaction):
     return wallet_address == get_transfer_receiver(transaction)
 
 
 def is_transaction_sender(wallet_address, transaction):
-    return wallet_address == transaction["sender"]
+    return wallet_address == get_transfer_sender(transaction)
 
 
 def is_transfer_receiver_non_zero_asset(wallet_address, transaction):
@@ -76,6 +78,16 @@ def generate_transfer_accounts(transaction):
 
 def is_transfer_participant(wallet_address, transaction):
     return wallet_address in generate_transfer_accounts(transaction)
+
+
+def get_transfer_asset_id(transaction):
+    txtype = transaction["tx-type"]
+    if txtype == co.TRANSACTION_TYPE_PAYMENT:
+        return 0
+    elif txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER:
+        return transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["asset-id"]
+    else:
+        return None
 
 
 def get_transfer_asset(transaction, asset_map={}):
@@ -113,7 +125,7 @@ def generate_inner_transfer_assets(transaction, asset_map={}, filter=None):
             if filter is None or filter(tx):
                 yield get_transfer_asset(tx, asset_map)
         elif is_app_call(tx):
-            generate_inner_transfer_assets(tx, asset_map, filter)
+            yield from generate_inner_transfer_assets(tx, asset_map, filter)
 
 
 def get_inner_transfer_asset(transaction, asset_map={}, filter=None):
@@ -147,19 +159,14 @@ def get_inner_transfer_count(transaction, depth=1):
 
 
 def is_asset_optin(transaction):
-    txtype = transaction["tx-type"]
-    if (txtype == co.TRANSACTION_TYPE_ASSET_TRANSFER
-            and transaction["sender"] == transaction[co.TRANSACTION_KEY_ASSET_TRANSFER]["receiver"]):
+    if is_transfer(transaction) and get_transfer_sender(transaction) == get_transfer_receiver(transaction):
         return True
 
-    if txtype == co.TRANSACTION_TYPE_APP_CALL:
-        inner_transactions = transaction.get("inner-txns", [])
-        if len(inner_transactions) == 0:
-            return False
+    inner_transactions = transaction.get("inner-txns", [])
+    if not inner_transactions:
+        return False
 
-        return all([is_asset_optin(tx) for tx in inner_transactions])
-
-    return False
+    return all([is_asset_optin(tx) for tx in inner_transactions])
 
 
 def is_transfer(transaction):
