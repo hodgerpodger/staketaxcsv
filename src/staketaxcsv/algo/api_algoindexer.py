@@ -1,6 +1,7 @@
 import datetime
 import logging
 import math
+import os
 import time
 from typing import Optional, Tuple
 from requests import Session
@@ -32,7 +33,7 @@ class AlgoIndexerAPI:
 
         return status_code == 200
 
-    @use_debug_files(localconfig, REPORTS_DIR)
+    @use_debug_files(localconfig, os.path.join(REPORTS_DIR, "algo", "accounts"))
     def get_account(self, address: str) -> Optional[dict]:
         """
         This function retrieves account information for a given address.
@@ -119,7 +120,7 @@ class AlgoIndexerAPI:
         else:
             return [], None
 
-    @use_debug_files(localconfig, REPORTS_DIR)
+    @use_debug_files(localconfig, os.path.join(REPORTS_DIR, "algo", "transactions"))
     def get_all_transactions(self, address: str) -> list:
         """
         This function retrieves all transactions for a given address within a specified date range and
@@ -176,16 +177,17 @@ class AlgoIndexerAPI:
         else:
             return []
 
+    @use_debug_files(localconfig, os.path.join(REPORTS_DIR, "algo", "transactions"))
     def get_transactions_by_app(self, app_id: int, round: int, address: Optional[str] = None) -> list[dict]:
         """
         This function retrieves a list of transactions for a specific application ID, round, and optional
         address.
-        
+
         Args:
           app_id (int): The ID of the application for which transactions are being requested.
           round (int): The round number of the transactions to retrieve.
           address (Optional[str]): Optional parameter to filter transactions by a specific address.
-        
+
         Returns:
           This function returns a list of dictionaries containing transactions made with the specified parameters.
         """
@@ -205,6 +207,7 @@ class AlgoIndexerAPI:
         else:
             return []
 
+    @use_debug_files(localconfig, os.path.join(REPORTS_DIR, "algo", "assets"))
     def get_asset(self, id: int) -> Optional[dict]:
         """
         This function retrieves asset information.
@@ -218,6 +221,7 @@ class AlgoIndexerAPI:
         """
         return self._get_asset(ALGO_INDEXER_NODE, id)
 
+    @use_debug_files(localconfig, os.path.join(REPORTS_DIR, "algo", "assets"))
     def get_deleted_asset(self, id: int) -> Optional[dict]:
         """
         This function retrieves information for an asset that has been deleted.
@@ -252,7 +256,7 @@ class AlgoIndexerAPI:
     def _query(self, node_url, endpoint, params=None):
         url = f"{node_url}/{endpoint}"
 
-        logging.info("Querying Algo Indexer %s...", url)
+        logging.info("Querying Algo Indexer %s with params %s...", url, params)
 
         try:
             response = AlgoIndexerAPI.session.get(url, params=params, timeout=5)

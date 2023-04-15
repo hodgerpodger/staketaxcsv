@@ -69,4 +69,4 @@ DONATION_WALLETS = set([v for k, v in os.environ.items() if k.startswith("DONATI
 MESSAGE_ADDRESS_NOT_FOUND = "Wallet address not found"
 MESSAGE_STAKING_ADDRESS_FOUND = "Staking address found.  Please input the main wallet address instead."
 
-REPORTS_DIR = os.path.dirname(os.path.realpath(__file__)) + "/_reports"
+REPORTS_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "_reports")

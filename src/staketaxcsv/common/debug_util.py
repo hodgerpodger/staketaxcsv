@@ -24,6 +24,9 @@ def use_debug_files(localconfig, file_dir):
                     return func(*args, **kwargs)
             # ####################################################################################
 
+            if not os.path.exists(file_dir):
+                os.makedirs(file_dir)
+
             debug_file = _debug_file_path(file_dir, args, func)
 
             # Debugging only: when --debug flag set, read from cache file
@@ -54,5 +57,5 @@ def _debug_file_path(file_dir, fields, func):
     # Remove special symbols to create a file path
     fields_clean = [''.join(filter(str.isalnum, str(f))) for f in fields_clean]
 
-    path = "{}/debug.{}.json".format(file_dir, "-".join(fields_clean))
+    path = os.path.join(file_dir, "debug.{}.json".format("-".join(fields_clean)))
     return path
