@@ -9,6 +9,7 @@ from datetime import datetime
 import pytz
 from pytz import timezone
 from staketaxcsv.common import ExporterTypes as et
+from staketaxcsv.common.ExporterTypes import TX_TYPE_UNKNOWN
 from staketaxcsv.common.exporter_koinly import NullMap
 from staketaxcsv.settings_csv import TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TICKER_LUNA2
 #from tabulate import tabulate
@@ -425,6 +426,7 @@ class Exporter:
             et.TX_TYPE_SPEND: "Spend",
             et.TX_TYPE_BORROW: "Transfer",
             et.TX_TYPE_REPAY: "Transfer",
+            TX_TYPE_UNKNOWN: TX_TYPE_UNKNOWN,
         }
         rows = self._rows_export(et.FORMAT_TOKENTAX)
 
@@ -447,7 +449,18 @@ class Exporter:
                         tx_type = "Deposit"
                         logging.error("Bad condition in export_tokentax_csv(): {}, {}, {}".format(
                             row.received_amount, row.sent_amount, row.as_array()))
-
+                elif row.tx_type == TX_TYPE_UNKNOWN:
+                    if row.received_amount and row.received_currency and row.sent_amount and row.sent_currency:
+                        tx_type = "Trade"
+                    elif row.received_amount and row.received_currency:
+                        tx_type = "Deposit"
+                    elif row.sent_amount and row.sent_currency:
+                        tx_type = "Withdrawal"
+                    elif row.fee_currency and row.fee:
+                        tx_type = "Spend"
+                    else:
+                        logging.error("Bad condition for txn-type: uknown in export_tokentax_csv(): {}, {}, {}".format(
+                            row.received_amount, row.sent_amount, row.as_array()))
                 if row.comment:
                     comment = "{} {}".format(row.comment, row.txid)
                 else:
