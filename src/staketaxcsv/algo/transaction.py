@@ -159,7 +159,7 @@ def get_inner_transfer_count(transaction, depth=1):
 
 
 def is_asset_optin(transaction):
-    if is_transfer(transaction) and get_transfer_sender(transaction) == get_transfer_receiver(transaction):
+    if is_asa_transfer(transaction) and get_transfer_sender(transaction) == get_transfer_receiver(transaction):
         return True
 
     inner_transactions = transaction.get("inner-txns", [])

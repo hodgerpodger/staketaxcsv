@@ -301,5 +301,4 @@ def export_unknown(exporter, txinfo, z_index=0):
 
 
 def export_participation_rewards(reward, exporter, txinfo):
-    if reward.uint_amount > 10000:
-        export_reward_tx(exporter, txinfo, reward, comment="Participation Rewards")
+    export_reward_tx(exporter, txinfo, reward, comment="Participation Rewards")
