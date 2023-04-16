@@ -104,6 +104,15 @@ UNDERLYING_ASSETS = {
     465818563: 465865291,
 }
 
+ALGOFI_MARKET_CONTRACTS = [
+    465814065,  # ALGO
+    465814103,  # USDC
+    465814149,  # goBTC
+    465814222,  # goETH
+    465814278,  # STBL
+    465814318,  # vALGO
+]
+
 ALGOFI_STAKING_CONTRACTS = {
     # Manager App ID
     482625868: "STBL",
@@ -389,27 +398,17 @@ class AlgofiV1(Dapp):
         if len(group) != ALGOFI_NUM_INIT_TXNS + 3:
             return False
 
-        if not is_app_call(group[-2],
-                           app_args=ALGOFI_TRANSACTION_MINT_TO_COLLATERAL,
-                           foreign_app=APPLICATION_ID_ALGOFI_LENDING_MANAGER):
-            return False
-
         app_ids = list(ALGOFI_STAKING_CONTRACTS.keys())
-        app_ids.append(APPLICATION_ID_ALGOFI_LENDING_MANAGER)
-        return is_app_call(group[-3], app_ids, ALGOFI_TRANSACTION_MINT_TO_COLLATERAL)
+        app_ids.extend(ALGOFI_MARKET_CONTRACTS)
+        return is_app_call(group[-2], app_ids, ALGOFI_TRANSACTION_MINT_TO_COLLATERAL)
 
     def _is_algofi_remove_collateral(self, group):
         if len(group) != ALGOFI_NUM_INIT_TXNS + 2:
             return False
 
-        if not is_app_call(group[-1],
-                           app_args=ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING,
-                           foreign_app=APPLICATION_ID_ALGOFI_LENDING_MANAGER):
-            return False
-
         app_ids = list(ALGOFI_STAKING_CONTRACTS.keys())
-        app_ids.append(APPLICATION_ID_ALGOFI_LENDING_MANAGER)
-        return is_app_call(group[-2], app_ids, ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING)
+        app_ids.extend(ALGOFI_MARKET_CONTRACTS)
+        return is_app_call(group[-1], app_ids, ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING)
 
     def _is_algofi_liquidate(self, group):
         length = len(group)

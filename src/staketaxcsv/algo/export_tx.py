@@ -261,13 +261,19 @@ def export_liquidate_tx(exporter, txinfo, send_asset, receive_asset, fee_amount=
 
 @exclude_tx
 def export_deposit_collateral_tx(exporter, txinfo, send_asset, fee_amount=0, comment=None, z_index=0):
-    row = make_deposit_collateral_tx(txinfo, send_asset.amount, send_asset.ticker, z_index)
+    currency = send_asset.ticker
+    if send_asset.is_lp_token():
+        currency = send_asset.get_lp_token_currency()
+    row = make_deposit_collateral_tx(txinfo, send_asset.amount, currency, z_index)
     _ingest_row(exporter, row, fee_amount, comment)
 
 
 @exclude_tx
 def export_withdraw_collateral_tx(exporter, txinfo, receive_asset, fee_amount=0, comment=None, z_index=0):
-    row = make_withdraw_collateral_tx(txinfo, receive_asset.amount, receive_asset.ticker, z_index=z_index)
+    currency = receive_asset.ticker
+    if receive_asset.is_lp_token():
+        currency = receive_asset.get_lp_token_currency()
+    row = make_withdraw_collateral_tx(txinfo, receive_asset.amount, currency, z_index=z_index)
     _ingest_row(exporter, row, fee_amount, comment)
 
 
@@ -295,4 +301,5 @@ def export_unknown(exporter, txinfo, z_index=0):
 
 
 def export_participation_rewards(reward, exporter, txinfo):
-    export_reward_tx(exporter, txinfo, reward, comment="Participation Rewards")
+    if reward.uint_amount > 10000:
+        export_reward_tx(exporter, txinfo, reward, comment="Participation Rewards")

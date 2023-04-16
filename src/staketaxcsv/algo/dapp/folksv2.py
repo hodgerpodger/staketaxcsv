@@ -56,7 +56,8 @@ APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR = [
 
 NOTE_FOLKSV2_DEPOSIT_APP = "da"
 NOTE_FOLKSV2_LOAN_APP = "la"
-NOTE_FOLKSV2_LOAN_NAME = "ff-name"
+NOTE_FOLKSV2_LOAN_NAME_NOTE = "ff-name"
+NOTE_FOLKSV2_LOAN_NAME_NOTE_ARC2 = "ff/v1:j{\"name\":"
 
 FOLKSV2_TRANSACTION_DEPOSIT_ESCROW_OPTIN = "sx8Gbg=="       # "opt_escrow_into_asset" ABI selector
 FOLKSV2_TRANSACTION_DEPOSIT = "udVC+w=="                    # "deposit" ABI selector
@@ -214,8 +215,8 @@ class FolksV2(Dapp):
         if not is_transaction_sender(self.user_address, group[0]):
             return False
 
-        note = get_transaction_note(group[0], len(NOTE_FOLKSV2_LOAN_NAME))
-        if note != NOTE_FOLKSV2_LOAN_NAME:
+        note = get_transaction_note(group[0])
+        if not note.startswith(NOTE_FOLKSV2_LOAN_NAME_NOTE) and not note.startswith(NOTE_FOLKSV2_LOAN_NAME_NOTE_ARC2):
             return False
 
         if not is_transfer(group[1]):

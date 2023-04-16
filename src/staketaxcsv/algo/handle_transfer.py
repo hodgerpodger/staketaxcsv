@@ -13,7 +13,6 @@ from staketaxcsv.algo.export_tx import (
     export_spend_fee_tx,
     export_unknown
 )
-from staketaxcsv.algo.handle_folks import is_folks_escrow_address
 from staketaxcsv.algo.transaction import (
     get_transaction_note,
     get_transfer_sender,
@@ -145,13 +144,11 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
             # Regular send or closing to the same account
             send_asset = Asset(asset_id, details["amount"] + details["close-amount"])
 
-            # Ignore Folks transactions to increase collateral with fTokens
             if txreceiver == co.ADDRESS_PERA and note == "Pera Swap Fee":
                 export_spend_fee_tx(exporter, txinfo, send_asset + transaction["fee"], note)
-            if not is_folks_escrow_address(txreceiver):
-                export_send_tx(
-                    exporter, txinfo, send_asset, transaction["fee"], txreceiver,
-                    "Algomint" if txreceiver == co.ADDRESS_ALGOMINT else note, z_index)
+            export_send_tx(
+                exporter, txinfo, send_asset, transaction["fee"], txreceiver,
+                "Algomint" if txreceiver == co.ADDRESS_ALGOMINT else note, z_index)
 
     reward = Algo(rewards_amount)
     export_participation_rewards(reward, exporter, txinfo)
