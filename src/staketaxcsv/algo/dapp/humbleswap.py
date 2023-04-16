@@ -1,7 +1,7 @@
 import re
 
 from staketaxcsv.algo import constants as co
-from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
+from staketaxcsv.algo.api.indexer import Indexer
 from staketaxcsv.algo.dapp import Dapp
 from staketaxcsv.algo.export_tx import export_reward_tx, export_unknown
 from staketaxcsv.algo.handle_amm import (
@@ -29,7 +29,7 @@ reach_pattern = re.compile(r"^Reach \d+\.\d+\.\d+$")
 
 
 class HumbleSwap(Dapp):
-    def __init__(self, indexer: AlgoIndexerAPI, user_address: str, account: dict, exporter: Exporter) -> None:
+    def __init__(self, indexer: Indexer, user_address: str, account: dict, exporter: Exporter) -> None:
         super().__init__(indexer, user_address, account, exporter)
         self.indexer = indexer
         self.user_address = user_address

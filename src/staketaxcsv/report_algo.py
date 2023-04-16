@@ -10,9 +10,8 @@ import os
 import pprint
 
 import staketaxcsv.algo.processor
-from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
-from staketaxcsv.algo.api_nfdomains import NFDomainsAPI
-from staketaxcsv.algo.asset import Asset
+from staketaxcsv.algo.api.indexer import Indexer
+from staketaxcsv.algo.api.nfdomains import NFDomains
 from staketaxcsv.algo.config_algo import localconfig
 from staketaxcsv.algo.dapp import Dapp
 from staketaxcsv.algo.progress_algo import ProgressAlgo
@@ -22,14 +21,14 @@ from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.common.ExporterTypes import LP_TREATMENT_TRANSFERS
 from staketaxcsv.settings_csv import REPORTS_DIR, TICKER_ALGO
 
-indexer = AlgoIndexerAPI()
+indexer = Indexer()
 
 
 def main():
     wallet_address, export_format, txid, options = report_util.parse_args(TICKER_ALGO)
 
     if wallet_address.endswith(".algo"):
-        wallet_address = NFDomainsAPI().get_address(wallet_address)
+        wallet_address = NFDomains().get_address(wallet_address)
 
     report_util.run_report(TICKER_ALGO, wallet_address, export_format, txid, options)
 

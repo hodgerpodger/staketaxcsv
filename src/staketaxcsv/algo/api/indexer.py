@@ -12,18 +12,18 @@ from staketaxcsv.common.debug_util import use_debug_files
 from staketaxcsv.settings_csv import ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE, REPORTS_DIR
 
 # https://developer.algorand.org/docs/get-details/indexer/#paginated-results
-ALGOINDEXER_LIMIT = 2000
+INDEXER_LIMIT = 2000
 
 
 # API documentation: https://algoexplorer.io/api-dev/indexer-v2
-class AlgoIndexerAPI:
+class Indexer:
     session = None
 
     def __init__(self):
-        if not AlgoIndexerAPI.session:
-            AlgoIndexerAPI.session = Session()
+        if not Indexer.session:
+            Indexer.session = Session()
             retries = Retry(total=5, backoff_factor=5)
-            AlgoIndexerAPI.session.mount("https://", HTTPAdapter(max_retries=retries))
+            Indexer.session.mount("https://", HTTPAdapter(max_retries=retries))
 
     def account_exists(self, address):
         endpoint = f"v2/accounts/{address}/transactions"
@@ -103,7 +103,7 @@ class AlgoIndexerAPI:
         pagination. See transaction schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Transaction
         """
         endpoint = f"v2/accounts/{address}/transactions"
-        params = {"limit": ALGOINDEXER_LIMIT}
+        params = {"limit": INDEXER_LIMIT}
         if after_date:
             params["after-time"] = after_date.isoformat()
         if before_date:
@@ -136,7 +136,7 @@ class AlgoIndexerAPI:
         out = []
 
         max_txs = localconfig.limit
-        max_queries = math.ceil(max_txs / ALGOINDEXER_LIMIT)
+        max_queries = math.ceil(max_txs / INDEXER_LIMIT)
         logging.info("max_txs: %s, max_queries: %s", max_txs, max_queries)
 
         after_date = None
@@ -193,7 +193,7 @@ class AlgoIndexerAPI:
         """
         endpoint = "v2/transactions"
         params = {
-            "limit": ALGOINDEXER_LIMIT,
+            "limit": INDEXER_LIMIT,
             "application-id": app_id,
             "round": round
         }
@@ -259,7 +259,7 @@ class AlgoIndexerAPI:
         logging.info("Querying Algo Indexer %s with params %s...", url, params)
 
         try:
-            response = AlgoIndexerAPI.session.get(url, params=params, timeout=5)
+            response = Indexer.session.get(url, params=params, timeout=5)
         except Exception as e:
             logging.error("Exception when querying '%s', exception=%s", url, str(e))
         else:

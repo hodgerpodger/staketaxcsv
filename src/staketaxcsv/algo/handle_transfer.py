@@ -122,6 +122,8 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
                 export_reward_tx(exporter, txinfo, receive_asset, fee_amount, "Algostake", z_index)
             elif txsender == co.ADDRESS_PACT_REWARDS:
                 export_reward_tx(exporter, txinfo, receive_asset, fee_amount, "Pact", z_index)
+            elif txsender in co.ADDRESS_GOVERNANCE_REWARDS_POOLS:
+                export_reward_tx(exporter, txinfo, receive_asset, fee_amount, "Governance")
             else:
                 if "tinymanStaking/v1" in note:
                     export_reward_tx(exporter, txinfo, receive_asset, fee_amount, "Tinyman", z_index)
