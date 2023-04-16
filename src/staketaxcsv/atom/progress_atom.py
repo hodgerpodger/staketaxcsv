@@ -1,7 +1,7 @@
 from staketaxcsv.atom.config_atom import localconfig
 from staketaxcsv.common.progress import Progress
 
-SECONDS_PER_PAGE = 5
+SECONDS_PER_PAGE = 8
 
 
 class ProgressAtom(Progress):

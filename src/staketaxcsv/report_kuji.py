@@ -15,7 +15,7 @@ from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.kuji.config_kuji import localconfig
 from staketaxcsv.kuji.progress_kuji import SECONDS_PER_PAGE, ProgressKuji
 from staketaxcsv.settings_csv import KUJI_NODE, TICKER_KUJI
-LIMIT_PER_QUERY = 25
+LIMIT_PER_QUERY = 15
 
 
 def main():
