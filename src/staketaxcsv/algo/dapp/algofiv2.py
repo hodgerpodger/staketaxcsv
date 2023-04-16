@@ -3,7 +3,7 @@ import base64
 from algosdk import encoding
 from functools import partial, reduce
 from staketaxcsv.algo import constants as co
-from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
+from staketaxcsv.algo.api.indexer import Indexer
 from staketaxcsv.algo.asset import Asset
 from staketaxcsv.algo.dapp import Dapp
 
@@ -161,7 +161,7 @@ ALGOFIV2_LENDING_CONTRACTS = [
 
 
 class AlgofiV2(Dapp):
-    def __init__(self, indexer: AlgoIndexerAPI, user_address: str, account: dict, exporter: Exporter) -> None:
+    def __init__(self, indexer: Indexer, user_address: str, account: dict, exporter: Exporter) -> None:
         super().__init__(indexer, user_address, account, exporter)
         self.indexer = indexer
         self.user_address = user_address

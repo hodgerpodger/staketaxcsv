@@ -3,7 +3,7 @@ import os
 import traceback
 from importlib import util
 
-from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
+from staketaxcsv.algo.api.indexer import Indexer
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.common.TxInfo import TxInfo
 
@@ -18,11 +18,11 @@ class Dapp(ABC):
         cls.plugins.append(cls)
 
     @abstractmethod
-    def __init__(self, indexer: AlgoIndexerAPI, user_address: str, account: dict, exporter: Exporter) -> None:
+    def __init__(self, indexer: Indexer, user_address: str, account: dict, exporter: Exporter) -> None:
         """ Dapp constructor
 
         Args:
-            indexer (AlgoIndexerAPI): Algorand indexer REST API.
+            indexer (Indexer): Algorand indexer REST API.
             user_address (str): User account address.
             account (dict): Account object as returned by the indexer,
                 see schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Account

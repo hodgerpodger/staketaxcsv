@@ -1,5 +1,5 @@
 import re
-from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
+from staketaxcsv.algo.api.indexer import Indexer
 from staketaxcsv.algo.constants import ASSET_ID_ALGO
 from staketaxcsv.algo.util import b64_decode_ascii
 
@@ -85,7 +85,7 @@ class Asset:
             "decimals": 6,
         }
     }
-    indexer = AlgoIndexerAPI()
+    indexer = Indexer()
 
     def __init__(self, id, amount=0):
         if id < 0:

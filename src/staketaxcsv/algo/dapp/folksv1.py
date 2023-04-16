@@ -1,5 +1,5 @@
 from staketaxcsv.algo import constants as co
-from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
+from staketaxcsv.algo.api.indexer import Indexer
 from staketaxcsv.algo.dapp import Dapp
 from staketaxcsv.algo.asset import Algo
 from staketaxcsv.algo.export_tx import (
@@ -198,7 +198,7 @@ FOLKS_TRANSACTION_GOVERNANCE_CLAIM = "2wMoWg=="
 
 
 class FolksV1(Dapp):
-    def __init__(self, indexer: AlgoIndexerAPI, user_address: str, account: dict, exporter: Exporter) -> None:
+    def __init__(self, indexer: Indexer, user_address: str, account: dict, exporter: Exporter) -> None:
         super().__init__(indexer, user_address, account, exporter)
         self.indexer = indexer
         self.user_address = user_address

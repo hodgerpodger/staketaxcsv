@@ -2,7 +2,7 @@ import base64
 from functools import partial
 import hashlib
 
-from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
+from staketaxcsv.algo.api.indexer import Indexer
 from staketaxcsv.algo import constants as co
 from staketaxcsv.algo.dapp import Dapp
 from staketaxcsv.algo.export_tx import (
@@ -51,7 +51,7 @@ DEFLEX_TRANSACTION_CLOSE_ESCROW = "jVTQ1A=="   # "Backend_close_escrow" ABI sele
 
 
 class Deflex(Dapp):
-    def __init__(self, indexer: AlgoIndexerAPI, user_address: str, account: dict, exporter: Exporter) -> None:
+    def __init__(self, indexer: Indexer, user_address: str, account: dict, exporter: Exporter) -> None:
         super().__init__(indexer, user_address, account, exporter)
         self.limit_order_apps = self._get_deflex_limit_order_apps(account)
         self.indexer = indexer

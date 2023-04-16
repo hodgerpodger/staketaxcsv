@@ -1,6 +1,6 @@
 from functools import partial
 
-from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
+from staketaxcsv.algo.api.indexer import Indexer
 from staketaxcsv.algo.asset import Algo
 from staketaxcsv.algo.dapp import Dapp
 from staketaxcsv.algo.export_tx import export_participation_rewards, export_swap_tx, export_unknown
@@ -37,7 +37,7 @@ PACT_TRANSACTION_LP_REMOVE = "UkVNTElR"      # "REMLIQ"
 
 
 class Pact(Dapp):
-    def __init__(self, indexer: AlgoIndexerAPI, user_address: str, account: dict, exporter: Exporter) -> None:
+    def __init__(self, indexer: Indexer, user_address: str, account: dict, exporter: Exporter) -> None:
         super().__init__(indexer, user_address, account, exporter)
         self.indexer = indexer
         self.user_address = user_address
