@@ -31,6 +31,9 @@ from staketaxcsv.algo.transaction import (
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.common.TxInfo import TxInfo
 
+# For reference:
+# https://github.com/tinymanorg/tinyman-py-sdk
+
 APPLICATION_ID_TINYMANV2_VALIDATOR = 1002541853
 
 TINYMANV2_TRANSACTION_SWAP = "c3dhcA=="                                       # "swap"

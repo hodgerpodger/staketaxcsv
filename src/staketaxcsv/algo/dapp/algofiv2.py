@@ -264,7 +264,7 @@ class AlgofiV2(Dapp):
 
         elif self._is_algofiv2_pool_zap(group):
             self._handle_algofiv2_pool_zap(group, txinfo)
-    
+
         elif self._is_algofiv2_liquidate(group):
             self._handle_algofiv2_liquidate(group, txinfo)
 
@@ -515,8 +515,7 @@ class AlgofiV2(Dapp):
 
             if (not is_app_call(group[i + 1],
                                 ALGOFIV2_STAKING_CONTRACTS,
-                                ALGOFIV2_TRANSACTION_CLAIM_REWARDS,
-                                APPLICATION_ID_ALGOFIV2_GOVERNANCE_VOTING_ESCROW)):
+                                ALGOFIV2_TRANSACTION_CLAIM_REWARDS)):
                 return False
             i += 2
 
@@ -708,7 +707,7 @@ class AlgofiV2(Dapp):
 
         return is_app_call(group[i + 2],
                         app_args=ALGOFIV2_TRANSACTION_BURN_STEP_2,
-                        foreign_app=APPLICATION_ID_ALGOFIV2_LENDING_POOL_MANAGER)
+                        foreign_app=APPLICATION_ID_ALGOFIV2_LENDING_MANAGER)
 
     def _is_algofiv2_lend_zap(self, group):
         length = len(group)

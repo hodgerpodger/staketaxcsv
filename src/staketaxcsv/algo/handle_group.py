@@ -9,20 +9,12 @@ from staketaxcsv.algo.config_algo import localconfig
 from staketaxcsv.algo.handle_akita import handle_akita_swap_transaction, is_akita_swap_transaction
 from staketaxcsv.algo.handle_algodex import handle_algodex_transaction, is_algodex_transaction
 from staketaxcsv.algo.handle_amm import handle_swap, is_swap_group
-from staketaxcsv.algo.handle_folks import (
-    handle_folks_transaction,
-    is_folks_transaction,
-)
 from staketaxcsv.algo.handle_gard import handle_gard_transaction, is_gard_transaction
-from staketaxcsv.algo.handle_humbleswap import handle_humbleswap_transaction, is_humbleswap_transaction
-from staketaxcsv.algo.handle_pact import handle_pact_transaction, is_pact_transaction
-from staketaxcsv.algo.handle_tinyman import handle_tinyman_transaction, is_tinyman_transaction
 from staketaxcsv.algo.handle_transfer import (
     handle_governance_reward_transaction,
     handle_transfer_transactions,
     is_governance_reward_transaction,
 )
-from staketaxcsv.algo.handle_vestige import handle_vestige_transaction, is_vestige_transaction
 from staketaxcsv.algo.handle_wagmiswap import handle_wagmiswap_transaction, is_wagmiswap_transaction
 from staketaxcsv.algo.handle_yieldly import handle_yieldly_transaction, is_yieldly_transaction
 from staketaxcsv.algo.transaction import is_transfer
@@ -30,7 +22,7 @@ from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.TxInfo import TxInfo
 
 
-def get_transaction_group(groupid, start, transactions):
+def get_group_transactions(groupid, start, transactions):
     group = []
     for tx in transactions[start:]:
         current_groupid = tx.get("group", None)
@@ -74,21 +66,6 @@ def handle_transaction_group(wallet_address, dapps, group, exporter, txinfo):
 
     if (is_governance_reward_transaction(wallet_address, group)):
         handle_governance_reward_transaction(group, exporter, txinfo)
-
-    elif is_tinyman_transaction(group):
-        handle_tinyman_transaction(group, exporter, txinfo)
-
-    elif is_pact_transaction(wallet_address, group):
-        handle_pact_transaction(wallet_address, group, exporter, txinfo)
-
-    elif is_humbleswap_transaction(group):
-        handle_humbleswap_transaction(wallet_address, group, exporter, txinfo)
-
-    elif is_vestige_transaction(group):
-        handle_vestige_transaction(wallet_address, group, exporter, txinfo)
-
-    elif is_folks_transaction(wallet_address, group):
-        handle_folks_transaction(wallet_address, group, exporter, txinfo)
 
     elif is_yieldly_transaction(group):
         handle_yieldly_transaction(group, exporter, txinfo)
