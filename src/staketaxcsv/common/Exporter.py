@@ -818,6 +818,7 @@ class Exporter:
                 "SOCKS": "ID:186027",
                 "WASP": "ID:274467",
                 "XET": "ID:80828",
+                "ZONE": "ID:547025",                
             },
             TICKER_LUNA2: {
                 "LUNA": "ID:6089",
