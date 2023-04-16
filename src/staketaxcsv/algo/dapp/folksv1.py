@@ -13,10 +13,12 @@ from staketaxcsv.algo.export_tx import (
     export_withdraw_collateral_tx,
 )
 from staketaxcsv.algo.transaction import (
+    get_fee_amount,
     get_inner_transfer_asset,
     get_transfer_asset,
     get_transfer_asset_id,
     get_transfer_receiver,
+    is_algo_transfer,
     is_app_call,
     is_asset_optin,
     is_transfer
@@ -190,11 +192,14 @@ FOLKS_TRANSACTION_REWARD_CLAIM = "Yw=="     # "c"
 FOLKS_TRANSACTION_REWARD_STAKED_EXCHANGE = "ZQ=="      # "e"
 FOLKS_TRANSACTION_REWARD_IMMEDIATE_EXCHANGE = "aWU="   # "ie"
 
-FOLKS_TRANSACTION_GOVERNANCE_MINT = "bh9UTw=="
-FOLKS_TRANSACTION_GOVERNANCE_UNMINT = "3c0QwA=="
-FOLKS_TRANSACTION_GOVERNANCE_BURN = "ojqoeg=="
-FOLKS_TRANSACTION_GOVERNANCE_EARLY_CLAIM = "3jMsVA=="
-FOLKS_TRANSACTION_GOVERNANCE_CLAIM = "2wMoWg=="
+# https://github.com/Folks-Finance/folks-finance-js-sdk/blob/main/src/algoLiquidGovernance/v1/constants/abiContracts.ts
+FOLKS_TRANSACTION_GOVERNANCE_MINT = "bh9UTw=="            # "mint" ABI selector
+FOLKS_TRANSACTION_GOVERNANCE_UNMINT_PREMINT = "ujelLw=="  # "unmint_premint" ABI selector
+FOLKS_TRANSACTION_GOVERNANCE_UNMINT = "3c0QwA=="          # "unmint" ABI selector
+FOLKS_TRANSACTION_GOVERNANCE_CLAIM_PREMINT = "kZDyNg=="   # "claim_premint" ABI selector
+FOLKS_TRANSACTION_GOVERNANCE_BURN = "ojqoeg=="            # "burn" ABI selector
+FOLKS_TRANSACTION_GOVERNANCE_EARLY_CLAIM = "3jMsVA=="     # "early_claim" ABI selector
+FOLKS_TRANSACTION_GOVERNANCE_CLAIM = "2wMoWg=="           # "cleaim_rewards" ABI selector
 
 
 class FolksV1(Dapp):
@@ -218,7 +223,9 @@ class FolksV1(Dapp):
                     or self._is_folks_galgo3_burn_transaction(group)
                     or self._is_folks_galgo3_claim_rewards_transaction(group)
                     or self._is_folks_galgo_mint_transaction(group)
+                    or self._is_folks_galgo_unmint_premint_transaction(group)
                     or self._is_folks_galgo_unmint_transaction(group)
+                    or self._is_folks_galgo_claim_premint_transaction(group)
                     or self._is_folks_galgo_claim_transaction(group)
                     or self._is_folks_deposit_transaction(group)
                     or self._is_folks_withdraw_transaction(group)
@@ -252,8 +259,14 @@ class FolksV1(Dapp):
         elif self._is_folks_galgo_mint_transaction(group):
             self._handle_folks_galgo_mint_transaction(group, txinfo)
 
+        elif self._is_folks_galgo_unmint_premint_transaction(group):
+            self._handle_folks_galgo_unmint_premint_transaction(group, txinfo)
+
         elif self._is_folks_galgo_unmint_transaction(group):
             self._handle_folks_galgo_unmint_transaction(group, txinfo)
+
+        elif self._is_folks_galgo_claim_premint_transaction(group):
+            self._handle_folks_galgo_claim_premint_transaction(group, txinfo)
 
         elif self._is_folks_galgo_claim_transaction(group):
             self._handle_folks_galgo_claim_transaction(group, txinfo)
@@ -347,26 +360,23 @@ class FolksV1(Dapp):
         if length < 2 or length > 4:
             return False
 
-        transaction = group[-1]
-        txtype = transaction["tx-type"]
-        if txtype != co.TRANSACTION_TYPE_APP_CALL:
-            return False
-
-        app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
-        if app_id not in APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR:
-            return False
-
-        appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
-        if FOLKS_TRANSACTION_GOVERNANCE_MINT not in appl_args:
+        if not is_app_call(group[-1], APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR, FOLKS_TRANSACTION_GOVERNANCE_MINT):
             return False
 
         transaction = group[-2]
-        txtype = transaction["tx-type"]
-        if txtype != co.TRANSACTION_TYPE_PAYMENT:
+        if not is_algo_transfer(transaction):
             return False
 
         receiver = get_transfer_receiver(transaction)
         return receiver in ADDRESS_FOLKS_GOVERNANCE_ALGO
+
+    def _is_folks_galgo_unmint_premint_transaction(self, group):
+        if len(group) != 1:
+            return False
+
+        return is_app_call(group[0],
+                           APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR,
+                           FOLKS_TRANSACTION_GOVERNANCE_UNMINT_PREMINT)
 
     def _is_folks_galgo_unmint_transaction(self, group):
         if len(group) != 2:
@@ -383,6 +393,14 @@ class FolksV1(Dapp):
 
         appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
         return FOLKS_TRANSACTION_GOVERNANCE_UNMINT in appl_args or FOLKS_TRANSACTION_GOVERNANCE_BURN in appl_args
+
+    def _is_folks_galgo_claim_premint_transaction(self, group):
+        if len(group) != 1:
+            return False
+
+        return is_app_call(group[0],
+                           APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR,
+                           FOLKS_TRANSACTION_GOVERNANCE_CLAIM_PREMINT)
 
     def _is_folks_galgo_early_claim_transaction(self, group):
         if len(group) != 1:
@@ -651,17 +669,20 @@ class FolksV1(Dapp):
         export_reward_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name)
 
     def _handle_folks_galgo_mint_transaction(self, group, txinfo):
-        fee_amount = 0
-        for transaction in group:
-            fee_amount += transaction["fee"]
+        fee_amount = get_fee_amount(self.user_address, group)
 
-        app_transaction = group[-1]
-        receive_asset = get_inner_transfer_asset(app_transaction)
+        send_asset = get_transfer_asset(group[-2])
+        receive_asset = get_inner_transfer_asset(group[-1])
+        if receive_asset is None:
+            export_deposit_collateral_tx(self.exporter, txinfo, send_asset, fee_amount, self.name + " Premint")
+        else:
+            export_swap_tx(self.exporter, txinfo, send_asset, receive_asset, fee_amount, self.name)
 
-        send_transaction = group[-2]
-        send_asset = get_transfer_asset(send_transaction)
+    def _handle_folks_galgo_unmint_premint_transaction(self, group, txinfo):
+        fee_amount = get_fee_amount(self.user_address, group)
 
-        export_swap_tx(self.exporter, txinfo, send_asset, receive_asset, fee_amount, self.name)
+        receive_asset = get_inner_transfer_asset(group[0])
+        export_withdraw_collateral_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name)
 
     def _handle_folks_galgo_unmint_transaction(self, group, txinfo):
         app_transaction = group[1]
@@ -673,6 +694,15 @@ class FolksV1(Dapp):
         send_asset = get_transfer_asset(send_transaction)
 
         export_swap_tx(self.exporter, txinfo, send_asset, receive_asset, fee_amount, self.name)
+
+    def _handle_folks_galgo_claim_premint_transaction(self, group, txinfo):
+        fee_amount = get_fee_amount(self.user_address, group)
+
+        receive_asset = get_inner_transfer_asset(group[0])
+        send_asset = Algo(receive_asset.uint_amount)
+
+        export_withdraw_collateral_tx(self.exporter, txinfo, send_asset, fee_amount, self.name + " Claim Premint", 0)
+        export_swap_tx(self.exporter, txinfo, send_asset, receive_asset, fee_amount, self.name, 1)
 
     def _handle_folks_galgo_early_claim_transaction(self, group, txinfo):
         transaction = group[0]
