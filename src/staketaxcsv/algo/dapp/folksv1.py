@@ -224,7 +224,8 @@ class FolksV1(Dapp):
                     or self._is_folks_galgo3_claim_rewards_transaction(group)
                     or self._is_folks_galgo_mint_transaction(group)
                     or self._is_folks_galgo_unmint_premint_transaction(group)
-                    or self._is_folks_galgo_unmint_transaction(group)
+                    or self._is_folks_galgo_burn_transaction(group)
+                    or self._is_folks_galgo_burn_and_premint_transaction(group)
                     or self._is_folks_galgo_claim_premint_transaction(group)
                     or self._is_folks_galgo_claim_transaction(group)
                     or self._is_folks_deposit_transaction(group)
@@ -262,8 +263,11 @@ class FolksV1(Dapp):
         elif self._is_folks_galgo_unmint_premint_transaction(group):
             self._handle_folks_galgo_unmint_premint_transaction(group, txinfo)
 
-        elif self._is_folks_galgo_unmint_transaction(group):
-            self._handle_folks_galgo_unmint_transaction(group, txinfo)
+        elif self._is_folks_galgo_burn_transaction(group):
+            self._handle_folks_galgo_burn_transaction(group, txinfo)
+
+        elif self._is_folks_galgo_burn_and_premint_transaction(group):
+            self._handle_folks_galgo_burn_and_premint_transaction(group, txinfo)
 
         elif self._is_folks_galgo_claim_premint_transaction(group):
             self._handle_folks_galgo_claim_premint_transaction(group, txinfo)
@@ -378,7 +382,7 @@ class FolksV1(Dapp):
                            APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR,
                            FOLKS_TRANSACTION_GOVERNANCE_UNMINT_PREMINT)
 
-    def _is_folks_galgo_unmint_transaction(self, group):
+    def _is_folks_galgo_burn_transaction(self, group):
         if len(group) != 2:
             return False
 
@@ -393,6 +397,14 @@ class FolksV1(Dapp):
 
         appl_args = transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
         return FOLKS_TRANSACTION_GOVERNANCE_UNMINT in appl_args or FOLKS_TRANSACTION_GOVERNANCE_BURN in appl_args
+
+    def _is_folks_galgo_burn_and_premint_transaction(self, group):
+        if len(group) != 5:
+            return False
+        if not self._is_folks_galgo_burn_transaction(group[:2]):
+            return False
+        
+        return self._is_folks_galgo_mint_transaction(group[2:])
 
     def _is_folks_galgo_claim_premint_transaction(self, group):
         if len(group) != 1:
@@ -684,7 +696,7 @@ class FolksV1(Dapp):
         receive_asset = get_inner_transfer_asset(group[0])
         export_withdraw_collateral_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name)
 
-    def _handle_folks_galgo_unmint_transaction(self, group, txinfo):
+    def _handle_folks_galgo_burn_transaction(self, group, txinfo):
         app_transaction = group[1]
         fee_amount = app_transaction["fee"]
 
@@ -694,6 +706,10 @@ class FolksV1(Dapp):
         send_asset = get_transfer_asset(send_transaction)
 
         export_swap_tx(self.exporter, txinfo, send_asset, receive_asset, fee_amount, self.name)
+
+    def _handle_folks_galgo_burn_and_premint_transaction(self, group, txinfo):
+        self._handle_folks_galgo_burn_transaction(group[:2], txinfo)
+        self._handle_folks_galgo_mint_transaction(group[2:], txinfo)
 
     def _handle_folks_galgo_claim_premint_transaction(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)
