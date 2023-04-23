@@ -117,11 +117,12 @@ def export_spend_fee_tx(exporter, txinfo, fee_asset, comment=None, z_index=0):
 @exclude_tx
 @exclude_lp_tx
 def export_income_tx(exporter, txinfo, receive_asset, fee_amount=0, comment=None, z_index=0):
-    receive_asset_currency = (receive_asset.get_lp_token_currency() if receive_asset.is_lp_token()
-                                else receive_asset.ticker)
+    if not receive_asset.zero():
+        receive_asset_currency = (receive_asset.get_lp_token_currency() if receive_asset.is_lp_token()
+                                    else receive_asset.ticker)
 
-    row = make_income_tx(txinfo, receive_asset.amount, receive_asset_currency, z_index=z_index)
-    _ingest_row(exporter, row, fee_amount, comment)
+        row = make_income_tx(txinfo, receive_asset.amount, receive_asset_currency, z_index=z_index)
+        _ingest_row(exporter, row, fee_amount, comment)
 
 
 @exclude_tx
