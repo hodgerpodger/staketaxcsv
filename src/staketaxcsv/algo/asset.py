@@ -218,7 +218,10 @@ class Asset:
         return self.amount
 
     def __str__(self):
-        return "{{:.{}f}}".format(self.decimals).format(self.amount)
+        return "{{:.{}f}}".format(self._decimals).format(self.amount)
+
+    def __repr__(self):
+        return "{{:.{}f}} {}".format(self._decimals, self._ticker).format(self.amount)
 
     def zero(self):
         return self._uint_amount == 0

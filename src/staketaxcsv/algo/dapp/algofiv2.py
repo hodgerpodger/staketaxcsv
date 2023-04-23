@@ -1,10 +1,12 @@
 import base64
+from decimal import Decimal
 
 from algosdk import encoding
 from functools import partial, reduce
 from staketaxcsv.algo import constants as co
 from staketaxcsv.algo.api.indexer import Indexer
 from staketaxcsv.algo.asset import Asset
+from staketaxcsv.algo.cost_basis import FIFO, Entry
 from staketaxcsv.algo.dapp import Dapp
 
 from staketaxcsv.algo.export_tx import (
@@ -167,6 +169,7 @@ class AlgofiV2(Dapp):
         self.user_address = user_address
         self.exporter = exporter
         self.storage_address = self._get_algofiv2_storage_address(account)
+        self.asset_cost_basis = {}
 
     @property
     def name(self):
@@ -330,6 +333,11 @@ class AlgofiV2(Dapp):
 
     def _get_algofiv2_governance_rewards_transactions(self, transactions):
         return [tx for tx in transactions if is_governance_reward_transaction(self.storage_address, [tx])]
+
+    def _get_asset_cost_basis_tracker(self, id) -> FIFO:
+        if id not in self.asset_cost_basis:
+            self.asset_cost_basis[id] = FIFO(id)
+        return self.asset_cost_basis[id]
 
     def _is_algofiv2_user_optin(self, group):
         if len(group) != 2:
@@ -812,26 +820,32 @@ class AlgofiV2(Dapp):
     def _handle_algofiv2_lend_stake(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)
 
-        send_transaction = group[0]
-        if is_asset_optin(send_transaction):
-            send_transaction = group[1]
+        i = 0
+        if is_asset_optin(group[i]):
+            i += 1
 
-        send_asset = get_transfer_asset(send_transaction)
+        send_asset = get_transfer_asset(group[i])
+        basset = get_inner_transfer_asset(group[i + 1])
+
+        cost_basis = self._get_asset_cost_basis_tracker(basset.id)
+        current_price = Decimal(send_asset.uint_amount) / Decimal(basset.uint_amount)
+        cost_basis.push(Entry(basset.uint_amount, current_price))
 
         export_stake_tx(self.exporter, txinfo, send_asset, fee_amount, self.name)
 
     def _handle_algofiv2_lend_unstake(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)
 
-        send_transaction = group[2]
-        send_asset = get_transfer_asset(send_transaction, UNDERLYING_ASSETS)
+        basset = get_transfer_asset(group[2])
 
-        app_transaction = group[3]
-        receive_asset = get_inner_transfer_asset(app_transaction)
+        receive_asset = get_inner_transfer_asset(group[3])
         export_unstake_tx(self.exporter, txinfo, receive_asset, 0, self.name, 0)
-        # TODO will need to track cost basis to calculate earnings accurately
-        # https://github.com/hodgerpodger/staketaxcsv/issues/245
-        # export_income_tx(self.exporter, txinfo, receive_asset - send_asset, fee_amount, self.name, 1)
+
+        cost_basis = self._get_asset_cost_basis_tracker(basset.id)
+        current_price = Decimal(receive_asset.uint_amount) / Decimal(basset.uint_amount)
+        cost = cost_basis.push(Entry(-basset.uint_amount, current_price))
+        interest = Asset(receive_asset.id, receive_asset.uint_amount - cost)
+        export_reward_tx(self.exporter, txinfo, interest, fee_amount, self.name + " Interest", 1)
 
     def _handle_algofiv2_governance_airdrop(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)
