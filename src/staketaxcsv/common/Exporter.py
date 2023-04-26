@@ -18,7 +18,7 @@ from staketaxcsv.settings_csv import TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TIC
 class Row:
 
     def __init__(self, timestamp, tx_type, received_amount, received_currency, sent_amount, sent_currency, fee,
-                 fee_currency, exchange, wallet_address, txid, url="", z_index=0, comment=""):
+                 fee_currency, exchange, wallet_address, txid, url="", z_index=0, comment="", block_svc_hash=""):
         self.timestamp = timestamp
         self.tx_type = tx_type
         self.received_amount = self._format_amount(received_amount)
@@ -33,6 +33,7 @@ class Row:
         self.url = url
         self.z_index = z_index  # Determines ordering for rows with same txid
         self.comment = comment
+        self.block_svc_hash = block_svc_hash
 
     def _format_currency(self, currency):
         if currency == "BLUNA":
@@ -477,7 +478,8 @@ class Exporter:
                     row.exchange,                                        # Exchange
                     row.wallet_address,                                  # Group
                     comment,                                             # Comment
-                    self._tokentax_timestamp(row.timestamp)              # Date
+                    self._tokentax_timestamp(row.timestamp),              # Date,
+                    row.block_svc_hash
                 ]
                 mywriter.writerow(line)
 

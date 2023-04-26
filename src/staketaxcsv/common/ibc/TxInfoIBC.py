@@ -8,10 +8,10 @@ from staketaxcsv.common.TxInfo import TxInfo
 
 class TxInfoIBC(TxInfo):
 
-    def __init__(self, txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, memo, is_failed):
+    def __init__(self, txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, memo, is_failed, block_svc_hash=''):
         url = "https://mintscan.io/{}/txs/{}".format(mintscan_label, txid)
         exchange = "{}_blockchain".format(mintscan_label)
-        super().__init__(txid, timestamp, fee, fee_currency, wallet_address, exchange, url)
+        super().__init__(txid, timestamp, fee, fee_currency, wallet_address, exchange, url, block_svc_hash=block_svc_hash)
         self.msgs = msgs
         self.memo = memo
         self.is_failed = is_failed

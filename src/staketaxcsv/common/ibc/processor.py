@@ -40,7 +40,7 @@ def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, custom
             msginfo = MsgInfoIBC(wallet_address, i, message, log, lcd_node, ibc_addresses)
         msgs.append(msginfo)
 
-    txinfo = TxInfoIBC(txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, memo, is_failed)
+    txinfo = TxInfoIBC(txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, memo, is_failed, block_svc_hash=elem["blockSvcHash"])
     return txinfo
 
 

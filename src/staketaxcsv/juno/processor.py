@@ -9,6 +9,7 @@ from staketaxcsv.settings_csv import JUNO_NODE
 
 def process_txs(wallet_address, elems, exporter):
     for elem in elems:
+        elem['blockSvcHash'] = elem['txhash']
         process_tx(wallet_address, elem, exporter)
 
 

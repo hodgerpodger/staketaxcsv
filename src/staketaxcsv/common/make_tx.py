@@ -155,7 +155,8 @@ def make_simple_tx(txinfo, tx_type, z_index=0):
         txid=txinfo.txid,
         url=txinfo.url,
         z_index=z_index,
-        comment=txinfo.comment
+        comment=txinfo.comment,
+        block_svc_hash=txinfo.block_svc_hash
     )
     return row
 
@@ -203,7 +204,8 @@ def _make_tx_received(txinfo, received_amount, received_currency, tx_type, txid=
         txid=txid,
         url=txinfo.url,
         z_index=z_index,
-        comment=txinfo.comment
+        comment=txinfo.comment,
+        block_svc_hash=txinfo.block_svc_hash
     )
     return row
 
@@ -226,7 +228,8 @@ def _make_tx_sent(txinfo, sent_amount, sent_currency, tx_type, empty_fee=False, 
         txid=txinfo.txid,
         url=txinfo.url,
         z_index=z_index,
-        comment=txinfo.comment
+        comment=txinfo.comment,
+        block_svc_hash=txinfo.block_svc_hash
     )
     return row
 
@@ -251,7 +254,8 @@ def _make_tx_exchange(txinfo, sent_amount, sent_currency, received_amount, recei
         txid=txid,
         url=txinfo.url,
         z_index=z_index,
-        comment=txinfo.comment
+        comment=txinfo.comment,
+        block_svc_hash=txinfo.block_svc_hash
     )
     return row
 
