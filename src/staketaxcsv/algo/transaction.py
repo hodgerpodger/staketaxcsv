@@ -197,10 +197,9 @@ def is_app_call(transaction, app_id=None, app_args=None, foreign_app=None):
     if isinstance(foreign_app, int) and foreign_app not in transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]:
         return False
 
-    if isinstance(app_args, str) and app_args not in transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]:
+    if isinstance(app_args, str) and app_args not in get_app_args(transaction):
         return False
-    if (isinstance(app_args, list)
-            and not any(arg in transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"] for arg in app_args)):
+    if (isinstance(app_args, list) and not any(arg in get_app_args(transaction) for arg in app_args)):
         return False
 
     return True
@@ -222,3 +221,36 @@ def is_app_clear(transaction):
 
 def get_fee_amount(wallet_address, group):
     return sum([transaction["fee"] for transaction in group if wallet_address == transaction["sender"]])
+
+
+def get_app_args(transaction):
+    if transaction["tx-type"] != co.TRANSACTION_TYPE_APP_CALL:
+        return []
+
+    return transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+
+
+def get_app_local_state_delta_value(transaction, address, key):
+    if transaction["tx-type"] != co.TRANSACTION_TYPE_APP_CALL:
+        return None
+
+    local_state_delta = transaction.get("local-state-delta", [])
+    for account_state_delta in local_state_delta:
+        if account_state_delta["address"] == address:
+            for kv in account_state_delta["delta"]:
+                if kv["key"] == key:
+                    return kv["value"]
+
+    return None
+
+
+def get_app_global_state_delta_value(transaction, key):
+    if transaction["tx-type"] != co.TRANSACTION_TYPE_APP_CALL:
+        return None
+
+    global_state_delta = transaction.get("global-state-delta", [])
+    for kv in global_state_delta:
+        if kv["key"] == key:
+            return kv["value"]
+
+    return None

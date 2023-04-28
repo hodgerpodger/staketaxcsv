@@ -3,7 +3,6 @@ from decimal import Decimal
 
 from algosdk import encoding
 from functools import partial, reduce
-from staketaxcsv.algo import constants as co
 from staketaxcsv.algo.api.indexer import Indexer
 from staketaxcsv.algo.asset import Asset
 from staketaxcsv.algo.cost_basis import FIFO, Entry
@@ -13,7 +12,6 @@ from staketaxcsv.algo.export_tx import (
     export_airdrop_tx,
     export_borrow_tx,
     export_deposit_collateral_tx,
-    export_income_tx,
     export_lp_deposit_tx,
     export_lp_withdraw_tx,
     export_repay_tx,
@@ -27,6 +25,9 @@ from staketaxcsv.algo.export_tx import (
 from staketaxcsv.algo.handle_transfer import handle_governance_reward_transaction, is_governance_reward_transaction
 from staketaxcsv.algo.transaction import (
     generate_inner_transfer_assets,
+    get_app_args,
+    get_app_global_state_delta_value,
+    get_app_local_state_delta_value,
     get_fee_amount,
     get_inner_transfer_asset,
     get_transfer_asset,
@@ -39,6 +40,7 @@ from staketaxcsv.algo.transaction import (
     is_transfer_receiver,
     is_transfer_receiver_non_zero_asset
 )
+from staketaxcsv.algo.util import b64_decode_uint
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.common.TxInfo import TxInfo
 
@@ -92,7 +94,8 @@ ALGOFIV2_TRANSACTION_BURN_STEP_2 = "YnVybl9zdGVwXzI="       # "burn_step_2"
 ALGOFIV2_TRANSACTION_BURN_STEP_3 = "YnVybl9zdGVwXzM="       # "burn_step_3"
 ALGOFIV2_TRANSACTION_BURN_STEP_4 = "YnVybl9zdGVwXzQ="       # "burn_step_4"
 
-ALGOFIV2_STATE_KEY_USER_AMOUNT_LOCKED = "YWFs"  # "aal"
+ALGOFIV2_STATE_KEY_USER_AMOUNT_LOCKED = "YWFs"              # "aal"
+ALGOFIV2_STATE_KEY_B_ASSET_EXCHANGE_RATE = "YmFlcg=="       # "baer"
 
 ALGOFIV2_MANAGER_STORAGE_ACCOUNT = "c2E="  # "sa"
 
@@ -768,21 +771,45 @@ class AlgofiV2(Dapp):
 
         send_asset = get_transfer_asset(send_transaction)
 
-        app_transaction = group[-1]
-        app_id = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
-        comment = self.name + (" Vault" if app_id == APPLICATION_ID_ALGOFIV2_VALGO_MARKET else "")
+        transaction = group[-1]
+        is_vault = is_app_call(transaction, APPLICATION_ID_ALGOFIV2_VALGO_MARKET)
+        comment = self.name + (" Vault" if is_vault else "")
 
         export_deposit_collateral_tx(self.exporter, txinfo, send_asset, fee_amount, comment)
+        if is_vault:
+            return
+
+        value = get_app_global_state_delta_value(transaction, ALGOFIV2_STATE_KEY_B_ASSET_EXCHANGE_RATE)
+        if value is None:
+            return
+
+        cost_basis = self._get_asset_cost_basis_tracker(send_asset.id)
+        current_price = Decimal(value["uint"]) / Decimal(10 ** 9)
+        basset_amount = int(send_asset.uint_amount / current_price)
+        cost_basis.push(Entry(basset_amount, current_price))
 
     def _handle_algofiv2_withdraw_collateral(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)
 
-        app_transaction = group[-1]
-        receive_asset = get_inner_transfer_asset(app_transaction)
-        app_id = app_transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
-        comment = self.name + (" Vault" if app_id == APPLICATION_ID_ALGOFIV2_VALGO_MARKET else "")
+        transaction = group[-1]
+        receive_asset = get_inner_transfer_asset(transaction)
+        is_vault = is_app_call(transaction, APPLICATION_ID_ALGOFIV2_VALGO_MARKET)
+        comment = self.name + (" Vault" if is_vault else "")
 
-        export_withdraw_collateral_tx(self.exporter, txinfo, receive_asset, fee_amount, comment)
+        export_withdraw_collateral_tx(self.exporter, txinfo, receive_asset, fee_amount, comment, 0)
+
+        if is_vault:
+            return
+
+        basset_amount = b64_decode_uint(get_app_args(transaction)[1])
+        if not basset_amount:
+            return
+
+        cost_basis = self._get_asset_cost_basis_tracker(receive_asset.id)
+        current_price = Decimal(receive_asset.uint_amount) / Decimal(basset_amount)
+        cost = cost_basis.push(Entry(-basset_amount, current_price))
+        interest = Asset(receive_asset.id, receive_asset.uint_amount - cost)
+        export_reward_tx(self.exporter, txinfo, interest, fee_amount, self.name + " Interest", 1)
 
     def _handle_algofiv2_borrow(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)
@@ -857,13 +884,10 @@ class AlgofiV2(Dapp):
         receive_asset = get_transfer_asset(receive_transaction)
         export_airdrop_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name, 0)
 
-        lock_transaction = group[-1]
-        local_state_deltas = lock_transaction["local-state-delta"][0]["delta"]
-        for pair in local_state_deltas:
-            if pair["key"] == ALGOFIV2_STATE_KEY_USER_AMOUNT_LOCKED:
-                send_asset = Asset(ASSET_ID_BANK, pair["value"]["uint"])
-                export_stake_tx(self.exporter, txinfo, send_asset, 0, self.name, 1)
-                break
+        value = get_app_local_state_delta_value(group[-1], self.user_address, ALGOFIV2_STATE_KEY_USER_AMOUNT_LOCKED)
+        if value is not None:
+            send_asset = Asset(ASSET_ID_BANK, value["uint"])
+            export_stake_tx(self.exporter, txinfo, send_asset, 0, self.name, 1)
 
     def _handle_algofiv2_governance_increase_lock(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)
