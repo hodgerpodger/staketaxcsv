@@ -1,7 +1,9 @@
+from decimal import Decimal
 from staketaxcsv.algo import constants as co
 from staketaxcsv.algo.api.indexer import Indexer
+from staketaxcsv.algo.cost_basis import FIFO, DepositCostBasisTracker, Entry
 from staketaxcsv.algo.dapp import Dapp
-from staketaxcsv.algo.asset import Algo
+from staketaxcsv.algo.asset import Algo, Asset
 from staketaxcsv.algo.export_tx import (
     export_borrow_tx,
     export_deposit_collateral_tx,
@@ -209,6 +211,7 @@ class FolksV1(Dapp):
         self.user_address = user_address
         self.exporter = exporter
         self.escrow_addresses = []
+        self.cost_basis_tracker = DepositCostBasisTracker()
 
     @property
     def name(self):
@@ -403,7 +406,7 @@ class FolksV1(Dapp):
             return False
         if not self._is_folks_galgo_burn_transaction(group[:2]):
             return False
-        
+
         return self._is_folks_galgo_mint_transaction(group[2:])
 
     def _is_folks_galgo_claim_premint_transaction(self, group):
@@ -733,23 +736,27 @@ class FolksV1(Dapp):
             reward_asset = get_inner_transfer_asset(transaction)
             export_reward_tx(self.exporter, txinfo, reward_asset, fee_amount, self.name)
 
-    # Note: For the moment we are ignoring fTokens as they are
-    # iliquid tokens that represent a deposit
+    # Note: Ignoring fTokens as they are iliquid tokens that represent a deposit
     def _handle_folks_deposit_transaction(self, group, txinfo):
-        app_transaction = group[0]
-        fee_amount = app_transaction["fee"]
+        fee_amount = get_fee_amount(self.user_address, group)
 
-        send_transaction = group[1]
-        send_asset = get_transfer_asset(send_transaction)
+        fasset = get_inner_transfer_asset(group[0])
+        send_asset = get_transfer_asset(group[1])
 
         export_deposit_collateral_tx(self.exporter, txinfo, send_asset, fee_amount, self.name)
 
-    def _handle_folks_withdraw_transaction(self, group, txinfo):
-        app_transaction = group[0]
-        fee_amount = app_transaction["fee"]
-        receive_asset = get_inner_transfer_asset(app_transaction)
+        self.cost_basis_tracker.deposit(send_asset, fasset)
 
-        export_withdraw_collateral_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name)
+    def _handle_folks_withdraw_transaction(self, group, txinfo):
+        fee_amount = get_fee_amount(self.user_address, group)
+
+        receive_asset = get_inner_transfer_asset(group[0])
+        fasset = get_transfer_asset(group[1])
+
+        export_withdraw_collateral_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name, 0)
+
+        interest = self.cost_basis_tracker.withdraw(fasset, receive_asset)
+        export_reward_tx(self.exporter, txinfo, interest, fee_amount, self.name + " Interest", 1)
 
     def _handle_folks_add_escrow_transaction(self, group):
         pay_transaction = group[0]

@@ -4,6 +4,8 @@ from decimal import Decimal
 import logging
 import math
 
+from staketaxcsv.algo.asset import Asset
+
 
 class Entry:
     def __init__(self, quantity: int, price: Decimal):
@@ -89,3 +91,24 @@ class FIFO:
                 remaining -= earliest.quantity
 
         return math.ceil(total_cost)
+
+
+class DepositCostBasisTracker:
+    def __init__(self):
+        self.asset_cost_basis = {}
+
+    def _get_asset_cost_basis_tracker(self, id) -> FIFO:
+        if id not in self.asset_cost_basis:
+            self.asset_cost_basis[id] = FIFO(id)
+        return self.asset_cost_basis[id]
+
+    def deposit(self, collateral: Asset, receipt: Asset):
+        cost_basis = self._get_asset_cost_basis_tracker(receipt.id)
+        exchange_rate = Decimal(collateral.uint_amount) / Decimal(receipt.uint_amount)
+        cost_basis.push(Entry(receipt.uint_amount, exchange_rate))
+
+    def withdraw(self, receipt: Asset, collateral: Asset) -> Asset:
+        cost_basis = self._get_asset_cost_basis_tracker(receipt.id)
+        exchange_rate = Decimal(collateral.uint_amount) / Decimal(receipt.uint_amount)
+        cost = cost_basis.push(Entry(-receipt.uint_amount, exchange_rate))
+        return Asset(collateral.id, collateral.uint_amount - cost)
