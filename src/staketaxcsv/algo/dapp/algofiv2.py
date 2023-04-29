@@ -5,7 +5,7 @@ from algosdk import encoding
 from functools import partial, reduce
 from staketaxcsv.algo.api.indexer import Indexer
 from staketaxcsv.algo.asset import Asset
-from staketaxcsv.algo.cost_basis import FIFO, Entry
+from staketaxcsv.algo.cost_basis import FIFO, DepositCostBasisTracker, Entry
 from staketaxcsv.algo.dapp import Dapp
 
 from staketaxcsv.algo.export_tx import (
@@ -128,6 +128,8 @@ UNDERLYING_ASSETS = {
     900919286: 900652777,
 }
 
+BANK_ASSETS = {v: k for k, v in UNDERLYING_ASSETS.items()}
+
 ALGOFIV2_MARKET_CONTRACTS = [
     818179346,  # ALGO
     818182048,  # USDC
@@ -172,7 +174,7 @@ class AlgofiV2(Dapp):
         self.user_address = user_address
         self.exporter = exporter
         self.storage_address = self._get_algofiv2_storage_address(account)
-        self.asset_cost_basis = {}
+        self.cost_basis_tracker = DepositCostBasisTracker()
 
     @property
     def name(self):
@@ -336,11 +338,6 @@ class AlgofiV2(Dapp):
 
     def _get_algofiv2_governance_rewards_transactions(self, transactions):
         return [tx for tx in transactions if is_governance_reward_transaction(self.storage_address, [tx])]
-
-    def _get_asset_cost_basis_tracker(self, id) -> FIFO:
-        if id not in self.asset_cost_basis:
-            self.asset_cost_basis[id] = FIFO(id)
-        return self.asset_cost_basis[id]
 
     def _is_algofiv2_user_optin(self, group):
         if len(group) != 2:
@@ -783,10 +780,10 @@ class AlgofiV2(Dapp):
         if value is None:
             return
 
-        cost_basis = self._get_asset_cost_basis_tracker(send_asset.id)
-        current_price = Decimal(value["uint"]) / Decimal(10 ** 9)
-        basset_amount = int(send_asset.uint_amount / current_price)
-        cost_basis.push(Entry(basset_amount, current_price))
+        exchange_rate = Decimal(value["uint"]) / Decimal(10 ** 9)
+        basset_amount = int(send_asset.uint_amount / exchange_rate)
+        basset = Asset(BANK_ASSETS[send_asset.id], basset_amount)
+        self.cost_basis_tracker.deposit(send_asset, basset)
 
     def _handle_algofiv2_withdraw_collateral(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)
@@ -805,10 +802,8 @@ class AlgofiV2(Dapp):
         if not basset_amount:
             return
 
-        cost_basis = self._get_asset_cost_basis_tracker(receive_asset.id)
-        current_price = Decimal(receive_asset.uint_amount) / Decimal(basset_amount)
-        cost = cost_basis.push(Entry(-basset_amount, current_price))
-        interest = Asset(receive_asset.id, receive_asset.uint_amount - cost)
+        basset = Asset(BANK_ASSETS[receive_asset.id], basset_amount)
+        interest = self.cost_basis_tracker.withdraw(basset, receive_asset)
         export_reward_tx(self.exporter, txinfo, interest, fee_amount, self.name + " Interest", 1)
 
     def _handle_algofiv2_borrow(self, group, txinfo):
@@ -854,9 +849,7 @@ class AlgofiV2(Dapp):
         send_asset = get_transfer_asset(group[i])
         basset = get_inner_transfer_asset(group[i + 1])
 
-        cost_basis = self._get_asset_cost_basis_tracker(basset.id)
-        current_price = Decimal(send_asset.uint_amount) / Decimal(basset.uint_amount)
-        cost_basis.push(Entry(basset.uint_amount, current_price))
+        self.cost_basis_tracker.deposit(send_asset, basset)
 
         export_stake_tx(self.exporter, txinfo, send_asset, fee_amount, self.name)
 
@@ -868,10 +861,7 @@ class AlgofiV2(Dapp):
         receive_asset = get_inner_transfer_asset(group[3])
         export_unstake_tx(self.exporter, txinfo, receive_asset, 0, self.name, 0)
 
-        cost_basis = self._get_asset_cost_basis_tracker(basset.id)
-        current_price = Decimal(receive_asset.uint_amount) / Decimal(basset.uint_amount)
-        cost = cost_basis.push(Entry(-basset.uint_amount, current_price))
-        interest = Asset(receive_asset.id, receive_asset.uint_amount - cost)
+        interest = self.cost_basis_tracker.withdraw(basset, receive_asset)
         export_reward_tx(self.exporter, txinfo, interest, fee_amount, self.name + " Interest", 1)
 
     def _handle_algofiv2_governance_airdrop(self, group, txinfo):
