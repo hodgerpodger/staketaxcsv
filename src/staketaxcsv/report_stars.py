@@ -36,7 +36,8 @@ def wallet_exists(wallet_address):
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_rpc_multinode.get_tx(STARS_RPC_NODES, txid)
+    elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(STARS_NODE).get_tx(txid)
+
 
     print("Transaction data:")
     pprint.pprint(elem)
@@ -49,10 +50,8 @@ def txone(wallet_address, txid):
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    num_pages, num_txs = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
-        STARS_RPC_NODES, wallet_address, max_txs)
-
-    return SECONDS_PER_PAGE * num_pages + SECONDS_PER_TX * num_txs
+    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(
+        STARS_NODE, wallet_address, max_txs)
 
 
 def txhistory(wallet_address):
@@ -65,11 +64,12 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_STARS)
 
     # Fetch count of transactions to estimate progress beforehand
-    staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
-        STARS_RPC_NODES, wallet_address, max_txs, progress)
+    count_pages = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(
+        STARS_NODE, wallet_address, max_txs,debug=localconfig.debug)
+    progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_all(STARS_RPC_NODES, wallet_address, progress, max_txs)
+    elems = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(STARS_NODE, wallet_address, progress, max_txs)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.stars.processor.process_txs(wallet_address, elems, exporter)

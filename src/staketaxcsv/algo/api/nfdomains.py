@@ -5,7 +5,7 @@ from staketaxcsv.settings_csv import ALGO_NFDOMAINS
 
 
 # API documentation: https://editor.swagger.io/?url=https://api.testnet.nf.domains/info/openapi3.yaml
-class NFDomainsAPI:
+class NFDomains:
     session = requests.Session()
 
     def get_address(self, name):

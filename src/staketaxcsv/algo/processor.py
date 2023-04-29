@@ -2,7 +2,7 @@ import logging
 
 from staketaxcsv.algo.config_algo import localconfig
 from staketaxcsv.algo.export_tx import export_unknown
-from staketaxcsv.algo.handle_group import get_group_txinfo, get_transaction_group, handle_transaction_group
+from staketaxcsv.algo.handle_group import get_group_transactions, get_group_txinfo, handle_transaction_group
 from staketaxcsv.algo.transaction import get_transaction_txinfo
 from staketaxcsv.common.ErrorCounter import ErrorCounter
 
@@ -21,7 +21,7 @@ def process_txs(wallet_address, dapps, transactions, exporter, progress):
                 group = [transaction]
             else:
                 txinfo = get_group_txinfo(wallet_address, transaction)
-                group = get_transaction_group(groupid, i, transactions)
+                group = get_group_transactions(groupid, i, transactions)
             handle_transaction_group(wallet_address, dapps, group, exporter, txinfo)
             i += len(group) - 1
         except Exception as e:

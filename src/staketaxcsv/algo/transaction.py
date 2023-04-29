@@ -159,7 +159,7 @@ def get_inner_transfer_count(transaction, depth=1):
 
 
 def is_asset_optin(transaction):
-    if is_transfer(transaction) and get_transfer_sender(transaction) == get_transfer_receiver(transaction):
+    if is_asa_transfer(transaction) and get_transfer_sender(transaction) == get_transfer_receiver(transaction):
         return True
 
     inner_transactions = transaction.get("inner-txns", [])
@@ -188,19 +188,18 @@ def is_app_call(transaction, app_id=None, app_args=None, foreign_app=None):
 
     if isinstance(app_id, list) and transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"] not in app_id:
         return False
-    elif isinstance(app_id, str) and transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"] != app_id:
+    elif isinstance(app_id, int) and transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"] != app_id:
         return False
 
     if (isinstance(foreign_app, list)
             and not any(app in transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"] for app in foreign_app)):
         return False
-    if isinstance(foreign_app, str) and foreign_app not in transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]:
+    if isinstance(foreign_app, int) and foreign_app not in transaction[co.TRANSACTION_KEY_APP_CALL]["foreign-apps"]:
         return False
 
-    if isinstance(app_args, str) and app_args not in transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]:
+    if isinstance(app_args, str) and app_args not in get_app_args(transaction):
         return False
-    if (isinstance(app_args, list)
-            and not any(arg in transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"] for arg in app_args)):
+    if (isinstance(app_args, list) and not any(arg in get_app_args(transaction) for arg in app_args)):
         return False
 
     return True
@@ -222,3 +221,36 @@ def is_app_clear(transaction):
 
 def get_fee_amount(wallet_address, group):
     return sum([transaction["fee"] for transaction in group if wallet_address == transaction["sender"]])
+
+
+def get_app_args(transaction):
+    if transaction["tx-type"] != co.TRANSACTION_TYPE_APP_CALL:
+        return []
+
+    return transaction[co.TRANSACTION_KEY_APP_CALL]["application-args"]
+
+
+def get_app_local_state_delta_value(transaction, address, key):
+    if transaction["tx-type"] != co.TRANSACTION_TYPE_APP_CALL:
+        return None
+
+    local_state_delta = transaction.get("local-state-delta", [])
+    for account_state_delta in local_state_delta:
+        if account_state_delta["address"] == address:
+            for kv in account_state_delta["delta"]:
+                if kv["key"] == key:
+                    return kv["value"]
+
+    return None
+
+
+def get_app_global_state_delta_value(transaction, key):
+    if transaction["tx-type"] != co.TRANSACTION_TYPE_APP_CALL:
+        return None
+
+    global_state_delta = transaction.get("global-state-delta", [])
+    for kv in global_state_delta:
+        if kv["key"] == key:
+            return kv["value"]
+
+    return None

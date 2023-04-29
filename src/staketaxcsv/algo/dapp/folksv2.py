@@ -1,5 +1,5 @@
 from functools import partial
-from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
+from staketaxcsv.algo.api.indexer import Indexer
 from staketaxcsv.algo.asset import Algo
 from staketaxcsv.algo.dapp import Dapp
 from staketaxcsv.algo.export_tx import (
@@ -56,7 +56,8 @@ APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR = [
 
 NOTE_FOLKSV2_DEPOSIT_APP = "da"
 NOTE_FOLKSV2_LOAN_APP = "la"
-NOTE_FOLKSV2_LOAN_NAME = "ff-name"
+NOTE_FOLKSV2_LOAN_NAME_NOTE = "ff-name"
+NOTE_FOLKSV2_LOAN_NAME_NOTE_ARC2 = "ff/v1:j{\"name\":"
 
 FOLKSV2_TRANSACTION_DEPOSIT_ESCROW_OPTIN = "sx8Gbg=="       # "opt_escrow_into_asset" ABI selector
 FOLKSV2_TRANSACTION_DEPOSIT = "udVC+w=="                    # "deposit" ABI selector
@@ -86,7 +87,7 @@ DEFLEX_TRANSACTION_SWAP_FINALIZE = "tTD7Hw=="  # "User_swap_finalize" ABI select
 
 
 class FolksV2(Dapp):
-    def __init__(self, indexer: AlgoIndexerAPI, user_address: str, account: dict, exporter: Exporter) -> None:
+    def __init__(self, indexer: Indexer, user_address: str, account: dict, exporter: Exporter) -> None:
         super().__init__(indexer, user_address, account, exporter)
         self.indexer = indexer
         self.user_address = user_address
@@ -118,7 +119,8 @@ class FolksV2(Dapp):
                     or self._is_folksv2_governance_claim_premint(group)
                     or self._is_folksv2_governance_unmint(group)
                     or self._is_folksv2_governance_rewards_claim(group)
-                    or self._is_folksv2_governance_leveraged_commit(group))
+                    or self._is_folksv2_governance_leveraged_commit(group)
+                    or self._is_folksv2_governance_leveraged_unroll(group))
 
     def handle_dapp_transaction(self, group: list, txinfo: TxInfo):
         if self._is_folksv2_deposit(group):
@@ -178,6 +180,9 @@ class FolksV2(Dapp):
         elif self._is_folksv2_governance_leveraged_commit(group):
             self._handle_folksv2_governance_leveraged_commit(group, txinfo)
 
+        elif self._is_folksv2_governance_leveraged_unroll(group):
+            self._handle_folksv2_governance_leveraged_unroll(group, txinfo)
+
         else:
             export_unknown(self.exporter, txinfo)
 
@@ -214,8 +219,8 @@ class FolksV2(Dapp):
         if not is_transaction_sender(self.user_address, group[0]):
             return False
 
-        note = get_transaction_note(group[0], len(NOTE_FOLKSV2_LOAN_NAME))
-        if note != NOTE_FOLKSV2_LOAN_NAME:
+        note = get_transaction_note(group[0])
+        if not note.startswith(NOTE_FOLKSV2_LOAN_NAME_NOTE) and not note.startswith(NOTE_FOLKSV2_LOAN_NAME_NOTE_ARC2):
             return False
 
         if not is_transfer(group[1]):
@@ -284,16 +289,14 @@ class FolksV2(Dapp):
         return self._is_folksv2_deposit(group[:-2])
 
     def _is_folksv2_reduce_collateral(self, group):
-        if len(group) != 3:
+        length = len(group)
+        if length < 2 or length > 3:
             return False
 
-        if not is_app_call(group[0], APPLICATION_ID_FOLKSV2_OP_UP):
+        if not is_app_call(group[-2], APPLICATION_ID_FOLKSV2_ORACLE_ADAPTER):
             return False
 
-        if not is_app_call(group[1], APPLICATION_ID_FOLKSV2_ORACLE_ADAPTER):
-            return False
-
-        return is_app_call(group[2], APPLICATION_ID_FOLKSV2_LOANS, FOLKSV2_TRANSACTION_LOAN_REDUCE_COLLATERAL)
+        return is_app_call(group[-1], APPLICATION_ID_FOLKSV2_LOANS, FOLKSV2_TRANSACTION_LOAN_REDUCE_COLLATERAL)
 
     def _is_folksv2_remove_loan(self, group):
         length = len(group)
@@ -454,6 +457,30 @@ class FolksV2(Dapp):
 
         return is_app_call(group[-1], APPLICATION_ID_FOLKSV2_POOLS, FOLKSV2_TRANSACTION_FLASH_LOAN_END)
 
+    def _is_folksv2_governance_leveraged_unroll(self, group):
+        if len(group) != 10:
+            return False
+
+        if not is_app_call(group[0], APPLICATION_ID_FOLKSV2_POOLS, FOLKSV2_TRANSACTION_FLASH_LOAN_BEGIN):
+            return False
+
+        if not self._is_folksv2_repay_with_txn(group[2:4]):
+            return False
+
+        if not self._is_folksv2_reduce_collateral(group[4:6]):
+            return False
+
+        if not self._is_folksv2_governance_burn(group[6:8]):
+            return False
+
+        if not is_transfer(group[-2]):
+            return False
+
+        if not is_transaction_sender(self.user_address, group[-2]):
+            return False
+
+        return is_app_call(group[-1], APPLICATION_ID_FOLKSV2_POOLS, FOLKSV2_TRANSACTION_FLASH_LOAN_END)
+
     def _handle_folksv2_deposit(self, group, txinfo, z_index=0):
         fee_amount = get_fee_amount(self.user_address, group)
 
@@ -478,7 +505,7 @@ class FolksV2(Dapp):
 
         export_borrow_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name + " Borrow", z_index)
 
-    def _handle_folksv2_repay_with_txn(self, group, txinfo):
+    def _handle_folksv2_repay_with_txn(self, group, txinfo, z_index=0):
         fee_amount = get_fee_amount(self.user_address, group)
 
         send_asset = get_transfer_asset(group[0])
@@ -487,16 +514,16 @@ class FolksV2(Dapp):
         if receive_asset is not None:
             send_asset -= receive_asset
 
-        export_repay_tx(self.exporter, txinfo, send_asset, fee_amount, self.name + " Repay")
+        export_repay_tx(self.exporter, txinfo, send_asset, fee_amount, self.name + " Repay", z_index)
 
-    def _handle_folksv2_reduce_collateral(self, group, txinfo):
+    def _handle_folksv2_reduce_collateral(self, group, txinfo, z_index=0):
         fee_amount = get_fee_amount(self.user_address, group)
 
-        receive_asset = get_inner_transfer_asset(group[2],
+        receive_asset = get_inner_transfer_asset(group[-1],
                                                 filter=partial(is_transfer_receiver, self.user_address))
 
         # TODO track cost basis to calculate earnings
-        export_withdraw_collateral_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name)
+        export_withdraw_collateral_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name, z_index)
 
     def _handle_folksv2_swap_repay(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group[:2])
@@ -525,12 +552,12 @@ class FolksV2(Dapp):
         send_asset = get_transfer_asset(group[-3])
         export_deposit_collateral_tx(self.exporter, txinfo, send_asset, fee_amount, self.name)
 
-    def _handle_folksv2_governance_burn(self, group, txinfo):
+    def _handle_folksv2_governance_burn(self, group, txinfo, z_index=0):
         fee_amount = get_fee_amount(self.user_address, group)
 
         send_asset = get_transfer_asset(group[0])
         receive_asset = get_inner_transfer_asset(group[1])
-        export_swap_tx(self.exporter, txinfo, send_asset, receive_asset, fee_amount, self.name)
+        export_swap_tx(self.exporter, txinfo, send_asset, receive_asset, fee_amount, self.name, z_index)
 
     def _handle_folksv2_governance_galgo_mint(self, group, txinfo, z_index=0):
         fee_amount = get_fee_amount(self.user_address, group)
@@ -576,6 +603,22 @@ class FolksV2(Dapp):
         self._handle_folksv2_governance_galgo_mint(group[3:5], txinfo, 1)
         self._handle_folksv2_deposit(group[6:8], txinfo, 2)
         self._handle_folksv2_borrow(group[10:12], txinfo, 3)
+
+        transaction = group[-1]
+        fee_amount = transaction["fee"]
+        transaction = group[-2]
+        send_asset = get_transfer_asset(transaction)
+        export_repay_tx(self.exporter, txinfo, send_asset, fee_amount, self.name + " Repay", 4)
+
+    def _handle_folksv2_governance_leveraged_unroll(self, group, txinfo):
+        transaction = group[0]
+        fee_amount = transaction["fee"]
+        receive_asset = get_inner_transfer_asset(transaction)
+        export_borrow_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name + " Borrow", 0)
+
+        self._handle_folksv2_repay_with_txn(group[2:4], txinfo, 1)
+        self._handle_folksv2_reduce_collateral(group[4:6], txinfo, 2)
+        self._handle_folksv2_governance_burn(group[6:8], txinfo, 3)
 
         transaction = group[-1]
         fee_amount = transaction["fee"]

@@ -86,7 +86,9 @@ def exclude_lp_tx(func):
 @exclude_tx
 def export_send_tx(exporter, txinfo, send_asset, fee_amount=0, dest_address=None, comment=None, z_index=0):
     if not send_asset.zero():
-        row = make_transfer_out_tx(txinfo, send_asset.amount, send_asset.ticker, dest_address, z_index)
+        send_asset_currency = (send_asset.get_lp_token_currency() if send_asset.is_lp_token()
+                                 else send_asset.ticker)
+        row = make_transfer_out_tx(txinfo, send_asset.amount, send_asset_currency, dest_address, z_index)
         _ingest_row(exporter, row, fee_amount, comment)
 
 
@@ -115,11 +117,12 @@ def export_spend_fee_tx(exporter, txinfo, fee_asset, comment=None, z_index=0):
 @exclude_tx
 @exclude_lp_tx
 def export_income_tx(exporter, txinfo, receive_asset, fee_amount=0, comment=None, z_index=0):
-    receive_asset_currency = (receive_asset.get_lp_token_currency() if receive_asset.is_lp_token()
-                                else receive_asset.ticker)
+    if not receive_asset.zero():
+        receive_asset_currency = (receive_asset.get_lp_token_currency() if receive_asset.is_lp_token()
+                                    else receive_asset.ticker)
 
-    row = make_income_tx(txinfo, receive_asset.amount, receive_asset_currency, z_index=z_index)
-    _ingest_row(exporter, row, fee_amount, comment)
+        row = make_income_tx(txinfo, receive_asset.amount, receive_asset_currency, z_index=z_index)
+        _ingest_row(exporter, row, fee_amount, comment)
 
 
 @exclude_tx
@@ -261,13 +264,17 @@ def export_liquidate_tx(exporter, txinfo, send_asset, receive_asset, fee_amount=
 
 @exclude_tx
 def export_deposit_collateral_tx(exporter, txinfo, send_asset, fee_amount=0, comment=None, z_index=0):
-    row = make_deposit_collateral_tx(txinfo, send_asset.amount, send_asset.ticker, z_index)
+    send_asset_currency = (send_asset.get_lp_token_currency() if send_asset.is_lp_token()
+                                else send_asset.ticker)
+    row = make_deposit_collateral_tx(txinfo, send_asset.amount, send_asset_currency, z_index)
     _ingest_row(exporter, row, fee_amount, comment)
 
 
 @exclude_tx
 def export_withdraw_collateral_tx(exporter, txinfo, receive_asset, fee_amount=0, comment=None, z_index=0):
-    row = make_withdraw_collateral_tx(txinfo, receive_asset.amount, receive_asset.ticker, z_index=z_index)
+    receive_asset_currency = (receive_asset.get_lp_token_currency() if receive_asset.is_lp_token()
+                                else receive_asset.ticker)
+    row = make_withdraw_collateral_tx(txinfo, receive_asset.amount, receive_asset_currency, z_index=z_index)
     _ingest_row(exporter, row, fee_amount, comment)
 
 

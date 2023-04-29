@@ -1,9 +1,11 @@
 import base64
+from decimal import Decimal
 
 from algosdk import encoding
 from staketaxcsv.algo import constants as co
-from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
-from staketaxcsv.algo.asset import Algo
+from staketaxcsv.algo.api.indexer import Indexer
+from staketaxcsv.algo.asset import Algo, Asset
+from staketaxcsv.algo.cost_basis import DepositCostBasisTracker
 from staketaxcsv.algo.dapp import Dapp
 from staketaxcsv.algo.export_tx import (
     export_borrow_tx,
@@ -22,6 +24,7 @@ from staketaxcsv.algo.export_tx import (
 )
 from staketaxcsv.algo.handle_transfer import handle_governance_reward_transaction, is_governance_reward_transaction
 from staketaxcsv.algo.transaction import (
+    get_app_global_state_delta_value,
     get_fee_amount,
     get_inner_transfer_asset,
     get_transfer_asset,
@@ -104,6 +107,17 @@ UNDERLYING_ASSETS = {
     465818563: 465865291,
 }
 
+BANK_ASSETS = {v: k for k, v in UNDERLYING_ASSETS.items()}
+
+ALGOFI_MARKET_CONTRACTS = [
+    465814065,  # ALGO
+    465814103,  # USDC
+    465814149,  # goBTC
+    465814222,  # goETH
+    465814278,  # STBL
+    465814318,  # vALGO
+]
+
 ALGOFI_STAKING_CONTRACTS = {
     # Manager App ID
     482625868: "STBL",
@@ -141,14 +155,17 @@ ALGOFI_STAKING_CONTRACTS = {
     705657303: "STBL-USDC",  # NanoSwap Stability
 }
 
+ALGOFI_STATE_KEY_BANK_TO_UNDERLYING_EXCHANGE = "YnQ="  # "bt"
+
 
 class AlgofiV1(Dapp):
-    def __init__(self, indexer: AlgoIndexerAPI, user_address: str, account: dict, exporter: Exporter) -> None:
+    def __init__(self, indexer: Indexer, user_address: str, account: dict, exporter: Exporter) -> None:
         super().__init__(indexer, user_address, account, exporter)
         self.indexer = indexer
         self.user_address = user_address
         self.exporter = exporter
         self.storage_address = self._get_algofi_storage_address(account)
+        self.cost_basis_tracker = DepositCostBasisTracker()
 
     @property
     def name(self):
@@ -389,27 +406,17 @@ class AlgofiV1(Dapp):
         if len(group) != ALGOFI_NUM_INIT_TXNS + 3:
             return False
 
-        if not is_app_call(group[-2],
-                           app_args=ALGOFI_TRANSACTION_MINT_TO_COLLATERAL,
-                           foreign_app=APPLICATION_ID_ALGOFI_LENDING_MANAGER):
-            return False
-
         app_ids = list(ALGOFI_STAKING_CONTRACTS.keys())
-        app_ids.append(APPLICATION_ID_ALGOFI_LENDING_MANAGER)
-        return is_app_call(group[-3], app_ids, ALGOFI_TRANSACTION_MINT_TO_COLLATERAL)
+        app_ids.extend(ALGOFI_MARKET_CONTRACTS)
+        return is_app_call(group[-2], app_ids, ALGOFI_TRANSACTION_MINT_TO_COLLATERAL)
 
     def _is_algofi_remove_collateral(self, group):
         if len(group) != ALGOFI_NUM_INIT_TXNS + 2:
             return False
 
-        if not is_app_call(group[-1],
-                           app_args=ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING,
-                           foreign_app=APPLICATION_ID_ALGOFI_LENDING_MANAGER):
-            return False
-
         app_ids = list(ALGOFI_STAKING_CONTRACTS.keys())
-        app_ids.append(APPLICATION_ID_ALGOFI_LENDING_MANAGER)
-        return is_app_call(group[-2], app_ids, ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING)
+        app_ids.extend(ALGOFI_MARKET_CONTRACTS)
+        return is_app_call(group[-1], app_ids, ALGOFI_TRANSACTION_REMOVE_COLLATERAL_UNDERLYING)
 
     def _is_algofi_liquidate(self, group):
         length = len(group)
@@ -592,9 +599,23 @@ class AlgofiV1(Dapp):
             export_lp_stake_tx(
                 self.exporter, txinfo, send_asset, fee_amount,
                 self.name + " " + ALGOFI_STAKING_CONTRACTS[app_id] + " staking")
-        else:
-            comment = self.name + (" Vault" if app_id == APPLICATION_ID_ALGOFI_VALGO_MARKET else "")
-            export_deposit_collateral_tx(self.exporter, txinfo, send_asset, fee_amount, comment)
+            return
+
+        is_vault = (app_id == APPLICATION_ID_ALGOFI_VALGO_MARKET)
+        comment = self.name + (" Vault" if is_vault else "")
+        export_deposit_collateral_tx(self.exporter, txinfo, send_asset, fee_amount, comment)
+
+        if is_vault:
+            return
+
+        value = get_app_global_state_delta_value(app_transaction, ALGOFI_STATE_KEY_BANK_TO_UNDERLYING_EXCHANGE)
+        if value is None:
+            return
+
+        exchange_rate = Decimal(value["uint"]) / Decimal(10 ** 9)
+        basset_amount = int(send_asset.uint_amount / exchange_rate)
+        basset = Asset(BANK_ASSETS[send_asset.id], basset_amount)
+        self.cost_basis_tracker.deposit(send_asset, basset)
 
     def _handle_algofi_withdraw_collateral(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)
@@ -607,6 +628,21 @@ class AlgofiV1(Dapp):
             export_lp_unstake_tx(
                 self.exporter, txinfo, receive_asset, fee_amount,
                 self.name + " " + ALGOFI_STAKING_CONTRACTS[app_id] + " unstaking")
-        else:
-            comment = self.name + (" Vault" if app_id == APPLICATION_ID_ALGOFI_VALGO_MARKET else "")
-            export_withdraw_collateral_tx(self.exporter, txinfo, receive_asset, fee_amount, comment)
+            return
+
+        is_vault = (app_id == APPLICATION_ID_ALGOFI_VALGO_MARKET)
+        comment = self.name + (" Vault" if is_vault else "")
+        export_withdraw_collateral_tx(self.exporter, txinfo, receive_asset, fee_amount, comment, 0)
+
+        if is_vault:
+            return
+
+        value = get_app_global_state_delta_value(app_transaction, ALGOFI_STATE_KEY_BANK_TO_UNDERLYING_EXCHANGE)
+        if value is None:
+            return
+
+        exchange_rate = Decimal(value["uint"]) / Decimal(10 ** 9)
+        basset_amount = int(receive_asset.uint_amount / exchange_rate)
+        basset = Asset(BANK_ASSETS[receive_asset.id], basset_amount)
+        interest = self.cost_basis_tracker.withdraw(basset, receive_asset)
+        export_reward_tx(self.exporter, txinfo, interest, fee_amount, self.name + " Interest", 1)

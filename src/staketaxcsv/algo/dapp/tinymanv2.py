@@ -1,7 +1,7 @@
 from functools import partial
 
 from staketaxcsv.algo import constants as co
-from staketaxcsv.algo.api_algoindexer import AlgoIndexerAPI
+from staketaxcsv.algo.api.indexer import Indexer
 from staketaxcsv.algo.dapp import Dapp
 from staketaxcsv.algo.export_tx import (
     export_lp_deposit_tx,
@@ -31,6 +31,9 @@ from staketaxcsv.algo.transaction import (
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.common.TxInfo import TxInfo
 
+# For reference:
+# https://github.com/tinymanorg/tinyman-py-sdk
+
 APPLICATION_ID_TINYMANV2_VALIDATOR = 1002541853
 
 TINYMANV2_TRANSACTION_SWAP = "c3dhcA=="                                       # "swap"
@@ -42,7 +45,7 @@ TINYMANV2_TRANSACTION_REMOVE_LIQUIDITY = "cmVtb3ZlX2xpcXVpZGl0eQ=="           # 
 
 
 class TinymanV2(Dapp):
-    def __init__(self, indexer: AlgoIndexerAPI, user_address: str, account: dict, exporter: Exporter) -> None:
+    def __init__(self, indexer: Indexer, user_address: str, account: dict, exporter: Exporter) -> None:
         super().__init__(indexer, user_address, account, exporter)
         self.indexer = indexer
         self.user_address = user_address
