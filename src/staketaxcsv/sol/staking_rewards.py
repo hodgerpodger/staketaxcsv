@@ -8,8 +8,7 @@ import subprocess
 from staketaxcsv.sol.api_rpc import RpcAPI
 from staketaxcsv.sol.config_sol import localconfig
 from staketaxcsv.sol.make_tx import make_sol_reward_tx
-
-DATADIR = os.path.dirname(os.path.realpath(__file__)) + "/data_staking_rewards"
+from staketaxcsv.settings_csv import SOL_DATADIR
 START_EPOCH = 132  # epoch of first ever staking reward
 
 
@@ -117,12 +116,12 @@ class EpochFile:
 
     @classmethod
     def _epoch_path(cls, epoch, date, slot):
-        return "{}/epoch.{}.{}.{}.csv".format(DATADIR, epoch, date, slot)
+        return "{}/epoch.{}.{}.{}.csv".format(SOL_DATADIR, epoch, date, slot)
 
     @classmethod
     def path(cls, epoch):
         """ Returns path of epoch file if exists, else None """
-        glob_expr = "{}/epoch.{}.*.csv".format(DATADIR, epoch)
+        glob_expr = "{}/epoch.{}.*.csv".format(SOL_DATADIR, epoch)
         result = glob.glob(glob_expr)
         if result and len(result) == 1:
             mypath = result[0]
@@ -135,7 +134,7 @@ class EpochFile:
         newest_epoch = 0
 
         # Get all epoch filenames
-        glob_expr = "{}/epoch.*.csv".format(DATADIR)
+        glob_expr = "{}/epoch.*.csv".format(SOL_DATADIR)
         result = glob.glob(glob_expr)
         filenames = [os.path.basename(path) for path in result]
 
