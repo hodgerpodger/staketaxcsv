@@ -818,7 +818,7 @@ class Exporter:
                 "SOCKS": "ID:186027",
                 "WASP": "ID:274467",
                 "XET": "ID:80828",
-                "ZONE": "ID:547025",                
+                "ZONE": "ID:547025",
             },
             TICKER_LUNA2: {
                 "LUNA": "ID:6089",
@@ -1241,7 +1241,7 @@ class Exporter:
         labels = {
             et.TX_TYPE_AIRDROP: "Airdrop",
             et.TX_TYPE_STAKING: "Staking",
-            et.TX_TYPE_TRADE: "Swap",
+            et.TX_TYPE_TRADE: "",
             et.TX_TYPE_TRANSFER: "",
             et.TX_TYPE_INCOME: "Income",
             et.TX_TYPE_SPEND: "Cost",
@@ -1278,7 +1278,7 @@ class Exporter:
                     label = "NFT"
 
                 line = [
-                    row.timestamp,          # Date
+                    row.timestamp,          # Timestamp (UTC)
                     row_type,               # Type
                     row.sent_amount,        # Sent Amount
                     row.sent_currency,      # Sent Currency
@@ -1286,6 +1286,8 @@ class Exporter:
                     row.received_currency,  # Received Currency
                     row.fee,                # Fee Amount
                     row.fee_currency,       # Fee Currency
+                    "",                     # Net Worth Amount
+                    "",                     # Net Worth Currency
                     label,                  # Label
                     row.comment,            # Description
                     row.txid,               # TxHash
