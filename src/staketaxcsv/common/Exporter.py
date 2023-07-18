@@ -130,7 +130,7 @@ class Exporter:
         self.sort_rows(reverse)
         rows = filter(lambda row: row.tx_type in et.TX_TYPES_CSVEXPORT, self.rows)
 
-        if format in [et.FORMAT_KOINLY, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI, et.FORMAT_DIVLY]:
+        if format in [et.FORMAT_KOINLY, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI, et.FORMAT_DIVLY, et.FORMAT_CRYPTOBOOKS]:
             return rows
 
         # For non-koinly CSVs, convert LP_DEPOSIT/LP_WITHDRAW into transfers/omit/trades
@@ -262,6 +262,8 @@ class Exporter:
             self.export_cointracker_csv(csvpath)
         elif csvformat == et.FORMAT_CRYPTIO:
             self.export_cryptio_csv(csvpath)
+        elif csvformat == et.FORMAT_CRYPTOBOOKS:
+            self.export_cryptobooks_csv(csvpath)
         elif csvformat == et.FORMAT_CRYPTOCOM:
             self.export_cryptocom_csv(csvpath)
         elif csvformat == et.FORMAT_CRYPTOTAXCALCULATOR:
@@ -705,6 +707,82 @@ class Exporter:
                     row.fee_currency,  # fee_currency
                     description,  # custom_description
                     row.txid  # tx_hash
+                ]
+                mywriter.writerow(line)
+
+        logging.info("Wrote to %s", csvpath)
+
+    def export_cryptobooks_csv(self, csvpath):
+        """ Write CSV, suitable for import into CryptoBooks """
+        rows = self._rows_export(et.FORMAT_CRYPTOBOOKS, reverse=False)
+
+        category_mappings = {
+            et.TX_TYPE_AIRDROP: "airdrop",
+            et.TX_TYPE_BORROW: "borrow",
+            et.TX_TYPE_INCOME: "general_income",
+            et.TX_TYPE_LP_DEPOSIT: "trading",
+            et.TX_TYPE_LP_WITHDRAW: "trading",
+            et.TX_TYPE_MARGIN_TRADE_FEE: "fees",
+            et.TX_TYPE_REPAY: "trading",
+            et.TX_TYPE_SPEND: "trading",
+            et.TX_TYPE_STAKING: "staking",
+            et.TX_TYPE_TRADE: "trading",
+            et.TX_TYPE_TRANSFER: "transfer",
+        }
+
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
+            mywriter = csv.writer(f)
+
+            # Header row
+            mywriter.writerow(et.CRYPTOBOOKS_FIELDS)
+
+            for row in rows:
+                # Get type
+                if row.received_amount and row.sent_amount:
+                    transaction_type = "trade"
+                elif not row.sent_amount:
+                    transaction_type = "incoming"
+                else:
+                    transaction_type = "outgoing"
+
+                # Get amounts and symbols
+                if transaction_type == "incoming":
+                    from_currency = row.received_currency
+                    from_amount = row.received_amount
+                else:
+                    from_currency = row.sent_currency
+                    from_amount = row.sent_amount
+
+                # Add trades destination currency and amount
+                if transaction_type == "trade":
+                    to_currency = row.received_currency
+                    to_amount = row.received_amount
+                else:
+                    to_currency = None
+                    to_amount = None
+
+                # Get category
+                category = category_mappings[row.tx_type]
+
+                # Notes field
+                notes = f"{row.comment}"
+
+                # Fix no-value fees
+                if not row.fee_currency:
+                    row.fee = ""
+
+                line = [
+                    transaction_type,
+                    category,
+                    row.timestamp,
+                    from_currency,
+                    from_amount,
+                    to_currency,
+                    to_amount,
+                    row.fee_currency,
+                    row.fee,
+                    notes,
+                    row.txid
                 ]
                 mywriter.writerow(line)
 
