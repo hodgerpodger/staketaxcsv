@@ -53,6 +53,7 @@ APPLICATION_ID_FOLKSV2_POOLS = [
 APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR = [
     991196662,   # Distributor G6
     1073098885,  # Distributor G7
+    1136393919,  # Distributor G8
 ]
 
 NOTE_FOLKSV2_DEPOSIT_APP = "da"
@@ -611,8 +612,9 @@ class FolksV2(Dapp):
     def _handle_folksv2_governance_commit(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)
 
+        receive_asset = get_inner_transfer_asset(group[-2])
         send_asset = get_transfer_asset(group[-3])
-        export_deposit_collateral_tx(self.exporter, txinfo, send_asset, fee_amount, self.name)
+        export_swap_tx(self.exporter, txinfo, send_asset, receive_asset, fee_amount, self.name)
 
     def _handle_folksv2_governance_burn(self, group, txinfo, z_index=0):
         fee_amount = get_fee_amount(self.user_address, group)
