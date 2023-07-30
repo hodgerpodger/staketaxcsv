@@ -32,6 +32,7 @@ from staketaxcsv.common.TxInfo import TxInfo
 
 APPLICATION_ID_FOLKSV2_POOL_MANAGER = 971350278
 APPLICATION_ID_FOLKSV2_DEPOSIT = 971353536
+APPLICATION_ID_FOLKSV2_DEPOSIT_STAKING = 1093729103
 APPLICATION_ID_FOLKSV2_LOANS = [
     971388781,  # General
     971388977,  # Stablecoin Efficiency
@@ -52,6 +53,7 @@ APPLICATION_ID_FOLKSV2_POOLS = [
 APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR = [
     991196662,   # Distributor G6
     1073098885,  # Distributor G7
+    1136393919,  # Distributor G8
 ]
 
 NOTE_FOLKSV2_DEPOSIT_APP = "da"
@@ -62,6 +64,9 @@ NOTE_FOLKSV2_LOAN_NAME_NOTE_ARC2 = "ff/v1:j{\"name\":"
 FOLKSV2_TRANSACTION_DEPOSIT_ESCROW_OPTIN = "sx8Gbg=="       # "opt_escrow_into_asset" ABI selector
 FOLKSV2_TRANSACTION_DEPOSIT = "udVC+w=="                    # "deposit" ABI selector
 FOLKSV2_TRANSACTION_DEPOSIT_WITHDRAW = "ruOUyw=="           # "withdraw" ABI selector
+FOLKSV2_TRANSACTION_STAKE_SYNC = "kEBUiQ=="                 # "sync_stake" ABI selector
+FOLKSV2_TRANSACTION_STAKE_WITHDRAW = "gQRrfQ=="             # "withdraw_stake" ABI selector
+FOLKSV2_TRANSACTION_STAKE_CLAIM_REWARDS = "zfKe3Q=="        # "claim_rewards" ABI selector
 FOLKSV2_TRANSACTION_FLASH_LOAN_BEGIN = "JGiTsw=="           # "flash_loan_begin" ABI selector
 FOLKSV2_TRANSACTION_FLASH_LOAN_END = "Kgiw7Q=="             # "flash_loan_end" ABI selector
 FOLKSV2_TRANSACTION_LOAN_ADD_COLLATERAL = "aV6pHw=="        # "add_collateral" ABI selector
@@ -103,6 +108,9 @@ class FolksV2(Dapp):
     def is_dapp_transaction(self, group: list) -> bool:
         return (self._is_folksv2_deposit(group)
                     or self._is_folksv2_withdraw(group)
+                    or self._is_folksv2_stake_deposit(group)
+                    or self._is_folksv2_stake_withdraw(group)
+                    or self._is_folksv2_stake_claim_rewards(group)
                     or self._is_folksv2_create_loan(group)
                     or self._is_folksv2_move_to_collateral(group)
                     or self._is_folksv2_borrow(group)
@@ -128,6 +136,15 @@ class FolksV2(Dapp):
 
         elif self._is_folksv2_withdraw(group):
             self._handle_folksv2_withdraw(group, txinfo)
+
+        elif self._is_folksv2_stake_deposit(group):
+            self._handle_folksv2_stake_deposit(group, txinfo)
+
+        elif self._is_folksv2_stake_withdraw(group):
+            self._handle_folksv2_withdraw(group, txinfo)
+
+        elif self._is_folksv2_stake_claim_rewards(group):
+            self._handle_folksv2_stake_claim_rewards(group, txinfo)
 
         elif self._is_folksv2_create_loan(group):
             pass
@@ -209,6 +226,34 @@ class FolksV2(Dapp):
 
         return is_app_call(group[-1], APPLICATION_ID_FOLKSV2_DEPOSIT, FOLKSV2_TRANSACTION_DEPOSIT_WITHDRAW)
 
+    def _is_folksv2_stake_deposit(self, group):
+        length = len(group)
+        if length < 4 or length > 7:
+            return False
+
+        if not is_app_call(group[-1], APPLICATION_ID_FOLKSV2_DEPOSIT_STAKING, FOLKSV2_TRANSACTION_STAKE_SYNC):
+            return False
+
+        if not is_app_call(group[-2], APPLICATION_ID_FOLKSV2_POOLS, FOLKSV2_TRANSACTION_DEPOSIT):
+            return False
+
+        if not is_transfer(group[-3]):
+            return False
+
+        return is_transaction_sender(self.user_address, group[-3])
+
+    def _is_folksv2_stake_withdraw(self, group):
+        if len(group) > 3:
+            return False
+
+        return is_app_call(group[-1], APPLICATION_ID_FOLKSV2_DEPOSIT_STAKING, FOLKSV2_TRANSACTION_STAKE_WITHDRAW)
+
+    def _is_folksv2_stake_claim_rewards(self, group):
+        if len(group) != 4:
+            return False
+
+        return is_app_call(group[-1], APPLICATION_ID_FOLKSV2_DEPOSIT_STAKING, FOLKSV2_TRANSACTION_STAKE_CLAIM_REWARDS)
+
     def _is_folksv2_create_loan(self, group):
         if len(group) != 2:
             return False
@@ -255,7 +300,7 @@ class FolksV2(Dapp):
 
     def _is_folksv2_borrow(self, group):
         length = len(group)
-        if length < 2 or length > 3:
+        if length < 2 or length > 4:
             return False
 
         if not is_app_call(group[-2], APPLICATION_ID_FOLKSV2_ORACLE_ADAPTER):
@@ -497,6 +542,24 @@ class FolksV2(Dapp):
         # TODO track cost basis to calculate earnings
         export_withdraw_collateral_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name)
 
+    def _handle_folksv2_stake_deposit(self, group, txinfo):
+        fee_amount = get_fee_amount(self.user_address, group)
+
+        send_asset = get_transfer_asset(group[-3])
+
+        export_deposit_collateral_tx(self.exporter, txinfo, send_asset, fee_amount, self.name)
+
+    def _handle_folksv2_stake_claim_rewards(self, group, txinfo):
+        fee_amount = get_fee_amount(self.user_address, group)
+
+        receive_asset = Algo()
+        for tx in group:
+            asset = get_inner_transfer_asset(tx)
+            if asset:
+                receive_asset += asset
+
+        export_reward_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name)
+
     def _handle_folksv2_borrow(self, group, txinfo, z_index=0):
         fee_amount = get_fee_amount(self.user_address, group)
 
@@ -549,8 +612,9 @@ class FolksV2(Dapp):
     def _handle_folksv2_governance_commit(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)
 
+        receive_asset = get_inner_transfer_asset(group[-2])
         send_asset = get_transfer_asset(group[-3])
-        export_deposit_collateral_tx(self.exporter, txinfo, send_asset, fee_amount, self.name)
+        export_swap_tx(self.exporter, txinfo, send_asset, receive_asset, fee_amount, self.name)
 
     def _handle_folksv2_governance_burn(self, group, txinfo, z_index=0):
         fee_amount = get_fee_amount(self.user_address, group)
