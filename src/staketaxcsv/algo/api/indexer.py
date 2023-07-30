@@ -7,6 +7,7 @@ from typing import Optional, Tuple
 from requests import Session
 from requests.adapters import HTTPAdapter, Retry
 
+from staketaxcsv.algo.api.throttler import LeakyBucketThrottler
 from staketaxcsv.algo.config_algo import localconfig
 from staketaxcsv.common.debug_util import use_debug_files
 from staketaxcsv.settings_csv import ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE, REPORTS_DIR
@@ -18,6 +19,7 @@ INDEXER_LIMIT = 2000
 # API documentation: https://algoexplorer.io/api-dev/indexer-v2
 class Indexer:
     session = None
+    throttler = LeakyBucketThrottler(1)
 
     def __init__(self):
         if not Indexer.session:
@@ -42,7 +44,7 @@ class Indexer:
           address (str): The address of the Algorand account that we want to retrieve information for.
 
         Returns:
-          A dictionary containing information about the account if successful, `None` otherwise. 
+          A dictionary containing information about the account if successful, `None` otherwise.
           See account schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Account
         """
         endpoint = f"v2/accounts/{address}"
@@ -257,6 +259,8 @@ class Indexer:
         url = f"{node_url}/{endpoint}"
 
         logging.info("Querying Algo Indexer %s with params %s...", url, params)
+
+        Indexer.throttler.fill_request()
 
         try:
             response = Indexer.session.get(url, params=params, timeout=5)
