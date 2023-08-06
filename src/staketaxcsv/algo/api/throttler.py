@@ -20,17 +20,8 @@ class LeakyBucketThrottler(object):
         self._lock = Lock()
 
     def _requires_new_bucket(self, current_time):
-        if self._current_bucket.minute < current_time.minute:
-            return True
-        elif self._current_bucket.minute == current_time.minute:
-            if self._current_bucket.second < current_time.second:
-                return True
-            elif self._current_bucket.second > current_time.second:
-                assert False, "Should never reach here."
-        else:
-            assert False, "Should never ever reach here."
-
-        return False
+        diff = current_time - self._current_bucket
+        return diff.seconds > 60
 
     def _create_new_bucket(self):
         self._capacity = 0
