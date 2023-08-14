@@ -118,6 +118,7 @@ class Exporter:
                     url=row["url"],
                     z_index=-i,
                     comment=row["comment"],
+                    block_svc_hash=row["block_svc_hash"]
                 )
                 self.ingest_row(cur_row)
 
@@ -178,6 +179,7 @@ class Exporter:
             url=row.url,
             z_index=row.z_index,
             comment=row.comment,
+            block_svc_hash=row.block_svc_hash
         )
 
     def _row_as_transfer_in(self, row):
@@ -196,6 +198,7 @@ class Exporter:
             url=row.url,
             z_index=row.z_index,
             comment=row.comment,
+            block_svc_hash=row.block_svc_hash
         )
 
     def _row_as_trade(self, row):
@@ -214,6 +217,7 @@ class Exporter:
             url=row.url,
             z_index=row.z_index,
             comment=row.comment,
+            block_svc_hash=row.block_svc_hash
         )
 
     def export_print(self):

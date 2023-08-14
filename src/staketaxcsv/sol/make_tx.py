@@ -24,7 +24,8 @@ def make_sol_reward_tx(timestamp, reward, wallet_address, txid):
         exchange=EXCHANGE_SOLANA_BLOCKCHAIN,
         wallet_address=wallet_address,
         txid=txid,
-        url=""
+        url="",
+        block_svc_hash=txid
     )
     return row
 
