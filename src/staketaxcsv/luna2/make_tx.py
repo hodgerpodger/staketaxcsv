@@ -16,6 +16,7 @@ def make_genesis_airdrop1_tx(amount_luna, wallet_address):
         exchange=EXCHANGE_LUNA2,
         wallet_address=wallet_address,
         txid="luna2_genesis_airdrop1",
-        url=""
+        url="",
+        block_svc_hash=""
     )
     return row

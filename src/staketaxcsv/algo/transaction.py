@@ -16,7 +16,7 @@ def get_transaction_txinfo(wallet_address, elem):
 
     url = "https://algoexplorer.io/tx/{}".format(urllib.parse.quote(txid))
 
-    return TxInfo(txid, timestamp, fee, fee.ticker, wallet_address, co.EXCHANGE_ALGORAND_BLOCKCHAIN, url)
+    return TxInfo(txid, timestamp, fee, fee.ticker, wallet_address, co.EXCHANGE_ALGORAND_BLOCKCHAIN, url, txid)
 
 
 def get_transaction_note(transaction, size=0):

@@ -34,10 +34,12 @@ class LeakyBucketThrottler(object):
             current_time = time.time()
             if self._requires_new_bucket(current_time):
                 self._create_new_bucket()
+                logger.debug('Reset capacity')
 
             if self._capacity > self._max_capacity:
                 time_to_wait = current_time - self._current_bucket
 
+                print(current_time, self._current_bucket)
                 logger.debug("Algorand throttler waiting for %f seconds.", time_to_wait)
 
                 sleep(time_to_wait)

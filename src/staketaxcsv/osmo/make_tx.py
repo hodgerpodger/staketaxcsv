@@ -62,7 +62,8 @@ def make_lp_reward_tx(wallet_address, day, reward_amount, reward_currency):
         exchange=EXCHANGE_OSMOSIS,
         wallet_address=wallet_address,
         txid=txid,
-        url=""
+        url="",
+        block_svc_hash=""
     )
     row.comment = "lp_reward"
     return row
