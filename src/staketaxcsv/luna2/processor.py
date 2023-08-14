@@ -56,6 +56,7 @@ def _txinfo(wallet_address, elem):
 
     # Edit url, since terra not in mintscan
     txid = elem["txhash"]
+    txinfo.block_svc_hash = txid
     txinfo.url = "https://terrasco.pe/mainnet/tx/{}".format(txid)
     return txinfo
 
