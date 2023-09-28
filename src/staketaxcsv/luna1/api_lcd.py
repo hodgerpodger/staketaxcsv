@@ -58,6 +58,10 @@ class LcdAPI:
 
     @classmethod
     def num_txs(cls, wallet_address):
+        return 200
+
+        # TODO: Fix this function.  Changes to LCD api make this no longer work.
+
         data = cls._get_txs(wallet_address, EVENTS_TYPE_SENDER, 0, LIMIT_TX_QUERY, 0)
         num_send = int(data["pagination"]["total"])
 
