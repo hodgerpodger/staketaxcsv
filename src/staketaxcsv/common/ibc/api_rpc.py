@@ -1,5 +1,6 @@
 import ast
 import base64
+import binascii
 import functools
 import logging
 import math
@@ -192,8 +193,13 @@ def _decode(elem):
         for kv in event["attributes"]:
             k, v = kv["key"], kv["value"]
 
-            kv["key"] = base64.b64decode(k).decode() if k else ""
-            kv["value"] = base64.b64decode(v).decode() if v else ""
+            try:
+                kv["key"] = base64.b64decode(k).decode() if k else ""
+                kv["value"] = base64.b64decode(v).decode() if v else ""
+            except binascii.Error as e:
+                pass
+            except UnicodeDecodeError as e:
+                pass
 
     elem["tx"] = base64.b64decode(elem["tx"])
 
