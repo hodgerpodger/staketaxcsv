@@ -49,6 +49,7 @@ MINTSCAN_LABELS = {
     "BCNA": "bitcanna",
     "BTSG": "bitsong",
     "CANTO": "canto",
+    "TIA": "celestia",
     "HUAHUA": "chihuahua",
     "CMDX": "comdex",
     "CRE": "crescent",
