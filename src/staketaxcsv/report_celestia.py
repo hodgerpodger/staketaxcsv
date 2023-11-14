@@ -13,6 +13,7 @@ from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.celestia.config_celestia import localconfig
+from staketaxcsv.celestia.genesis_airdrop import genesis_airdrop
 from staketaxcsv.celestia.progress_celestia import SECONDS_PER_PAGE, ProgressCelestia
 from staketaxcsv.settings_csv import CELESTIA_NODE, TICKER_CELESTIA
 
@@ -58,9 +59,8 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_CELESTIA)
 
     # Fetch/add genesis airdrop to csv
-    # progress.report_message("Fetching genesis airdrop amount...")
-    # TODO
-    # staketaxcsv.celestia.genesis_airdrop.genesis_airdrop(wallet_address, exporter)
+    progress.report_message("Fetching genesis airdrop amount...")
+    staketaxcsv.celestia.genesis_airdrop.genesis_airdrop(wallet_address, exporter)
 
     # Fetch count of transactions to estimate progress more accurately
     count_pages = staketaxcsv.common.ibc.api_lcd_v2.get_txs_pages_count(CELESTIA_NODE, wallet_address, max_txs, debug=localconfig.debug)
