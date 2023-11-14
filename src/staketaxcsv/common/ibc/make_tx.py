@@ -33,6 +33,10 @@ def make_simple_tx(txinfo, msginfo):
     return _make_tx(txinfo, msginfo, "", "", "", "")
 
 
+def make_stake_tx(txinfo, msginfo, sent_amount, sent_currency):
+    return _make_tx(txinfo, msginfo, sent_amount, sent_currency, "", "", TX_TYPE_STAKING)
+
+
 def make_spend_tx_fee(txinfo, msginfo):
     row = _make_tx(txinfo, msginfo, txinfo.fee, txinfo.fee_currency, "", "", TX_TYPE_SPEND)
     row.fee = 0

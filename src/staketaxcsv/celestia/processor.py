@@ -1,5 +1,3 @@
-import logging
-
 import staketaxcsv.common.ibc.handle
 import staketaxcsv.common.ibc.processor
 import staketaxcsv.celestia.constants as co

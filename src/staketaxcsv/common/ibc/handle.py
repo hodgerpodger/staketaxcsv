@@ -1,4 +1,3 @@
-
 from staketaxcsv.common.ibc import constants as co
 from staketaxcsv.common.ibc import make_tx, util_ibc
 
@@ -34,17 +33,35 @@ def handle_simple_outbound(exporter, txinfo, msginfo):
 def handle_staking(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
 
-    totals = {}
+    totals_in = {}
+    totals_out = {}
     for amount, currency in transfers_in:
-        if currency not in totals:
-            totals[currency] = 0
-        totals[currency] += amount
+        if currency not in totals_in:
+            totals_in[currency] = 0
+        totals_in[currency] += amount
+    for amount, currency in transfers_out:
+        if currency not in totals_out:
+            totals_out[currency] = 0
+        totals_out[currency] += amount
 
-    if sum(totals.values()) > 0:
+    if sum(totals_in.values()) > 0:
         i = 0
-        for currency, total in totals.items():
+        for currency, total in totals_in.items():
             row = make_tx.make_reward_tx(txinfo, msginfo, total, currency)
             row.comment = "claim reward in {}".format(msginfo.msg_type)
+
+            # Only first row should have fee (if exists)
+            if i > 0:
+                row.fee = ""
+                row.fee_currency = ""
+            i += 1
+
+            exporter.ingest_row(row)
+    if sum(totals_out.values()) > 0:
+        i = 0
+        for currency, total in totals_out.items():
+            row = make_tx.make_stake_tx(txinfo, msginfo, total, currency)
+            row.comment = "staking in {}".format(msginfo.msg_type)
 
             # Only first row should have fee (if exists)
             if i > 0:
