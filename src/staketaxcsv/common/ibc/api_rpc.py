@@ -276,7 +276,8 @@ def _make_message_from_event_attributes(event_attributes):
     #
     # note: we do not do any other combination of events to produce application
     # specific message fields and rely on transfer events to dictate any movement of coins
-    message["@type"] = message["action"]
-    del message["action"]
+    if message.get("action") != None:
+        message["@type"] = message["action"]
+        del message["action"]
 
     return message

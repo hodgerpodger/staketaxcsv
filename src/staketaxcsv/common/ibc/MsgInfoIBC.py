@@ -41,7 +41,9 @@ class MsgInfoIBC:
             # luna2 only: staking/MsgUndelegate -> MsgUndelegate
             last_field = message["type"].split("/")[-1]
         else:
-            raise Exception("Unexpected message: {}".format(message))
+            # raise Exception("Unexpected message: {}".format(message))
+            logging.warning("Skipping unexpected message: %s", message)
+            last_field = "Message"
         return last_field
 
     def _has_coin_spent_received(self):
