@@ -39,6 +39,12 @@
         "https://akash-mainnet-lcd.autostake.com:443",
         "https://akash.rest.interchain.ivaldilabs.xyz"
     ],
+    "archway": [
+        "https://api.mainnet.archway.io",
+        "https://archway.api.kjnodes.com",
+        "https://rest-archway.theamsolutions.info",
+        "https://archway-mainnet-archive.allthatnode.com:1317"
+    ],
     "arkh": [
         "https://asc-blockchain-api.arkhadian.com/",
         "https://api.arkh.nodestake.top",
