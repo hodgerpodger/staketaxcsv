@@ -4,7 +4,7 @@ from staketaxcsv.settings_csv import (
     TICKER_ALGO, TICKER_ATOM, TICKER_BLD, TICKER_BTSG, TICKER_DVPN, TICKER_EVMOS, TICKER_FET,
     TICKER_COSMOSPLUS, TICKER_HUAHUA, TICKER_IOTEX, TICKER_JUNO, TICKER_KUJI, TICKER_LUNA1,
     TICKER_LUNA2, TICKER_MNTL, TICKER_OSMO, TICKER_REGEN, TICKER_ROWAN, TICKER_SCRT,
-    TICKER_SOL, TICKER_STARS, TICKER_TORI, TICKER_KYVE)
+    TICKER_SOL, TICKER_STARS, TICKER_TORI, TICKER_KYVE, TICKER_ARCH)
 from staketaxcsv.common.ExporterTypes import FORMATS
 
 import staketaxcsv.report_algo
@@ -30,6 +30,7 @@ import staketaxcsv.report_sol
 import staketaxcsv.report_stars
 import staketaxcsv.report_tori
 import staketaxcsv.report_kyve
+import staketaxcsv.report_arch
 
 REPORT_MODULES = {
     TICKER_ALGO: staketaxcsv.report_algo,
@@ -55,6 +56,7 @@ REPORT_MODULES = {
     TICKER_SOL: staketaxcsv.report_sol,
     TICKER_STARS: staketaxcsv.report_stars,
     TICKER_TORI: staketaxcsv.report_tori,
+    TICKER_ARCH: staketaxcsv.report_arch,
 }
 
 
