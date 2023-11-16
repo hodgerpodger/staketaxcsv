@@ -136,6 +136,7 @@ ALGOFI_STAKING_CONTRACTS = {
     661204747: "STBL-USDT",  # NanoSwap
     661247364: "USDC-USDT",  # NanoSwap
     705663269: "STBL-USDC",  # NanoSwap Stability
+    764407972: "STBL-goMINT",
     # Market App ID
     482608867: "STBL",
     553866305: "Tinyman STBL-USDC",
@@ -153,6 +154,7 @@ ALGOFI_STAKING_CONTRACTS = {
     661199805: "STBL-USDT",  # NanoSwap
     661207804: "USDC-USDT",  # NanoSwap
     705657303: "STBL-USDC",  # NanoSwap Stability
+    764406975: "STBL-goMINT",
 }
 
 ALGOFI_STATE_KEY_BANK_TO_UNDERLYING_EXCHANGE = "YnQ="  # "bt"

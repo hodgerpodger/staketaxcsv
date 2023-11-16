@@ -111,4 +111,4 @@ class DepositCostBasisTracker:
         cost_basis = self._get_asset_cost_basis_tracker(receipt.id)
         exchange_rate = Decimal(collateral.uint_amount) / Decimal(receipt.uint_amount)
         cost = cost_basis.push(Entry(-receipt.uint_amount, exchange_rate))
-        return Asset(collateral.id, collateral.uint_amount - cost)
+        return Asset(collateral.id, max(collateral.uint_amount - cost, 0))
