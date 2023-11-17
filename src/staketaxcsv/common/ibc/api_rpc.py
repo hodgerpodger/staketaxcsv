@@ -257,8 +257,11 @@ def _add_messages_from_logs(elem):
             if event_type != "message":
                 continue
 
-            message = _make_message_from_event_attributes(event_attributes)
-            messages.append(message)
+            try:
+                message = _make_message_from_event_attributes(event_attributes)
+                messages.append(message)
+            except Exception as e:
+                logging.error("Unexpected message for txid=%s, exception=%s", elem["txhash"], str(e))
 
     # add messages into the transaction body element
     elem["tx"]["body"] = {
@@ -279,5 +282,7 @@ def _make_message_from_event_attributes(event_attributes):
     if message.get("action") != None:
         message["@type"] = message["action"]
         del message["action"]
+        return message
+    else:
+        raise Exception("Unexpected message: {}".format(message))
 
-    return message

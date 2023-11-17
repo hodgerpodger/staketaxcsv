@@ -42,8 +42,7 @@ class MsgInfoIBC:
             last_field = message["type"].split("/")[-1]
         else:
             # raise Exception("Unexpected message: {}".format(message))
-            logging.warning("Skipping unexpected message: %s", message)
-            last_field = "Message"
+            last_field = None
         return last_field
 
     def _has_coin_spent_received(self):

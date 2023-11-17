@@ -34,11 +34,14 @@ def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, custom
         message = elem["tx"]["body"]["messages"][i]
         log = elem["logs"][i]
 
-        if customMsgInfo:
-            msginfo = customMsgInfo(wallet_address, i, message, log, lcd_node, ibc_addresses)
-        else:
-            msginfo = MsgInfoIBC(wallet_address, i, message, log, lcd_node, ibc_addresses)
-        msgs.append(msginfo)
+        try:
+            if customMsgInfo:
+                msginfo = customMsgInfo(wallet_address, i, message, log, lcd_node, ibc_addresses)
+            else:
+                msginfo = MsgInfoIBC(wallet_address, i, message, log, lcd_node, ibc_addresses)
+            msgs.append(msginfo)
+        except Exception as e:
+            logging.error("Exception when creating MsgInfoIBC object. exception=%s, txid=%s, message=%s", str(e), txid, message)
 
     txinfo = TxInfoIBC(txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, memo, is_failed)
     return txinfo
