@@ -1,7 +1,6 @@
+import boto3
 import logging
 import os
-
-import boto3
 
 STAGE = os.environ.get("STAGE")
 DYNAMO_TABLE_CACHE = "prod_cache" if STAGE == "prod" else "dev_cache"

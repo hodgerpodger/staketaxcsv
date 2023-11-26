@@ -36,11 +36,7 @@ TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
 LUNA2_LCD_NODE = os.environ.get("STAKETAX_LUNA2_LCD_NODE", "https://phoenix-lcd.terra.dev")
 
 # Optional environment variables
-COVALENT_API_KEY = os.environ.get("STAKETAX_COVALENT_API_KEY", "")
-
-SOL_DATADIR = os.environ.get(
-    "SOL_DATADIR",
-    os.path.dirname(os.path.realpath(__file__)) + "/sol/data_staking_rewards")
+SOL_REWARDS_DB_READ = os.environ.get("STAKETAX_SOL_REWARDS_DB_READ", False)
 
 # #############################################################################
 
