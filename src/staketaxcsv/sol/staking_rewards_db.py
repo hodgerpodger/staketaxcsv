@@ -273,8 +273,9 @@ class StakingRewardsDB:
         # Get rewards for address
         k = FIELD_PREFIX_ADDRESS + address
         addr_rewards = self._get(k)
+        addr_rewards = {} if addr_rewards is None else addr_rewards
 
-        # Fill in epochs with no rewards with reward=0
+        # Fill in epochs with reward=0 if db has data for that epoch
         for epoch in epochs:
             if epoch in epochs_in_db and epoch not in addr_rewards:
                 addr_rewards[epoch] = "0"

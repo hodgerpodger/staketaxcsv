@@ -65,8 +65,6 @@ def _rewards(staking_address, min_date):
     else:
         return out
 
-    return out2
-
 
 def _lookup_reward_via_rpc(staking_address, epoch):
     logging.info("Querying RPC for rewards epoch=%s staking_address=%s ...", epoch, staking_address)
