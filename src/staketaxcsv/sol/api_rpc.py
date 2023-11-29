@@ -160,8 +160,8 @@ class RpcAPI(object):
     @classmethod
     @use_debug_files(localconfig, REPORTS_DIR)
     def fetch_tx(cls, txid):
-        params_list = [txid, {"encoding": "jsonParsed"}]
-        return cls._fetch("getConfirmedTransaction", params_list)
+        params_list = [txid, {"encoding": "jsonParsed", "maxSupportedTransactionVersion": 0}]
+        return cls._fetch("getTransaction", params_list)
 
     @classmethod
     def fetch_token_accounts(cls, wallet_address):

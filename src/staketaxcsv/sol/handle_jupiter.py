@@ -22,6 +22,10 @@ def handle_jupiter_aggregator_v4(exporter, txinfo):
     txinfo.comment = "jupiter_aggregator_v4"
     _handle_jupiter_aggregator(exporter, txinfo)
 
+def handle_jupiter_v6_swap(exporter, txinfo):
+    txinfo.comment = "jupiter_v6_swap"
+    _handle_jupiter_aggregator(exporter, txinfo)
+
 
 def _handle_jupiter_aggregator(exporter, txinfo):
     transfers_in, transfers_out, _ = txinfo.transfers_net
