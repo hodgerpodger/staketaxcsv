@@ -4,6 +4,7 @@ from staketaxcsv.common.make_tx import make_transfer_in_tx, make_transfer_out_tx
 
 PRISM_FORGE_CONTRACT = "terra1angxk38zehp0k09m0wqrrxf0r3ces6qjj432l8"
 
+
 def handle_prism_withdraw(elem, txinfo):
     txid = txinfo.txid
     txinfo.comment += "Prism withdraw"
@@ -21,5 +22,6 @@ def handle_prism_withdraw(elem, txinfo):
         return [make_simple_tx(txinfo, "PRISM_UNKNOWN")]
     else:
         return rows
+
 
 CONTRACTS[PRISM_FORGE_CONTRACT] = handle_prism_withdraw

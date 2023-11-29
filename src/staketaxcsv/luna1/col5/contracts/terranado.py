@@ -9,6 +9,7 @@ from staketaxcsv.common.ExporterTypes import (
 
 TERRANADO_CONTRACT = "terra1tzhh2yt0arrwttpywg65vy0kyu99n22jhjxva7"
 
+
 def handle_terranado_deposit(elem, txinfo):
     txid = txinfo.txid
     txinfo.comment += "Terranado deposit"

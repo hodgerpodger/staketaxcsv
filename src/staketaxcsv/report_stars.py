@@ -38,7 +38,6 @@ def wallet_exists(wallet_address):
 def txone(wallet_address, txid):
     elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(STARS_NODE).get_tx(txid)
 
-
     print("Transaction data:")
     pprint.pprint(elem)
 
@@ -65,7 +64,7 @@ def txhistory(wallet_address):
 
     # Fetch count of transactions to estimate progress beforehand
     count_pages = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(
-        STARS_NODE, wallet_address, max_txs,debug=localconfig.debug)
+        STARS_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_estimate(count_pages)
 
     # Fetch transactions

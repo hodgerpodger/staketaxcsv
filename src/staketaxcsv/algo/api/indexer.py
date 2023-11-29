@@ -42,7 +42,7 @@ class Indexer:
           address (str): The address of the Algorand account that we want to retrieve information for.
 
         Returns:
-          A dictionary containing information about the account if successful, `None` otherwise. 
+          A dictionary containing information about the account if successful, `None` otherwise.
           See account schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Account
         """
         endpoint = f"v2/accounts/{address}"

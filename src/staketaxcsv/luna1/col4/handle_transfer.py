@@ -5,6 +5,7 @@ from staketaxcsv.luna1.col4.handle_simple import handle_unknown, handle_unknown_
 
 SHUTTLE_BRIDGE = "terra1rtn03a9l3qsc0a9verxwj00afs93mlm0yr7chk"
 
+
 def handle_transfer(exporter, elem, txinfo):
     wallet_address = txinfo.wallet_address
 

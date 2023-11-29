@@ -5,6 +5,7 @@ from staketaxcsv.common.make_tx import make_transfer_in_tx, make_transfer_out_tx
 
 LIQUIDATION_REMEDIATION_CONTRACT = "terra13v4ln23tmfs2zk4nh5dw5mzufckekp4fpafpcy"
 
+
 def handle_remediation_claim(elem, txinfo):
     txid = txinfo.txid
     txinfo.comment += "Remediation claim"

@@ -13,6 +13,7 @@ MARS_FIELD_ANC_UST_CONTRACT = "terra1vapq79y9cqghqny7zt72g4qukndz282uvqwtz6"
 MARS_FIELD_MIR_UST_CONTRACT = "terra12dq4wmfcsnz6ycep6ek4umtuaj6luhfp256hyu"
 MARS_RED_BANK_CONTRACT = "terra19dtgj9j5j7kyf3pmejqv8vzfpxtejaypgzkz5u"
 
+
 def handle_mars_unbond(elem, txinfo):
     txid = txinfo.txid
     txinfo.comment += "MARS unbond"
@@ -25,8 +26,9 @@ def handle_mars_unbond(elem, txinfo):
 
     for amount, currency in transfers_out:
         rows.append(_make_tx_sent(txinfo, amount, currency, TX_TYPE_TRANSFER, txid))
-    
+
     return rows
+
 
 def handle_mars_deposit(elem, txinfo):
     txid = txinfo.txid

@@ -39,7 +39,7 @@ def rewards_all_users_write_db():
 
     for x in range(start_epoch, end_epoch, N_BLOCKS):
         # Process 10 epochs at a time (lessens db writes/reads)
-        cur_epochs = list(range(x, min(x+N_BLOCKS, end_epoch)))
+        cur_epochs = list(range(x, min(x + N_BLOCKS, end_epoch)))
         logging.info("cur_epochs: %s", cur_epochs)
 
         list_block_rewards = []
@@ -137,7 +137,6 @@ class StakingRewardsDB:
             ts = slot_to_timestamp(slot)
             self.set_epoch_timestamp(epoch, ts)
 
-
     def set_block_rewards(self, epoch, slot, block_rewards):
         logging.info("set_block_rewards() for epoch %s...", epoch)
 
@@ -155,7 +154,6 @@ class StakingRewardsDB:
         # Update slot_timestamps (which also marks completed data epochs in rewards db)
         ts = slot_to_timestamp(slot)
         self.set_epoch_timestamp(epoch, ts)
-
 
     def _db_read_rewards(self, addrs):
         """ Gets existing reward data from db for list of addresses """
@@ -175,7 +173,7 @@ class StakingRewardsDB:
             for f in as_completed(futures):
                 results.append(f.result())
 
-                num_read_items = len(results)*BATCH_SIZE_READ
+                num_read_items = len(results) * BATCH_SIZE_READ
                 if num_read_items % 1000 == 0:
                     logging.info("%s of %s reads completed ... ", num_read_items, len(addrs))
             logging.info("All tasks completed.")
@@ -203,7 +201,7 @@ class StakingRewardsDB:
         # Run batch read
         dynamodb = boto3.resource("dynamodb", "us-east-1")
         NUM_RETRIES = 5
-        for i in range(NUM_RETRIES+1):
+        for i in range(NUM_RETRIES + 1):
             try:
                 response = dynamodb.batch_get_item(RequestItems=batch_keys)
                 break

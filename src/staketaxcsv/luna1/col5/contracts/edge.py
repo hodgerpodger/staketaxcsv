@@ -5,6 +5,7 @@ from staketaxcsv.common.make_tx import make_swap_tx, make_repay_tx, make_borrow_
 
 EDGE_CONTRACT = "terra13zggcrrf5cytnsmv33uwrtf56c258vqrhckkj6"
 
+
 def handle_edge(elem, txinfo):
     execute_msg = util_terra._execute_msg(elem)
 
@@ -21,6 +22,7 @@ def handle_edge(elem, txinfo):
         return handle_edge_withdraw(elem, txinfo)
     else:
         return [make_simple_tx(txinfo, "EDGE_UNKNOWN")]
+
 
 def handle_edge_deposit(elem, txinfo):
     txid = txinfo.txid
@@ -45,6 +47,7 @@ def handle_edge_deposit(elem, txinfo):
 
     return [make_swap_tx(txinfo, amount_sent, currency_sent, amount_received, currency_received, txid)]
 
+
 def handle_edge_borrow(elem, txinfo):
     txid = txinfo.txid
     msgs = txinfo.msgs
@@ -58,6 +61,7 @@ def handle_edge_borrow(elem, txinfo):
             return [make_borrow_tx(txinfo, amount_received, currency_received)]
         else:
             return [make_simple_tx(txinfo, "EDGE_UNKNOWN")]
+
 
 def handle_edge_withdraw(elem, txinfo):
     txid = txinfo.txid
@@ -81,6 +85,7 @@ def handle_edge_withdraw(elem, txinfo):
             return [make_simple_tx(txinfo, "EDGE_UNKNOWN")]
 
     return [make_swap_tx(txinfo, amount_sent, currency_sent, amount_received, currency_received, txid)]
+
 
 def handle_edge_repay(elem, txinfo):
     txid = txinfo.txid

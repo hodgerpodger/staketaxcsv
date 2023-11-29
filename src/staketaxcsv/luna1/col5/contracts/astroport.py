@@ -63,6 +63,7 @@ def _is_astroport_swap(msgs):
                 return True
     return False
 
+
 def _handle_astro_claim_msg(msg, txinfo):
     txid = txinfo.txid
     rows = []
@@ -71,18 +72,19 @@ def _handle_astro_claim_msg(msg, txinfo):
 
     for amount, currency in transfers_in:
         if "LP" in str(currency):
-            rows.append(make_lp_unstake_tx(txinfo, amount, currency))  
+            rows.append(make_lp_unstake_tx(txinfo, amount, currency))
         else:
             rows.append(make_income_tx(txinfo, amount, currency, txid))
-    
+
     return rows
+
 
 def handle_astro_claim_all(elem, txinfo):
     msgs = txinfo.msgs
     if len(msgs) > 1:
-      txinfo.comment += "ASTRO multi-claim all rewards"
+        txinfo.comment += "ASTRO multi-claim all rewards"
     else:
-      txinfo.comment += "ASTRO rewards claim"
+        txinfo.comment += "ASTRO rewards claim"
 
     rows = []
 
@@ -95,6 +97,7 @@ def handle_astro_claim_all(elem, txinfo):
             flattened_rows.append(item)
 
     return flattened_rows
+
 
 def handle_astro_lockdrop(elem, txinfo):
     txid = txinfo.txid
@@ -111,6 +114,7 @@ def handle_astro_lockdrop(elem, txinfo):
             rows.append(make_lp_unstake_tx(txinfo, amount, currency))
 
     return rows
+
 
 def _handle_astroport_swap(elem, txinfo, msgs):
     txid = txinfo.txid

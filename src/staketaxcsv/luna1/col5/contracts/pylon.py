@@ -45,7 +45,7 @@ def _handle_pool_deposit(elem, txinfo, msgs):
     wallet_address = txinfo.wallet_address
 
     mint_action = msgs[0].actions[-1]
-    assert(mint_action['action'] == "mint")
+    assert (mint_action['action'] == "mint")
 
     _, transfers_out = util_terra._transfers(elem, wallet_address, txid)
 
@@ -63,7 +63,7 @@ def _handle_pool_withdraw(elem, txinfo, msgs):
     wallet_address = txinfo.wallet_address
 
     burn_action = msgs[1].actions[0]
-    assert(burn_action['action'] == "send")
+    assert (burn_action['action'] == "send")
 
     transfers_in, _ = util_terra._transfers(elem, wallet_address, txid)
 

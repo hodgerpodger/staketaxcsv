@@ -3,6 +3,7 @@ from staketaxcsv.luna1.col5.actions.complete_transfer_wrapped import handle_acti
 from staketaxcsv.luna1.col5.contracts.config import CONTRACTS
 from staketaxcsv.luna1 import util_terra
 
+
 def handle_wormhole(elem, txinfo):
     txinfo.comment += "bridge wormhole"
 

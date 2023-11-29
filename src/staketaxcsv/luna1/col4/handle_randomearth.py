@@ -42,6 +42,7 @@ def handle_randomearth(exporter, elem, txinfo):
     else:
         handle_unknown(exporter, txinfo)
 
+
 def handle_submit_bid(exporter, elem, txinfo):
     _, transfers_out = util_terra._transfers(elem, txinfo.wallet_address, txinfo.txid)
 
@@ -49,6 +50,7 @@ def handle_submit_bid(exporter, elem, txinfo):
         print(transfer)
         row = make_submit_bid_tx(txinfo, transfer[0], transfer[1])
         exporter.ingest_row(row)
+
 
 def handle_add_whitelist(exporter, elem, txinfo):
     handle_simple(exporter, txinfo, TX_TYPE_NFT_WHITELIST)
@@ -357,6 +359,7 @@ def handle_withdraw(exporter, elem, txinfo, index=0):
         received_amount, received_currency = _parse_asset(asset)
         row = make_nft_withdraw(txinfo, received_amount, received_currency)
         exporter.ingest_row(row)
+
 
 def handle_withdraw_nft(exporter, elem, txinfo, index=0):
     """ withdraw nft or sell proceeds from randomearth.io """

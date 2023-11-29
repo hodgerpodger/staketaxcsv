@@ -122,6 +122,7 @@ def _transfers(elem, wallet_address, txid, multicurrency=False):
 
     return transfers_in, transfers_out
 
+
 def _transfers_from_actions(msg, wallet_address, txid, multicurrency=False):
     transfers_in = []
     transfers_out = []
@@ -140,6 +141,7 @@ def _transfers_from_actions(msg, wallet_address, txid, multicurrency=False):
                 transfers_out.append([amount, currency])
 
     return transfers_in, transfers_out
+
 
 def _transfers_log(log, wallet_address, multicurrency=False):
     transfers_in = []
