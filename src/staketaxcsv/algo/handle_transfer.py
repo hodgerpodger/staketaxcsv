@@ -18,7 +18,9 @@ from staketaxcsv.algo.transaction import (
     get_transfer_sender,
     is_algo_transfer,
     is_app_call,
+    is_app_optin,
     is_asset_optin,
+    is_transaction_sender,
     is_transfer,
     is_transfer_participant,
     is_transfer_receiver
@@ -72,6 +74,14 @@ def handle_asa_transaction(wallet_address, transaction, exporter, txinfo, z_inde
 
     _handle_transfer(wallet_address, transaction, transfer_details, exporter, txinfo, asset_id, z_index)
 
+def handle_sender_transaction(wallet_address, transaction, exporter, txinfo, z_index=0):
+    fee_amount = transaction["fee"]
+    if fee_amount > 0:
+        fee = Algo(fee_amount)
+        export_spend_fee_tx(exporter, txinfo, fee, z_index=z_index)
+
+    reward = Algo(transaction["sender-rewards"])
+    export_participation_rewards(reward, exporter, txinfo)
 
 def handle_transfer_transactions(wallet_address, transactions, exporter, txinfo, z_index=0):
     num_transfers = 0
@@ -82,10 +92,12 @@ def handle_transfer_transactions(wallet_address, transactions, exporter, txinfo,
             handle_transfer_transaction(
                 wallet_address, transaction, exporter, txinfo, z_index + num_transfers)
             num_transfers += 1
-        elif is_app_call(transaction):
+        elif is_app_call(transaction) and not is_app_optin(transaction):
             inner_transactions = transaction.get("inner-txns", [])
             num_transfers += handle_transfer_transactions(
                 wallet_address, inner_transactions, exporter, txinfo, z_index + num_transfers)
+        elif is_transaction_sender(wallet_address, transaction):
+            handle_sender_transaction(wallet_address, transaction, exporter, txinfo, z_index + num_transfers)
     return num_transfers
 
 
@@ -133,6 +145,9 @@ def _handle_transfer(wallet_address, transaction, details, exporter, txinfo, ass
                     export_receive_tx(
                         exporter, txinfo, receive_asset, fee_amount,
                         "Algomint" if txsender == co.ADDRESS_ALGOMINT else note, z_index)
+        elif fee_amount > 0:
+            fee = Algo(fee_amount)
+            export_spend_fee_tx(exporter, txinfo, fee)
     else:
         rewards_amount += transaction["sender-rewards"]
         if close_to and txreceiver != close_to:
