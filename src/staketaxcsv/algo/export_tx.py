@@ -92,8 +92,8 @@ def export_send_tx(exporter, txinfo, send_asset, fee_amount=0, dest_address=None
         _ingest_row(exporter, row, fee_amount, comment)
     elif fee_amount > 0:
         fee = Algo(fee_amount)
-        row = make_spend_fee_tx(txinfo, fee.amount, fee.ticker)
-        _ingest_row(exporter, row, fee_amount, comment)
+        row = make_spend_fee_tx(txinfo, fee.amount, fee.ticker, z_index)
+        _ingest_row(exporter, row, comment=comment)
 
 
 @exclude_tx
