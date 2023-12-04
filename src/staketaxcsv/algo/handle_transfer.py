@@ -18,6 +18,7 @@ from staketaxcsv.algo.transaction import (
     get_transfer_sender,
     is_algo_transfer,
     is_app_call,
+    is_app_clear,
     is_app_optin,
     is_asset_optin,
     is_transaction_sender,
@@ -74,11 +75,18 @@ def handle_asa_transaction(wallet_address, transaction, exporter, txinfo, z_inde
 
     _handle_transfer(wallet_address, transaction, transfer_details, exporter, txinfo, asset_id, z_index)
 
-def handle_sender_transaction(wallet_address, transaction, exporter, txinfo, z_index=0):
+def handle_sender_transaction(transaction, exporter, txinfo, z_index=0):
     fee_amount = transaction["fee"]
     if fee_amount > 0:
         fee = Algo(fee_amount)
-        export_spend_fee_tx(exporter, txinfo, fee, z_index=z_index)
+        comment = ""
+        if is_app_optin(transaction):
+            app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+            comment = f"App {app_id} opt-in"
+        elif is_app_clear(transaction):
+            app_id = transaction[co.TRANSACTION_KEY_APP_CALL]["application-id"]
+            comment = f"App {app_id} opt-out"
+        export_spend_fee_tx(exporter, txinfo, fee, comment, z_index)
 
     reward = Algo(transaction["sender-rewards"])
     export_participation_rewards(reward, exporter, txinfo)
@@ -92,12 +100,12 @@ def handle_transfer_transactions(wallet_address, transactions, exporter, txinfo,
             handle_transfer_transaction(
                 wallet_address, transaction, exporter, txinfo, z_index + num_transfers)
             num_transfers += 1
-        elif is_app_call(transaction) and not is_app_optin(transaction):
+        elif is_app_call(transaction) and "inner-txns" in transaction:
             inner_transactions = transaction.get("inner-txns", [])
             num_transfers += handle_transfer_transactions(
                 wallet_address, inner_transactions, exporter, txinfo, z_index + num_transfers)
         elif is_transaction_sender(wallet_address, transaction):
-            handle_sender_transaction(wallet_address, transaction, exporter, txinfo, z_index + num_transfers)
+            handle_sender_transaction(transaction, exporter, txinfo, z_index + num_transfers)
     return num_transfers
 
 

@@ -9,10 +9,9 @@ from staketaxcsv.common.TxInfo import TxInfo
 
 def get_transaction_txinfo(wallet_address, elem):
     txid = elem["id"]
-    txsender = elem["sender"]
 
     timestamp = datetime.utcfromtimestamp(elem["round-time"]).strftime('%Y-%m-%d %H:%M:%S')
-    fee = Algo(elem["fee"] if txsender == wallet_address else 0)
+    fee = Algo(0)
 
     url = "https://algoexplorer.io/tx/{}".format(urllib.parse.quote(txid))
 

@@ -257,7 +257,7 @@ class Yieldly(Dapp):
         algo_reward = get_transfer_asset(pay_transaction)
 
         fee_transaction = group[5]
-        fee_amount = fee_transaction["fee"] + fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"]
+        fee_amount += fee_transaction["fee"] + fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"]
 
         # Distribute fee over the two transactions
         export_reward_tx(self.exporter, txinfo, yldy_reward, fee_amount / 2, self.name)
@@ -314,6 +314,10 @@ class Yieldly(Dapp):
 
         receive_transaction = group[2]
         receive_asset = get_transfer_asset(receive_transaction)
+
+        if len(group) == 4:
+            fee_transaction = group[3]
+            fee_amount += fee_transaction["fee"] + fee_transaction[co.TRANSACTION_KEY_PAYMENT]["amount"]
 
         export_unstake_tx(self.exporter, txinfo, receive_asset, fee_amount, self.name)
 
