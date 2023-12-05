@@ -6,12 +6,10 @@ Prints transactions and writes CSV(s) to _reports/SOL*.csv
 
 import json
 import logging
-import math
 from json.decoder import JSONDecodeError
 
 import staketaxcsv.sol.processor
 from staketaxcsv.common import report_util
-from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import MESSAGE_ADDRESS_NOT_FOUND, MESSAGE_STAKING_ADDRESS_FOUND, SOL_NODE, TICKER_SOL
@@ -102,9 +100,6 @@ def _num_txids(wallet_address):
 
 
 def txhistory(wallet_address):
-    if localconfig.cache:
-        localconfig.blocks = Cache().get_sol_blocks()
-        logging.info("Loaded sol blocks info into cache...")
     logging.info("Using SOLANA_URL=%s...", SOL_NODE)
     min_date = localconfig.start_date
 
@@ -137,9 +132,6 @@ def txhistory(wallet_address):
     staking_rewards.reward_txs(wallet_info, exporter, progress, min_date)
 
     ErrorCounter.log(TICKER_SOL, wallet_address)
-    if localconfig.cache:
-        # Flush cache to db
-        Cache().set_sol_blocks(localconfig.blocks)
 
     return exporter
 

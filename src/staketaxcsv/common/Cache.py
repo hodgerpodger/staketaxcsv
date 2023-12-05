@@ -4,7 +4,6 @@ import os
 
 STAGE = os.environ.get("STAGE")
 DYNAMO_TABLE_CACHE = "prod_cache" if STAGE == "prod" else "dev_cache"
-FIELD_SOL_BLOCKS = "sol_blocks"
 FIELD_TERRA_CURRENCY_ADDRESSES = "terra_currency_addresses"
 FIELD_TERRA_DECIMALS = "terra_decimals"
 FIELD_TERRA_LP_CURRENCY_ADDRESSES = "terra_lp_currency_addresses"
@@ -54,12 +53,6 @@ class Cache:
         logging.info("Retrieved %s data.", field_name)
         data = item['data']
         return data
-
-    def set_sol_blocks(self, data):
-        self._set_merge(FIELD_SOL_BLOCKS, data)
-
-    def get_sol_blocks(self):
-        return self._get(FIELD_SOL_BLOCKS)
 
     def set_terra_currency_addresses(self, data):
         # Remove entries where no symbol was found or empty attribute
