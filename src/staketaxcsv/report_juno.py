@@ -41,7 +41,7 @@ def txone(wallet_address, txid):
 
     exporter = Exporter(wallet_address, localconfig, TICKER_JUNO)
     txinfo = staketaxcsv.juno.processor.process_tx(wallet_address, elem, exporter)
-    txinfo.print()
+
     return exporter
 
 

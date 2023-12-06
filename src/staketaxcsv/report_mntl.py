@@ -5,7 +5,6 @@ Prints transactions and writes CSV(s) to _reports/MNTL*.csv
 """
 
 import logging
-import pprint
 
 import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.mntl.processor
@@ -34,12 +33,9 @@ def wallet_exists(wallet_address):
 def txone(wallet_address, txid):
     elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(MNTL_NODE).get_tx(txid)
 
-    print("Transaction data:")
-    pprint.pprint(elem)
-
     exporter = Exporter(wallet_address, localconfig, TICKER_MNTL)
     txinfo = staketaxcsv.mntl.processor.process_tx(wallet_address, elem, exporter)
-    txinfo.print()
+
     return exporter
 
 

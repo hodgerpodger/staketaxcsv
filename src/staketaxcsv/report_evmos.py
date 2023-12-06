@@ -8,7 +8,6 @@ Note:
 """
 
 import logging
-import pprint
 
 import staketaxcsv.common.address
 import staketaxcsv.common.ibc.api_lcd_v2
@@ -61,12 +60,9 @@ def wallet_exists(wallet_address):
 def txone(wallet_address, txid):
     elem = staketaxcsv.common.ibc.api_lcd.make_lcd_api(EVMOS_NODE).get_tx(txid)
 
-    print("Transaction data:")
-    pprint.pprint(elem)
-
     exporter = Exporter(wallet_address, localconfig, TICKER_EVMOS)
     txinfo = staketaxcsv.evmos.processor.process_tx(wallet_address, elem, exporter)
-    txinfo.print()
+
     return exporter
 
 

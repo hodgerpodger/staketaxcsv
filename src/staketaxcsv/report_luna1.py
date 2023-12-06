@@ -10,10 +10,8 @@ Notes:
     * https://columbus-lcd.terra.dev/swagger/
 """
 
-import json
 import logging
 import math
-import os
 import pprint
 
 import staketaxcsv.api
@@ -52,14 +50,9 @@ def wallet_exists(wallet_address):
 
 def txone(wallet_address, txid):
     data = FcdAPI.get_tx(txid)
-    print("\ndebug data:")
-    pprint.pprint(data)
-    print("")
 
     exporter = Exporter(wallet_address, localconfig, TICKER_LUNA1)
     txinfo = staketaxcsv.luna1.processor.process_tx(wallet_address, data, exporter)
-    txinfo.print()
-    print("")
 
     return exporter
 

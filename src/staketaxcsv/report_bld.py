@@ -5,7 +5,6 @@ Prints transactions and writes CSV(s) to _reports/BLD*.csv
 """
 
 import logging
-import pprint
 
 import staketaxcsv.bld.processor
 import staketaxcsv.common.ibc.api_lcd_v1
@@ -33,12 +32,9 @@ def wallet_exists(wallet_address):
 def txone(wallet_address, txid):
     elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(BLD_NODE).get_tx(txid)
 
-    print("Transaction data:")
-    pprint.pprint(elem)
-
     exporter = Exporter(wallet_address, localconfig, TICKER_BLD)
     txinfo = staketaxcsv.bld.processor.process_tx(wallet_address, elem, exporter)
-    txinfo.print()
+
     return exporter
 
 

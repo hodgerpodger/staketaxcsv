@@ -47,10 +47,6 @@ def txone(wallet_address, txid):
 
     txinfo = staketaxcsv.fet.processor.process_tx(wallet_address, elem, exporter, node)
 
-    print("Transaction data:")
-    pprint.pprint(elem)
-    txinfo.print()
-
     return exporter
 
 

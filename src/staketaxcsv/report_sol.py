@@ -73,14 +73,10 @@ def _account_exists(wallet_address):
 
 def txone(wallet_address, txid):
     data = RpcAPI.fetch_tx(txid)
-    s = json.dumps(data, indent=4)
-    print("\nTransaction data:")
-    print(s)
-    print("\n")
 
     exporter = Exporter(wallet_address, localconfig, TICKER_SOL)
     txinfo = staketaxcsv.sol.processor.process_tx(WalletInfo(wallet_address), exporter, txid, data)
-    txinfo.print()
+
     return exporter
 
 

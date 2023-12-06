@@ -38,12 +38,9 @@ def wallet_exists(wallet_address):
 def txone(wallet_address, txid):
     elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(STARS_NODE).get_tx(txid)
 
-    print("Transaction data:")
-    pprint.pprint(elem)
-
     exporter = Exporter(wallet_address, localconfig, TICKER_STARS)
     txinfo = staketaxcsv.stars.processor.process_tx(wallet_address, elem, exporter)
-    txinfo.print()
+
     return exporter
 
 

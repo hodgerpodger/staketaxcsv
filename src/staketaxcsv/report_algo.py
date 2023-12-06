@@ -7,7 +7,6 @@ Prints transactions and writes CSV(s) to _reports/ALGO.<walletaddress>.<format>.
 import json
 import logging
 import os
-import pprint
 
 import staketaxcsv.algo.processor
 from staketaxcsv.algo.api.indexer import Indexer
@@ -92,13 +91,8 @@ def txone(wallet_address, txid_or_groupid):
     if elems is None:
         elems = indexer.get_transactions_by_group(txid_or_groupid)
 
-    print("\ndebug data:")
-    pprint.pprint(elems)
-    print("")
-
     progress.set_estimate(1)
     staketaxcsv.algo.processor.process_txs(wallet_address, dapps, elems, exporter, progress)
-    print("")
 
     return exporter
 

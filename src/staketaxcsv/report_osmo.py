@@ -4,7 +4,7 @@ usage: python3 staketaxcsv/report_osmo.py <walletaddress> [--format all|cointrac
 Prints transactions and writes CSV(s) to _reports/OSMO*.csv
 
 """
-
+import json
 import logging
 import math
 import pprint
@@ -43,13 +43,9 @@ def wallet_exists(wallet_address):
 
 def txone(wallet_address, txid):
     data = staketaxcsv.osmo.api_data.get_tx(txid)
-    print("\ndebug data:")
-    pprint.pprint(data)
-    print("\n")
 
     exporter = Exporter(wallet_address, localconfig, TICKER_OSMO)
     txinfo = staketaxcsv.osmo.processor.process_tx(wallet_address, data, exporter)
-    txinfo.print()
 
     return exporter
 

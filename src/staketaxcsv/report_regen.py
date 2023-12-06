@@ -5,7 +5,6 @@ Prints transactions and writes CSV(s) to _reports/regen*.csv
 """
 
 import logging
-import pprint
 
 from staketaxcsv.regen.config_regen import localconfig
 from staketaxcsv.regen.progress_regen import SECONDS_PER_PAGE, ProgressRegen
@@ -34,12 +33,9 @@ def wallet_exists(wallet_address):
 def txone(wallet_address, txid):
     elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(REGEN_NODE).get_tx(txid)
 
-    print("Transaction data:")
-    pprint.pprint(elem)
-
     exporter = Exporter(wallet_address, localconfig, TICKER_REGEN)
     txinfo = staketaxcsv.regen.processor.process_tx(wallet_address, elem, exporter)
-    txinfo.print()
+
     return exporter
 
 

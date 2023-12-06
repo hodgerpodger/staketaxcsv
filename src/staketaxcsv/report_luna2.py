@@ -49,14 +49,9 @@ def estimate_duration(wallet_address):
 
 def txone(wallet_address, txid):
     data = FcdAPI.get_tx(txid)
-    print("\ndebug data:")
-    pprint.pprint(data)
-    print("")
 
     exporter = Exporter(wallet_address, localconfig, TICKER_LUNA2)
     txinfo = staketaxcsv.luna2.processor.process_tx(wallet_address, data, exporter)
-    txinfo.print()
-    print("")
 
     return exporter
 

@@ -41,14 +41,9 @@ def txone(wallet_address, txid):
 
     elems = IoTexGraphQL.get_action(txid)
 
-    print("\ndebug data:")
-    pprint.pprint(elems)
-    print("")
-
     progress.set_estimate(1)
     exporter = Exporter(wallet_address, localconfig)
     staketaxcsv.iotex.processor.process_txs(wallet_address, elems, exporter, progress)
-    print("")
 
     return exporter
 

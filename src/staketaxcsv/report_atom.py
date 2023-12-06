@@ -12,7 +12,7 @@ https://node.atomscan.com/swagger/
 
 import logging
 import math
-import pprint
+
 
 import staketaxcsv.api
 import staketaxcsv.atom.api_lcd
@@ -51,13 +51,9 @@ def txone(wallet_address, txid):
     else:
         elem = staketaxcsv.atom.api_lcd.get_tx(txid)
 
-    print("Transaction data:")
-    pprint.pprint(elem)
-
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
     txinfo = staketaxcsv.atom.processor.process_tx(wallet_address, elem, exporter)
-    if txinfo:
-        txinfo.print()
+
     return exporter
 
 

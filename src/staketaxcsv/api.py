@@ -86,7 +86,7 @@ def csv(ticker, wallet_address, csv_format, path=None, options=None, logs=True):
     :param path: (optional) <string file path> .  By default, writes to /tmp .
     :param options: (optional) dictionary [documentation not in great state; see parse_args() in
            https://github.com/hodgerpodger/staketaxcsv/blob/main/src/staketaxcsv/common/report_util.py]
-    :params logs: (optional) show logging.  Defaults to True.
+    :param logs: (optional) show logging.  Defaults to True.
 
     """
     path = path if path else "/tmp/{}.{}.{}.csv".format(ticker, wallet_address, csv_format)
@@ -113,10 +113,10 @@ def csv_all(ticker, wallet_address, dirpath=None, options=None, logs=True):
 
     :param ticker: ALGO|ATOM|LUNA1|LUNA2|...   [see staketaxcsv.tickers()]
     :param wallet_address: <string wallet address>
-    :params dirpath: (optional) <string directory path> directory to write CSV files to.
+    :param dirpath: (optional) <string directory path> directory to write CSV files to.
                      By default, writes to /tmp .
     :param options: (optional)
-    :params logs: (optional) show logging.  Defaults to True.
+    :param logs: (optional) show logging.  Defaults to True.
     """
     dirpath = dirpath if dirpath else "/tmp"
     options = options if options else {}
@@ -158,9 +158,11 @@ def transaction(ticker, wallet_address, txid, csv_format="", path="", options=No
     module.read_options(options)
     exporter = module.txone(wallet_address, txid)
 
-    # Print transactions table to console
-    exporter.export_print()
-
-    if csv_format:
+    if csv_format == "":
+        exporter.export_print()
+    elif csv_format == "test":
+        return exporter.export_for_test()
+    else:
+        exporter.export_print()
         path = path if path else "/tmp/{}.{}.csv".format(txid, csv_format)
         exporter.export_format(csv_format, path)

@@ -6,7 +6,6 @@ Prints transactions and writes CSV(s) to _reports/DVPN*.csv
 """
 
 import logging
-import pprint
 
 import staketaxcsv.common.ibc.api_common
 import staketaxcsv.common.ibc.api_lcd_v1
@@ -46,12 +45,9 @@ def txone(wallet_address, txid):
         elem = RpcAPI(DVPN_RPC_NODE).get_tx(txid)
         staketaxcsv.common.ibc.api_rpc.normalize_rpc_txns(DVPN_RPC_NODE, [elem])
 
-    print("Transaction data:")
-    pprint.pprint(elem)
-
     exporter = Exporter(wallet_address, localconfig, TICKER_DVPN)
     txinfo = staketaxcsv.dvpn.processor.process_tx(wallet_address, elem, exporter)
-    txinfo.print()
+
     return exporter
 
 
