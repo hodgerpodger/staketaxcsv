@@ -77,6 +77,17 @@
     >>> staketaxcsv.has_csv("ATOM", address)
     True
   ```
+  
+# Tests
+
+* To run test suite:
+  ```
+  cd src
+  python -m unittest
+  ```
+  
+* Tests located at tests/tests/test*.py
+* Note: test suite very limited at the moment.  It should expand over time.
 
 
 # Docker
