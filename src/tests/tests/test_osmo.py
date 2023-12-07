@@ -10,19 +10,14 @@ validator or contract.  This is to ensure good faith in maintaining privacy.
 import unittest
 from unittest.mock import patch
 
-from staketaxcsv.settings_csv import TICKER_OSMO
-from staketaxcsv.api import transaction
-from tests.mock_query import mock_query_one_arg
-from staketaxcsv.osmo.api_data import get_tx as my_get_tx
-
-
-def mock_get_tx(txid):
-    return mock_query_one_arg(my_get_tx, txid, TICKER_OSMO)
+from tests.mock_osmo import mock_get_tx
+import staketaxcsv.report_osmo
 
 
 @patch("staketaxcsv.osmo.api_data.get_tx", mock_get_tx)
 def run_test(wallet_address, txid):
-    return transaction(TICKER_OSMO, wallet_address, txid, "test")
+    exporter = staketaxcsv.report_osmo.txone(wallet_address, txid)
+    return exporter.export_for_test()
 
 
 class TestOsmo(unittest.TestCase):

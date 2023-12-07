@@ -9,9 +9,34 @@ def mock_query_one_arg(func, arg1, dirname=""):
     return _mock_query(func, args, dirname)
 
 
+def mock_query_two_args(func, arg1, arg2, dirname=""):
+    args = [arg1, arg2]
+    return _mock_query(func, args, dirname)
+
+
+def mock_query_three_args(func, arg1, arg2, arg3, dirname=""):
+    args = [arg1, arg2, arg3]
+    return _mock_query(func, args, dirname)
+
+
+def mock_query_four_args(func, arg1, arg2, arg3, arg4, dirname=""):
+    args = [arg1, arg2, arg3, arg4]
+    return _mock_query(func, args, dirname)
+
+
+def mock_query_five_args(func, arg1, arg2, arg3, arg4, arg5, dirname=""):
+    args = [arg1, arg2, arg3, arg4, arg5]
+    return _mock_query(func, args, dirname)
+
+
+def mock_query_six_args(func, arg1, arg2, arg3, arg4, arg5, arg6, dirname=""):
+    args = [arg1, arg2, arg3, arg4, arg5, arg6]
+    return _mock_query(func, args, dirname)
+
+
 def _mock_query(func, args, dirname=""):
     # Create a filename
-    dir = DATADIR + "/" + _clean(dirname if dirname else func.__name__)
+    dir = DATADIR + "/" + (dirname if dirname else _clean(func.__name__))
     filename_parts = [_clean(func.__name__)] + [_clean(x) for x in args]
     json_path = dir + "/" + "-".join(filename_parts)
 

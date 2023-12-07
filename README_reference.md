@@ -12,16 +12,33 @@
   pycodestyle
   ```
 
-# Unit Tests
+# Tests
 
-You may notice a lack of unit tests in this codebase. Though tests exist, I omitted them because they rely on extensive
-use of real world wallet data. For the sake of all users' privacy, I do not include these tests. I'm open to ideas for
-alternatives or PRs for non-invasive tests, since obviously this is non-optimal.
-
-Note to contributors: I encourage you to be proactive with changes before I find a solution to the testing problem.
-Private tests are run for most txs types and perfection without those tests is not expected.  Of course, try to be 
-perfect :).
+* Examples:
+  ```
+  cd src
   
+  # run all tests
+  python -m unittest
+  
+  # run tests matching ...
+  python -m unittest -k "test_redelegate"
+  
+  # run exact test
+  python -m unittest tests.tests.test_osmo.TestOsmo.test_redelegate
+  
+  # run tests with different granularity
+  python -m unittest tests.tests.test_osmo.TestOsmo
+  python -m unittest tests.tests.test_osmo
+  
+  # run tests in file
+  python -m unittest tests/tests/test_osmo.py
+  ```
+  
+* Tests located at tests/tests/test*.py
+* Note: test suite very limited at the moment.  It should expand over time.
+
+
 # Docker
 
 Sample of using a docker container

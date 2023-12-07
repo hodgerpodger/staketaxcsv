@@ -77,26 +77,12 @@
     >>> staketaxcsv.has_csv("ATOM", address)
     True
   ```
-  
-# Tests
-
-* To run test suite:
-  ```
-  cd src
-  python -m unittest
-  ```
-  
-* Tests located at tests/tests/test*.py
-* Note: test suite very limited at the moment.  It should expand over time.
-
-
-# Docker
-
-See [Docker](README_reference.md#docker) to alternatively install/run in docker container.
 
 # Contributing Code
 
+* See [Tests](README_reference.md#tests) for running unit tests.
 * See [Linting](README_reference.md#linting) to see code style feedback.
+* See [Docker](README_reference.md#docker) to alternatively install/run in docker container.
 * Providing a sample txid will expedite a pull request (email support@stake.tax,
   DM @staketax, etc.):
 
@@ -111,7 +97,7 @@ See [README_reference.md](README_reference.md):
 
 * [Code Style](README_reference.md#code-style)
 * [Linting](README_reference.md#linting)
-* [Unit Tests](README_reference.md#unit-tests)
+* [Tests](README_reference.md#tests)
 * [Docker](README_reference.md#docker)
 * [Ideal Configuration](README_reference.md#ideal-configuration)
   * [RPC Node Settings](README_reference.md#rpc-node-settings)

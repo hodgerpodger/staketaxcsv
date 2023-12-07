@@ -75,6 +75,7 @@ def handle_asa_transaction(wallet_address, transaction, exporter, txinfo, z_inde
 
     _handle_transfer(wallet_address, transaction, transfer_details, exporter, txinfo, asset_id, z_index)
 
+
 def handle_sender_transaction(transaction, exporter, txinfo, z_index=0):
     fee_amount = transaction["fee"]
     if fee_amount > 0:
@@ -90,6 +91,7 @@ def handle_sender_transaction(transaction, exporter, txinfo, z_index=0):
 
     reward = Algo(transaction["sender-rewards"])
     export_participation_rewards(reward, exporter, txinfo)
+
 
 def handle_transfer_transactions(wallet_address, transactions, exporter, txinfo, z_index=0):
     num_transfers = 0

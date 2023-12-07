@@ -70,6 +70,8 @@ def wallet_exists(wallet_address):
 
 
 def txone(wallet_address, txid_or_groupid):
+    indexer = Indexer()  # just to get unit test patch to work
+
     progress = ProgressAlgo()
     exporter = Exporter(wallet_address, localconfig, TICKER_ALGO)
 

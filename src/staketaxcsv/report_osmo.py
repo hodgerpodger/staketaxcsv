@@ -4,10 +4,8 @@ usage: python3 staketaxcsv/report_osmo.py <walletaddress> [--format all|cointrac
 Prints transactions and writes CSV(s) to _reports/OSMO*.csv
 
 """
-import json
 import logging
 import math
-import pprint
 
 import staketaxcsv.osmo.api_data
 import staketaxcsv.osmo.processor
