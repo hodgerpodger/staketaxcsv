@@ -19,6 +19,7 @@ import staketaxcsv.atom.api_lcd
 import staketaxcsv.atom.cosmoshub123.api_cosmostation
 import staketaxcsv.atom.processor
 import staketaxcsv.common.ibc.api_lcd_v1
+from staketaxcsv.common.ibc.api_lcd_v1 import LcdAPI_v1
 from staketaxcsv.atom.config_atom import localconfig
 from staketaxcsv.atom.progress_atom import SECONDS_PER_PAGE, ProgressAtom
 from staketaxcsv.common import report_util
@@ -49,7 +50,7 @@ def txone(wallet_address, txid):
     if localconfig.legacy:
         elem = staketaxcsv.atom.cosmoshub123.api_cosmostation.get_tx(txid)
     else:
-        elem = staketaxcsv.atom.api_lcd.get_tx(txid)
+        elem = LcdAPI_v1(ATOM_NODE).get_tx(txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
     txinfo = staketaxcsv.atom.processor.process_tx(wallet_address, elem, exporter)
