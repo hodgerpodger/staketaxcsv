@@ -38,4 +38,3 @@ class MockRpcAPI(RpcAPI):
     @classmethod
     def get_block_time(cls, block):
         return mock_query_one_arg(RpcAPI.get_block_time, block, TICKER_SOL + "/get_block_time")
-
