@@ -8,7 +8,7 @@ class TxInfoSol(TxInfo):
     """Common properties across every blockchain transaction (only)"""
 
     def __init__(self, txid, timestamp, fee, wallet_address):
-        url = "https://solscan.io/tx/{}".format(txid)
+        url = "https://solana.fm/tx/{}".format(txid)
         super().__init__(txid, timestamp, fee, CURRENCY_SOL, wallet_address, EXCHANGE_SOLANA_BLOCKCHAIN, url)
 
         self.fee_blockchain = None

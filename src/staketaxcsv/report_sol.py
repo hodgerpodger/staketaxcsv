@@ -4,9 +4,9 @@ usage: python3 staketaxcsv/report_sol.py <walletaddress> [--format all|cointrack
 Prints transactions and writes CSV(s) to _reports/SOL*.csv
 """
 
-import json
 import logging
 from json.decoder import JSONDecodeError
+import pprint
 
 import staketaxcsv.sol.processor
 from staketaxcsv.common import report_util
@@ -74,8 +74,16 @@ def _account_exists(wallet_address):
 def txone(wallet_address, txid):
     data = RpcAPI.fetch_tx(txid)
 
+    if __name__ == "staketaxcsv.report_sol":
+        print("tx data:")
+        pprint.pprint(data)
+
     exporter = Exporter(wallet_address, localconfig, TICKER_SOL)
     txinfo = staketaxcsv.sol.processor.process_tx(WalletInfo(wallet_address), exporter, txid, data)
+
+    if __name__ == "staketaxcsv.report_sol" and txinfo:
+        print("txinfo:")
+        txinfo.print()
 
     return exporter
 

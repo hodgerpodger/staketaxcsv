@@ -164,6 +164,7 @@ TX_TYPE_SOL_REWARD_ZERO = "_REWARD_ZERO"  # Ray staking reward 0
 TX_TYPE_SOL_SERUM_DEX = "_SERUM_DEX"
 TX_TYPE_SOL_TRANSFER_SELF = "_TRANSFER_SELF"
 TX_TYPE_SOL_WORMHOLE_NOOP = "_WORMHOLE_NOOP"
+TX_TYPE_SOL_JUPITER_OPEN_DCA = "_JUPITER_OPEN_DCA"
 
 # ### OSMO ##########################################################################################
 

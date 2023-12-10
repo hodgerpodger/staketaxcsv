@@ -1,3 +1,4 @@
+
 from staketaxcsv.common.make_tx import make_swap_tx
 from staketaxcsv.sol.constants import CURRENCY_SOL
 from staketaxcsv.sol.handle_simple import handle_unknown_detect_transfers
@@ -23,8 +24,8 @@ def handle_jupiter_aggregator_v4(exporter, txinfo):
     _handle_jupiter_aggregator(exporter, txinfo)
 
 
-def handle_jupiter_v6_swap(exporter, txinfo):
-    txinfo.comment = "jupiter_v6_swap"
+def handle_jupiter_aggregator_v6(exporter, txinfo):
+    txinfo.comment = "jupiter_aggregator_v6"
     _handle_jupiter_aggregator(exporter, txinfo)
 
 
