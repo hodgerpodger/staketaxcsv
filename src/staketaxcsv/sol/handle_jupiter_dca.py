@@ -51,6 +51,7 @@ class DcaSeries:
             # sanity check
             if 0 < fee_series < 0.5:
                 return fee_series
+            logging.error("bad value for fee_series:%s", fee_series)
         return None
 
 

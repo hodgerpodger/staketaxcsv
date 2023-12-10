@@ -397,7 +397,7 @@ def _transfers_instruction(txinfo, instructions):
                 elif destination in wallet_accounts:
                     transfers_in.append((amount, currency, source, destination))
                 else:
-                    logging.error("Unable to determine direction for info: %s", info)
+                    logging.info("Unable to determine direction for info: %s", info)
                     transfers_unknown.append((amount, currency, source, destination))
 
     return transfers_in, transfers_out, transfers_unknown

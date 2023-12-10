@@ -74,14 +74,14 @@ def _account_exists(wallet_address):
 def txone(wallet_address, txid):
     data = RpcAPI.fetch_tx(txid)
 
-    if __name__ == "staketaxcsv.report_sol":
+    if localconfig.debug:
         print("tx data:")
         pprint.pprint(data)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_SOL)
     txinfo = staketaxcsv.sol.processor.process_tx(WalletInfo(wallet_address), exporter, txid, data)
 
-    if __name__ == "staketaxcsv.report_sol" and txinfo:
+    if localconfig.debug:
         print("txinfo:")
         txinfo.print()
 
