@@ -19,6 +19,7 @@ from staketaxcsv.sol.config_sol import localconfig
 from staketaxcsv.sol.constants import PROGRAMID_STAKE
 from staketaxcsv.sol.progress_sol import SECONDS_PER_STAKING_ADDRESS, SECONDS_PER_TX, ProgressSol
 from staketaxcsv.sol.TxInfoSol import WalletInfo
+from staketaxcsv.sol.api_helius import get_token_symbols_no_limit
 
 LIMIT_PER_QUERY = 1000
 RPC_TIMEOUT = 600  # seconds
@@ -80,6 +81,7 @@ def txone(wallet_address, txid):
 
     exporter = Exporter(wallet_address, localconfig, TICKER_SOL)
     txinfo = staketaxcsv.sol.processor.process_tx(WalletInfo(wallet_address), exporter, txid, data)
+    _convert_token_addresses_to_symbols(exporter)
 
     if localconfig.debug:
         print("txinfo:")
@@ -135,8 +137,8 @@ def txhistory(wallet_address):
     # Staking rewards data
     staking_rewards.reward_txs(wallet_info, exporter, progress, min_date)
 
+    _convert_token_addresses_to_symbols(exporter)
     ErrorCounter.log(TICKER_SOL, wallet_address)
-
     return exporter
 
 
@@ -202,6 +204,37 @@ def _fetch_and_process_txs(txids, wallet_info, exporter, progress):
 
     message = f"Finished fetching {total_count} transactions"
     progress.report(total_count, message, "txs")
+
+
+def _convert_token_addresses_to_symbols(exporter):
+    """ Converts on token addresses to ticker symbol in CSV (for those possible) """
+    # Gather all token addresses in CSV
+    token_addrs = set()
+    for row in exporter.rows:
+        if len(row.received_currency) > 40:
+            token_addrs.add(row.received_currency)
+        if len(row.sent_currency) > 40:
+            token_addrs.add(row.sent_currency)
+
+    # Lookup up ticker symbols for the addresses.
+    addrs = list(token_addrs)
+    symbols = get_token_symbols_no_limit(addrs)
+
+    # Put into dict <address> -> <symbol>
+    address_to_symbol = {}
+    for i in range(len(addrs)):
+        addr = addrs[i]
+        symbol = symbols[i]
+
+        # (if not symbol found use address in CSV)
+        address_to_symbol[addr] = symbol if symbol else addr
+
+    # Replace token addresses with ticker symbols in CSV where applicable
+    for row in exporter.rows:
+        if row.received_currency in address_to_symbol:
+            row.received_currency = address_to_symbol[row.received_currency]
+        if row.sent_currency in address_to_symbol:
+            row.sent_currency = address_to_symbol[row.sent_currency]
 
 
 if __name__ == "__main__":

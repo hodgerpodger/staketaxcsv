@@ -3,6 +3,7 @@ import requests
 import time
 from staketaxcsv.settings_csv import SOL_HELIUS_API_KEY
 HELIUS_API_URL = "https://api.helius.xyz/"
+LIMIT_MINT_ACCOUNTS = 100
 
 
 class HeliusAPI:
@@ -54,3 +55,11 @@ class HeliusAPI:
     @classmethod
     def get_token_symbol(cls, mint_address):
         return cls.get_token_symbols([mint_address])[0]
+
+
+def get_token_symbols_no_limit(mint_addresses):
+    out = []
+    for i in range(0, len(mint_addresses), LIMIT_MINT_ACCOUNTS):
+        result = HeliusAPI.get_token_symbols(mint_addresses[i:i + LIMIT_MINT_ACCOUNTS])
+        out.extend(result)
+    return out
