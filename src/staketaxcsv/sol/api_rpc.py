@@ -2,8 +2,8 @@ import logging
 import random
 import time
 from datetime import datetime, timezone
-
 import requests
+
 from staketaxcsv.common.debug_util import use_debug_files
 from staketaxcsv.settings_csv import REPORTS_DIR, SOL_NODE
 from staketaxcsv.sol.config_sol import localconfig

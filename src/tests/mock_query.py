@@ -1,7 +1,7 @@
 import logging
 import json
 import os
-from tests.constants import DATADIR
+from tests.settings_test import DATADIR
 
 
 def mock_query_one_arg(func, arg1, dirname=""):
