@@ -25,3 +25,16 @@ timestamp            tx_type  received_amount  received_currency  sent_amount  s
 -------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ---------------------------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+    def test_jupiter_v6_dca_swap_with_sol_sent(self):
+        result = run_test(
+            "7WZcPib1yW3wig8sSLrhx2Qt97huiJMboQNrqSocGSyc",
+            "2GMpqA7duENGaEXJUuP712J3tvX25uU45ZQ8vZdszXVUHyiAwo9byn3vVSVRgxks1PKX7H4wrBcE3FXqH1q6mRa1"
+        )
+        correct_result = """
+-------------------  -------  ---------------  --------------------------------------------  -----------  -------------  ---  ------------  ----------------------------------------------------------------------------------------
+timestamp            tx_type  received_amount  received_currency                             sent_amount  sent_currency  fee  fee_currency  txid
+2023-12-09 02:48:15  TRADE    441.19999        74DSHnK1qqr4z1pXjLjPAVi8XFngZ635jEVpdkJtnizQ  0.001428571  SOL                               2GMpqA7duENGaEXJUuP712J3tvX25uU45ZQ8vZdszXVUHyiAwo9byn3vVSVRgxks1PKX7H4wrBcE3FXqH1q6mRa1
+-------------------  -------  ---------------  --------------------------------------------  -----------  -------------  ---  ------------  ----------------------------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)

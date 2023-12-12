@@ -134,6 +134,11 @@ def _handle_swap(exporter, txinfo):
         if received_amount is None:
             received_amount = received_amount_with_fee
 
+        # If swap involves SOL sent out, make sure SOL fee is zeroed to avoid error in special case of SOL.
+        if sent_currency == CURRENCY_SOL:
+            txinfo.fee = ""
+            txinfo.fee_currency = ""
+
         row = make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
         exporter.ingest_row(row)
         return True
