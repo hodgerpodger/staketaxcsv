@@ -1,6 +1,14 @@
+"""
+IMPORTANT NOTE TO ADD TO ALL TEST FILES WITH ADDRESSES/TRANSACTIONS
+
+DO NOT use personal addresses/transactions for tests.  Instead, choose relatively random
+addresses/transactions.  For example, choose recent transactions from mintscan explorer for a
+validator or contract.  This is to ensure good faith in maintaining privacy.
+
+"""
+
 import json
 import logging
-import pprint
 import unittest
 from unittest.mock import patch
 
