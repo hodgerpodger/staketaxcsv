@@ -117,7 +117,7 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_SOL)
     wallet_info = WalletInfo(wallet_address)
 
-    ######## Fetch data to so that job progress can be estimated ##########
+    # ####### Fetch data to so that job progress can be estimated ##########
 
     # Fetch transaction ids for wallet
     txids = get_txids(wallet_address, progress, start_date, end_date)

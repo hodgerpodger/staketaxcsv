@@ -71,8 +71,8 @@ def _filter_date(rewards, start_date=None, end_date=None):
     for epoch, ts, amount in rewards:
         date, _ = ts.split()
         if (
-            (start_date is None or _date_to_dt(date) >= _date_to_dt(start_date)) and
-            (end_date is None or _date_to_dt(date) <= _date_to_dt(end_date))
+            (start_date is None or _date_to_dt(date) >= _date_to_dt(start_date))
+            and (end_date is None or _date_to_dt(date) <= _date_to_dt(end_date))
         ):
             out.append((epoch, ts, amount))
 

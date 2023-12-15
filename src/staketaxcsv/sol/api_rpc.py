@@ -11,7 +11,6 @@ from staketaxcsv.sol.constants import BILLION, PROGRAMID_STAKE, PROGRAMID_TOKEN_
 TOKEN_ACCOUNTS = {}
 
 
-
 class RpcAPI(object):
     session = requests.Session()
 
