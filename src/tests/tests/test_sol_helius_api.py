@@ -1,3 +1,4 @@
+import logging
 import unittest
 from staketaxcsv.sol.api_helius import HeliusAPI, get_token_symbols_no_limit
 from tests.settings_test import specialtest
@@ -43,3 +44,8 @@ class TestHeliusAPI(unittest.TestCase):
         mint_addresses.append("somebadaddress")
         symbols = get_token_symbols_no_limit(mint_addresses)
         self.assertListEqual(symbols, ["COCO"] * 101 + [None])
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    unittest.main()

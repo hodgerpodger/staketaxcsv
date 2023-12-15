@@ -1,0 +1,13 @@
+{
+    "jsonrpc": "2.0",
+    "result": [
+        {
+            "amount": 12420643354,
+            "commission": 5,
+            "effectiveSlot": 199152000,
+            "epoch": 460,
+            "postBalance": 27728087293223
+        }
+    ],
+    "id": "be5adf2ee9f450f540cd7325740cdaea754ef660"
+}

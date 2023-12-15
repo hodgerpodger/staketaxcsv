@@ -73,7 +73,7 @@ def parse_args(ticker):
             type=str,
             help="(YYYY-MM-DD) Only include transactions after start_date (inclusive)",
         )
-    if ticker in (TICKER_ALGO):
+    if ticker in (TICKER_ALGO, TICKER_SOL):
         parser.add_argument(
             "--end_date",
             type=str,

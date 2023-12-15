@@ -276,7 +276,7 @@ class StakingRewardsDB:
         # Fill in epochs with reward=0 if db has data for that epoch
         for epoch in epochs:
             if epoch in epochs_in_db and epoch not in addr_rewards:
-                addr_rewards[epoch] = "0"
+                addr_rewards[epoch] = 0
 
         # Add timestamp field to output for each epoch/reward
         out = {}
@@ -284,7 +284,7 @@ class StakingRewardsDB:
             if epoch in epochs_in_db:
                 ts = epoch_timestamps[epoch]
                 amount = addr_rewards[epoch]
-                out[int(epoch)] = (ts, amount)
+                out[int(epoch)] = (ts, float(amount))
 
         return out
 

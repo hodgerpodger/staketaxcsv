@@ -8,8 +8,8 @@ from staketaxcsv.common.debug_util import use_debug_files
 from staketaxcsv.settings_csv import REPORTS_DIR, SOL_NODE
 from staketaxcsv.sol.config_sol import localconfig
 from staketaxcsv.sol.constants import BILLION, PROGRAMID_STAKE, PROGRAMID_TOKEN_ACCOUNTS
-
 TOKEN_ACCOUNTS = {}
+
 
 
 class RpcAPI(object):
@@ -172,6 +172,7 @@ class RpcAPI(object):
 
         result = cls._extract_token_accounts(data["result"]["value"])
         TOKEN_ACCOUNTS[wallet_address] = result
+
         return result
 
     @classmethod
@@ -234,16 +235,8 @@ class RpcAPI(object):
         return cls._fetch("getProgramAccounts", params_list)
 
     @classmethod
-    def _unix_timestamp(cls, thedate):
-        y, m, d = thedate.split("-")
-        dt = datetime(int(y), int(m), int(d))
-        return dt.replace(tzinfo=timezone.utc).timestamp()
-
-    @classmethod
-    def get_txids(cls, wallet_address, limit=None, before=None, min_date=None):
-        min_date_ts = cls._unix_timestamp(min_date) if min_date else None
-
-        data = cls._get_txids(wallet_address, limit, before)
+    def get_txids(cls, wallet_address, limit=None, before_txid=None):
+        data = cls._get_txids(wallet_address, limit, before_txid)
 
         if "result" not in data or data["result"] is None:
             return [], None
@@ -257,16 +250,11 @@ class RpcAPI(object):
                 continue
 
             txid = info["signature"]
+            block_time = info["blockTime"]
 
-            # Restrict to range (min_date, today) if min_date specified
-            if min_date_ts:
-                unix_timestamp = info["blockTime"]
-                if unix_timestamp < min_date_ts:
-                    return out, None
+            out.append((txid, block_time))
 
-            out.append(txid)
-
-        # Determine "before" argument in subsequent query: use last txid of this query
+        # Determine "before_txid" argument in subsequent query: use last txid of this query
         if data["result"]:
             last_txid = data["result"][-1]["signature"]
         else:
@@ -287,4 +275,4 @@ class RpcAPI(object):
             config
         ]
 
-        return cls._fetch("getConfirmedSignaturesForAddress2", params_list)
+        return cls._fetch("getSignaturesForAddress", params_list)
