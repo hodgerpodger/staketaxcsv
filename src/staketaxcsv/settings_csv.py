@@ -38,8 +38,6 @@ LUNA2_LCD_NODE = os.environ.get("STAKETAX_LUNA2_LCD_NODE", "https://phoenix-lcd.
 # Optional environment variables
 
 SOL_REWARDS_DB_READ = os.environ.get("STAKETAX_SOL_REWARDS_DB_READ", False)
-# Required for token address -> symbol translation for SOL CSV's (tokens after 2022)
-SOL_HELIUS_API_KEY = os.environ.get("STAKETAX_SOL_HELIUS_API_KEY", "")
 
 # #############################################################################
 

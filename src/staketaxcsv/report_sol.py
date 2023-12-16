@@ -20,9 +20,7 @@ from staketaxcsv.sol.config_sol import localconfig
 from staketaxcsv.sol.constants import PROGRAMID_STAKE
 from staketaxcsv.sol.progress_sol import SECONDS_PER_STAKING_ADDRESS, SECONDS_PER_TX, ProgressSol
 from staketaxcsv.sol.TxInfoSol import WalletInfo
-from staketaxcsv.sol.api_helius import get_token_symbols_no_limit
 from staketaxcsv.sol.txids import get_txids, get_txids_for_addresses
-from staketaxcsv.settings_csv import SOL_HELIUS_API_KEY
 
 
 RPC_TIMEOUT = 600  # seconds

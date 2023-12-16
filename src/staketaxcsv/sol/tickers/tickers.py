@@ -1,10 +1,9 @@
+import glob
 import json
 import logging
 import os
 
-# From https://github.com/solana-labs/token-list/blob/main/src/tokens/solana.tokenlist.json
-# https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json
-PATH_JSON = os.path.dirname(os.path.realpath(__file__)) + "/solana.tokenlist.json"
+TOKEN_LISTS_DIR = os.path.dirname(os.path.realpath(__file__)) + "/token_lists"
 
 
 class Tickers:
@@ -14,18 +13,29 @@ class Tickers:
     @classmethod
     def _load(cls):
         if cls.loaded is False:
-            logging.info("Loading {}".format(PATH_JSON))
-            with open(PATH_JSON) as f:
-                data = json.load(f)
-                for info in data["tokens"]:
-                    address = info["address"]
-                    symbol = info["symbol"]
+            json_files = glob.glob(os.path.join(TOKEN_LISTS_DIR, '*.json'))
 
-                    # extra stuff I can probably use later
-                    # name = info["name"]
-                    # logouri = info.get("logoURI")
+            # Extract dates from filenames and sort files by date
+            file_date_pairs = []
+            for file in json_files:
+                # Extract date part from filename
+                date_part = file.split('.')[-2]
+                if date_part.isdigit() and len(date_part) == 8:
+                    file_date_pairs.append((file, date_part))
 
-                    cls.tickers[address] = symbol
+            file_date_pairs.sort(key=lambda x: x[1])
+
+            # Load the JSON files in sorted order
+            for file, _ in file_date_pairs:
+                try:
+                    with open(file, 'r') as json_file:
+                        data = json.load(json_file)
+                        for address, symbol in data.items():
+                            cls.tickers.setdefault(address, symbol)
+                    logging.info("Loaded tickers json file = %s", json_file)
+                except Exception as e:
+                    logging.error(f"Error loading file {file}: {str(e)}")
+
             cls.loaded = True
 
     @classmethod

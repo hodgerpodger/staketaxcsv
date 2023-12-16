@@ -3,7 +3,6 @@ import json
 from staketaxcsv.sol.api_rpc import RpcAPI
 from tests.mock_query import mock_query_one_arg, mock_query_two_args, mock_query_three_args
 from staketaxcsv.settings_csv import TICKER_SOL
-from staketaxcsv.sol.api_helius import HeliusAPI
 
 
 class MockRpcAPI(RpcAPI):
@@ -40,15 +39,3 @@ class MockRpcAPI(RpcAPI):
     @classmethod
     def get_block_time(cls, block):
         return mock_query_one_arg(RpcAPI.get_block_time, block, TICKER_SOL + "/get_block_time")
-
-
-class MockHeliusAPI(HeliusAPI):
-
-    @classmethod
-    def _get_token_metadata(cls, mints_list):
-        # Convert the list to a JSON string and then hash it
-        mints_list_str = json.dumps(mints_list, sort_keys=True)
-        mints_list_hash = hashlib.md5(mints_list_str.encode()).hexdigest()
-
-        return mock_query_one_arg(HeliusAPI._get_token_metadata, mints_list,
-                                  TICKER_SOL + "/_get_token_metadata-" + mints_list_hash)
