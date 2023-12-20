@@ -39,6 +39,8 @@ LUNA2_LCD_NODE = os.environ.get("STAKETAX_LUNA2_LCD_NODE", "https://phoenix-lcd.
 
 SOL_REWARDS_DB_READ = os.environ.get("STAKETAX_SOL_REWARDS_DB_READ", False)
 
+MINTSCAN_KEY = os.environ.get("STAKETAX_MINTSCAN_KEY", "")
+
 # #############################################################################
 
 TICKER_ALGO = "ALGO"
