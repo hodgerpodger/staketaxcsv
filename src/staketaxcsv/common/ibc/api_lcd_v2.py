@@ -62,18 +62,19 @@ def get_txs_all(node, address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, sle
     max_pages = math.ceil(max_txs / limit)
 
     out = []
-
+    pages_total = 0
     for events_type in events_types:
         page = 1
 
         for _ in range(0, max_pages):
             message = f"Fetching page {page} for {events_type} ..."
-            progress.report(page, message, stage_name)
-
             elems, _, is_last_page = api.get_txs(address, events_type, page, limit, sleep_seconds)
             out.extend(elems)
 
             page += 1
+            pages_total += 1
+            progress.report(pages_total, message, stage_name)
+
             if is_last_page:
                 break
 

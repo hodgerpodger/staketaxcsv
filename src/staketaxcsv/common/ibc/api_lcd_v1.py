@@ -142,18 +142,18 @@ def get_txs_all(node, address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, sle
     max_pages = math.ceil(max_txs / limit)
 
     out = []
-    page_for_progress = 1
+    pages_total = 0
     for events_type in events_types:
         offset = 0
 
-        for _ in range(0, max_pages):
-            message = f"Fetching page {page_for_progress} for {events_type} ..."
-            progress.report(page_for_progress, message, stage_name)
-            page_for_progress += 1
-
+        for i in range(0, max_pages):
+            message = f"Fetching page {i} for {events_type} ..."
             elems, offset, _ = api.get_txs(address, events_type, offset, limit, sleep_seconds)
-
             out.extend(elems)
+
+            pages_total += 1
+            progress.report(pages_total, message, stage_name)
+
             if offset is None:
                 break
 
