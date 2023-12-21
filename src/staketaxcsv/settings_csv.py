@@ -5,6 +5,7 @@ import os
 ALGO_HIST_INDEXER_NODE = os.environ.get("STAKETAX_ALGO_HIST_INDEXER_NODE", "https://indexer.algoexplorerapi.io")
 ALGO_INDEXER_NODE = os.environ.get("STAKETAX_ALGO_INDEXER_NODE", "https://mainnet-idx.algonode.cloud")
 ALGO_NFDOMAINS = os.environ.get("STAKETAX_ALGO_NFDOMAINS", "https://api.nf.domains")
+ARCH_NODE = os.environ.get("STAKETAX_ARCH_NODE", "https://rest-archway.theamsolutions.info")
 ATOM_NODE = os.environ.get("STAKETAX_ATOM_NODE", "https://api.cosmos.network")
 BLD_NODE = os.environ.get("STAKETAX_BLD_NODE", "https://main.api.agoric.net")
 BTSG_NODE = os.environ.get("STAKETAX_BTSG_NODE", "https://lcd.explorebitsong.com")
@@ -34,12 +35,10 @@ STARS_RPC_NODES = [STARS_RPC_NODE]
 TERRA_LCD_NODE = os.environ.get("STAKETAX_TERRA_LCD_NODE", "https://lcd.terra.dev")
 TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
 LUNA2_LCD_NODE = os.environ.get("STAKETAX_LUNA2_LCD_NODE", "https://phoenix-lcd.terra.dev")
-ARCH_NODE = os.environ.get("STAKETAX_ARCH_NODE", "https://rest-archway.theamsolutions.info")
 
 # Optional environment variables
 
 SOL_REWARDS_DB_READ = os.environ.get("STAKETAX_SOL_REWARDS_DB_READ", False)
-
 MINTSCAN_KEY = os.environ.get("STAKETAX_MINTSCAN_KEY", "")
 
 # #############################################################################
