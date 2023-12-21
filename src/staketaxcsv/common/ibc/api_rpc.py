@@ -258,7 +258,8 @@ def _add_messages_from_logs(elem):
                 continue
 
             message = _make_message_from_event_attributes(event_attributes)
-            messages.append(message)
+            if message is not None:
+                messages.append(message)
 
     # add messages into the transaction body element
     elem["tx"]["body"] = {
@@ -271,6 +272,10 @@ def _make_message_from_event_attributes(event_attributes):
     for kv in event_attributes:
         key, value = kv["key"], kv["value"]
         message[key] = value
+
+    # seen in juno.  looks like malformed messages.  just skip.
+    if "action" not in message:
+        return None
 
     # set the message type field that LCD responses provide
     #
