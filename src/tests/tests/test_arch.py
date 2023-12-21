@@ -75,7 +75,6 @@ timestamp            tx_type   received_amount  received_currency  sent_amount  
         """
         self.assertEqual(result, correct_result.strip(), result)
 
-
     def test_transfer_out(self):
         result = run_test(
             "archway1r7v4a9n8z6cxtm4rde0y9r5jz8wmh90wrrxsv8",
@@ -88,4 +87,3 @@ timestamp            tx_type   received_amount  received_currency  sent_amount  
 -------------------  --------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
-
