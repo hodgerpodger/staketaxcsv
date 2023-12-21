@@ -23,7 +23,6 @@ REWARDS_GOLD_JSON = DATADIR + "/" + TICKER_SOL + "/rewards." + STAKING_ADDRESS +
 
 
 @specialtest
-@patch("staketaxcsv.sol.staking_rewards.RpcAPI", new=MockRpcAPI)
 class TestSolStakingRewards(unittest.TestCase):
     rewards_gold = None
 
@@ -36,10 +35,10 @@ class TestSolStakingRewards(unittest.TestCase):
         cls.rewards_gold = [tuple(item) for item in data]
 
     @patch("staketaxcsv.sol.staking_rewards.SOL_REWARDS_DB_READ", False)
-    @patch("staketaxcsv.sol.staking_rewards.RpcAPI.get_latest_epoch", return_value=142)
-    @patch("staketaxcsv.sol.staking_rewards_common.RpcAPI", MockRpcAPI)
-    def test_rewards_using_rpc(self, mock_get_lastest_epoch):
-        logging.basicConfig(level=logging.INFO)
+    @patch("staketaxcsv.sol.staking_rewards.RpcAPI", new=MockRpcAPI)
+    @patch("staketaxcsv.sol.staking_rewards_common.RpcAPI", new=MockRpcAPI)
+    @patch("staketaxcsv.sol.staking_rewards.get_epochs_all", return_value=list(range(132, 142)))
+    def test_rewards_using_rpc(self, mock_get_epochs_all):
         result = staking_rewards._rewards(STAKING_ADDRESS)
         self.assertEqual(result[:10], self.rewards_gold[:10])
 
