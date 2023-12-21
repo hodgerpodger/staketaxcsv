@@ -34,6 +34,7 @@ STARS_RPC_NODES = [STARS_RPC_NODE]
 TERRA_LCD_NODE = os.environ.get("STAKETAX_TERRA_LCD_NODE", "https://lcd.terra.dev")
 TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
 LUNA2_LCD_NODE = os.environ.get("STAKETAX_LUNA2_LCD_NODE", "https://phoenix-lcd.terra.dev")
+ARCH_NODE = os.environ.get("STAKETAX_ARCH_NODE", "https://rest-archway.theamsolutions.info")
 
 # Optional environment variables
 
@@ -66,6 +67,7 @@ TICKER_SCRT = "SCRT"
 TICKER_SOL = "SOL"
 TICKER_STARS = "STARS"
 TICKER_TORI = "TORI"
+TICKER_ARCH = "ARCH"
 
 DONATION_WALLETS = set([v for k, v in os.environ.items() if k.startswith("DONATION_WALLET_")])
 
