@@ -20,7 +20,6 @@ def get_txids(wallet_address, progress, start_date=None, end_date=None):
 
 def get_txids_for_addresses(addresses, progress, start_date=None, end_date=None):
     """ Returns transactions txids for all addresses in one list """
-    max_txs = localconfig.limit
     start_ts = _unix_timestamp(start_date + " 00:00:00") if start_date else None
     end_ts = _unix_timestamp(end_date + " 23:59:59") if end_date else None
 
@@ -30,6 +29,13 @@ def get_txids_for_addresses(addresses, progress, start_date=None, end_date=None)
         if progress and i % 10 == 0:
             message = f"Fetched txids for {i} of {len(addresses)} addresses..."
             progress.report_message(message)
+
+        # main wallet address: use max txs limit
+        # associated token accounts: use lower txs limit based off max txs limit
+        if i == 0:
+            max_txs = localconfig.limit
+        else:
+            max_txs = int(localconfig.limit / 10)
 
         # Get transaction txids for this token account
         before_txid = None
