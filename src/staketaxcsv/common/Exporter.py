@@ -1507,16 +1507,16 @@ class Exporter:
         logging.info("Wrote to %s", csvpath)
 
     def export_blockpit_csv(self, csvpath):
-        """ Experimental-state CSV for blockpit.io """
-        BLOCKPIT_TYPES = {
-            et.TX_TYPE_STAKING: "staking",
-            et.TX_TYPE_AIRDROP: "airdrop",
-            et.TX_TYPE_TRADE: "trade",
-            et.TX_TYPE_SPEND: "expense",
-            et.TX_TYPE_INCOME: "staking",
+        """ Writes CSV, suitable for import into blockpit.io """
+        BLOCKPIT_LABELS = {
+            et.TX_TYPE_STAKING: "Staking",
+            et.TX_TYPE_AIRDROP: "Airdrop",
+            et.TX_TYPE_TRADE: "Trade",
+            et.TX_TYPE_SPEND: "Payment",
+            et.TX_TYPE_INCOME: "Income",
             et.TX_TYPE_TRANSFER: "transfer",
             et.TX_TYPE_BORROW: "transfer",
-            et.TX_TYPE_REPAY: "transfer"
+            et.TX_TYPE_REPAY: "transfer",
         }
         rows = self._rows_export(et.FORMAT_BLOCKPIT)
 
@@ -1528,40 +1528,31 @@ class Exporter:
 
             # data rows
             for i, row in enumerate(rows):
-                # Determine Transaction Type
-                bl_type = BLOCKPIT_TYPES[row.tx_type]
-                if bl_type == "transfer":
+                # Determine Label
+                label = BLOCKPIT_LABELS[row.tx_type]
+                if label == "transfer":
                     if row.sent_amount:
-                        bl_type = "withdrawal"
+                        label = "Withdrawal"
                     else:
-                        bl_type = "deposit"
-
-                exchange_name = self.ticker + "_blockchain"
-                depot_name = "staketax_" + self.wallet_address
+                        label = "Deposit"
 
                 line = [
-                    self._blockpit_id(row),                   # id
-                    exchange_name,                            # exchange_name
-                    depot_name,                               # depot_name
-                    self._blockpit_timestamp(row.timestamp),  # transaction_date
-                    row.received_currency,                    # buy_asset
-                    row.received_amount,                      # buy_amount
-                    row.sent_currency,                        # sell_asset
-                    row.sent_amount,                          # sell_amount
-                    row.fee_currency,                         # fee_asset
-                    row.fee,                                  # fee_amount
-                    bl_type,                                  # transaction_type
+                    self._blockpit_timestamp(row.timestamp),  # Date (UTC)
+                    self.ticker + "_blockchain",              # Integration Name
+                    label,                                    # Label
+                    row.sent_currency,                        # Outgoing Asset
+                    row.sent_amount,                          # Outgoing Amount
+                    row.received_currency,                    # Incoming Asset
+                    row.received_amount,                      # Incoming Amount
+                    row.fee_currency,                         # Fee Asset (optional)
+                    row.fee,                                  # Fee Amount (optional)
+                    row.comment,                              # Comment (optional)
+                    row.txid,                                 # Trx. ID (optional)
                 ]
+
                 mywriter.writerow(line)
 
         logging.info("Wrote to %s", csvpath)
-
-    def _blockpit_id(self, row):
-        # Convert "2021-08-04 15:25:43" to "14.08.2021 15:25:43"
-        dt = datetime.strptime(row.timestamp, "%Y-%m-%d %H:%M:%S")
-
-        id = str(int(time.mktime(dt.timetuple())))
-        return id
 
     def _blockpit_timestamp(self, ts):
         # Convert "2021-08-04 15:25:43" to "14.08.2021 15:25:43"
