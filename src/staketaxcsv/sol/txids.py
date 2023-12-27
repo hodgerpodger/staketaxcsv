@@ -35,7 +35,7 @@ def get_txids_for_addresses(addresses, progress, start_date=None, end_date=None)
         if i == 0:
             max_txs = localconfig.limit
         else:
-            max_txs = int(localconfig.limit / 10)
+            max_txs = int(localconfig.limit / 5)
 
         # Get transaction txids for this token account
         before_txid = None
