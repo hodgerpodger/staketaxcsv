@@ -1507,7 +1507,7 @@ class Exporter:
         logging.info("Wrote to %s", csvpath)
 
     def export_blockpit_csv(self, csvpath):
-        """ Writes CSV, suitable for import into blockpit.io """
+        """ Writes CSV, whose xlsx translation is suitable for import into blockpit.io """
         BLOCKPIT_LABELS = {
             et.TX_TYPE_STAKING: "Staking",
             et.TX_TYPE_AIRDROP: "Airdrop",
