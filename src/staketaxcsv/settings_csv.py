@@ -8,6 +8,7 @@ ALGO_NFDOMAINS = os.environ.get("STAKETAX_ALGO_NFDOMAINS", "https://api.nf.domai
 ARCH_NODE = os.environ.get("STAKETAX_ARCH_NODE", "https://rest-archway.theamsolutions.info")
 ATOM_NODE = os.environ.get("STAKETAX_ATOM_NODE", "https://api.cosmos.network")
 BLD_NODE = os.environ.get("STAKETAX_BLD_NODE", "https://main.api.agoric.net")
+BLD_RPC_NODE = os.environ.get("STAKETAX_BLD_RPC_NODE", "")
 BTSG_NODE = os.environ.get("STAKETAX_BTSG_NODE", "https://lcd.explorebitsong.com")
 COVALENT_NODE = os.environ.get("STAKETAX_COVALENT_NODE", "https://api.covalenthq.com")
 DVPN_LCD_NODE = os.environ.get("STAKETAX_DVPN_LCD_NODE", "https://lcd.sentinel.co")
