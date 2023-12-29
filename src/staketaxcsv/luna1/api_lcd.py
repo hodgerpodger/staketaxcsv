@@ -26,6 +26,13 @@ class LcdAPI:
         return data
 
     @classmethod
+    def contract_history(cls, contract):
+        uri = "/cosmwasm/wasm/v1/contract/{}/history".format(contract)
+        logging.info("Querying lcd for contract history of %s ...", contract)
+        data = cls._query(uri, {})
+        return data
+
+    @classmethod
     def _query(cls, uri_path, query_params, sleep_seconds=1):
         url = f"{TERRA_LCD_NODE}{uri_path}"
         logging.info("Requesting url %s?%s", url, urlencode(query_params))
