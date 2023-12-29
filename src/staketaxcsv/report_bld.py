@@ -16,6 +16,7 @@ from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import BLD_NODE, TICKER_BLD, BLD_RPC_NODE
 BLD_RPC_NODES = [BLD_RPC_NODE]
+LIMIT_TXS_PER_QUERY = 20
 
 
 def main():
@@ -44,7 +45,7 @@ def txone(wallet_address, txid):
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
     num_pages, num_txs = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
-        BLD_RPC_NODES, wallet_address, max_txs
+        BLD_RPC_NODES, wallet_address, max_txs, LIMIT_TXS_PER_QUERY
     )
 
     return SECONDS_PER_PAGE * num_pages + SECONDS_PER_TX * num_txs
@@ -62,11 +63,11 @@ def txhistory(wallet_address):
 
     # Fetch count of transactions to estimate progress more accurately
     staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
-        BLD_RPC_NODES, wallet_address, max_txs, progress)
+        BLD_RPC_NODES, wallet_address, max_txs, progress, LIMIT_TXS_PER_QUERY)
 
     # Fetch transactions
     elems = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_all(
-        BLD_RPC_NODES, wallet_address, progress, max_txs
+        BLD_RPC_NODES, wallet_address, progress, max_txs, limit=LIMIT_TXS_PER_QUERY
     )
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
