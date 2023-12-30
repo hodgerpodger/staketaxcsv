@@ -45,7 +45,7 @@ def txone(wallet_address, txid):
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
     num_pages, num_txs = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
-        BLD_RPC_NODES, wallet_address, max_txs, LIMIT_TXS_PER_QUERY
+        BLD_RPC_NODES, wallet_address, max_txs, limit=LIMIT_TXS_PER_QUERY
     )
 
     return SECONDS_PER_PAGE * num_pages + SECONDS_PER_TX * num_txs
