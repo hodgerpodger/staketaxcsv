@@ -54,6 +54,14 @@ docker run --platform linux/amd64 -it --volume $PWD:/staketaxcsv staketaxcsv bas
 # https://github.com/hodgerpodger/staketaxcsv#usage
 ```
 
+# PYTHONPATH Issues
+
+* It may be necessary to edit the `PYTHONPATH` if you encounter import errors.
+* For example, you can add to ~/.bash_profile or ~/.bashrc (and restart shell):
+  ```
+  export PYTHONPATH=$PYTHONPATH:<INSERT_PATH_TO_REPO_HERE>/src`
+  ```  
+
 # Run CSV job with no transaction limit
 
 This is a common support request.  I provide some details here for those interested.  Steps:
