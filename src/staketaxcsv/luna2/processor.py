@@ -12,7 +12,7 @@ from staketaxcsv.luna2.config_luna2 import localconfig
 
 # These imports add to CONTRACTS dict
 from staketaxcsv.luna2.contracts.config import CONTRACTS
-from staketaxcsv.settings_csv import LUNA2_LCD_NODE
+from staketaxcsv.settings_csv import LUNA2_NODE
 import staketaxcsv.luna2.contracts.astroport
 import staketaxcsv.luna2.contracts.general
 import staketaxcsv.luna2.contracts.valkyrie
@@ -52,7 +52,7 @@ def process_tx(wallet_address, elem, exporter):
 
 def _txinfo(wallet_address, elem):
     txinfo = staketaxcsv.common.ibc.processor.txinfo(
-        wallet_address, elem, "luna2", localconfig.ibc_addresses, LUNA2_LCD_NODE)
+        wallet_address, elem, "luna2", localconfig.ibc_addresses, LUNA2_NODE)
 
     # Edit url, since terra not in mintscan
     txid = elem["txhash"]
@@ -103,7 +103,7 @@ def _get_contract_data(address):
     if address in localconfig.contracts:
         return localconfig.contracts[address]
 
-    data = CosmWasmLcdAPI(LUNA2_LCD_NODE).contract(address)
+    data = CosmWasmLcdAPI(LUNA2_NODE).contract(address)
 
     localconfig.contracts[address] = data
     return data

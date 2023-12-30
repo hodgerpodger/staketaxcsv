@@ -17,7 +17,7 @@ from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.common.ibc.api_rpc import RpcAPI
 from staketaxcsv.dvpn.config_dvpn import localconfig
 from staketaxcsv.dvpn.progress_dvpn import LCD_SECONDS_PER_PAGE, ProgressDvpn
-from staketaxcsv.settings_csv import DVPN_LCD_NODE, DVPN_RPC_NODE, TICKER_DVPN
+from staketaxcsv.settings_csv import DVPN_NODE, DVPN_NODE_RPC, TICKER_DVPN
 
 
 def main():
@@ -31,19 +31,19 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(DVPN_LCD_NODE).account_exists(wallet_address)
+    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(DVPN_NODE).account_exists(wallet_address)
 
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return LCD_SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(DVPN_LCD_NODE, wallet_address, max_txs)
+    return LCD_SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(DVPN_NODE, wallet_address, max_txs)
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(DVPN_LCD_NODE).get_tx(txid)
+    elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(DVPN_NODE).get_tx(txid)
     if not elem:
-        elem = RpcAPI(DVPN_RPC_NODE).get_tx(txid)
-        staketaxcsv.common.ibc.api_rpc.normalize_rpc_txns(DVPN_RPC_NODE, [elem])
+        elem = RpcAPI(DVPN_NODE_RPC).get_tx(txid)
+        staketaxcsv.common.ibc.api_rpc.normalize_rpc_txns(DVPN_NODE_RPC, [elem])
 
     exporter = Exporter(wallet_address, localconfig, TICKER_DVPN)
     txinfo = staketaxcsv.dvpn.processor.process_tx(wallet_address, elem, exporter)
@@ -62,17 +62,17 @@ def txhistory(wallet_address):
 
     # LCD - fetch count of transactions to estimate progress more accurately
     lcd_count_pages = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(
-        DVPN_LCD_NODE, wallet_address, max_txs, debug=localconfig.debug)
+        DVPN_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_lcd_estimate(lcd_count_pages)
     # RPC - fetch count of transactions to estimate progress more accurately
     rpc_count_pages, _ = staketaxcsv.common.ibc.api_rpc.get_txs_pages_count(
-        DVPN_RPC_NODE, wallet_address, max_txs, debug=localconfig.debug)
+        DVPN_NODE_RPC, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_rpc_estimate(rpc_count_pages)
 
     # LCD - fetch transactions
-    lcd_elems = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(DVPN_LCD_NODE, wallet_address, progress, max_txs,
-                                               debug=localconfig.debug,
-                                               stage_name="lcd")
+    lcd_elems = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(DVPN_NODE, wallet_address, progress, max_txs,
+                                                              debug=localconfig.debug,
+                                                              stage_name="lcd")
 
     # Some older transaction types can no longer be processed through the latest sentinelhub LCD api (version 0.9.2 at time of writing).
     # Example failure message:
@@ -82,10 +82,10 @@ def txhistory(wallet_address):
     # Only found cases of this when the address is the sender, so the `events_types` queried are limited.
 
     # RPC - fetch transactions
-    rpc_elems = staketaxcsv.common.ibc.api_rpc.get_txs_all(DVPN_RPC_NODE, wallet_address, progress, max_txs,
-                                               debug=localconfig.debug,
-                                               stage_name="rpc",
-                                               events_types=[staketaxcsv.common.ibc.api_common.EVENTS_TYPE_SENDER])
+    rpc_elems = staketaxcsv.common.ibc.api_rpc.get_txs_all(DVPN_NODE_RPC, wallet_address, progress, max_txs,
+                                                           debug=localconfig.debug,
+                                                           stage_name="rpc",
+                                                           events_types=[staketaxcsv.common.ibc.api_common.EVENTS_TYPE_SENDER])
 
     # See if there were any missing transactions between the LCD and RPC scans
     lcd_tx_hashes = set([e["txhash"] for e in lcd_elems])
@@ -100,7 +100,7 @@ def txhistory(wallet_address):
             lambda e, hashes=missing_tx_hashes: e["hash"] in hashes,
             rpc_elems
         ))
-        staketaxcsv.common.ibc.api_rpc.normalize_rpc_txns(DVPN_RPC_NODE, missing_elems)
+        staketaxcsv.common.ibc.api_rpc.normalize_rpc_txns(DVPN_NODE_RPC, missing_elems)
 
         elems.extend(missing_elems)
 

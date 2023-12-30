@@ -8,16 +8,15 @@ ALGO_NFDOMAINS = os.environ.get("STAKETAX_ALGO_NFDOMAINS", "https://api.nf.domai
 ARCH_NODE = os.environ.get("STAKETAX_ARCH_NODE", "https://rest-archway.theamsolutions.info")
 ATOM_NODE = os.environ.get("STAKETAX_ATOM_NODE", "https://api.cosmos.network")
 BLD_NODE = os.environ.get("STAKETAX_BLD_NODE", "https://main.api.agoric.net")
-BLD_RPC_NODE = os.environ.get("STAKETAX_BLD_RPC_NODE", "")
+BLD_NODE_RPC = os.environ.get("STAKETAX_BLD_RPC_NODE", "")
 BTSG_NODE = os.environ.get("STAKETAX_BTSG_NODE", "https://lcd.explorebitsong.com")
-COVALENT_NODE = os.environ.get("STAKETAX_COVALENT_NODE", "https://api.covalenthq.com")
-DVPN_LCD_NODE = os.environ.get("STAKETAX_DVPN_LCD_NODE", "https://lcd.sentinel.co")
-DVPN_RPC_NODE = os.environ.get("STAKETAX_DVPN_RPC_NODE", "https://rpc.sentinel.co")
+DVPN_NODE = os.environ.get("STAKETAX_DVPN_NODE", "https://lcd.sentinel.co")
+DVPN_NODE_RPC = os.environ.get("STAKETAX_DVPN_NODE_RPC", "https://rpc.sentinel.co")
 EVMOS_NODE = os.environ.get("STAKETAX_EVMOS_NODE", "")
 FET_NODE = os.environ.get("STAKETAX_FET_NODE", "https://rest-fetchhub.fetch.ai")
 HUAHUA_NODE = os.environ.get("STAKETAX_HUAHUA_NODE", "")
 JUNO_NODE = os.environ.get("STAKETAX_JUNO_NODE", "")
-JUNO_RPC_NODES = [
+JUNO_NODES_RPC = [
     "https://rpc-archive.junonetwork.io",      # 4136532 to now
     "https://rpc-v3-archive.junonetwork.io",   # 2578099 to #4136530
     "https://rpc-v2-archive.junonetwork.io",   # 1 to #2578097
@@ -31,9 +30,9 @@ ROWAN_NODE = os.environ.get("STAKETAX_ROWAN_NODE", "")
 SCRT_NODE = os.environ.get("STAKETAX_SCRT_NODE", "")
 SOL_NODE = os.environ.get("STAKETAX_SOL_NODE", "https://api.mainnet-beta.solana.com")
 STARS_NODE = os.environ.get("STAKETAX_STARS_NODE", "")
-TERRA_LCD_NODE = os.environ.get("STAKETAX_TERRA_LCD_NODE", "https://lcd.terra.dev")
+TERRA_NODE = os.environ.get("STAKETAX_TERRA_NODE", "https://lcd.terra.dev")
 TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
-LUNA2_LCD_NODE = os.environ.get("STAKETAX_LUNA2_LCD_NODE", "https://phoenix-lcd.terra.dev")
+LUNA2_NODE = os.environ.get("STAKETAX_LUNA2_NODE", "https://phoenix-lcd.terra.dev")
 
 # Optional environment variables
 

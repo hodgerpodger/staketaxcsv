@@ -19,7 +19,7 @@ from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.juno.config_juno import localconfig
 from staketaxcsv.juno.progress_juno import SECONDS_PER_PAGE, ProgressJuno, SECONDS_PER_TX
-from staketaxcsv.settings_csv import JUNO_NODE, TICKER_JUNO, JUNO_RPC_NODES
+from staketaxcsv.settings_csv import JUNO_NODE, TICKER_JUNO, JUNO_NODES_RPC
 
 
 def main():
@@ -37,7 +37,7 @@ def wallet_exists(wallet_address):
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_rpc_multinode.get_tx(JUNO_RPC_NODES, txid)
+    elem = staketaxcsv.common.ibc.api_rpc_multinode.get_tx(JUNO_NODES_RPC, txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_JUNO)
     txinfo = staketaxcsv.juno.processor.process_tx(wallet_address, elem, exporter)
@@ -48,7 +48,7 @@ def txone(wallet_address, txid):
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
     num_pages, num_txs = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
-        JUNO_RPC_NODES, wallet_address, max_txs)
+        JUNO_NODES_RPC, wallet_address, max_txs)
 
     return SECONDS_PER_PAGE * num_pages + SECONDS_PER_TX * num_txs
 
@@ -64,10 +64,10 @@ def txhistory(wallet_address):
 
     # Fetch count of transactions to estimate progress beforehand
     staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
-        JUNO_RPC_NODES, wallet_address, max_txs, progress)
+        JUNO_NODES_RPC, wallet_address, max_txs, progress)
 
     # Fetch transactions
-    elems = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_all(JUNO_RPC_NODES, wallet_address, progress, max_txs)
+    elems = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_all(JUNO_NODES_RPC, wallet_address, progress, max_txs)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.juno.processor.process_txs(wallet_address, elems, exporter)

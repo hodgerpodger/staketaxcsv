@@ -14,8 +14,8 @@ from staketaxcsv.bld.progress_bld import SECONDS_PER_PAGE, ProgressBld, SECONDS_
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.settings_csv import BLD_NODE, TICKER_BLD, BLD_RPC_NODE
-BLD_RPC_NODES = [BLD_RPC_NODE]
+from staketaxcsv.settings_csv import BLD_NODE, TICKER_BLD, BLD_NODE_RPC
+BLD_RPC_NODES = [BLD_NODE_RPC]
 LIMIT_TXS_PER_QUERY = 20
 
 

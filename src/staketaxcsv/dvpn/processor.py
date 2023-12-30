@@ -3,7 +3,7 @@ import staketaxcsv.common.ibc.processor
 import staketaxcsv.dvpn.constants as co
 from staketaxcsv.common.make_tx import make_spend_fee_tx, make_spend_tx
 from staketaxcsv.dvpn.config_dvpn import localconfig
-from staketaxcsv.settings_csv import DVPN_LCD_NODE
+from staketaxcsv.settings_csv import DVPN_NODE
 
 _handled_fee_spend_tx_hashes = set()
 
@@ -34,7 +34,7 @@ def process_txs(wallet_address, elems, exporter):
 
 def process_tx(wallet_address, elem, exporter):
     txinfo = staketaxcsv.common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_DVPN, localconfig.ibc_addresses, DVPN_LCD_NODE)
+        wallet_address, elem, co.MINTSCAN_LABEL_DVPN, localconfig.ibc_addresses, DVPN_NODE)
 
     if txinfo.is_failed:
         staketaxcsv.common.ibc.processor.handle_failed_transaction(exporter, txinfo)

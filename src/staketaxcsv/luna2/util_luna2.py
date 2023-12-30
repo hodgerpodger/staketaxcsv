@@ -2,7 +2,7 @@ from staketaxcsv.common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI, extract_msg
 from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 from staketaxcsv.luna2.config_luna2 import localconfig
 from staketaxcsv.luna2.constants import MILLION
-from staketaxcsv.settings_csv import LUNA2_LCD_NODE
+from staketaxcsv.settings_csv import LUNA2_NODE
 
 
 def _contract_address_to_currency(address):
@@ -10,7 +10,7 @@ def _contract_address_to_currency(address):
         currency, decimals = localconfig.currency_addresses[address]
         return currency, int(decimals)
 
-    data = CosmWasmLcdAPI(LUNA2_LCD_NODE).contract_history(address)
+    data = CosmWasmLcdAPI(LUNA2_NODE).contract_history(address)
     msg = extract_msg(data)
 
     currency = msg["symbol"]
@@ -31,7 +31,7 @@ def asset_to_currency(amount_raw, asset):
         amount = float(amount_raw) / (10 ** decimals)
         return amount, currency
     else:
-        return MsgInfoIBC.amount_currency_from_raw(amount_raw, asset, LUNA2_LCD_NODE, localconfig.ibc_addresses)
+        return MsgInfoIBC.amount_currency_from_raw(amount_raw, asset, LUNA2_NODE, localconfig.ibc_addresses)
 
 
 def amount_assets_to_currency(amount_assets_raw):
@@ -70,7 +70,7 @@ def _lp_asset_to_currency(lp_asset):
     if lp_asset in localconfig.lp_currency_addresses:
         return localconfig.lp_currency_addresses[lp_asset]
 
-    data = CosmWasmLcdAPI(LUNA2_LCD_NODE).contract_history(lp_asset)
+    data = CosmWasmLcdAPI(LUNA2_NODE).contract_history(lp_asset)
     msg = extract_msg(data)
 
     # Extract pair of currencies in LP pair
@@ -79,7 +79,7 @@ def _lp_asset_to_currency(lp_asset):
         currency2 = _asset_info_to_currency(msg["asset_infos"][1])
     elif "mint" in msg:
         minter = msg["mint"]["minter"]
-        data = CosmWasmLcdAPI(LUNA2_LCD_NODE).contract_history(minter)
+        data = CosmWasmLcdAPI(LUNA2_NODE).contract_history(minter)
         msg = extract_msg(data)
         currency1 = _asset_info_to_currency(msg["asset_infos"][0])
         currency2 = _asset_info_to_currency(msg["asset_infos"][1])
