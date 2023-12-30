@@ -3,6 +3,7 @@ import random
 import time
 from datetime import datetime, timezone
 import requests
+from requests.exceptions import JSONDecodeError, Timeout
 
 from staketaxcsv.common.debug_util import use_debug_files
 from staketaxcsv.settings_csv import REPORTS_DIR, SOL_NODE
@@ -14,6 +15,48 @@ TOKEN_ACCOUNTS = {}
 class RpcAPI(object):
     session = requests.Session()
 
+    @classmethod
+    def _make_request_with_retries(cls, url, data, headers):
+        retries = 4
+        backoff_factor = 5
+
+        for attempt in range(retries):
+            try:
+                response = cls.session.post(url, json=data, headers=headers)
+                return response.json()  # Parse and return JSON here
+
+            except (JSONDecodeError, Timeout, TimeoutError) as e:
+                logging.warning(f"Error on attempt {attempt + 1}: {e}")
+                if attempt < retries - 1:
+                    wait_time = backoff_factor * (2 ** attempt)
+                    logging.info(f"Waiting {wait_time} seconds before retrying...")
+                    time.sleep(wait_time)
+                else:
+                    logging.error("Max retries reached. Unable to get a valid response.")
+                    raise
+
+        raise Exception("Failed to fetch data after maximum retries.")
+
+    @classmethod
+    def _fetch(cls, method, params_list):
+        myid = "be5adf2ee9f450f540cd7325740cdaea754ef660"
+        data = {
+            "method": method,
+            "jsonrpc": "2.0",
+            "params": params_list,
+            "id": myid
+        }
+
+        result = cls._make_request_with_retries(SOL_NODE, data, {})
+
+        if "api.mainnet-beta.solana.com" in SOL_NODE:
+            time.sleep(0.3)
+        else:
+            time.sleep(0.1)
+
+        return result
+
+    """
     @classmethod
     def _fetch(cls, method, params_list):
         myid = "be5adf2ee9f450f540cd7325740cdaea754ef660"
@@ -44,13 +87,7 @@ class RpcAPI(object):
             time.sleep(0.1)
 
         return result
-
-    @classmethod
-    def _is_rate_limit_exceeded(cls, result):
-        if "error" in result and "code" in result["error"] and result["error"]["code"] == 429:
-            return True
-        else:
-            return False
+    """
 
     @classmethod
     def fetch_account(cls, address):
