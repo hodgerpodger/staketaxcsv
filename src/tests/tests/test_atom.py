@@ -16,6 +16,7 @@ import staketaxcsv.report_atom
 
 
 @patch("staketaxcsv.report_atom.LcdAPI_v1", new=MockLcdAPI_v1)
+@patch("staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1", new=MockLcdAPI_v1)
 def run_test(wallet_address, txid):
     exporter = staketaxcsv.report_atom.txone(wallet_address, txid)
     return exporter.export_for_test()
@@ -46,5 +47,29 @@ timestamp            tx_type   received_amount  received_currency  sent_amount  
 timestamp            tx_type   received_amount  received_currency  sent_amount  sent_currency  fee  fee_currency  txid
 2023-12-07 03:13:04  TRANSFER  2.0              ATOM                                                              EAE059242FB773F07526E7564065F30BB6BE85A451CF19A1D06F479F44B4EC5F-0
 -------------------  --------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
+
+    def test_withdraw_rewards_with_st_coins(self):
+        result = run_test(
+            "cosmos12ftp45z2mj8skpv355hyexfrtq5dp4gz8pzwpt",
+            "14BCA0CFC636254E79F090BCB6F07176E5A721B6ED5FA36A60EDFF5829153DCC"
+        )
+        correct_result = """
+-------------------  -------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
+timestamp            tx_type  received_amount  received_currency  sent_amount  sent_currency  fee       fee_currency  txid
+2023-12-30 07:57:59  STAKING  0.000028000      NTRN                                           0.004073  ATOM          14BCA0CFC636254E79F090BCB6F07176E5A721B6ED5FA36A60EDFF5829153DCC-0
+2023-12-30 07:57:59  STAKING  0.000010000      stOSMO                                                                 14BCA0CFC636254E79F090BCB6F07176E5A721B6ED5FA36A60EDFF5829153DCC-0
+2023-12-30 07:57:59  STAKING  0.000025000      STRD                                                                   14BCA0CFC636254E79F090BCB6F07176E5A721B6ED5FA36A60EDFF5829153DCC-0
+2023-12-30 07:57:59  STAKING  0.000024000      stSTARS                                                                14BCA0CFC636254E79F090BCB6F07176E5A721B6ED5FA36A60EDFF5829153DCC-0
+2023-12-30 07:57:59  STAKING  0.000001000      stJUNO                                                                 14BCA0CFC636254E79F090BCB6F07176E5A721B6ED5FA36A60EDFF5829153DCC-0
+2023-12-30 07:57:59  STAKING  0.000000025      stINJ                                                                  14BCA0CFC636254E79F090BCB6F07176E5A721B6ED5FA36A60EDFF5829153DCC-0
+2023-12-30 07:57:59  STAKING  0.000001000      stATOM                                                                 14BCA0CFC636254E79F090BCB6F07176E5A721B6ED5FA36A60EDFF5829153DCC-0
+2023-12-30 07:57:59  STAKING  0.000015306      stEVMOS                                                                14BCA0CFC636254E79F090BCB6F07176E5A721B6ED5FA36A60EDFF5829153DCC-0
+2023-12-30 07:57:59  STAKING  0.000013000      stUMEE                                                                 14BCA0CFC636254E79F090BCB6F07176E5A721B6ED5FA36A60EDFF5829153DCC-0
+2023-12-30 07:57:59  STAKING  0.000002000      stCMDX                                                                 14BCA0CFC636254E79F090BCB6F07176E5A721B6ED5FA36A60EDFF5829153DCC-0
+2023-12-30 07:57:59  STAKING  0.000018000      USDC                                                                   14BCA0CFC636254E79F090BCB6F07176E5A721B6ED5FA36A60EDFF5829153DCC-0
+2023-12-30 07:57:59  STAKING  0.012508         ATOM                                                                   14BCA0CFC636254E79F090BCB6F07176E5A721B6ED5FA36A60EDFF5829153DCC-0
+-------------------  -------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)

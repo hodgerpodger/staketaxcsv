@@ -1,0 +1,6 @@
+{
+    "denom_trace": {
+        "path": "transfer/channel-569/transfer/channel-2",
+        "base_denom": "uusdc"
+    }
+}

@@ -265,6 +265,10 @@ class MsgInfoIBC:
             amount = float(amount_raw) / co.MILLION
             currency = currency_raw[1:].upper()
             return amount, currency
+        elif currency_raw.startswith("st"):
+            # i.e. stinj, stujuno, staevmos
+            amt, cur = MsgInfoIBC._amount_currency_convert(amount_raw, currency_raw[2:])
+            return amt, "st" + cur
         else:
             logging.error("_amount_currency_from_raw(): no case for amount_raw={}, currency_raw={}".format(
                 amount_raw, currency_raw))
