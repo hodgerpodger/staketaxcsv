@@ -16,9 +16,9 @@ import staketaxcsv.stars.processor
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.settings_csv import STARS_NODE, TICKER_STARS, STARS_RPC_NODES
+from staketaxcsv.settings_csv import STARS_NODE, TICKER_STARS
 from staketaxcsv.stars.config_stars import localconfig
-from staketaxcsv.stars.progress_stars import SECONDS_PER_PAGE, ProgressStars, SECONDS_PER_TX
+from staketaxcsv.stars.progress_stars import SECONDS_PER_PAGE, ProgressStars
 
 
 def main():

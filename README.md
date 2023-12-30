@@ -1,9 +1,10 @@
 
 # staketaxcsv
 
-* Python repository to create blockchain CSVs for Algorand (ALGO), Cosmos (ATOM), Agoric (BLD), Bitsong (BTSG),
-  Sentinel (DVPN), Evmos (EVMOS), Fetch.ai (FET), Chihuahua (HUAHUA), IoTex (IOTX), Juno (JUNO), Kujira (KUJI),
-  KYVE Network (KYVE), Terra Classic (LUNC), Terra 2.0 (LUNA), Osmosis (OSMO), Solana (SOL), and Stargaze (STARS) blockchains. 
+* Python repository to create blockchain CSVs for Algorand (ALGO), Archway (ARCH), Cosmos (ATOM), 
+  Agoric (BLD), Bitsong (BTSG), Sentinel (DVPN), Evmos (EVMOS), Fetch.ai (FET), Chihuahua (HUAHUA), 
+  IoTex (IOTX), Juno (JUNO), Kujira (KUJI), KYVE Network (KYVE), Terra Classic (LUNC), Terra 2.0 (LUNA), 
+  Osmosis (OSMO), Solana (SOL), and Stargaze (STARS) blockchains. 
 * CSV codebase for <https://stake.tax>
 * Contributions/PRs highly encouraged, such as support for new txs, blockchains, or CSV formats.  Examples:
   * Add cosmo-based-blockchain CSV: https://docs.stake.tax/devs/adding-csv-in-cosmos-based-ecosystem
