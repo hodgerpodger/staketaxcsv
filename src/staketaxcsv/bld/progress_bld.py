@@ -2,7 +2,7 @@ from staketaxcsv.bld.config_bld import localconfig
 from staketaxcsv.common.progress_rpc_nodes import ProgressRpc
 
 SECONDS_PER_PAGE = 4
-SECONDS_PER_TX = 0.7
+SECONDS_PER_TX = 0.4
 
 
 class ProgressBld(ProgressRpc):
