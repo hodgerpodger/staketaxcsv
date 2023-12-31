@@ -1,7 +1,7 @@
 from staketaxcsv.common.progress import Progress
 from staketaxcsv.kuji.config_kuji import localconfig
 
-SECONDS_PER_PAGE = 4
+SECONDS_PER_PAGE = 25
 
 
 class ProgressKuji(Progress):
