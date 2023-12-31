@@ -15,6 +15,7 @@ from staketaxcsv.common.ibc.api_common import (
     remove_duplicates,
 )
 from staketaxcsv.settings_csv import REPORTS_DIR
+from staketaxcsv.common.query import get_with_retries
 
 
 class LcdAPI_v1:
@@ -28,11 +29,11 @@ class LcdAPI_v1:
     def _query(self, uri_path, query_params, sleep_seconds=0):
         url = f"{self.node}{uri_path}"
         logging.info("Requesting url %s?%s ...", url, urlencode(query_params))
-        response = self.session.get(url, params=query_params)
+        data = get_with_retries(self.session, url, query_params, {})
 
         if sleep_seconds:
             time.sleep(sleep_seconds)
-        return response.json()
+        return data
 
     def _node_info(self):
         uri_path = f"/cosmos/base/tendermint/v1beta1/node_info"

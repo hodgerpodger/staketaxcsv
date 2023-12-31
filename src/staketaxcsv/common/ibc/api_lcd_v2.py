@@ -47,11 +47,35 @@ class LcdAPI_v2(LcdAPI_v1):
         if data.get("code") == 3:
             return [], 0, True
 
+        if data.get("code") == 8 and "grpc: received message larger than max" in data.get("message", ""):
+            logging.warning("Received grpc message too large.  "
+                            "Will retry by getting one tx at a time...")
+            return self._get_txs_one_by_one(wallet_address, events_type, page, limit, sleep_seconds)
+
         elems = data["tx_responses"]
         total_count_txs = int(data["total"])
         is_last_page = (page >= math.ceil(total_count_txs / limit))
 
         return elems, total_count_txs, is_last_page
+
+    def _get_txs_one_by_one(self, wallet_address, events_type, page, limit, sleep_seconds):
+        """ Rewrites original query by retrieving set of txs one-by-one. """
+        p_start = (page-1) * limit + 1
+        p_end = page * limit
+
+        elems = []
+        for p in range(p_start, p_end + 1):
+            logging.info("Fetching p=%s ...", p)
+            data = self._get_txs(wallet_address, events_type, p, 1, sleep_seconds)
+            elems.extend(data["tx_responses"])
+
+            if p == p_end:
+                total_count_txs = int(data["total"])
+                is_last_page = (p >= math.ceil(total_count_txs))
+
+                return elems, total_count_txs, is_last_page
+
+        return [], 0, True
 
 
 def get_txs_all(node, address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, sleep_seconds=1,
