@@ -6,10 +6,10 @@ import logging
 import math
 import time
 from urllib.parse import urlencode
-from requests.exceptions import JSONDecodeError
-
 import requests
 from dateutil import parser
+
+from staketaxcsv.common.query import get_with_retries
 from staketaxcsv.common.ibc.api_common import (
     EVENTS_TYPE_LIST_DEFAULT,
     EVENTS_TYPE_RECIPIENT,
@@ -35,32 +35,11 @@ class RpcAPI:
     def _query(self, uri_path, query_params, sleep_seconds=0.0):
         url = f"{self.node}{uri_path}"
         logging.info("Requesting url %s?%s ...", url, urlencode(query_params))
-        json_response = self._make_request_with_retries(url, query_params)
+        json_response = get_with_retries(self.session, url, query_params, {})
+
         if sleep_seconds:
             time.sleep(sleep_seconds)
         return json_response
-
-    def _make_request_with_retries(self, url, params):
-        retries = 3  # Hardcoded number of retries
-        backoff_factor = 1  # Hardcoded backoff factor
-
-        for attempt in range(retries):
-            try:
-                response = self.session.get(url, params=params)
-                return response.json()  # Parse JSON here
-
-            except JSONDecodeError as e:
-                logging.warning("JSONDecodeError occurred: %s", e)
-                if attempt < retries - 1:
-                    wait_time = backoff_factor * (2 ** attempt)
-                    logging.info("Waiting %s seconds before retrying...", wait_time)
-                    time.sleep(wait_time)
-                else:
-                    logging.error("Max retries reached. Raising exception.")
-                    raise
-
-        # If all retries fail, raise an exception
-        raise Exception("Max retries reached. Unable to get a valid JSON response.")
 
     def _block(self, height):
         uri_path = "/block"

@@ -1,10 +1,9 @@
 import logging
-import random
 import time
 from datetime import datetime, timezone
 import requests
-from requests.exceptions import JSONDecodeError, Timeout
 
+from staketaxcsv.common.query import post_with_retries
 from staketaxcsv.common.debug_util import use_debug_files
 from staketaxcsv.settings_csv import REPORTS_DIR, SOL_NODE
 from staketaxcsv.sol.config_sol import localconfig
@@ -16,28 +15,6 @@ class RpcAPI(object):
     session = requests.Session()
 
     @classmethod
-    def _make_request_with_retries(cls, url, data, headers):
-        retries = 4
-        backoff_factor = 5
-
-        for attempt in range(retries):
-            try:
-                response = cls.session.post(url, json=data, headers=headers)
-                return response.json()  # Parse and return JSON here
-
-            except (JSONDecodeError, Timeout, TimeoutError) as e:
-                logging.warning(f"Error on attempt {attempt + 1}: {e}")
-                if attempt < retries - 1:
-                    wait_time = backoff_factor * (2 ** attempt)
-                    logging.info(f"Waiting {wait_time} seconds before retrying...")
-                    time.sleep(wait_time)
-                else:
-                    logging.error("Max retries reached. Unable to get a valid response.")
-                    raise
-
-        raise Exception("Failed to fetch data after maximum retries.")
-
-    @classmethod
     def _fetch(cls, method, params_list):
         myid = "be5adf2ee9f450f540cd7325740cdaea754ef660"
         data = {
@@ -47,7 +24,7 @@ class RpcAPI(object):
             "id": myid
         }
 
-        result = cls._make_request_with_retries(SOL_NODE, data, {})
+        result = post_with_retries(cls.session, SOL_NODE, data, {}, retries=5, backoff_factor=5)
 
         if "api.mainnet-beta.solana.com" in SOL_NODE:
             time.sleep(0.3)
@@ -56,38 +33,6 @@ class RpcAPI(object):
 
         return result
 
-    """
-    @classmethod
-    def _fetch(cls, method, params_list):
-        myid = "be5adf2ee9f450f540cd7325740cdaea754ef660"
-        data = {
-            "method": method,
-            "jsonrpc": "2.0",
-            "params": params_list,
-            "id": myid
-        }
-        headers = {}
-
-        try:
-            response = cls.session.post(SOL_NODE, json=data, headers=headers)
-
-        except TimeoutError:
-            # quicknode server sometimes refuses connection after hundreds of requests
-            s = random.randint(60, 180)
-            logging.warning("Returned timeout.  Sleeping %s seconds and retrying once...", s)
-            time.sleep(s)
-            response = cls.session.post(SOL_NODE, json=data, headers=headers)
-
-        result = response.json()
-
-        if "api.mainnet-beta.solana.com" in SOL_NODE:
-            # mainnet: a bit slower to avoid rate-limiting errors
-            time.sleep(0.3)
-        else:
-            time.sleep(0.1)
-
-        return result
-    """
 
     @classmethod
     def fetch_account(cls, address):
