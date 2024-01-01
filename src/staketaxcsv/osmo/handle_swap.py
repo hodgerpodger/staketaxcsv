@@ -11,14 +11,16 @@ def handle_swap(exporter, txinfo, msginfo):
     # Preprocessing step to parse staking reward events first, if exists.
     handle_claim(exporter, txinfo, msginfo)
 
+
+
+    # Sum up by token
+    transfers_in, transfers_out = _aggregate_transfers(transfers_in, transfers_out)
+
     # Remove intermediate swap tokens (A -> B -> C; remove B)
     transfers_common = set(transfers_in).intersection(set(transfers_out))
     for t in transfers_common:
         transfers_in.remove(t)
         transfers_out.remove(t)
-
-    # Sum up by token
-    transfers_in, transfers_out = _aggregate_transfers(transfers_in, transfers_out)
 
     if len(transfers_in) == 1 and len(transfers_out) == 1:
         sent_amount, sent_currency = transfers_out[0]
