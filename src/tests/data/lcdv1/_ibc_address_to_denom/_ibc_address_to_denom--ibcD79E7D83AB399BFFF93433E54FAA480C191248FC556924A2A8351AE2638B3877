@@ -1,0 +1,6 @@
+{
+    "denom_trace": {
+        "path": "transfer/channel-6994",
+        "base_denom": "utia"
+    }
+}

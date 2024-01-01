@@ -7,14 +7,18 @@ validator or contract.  This is to ensure good faith in maintaining privacy.
 
 """
 
+import logging
 import unittest
 from unittest.mock import patch
 
 from tests.mock_osmo import mock_get_tx
+from tests.mock_lcd import MockLcdAPI_v1
 import staketaxcsv.report_osmo
+logging.basicConfig(level=logging.INFO)
 
 
 @patch("staketaxcsv.osmo.api_data.get_tx", mock_get_tx)
+@patch("staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1", new=MockLcdAPI_v1)
 def run_test(wallet_address, txid):
     exporter = staketaxcsv.report_osmo.txone(wallet_address, txid)
     return exporter.export_for_test()
@@ -45,6 +49,19 @@ timestamp            tx_type  received_amount  received_currency  sent_amount  s
 timestamp            tx_type  received_amount  received_currency  sent_amount  sent_currency  fee       fee_currency  txid
 2023-12-01 22:18:02  STAKING  6.919062         OSMO                                           0.006606  OSMO          DBB87D066C7052E36AB8A5BD4035F7270A4ABE615158DEFF4CEF3E30E3F84FB8-0
 2023-12-01 22:18:02  STAKING  0.624267         OSMO                                                                   DBB87D066C7052E36AB8A5BD4035F7270A4ABE615158DEFF4CEF3E30E3F84FB8-1
+-------------------  -------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
+
+    def test_swap_v202401(self):
+        result = run_test(
+            "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu",
+            "37F8F96EA91C830B201797EC148D97F69FB2322CB7E1EE66DEE5A84C3560F091"
+        )
+        correct_result = """
+-------------------  -------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
+timestamp            tx_type  received_amount  received_currency  sent_amount  sent_currency  fee       fee_currency  txid
+2024-01-01 00:24:07  TRADE    12.536491        OSMO               1.6          TIA            0.012629  OSMO          37F8F96EA91C830B201797EC148D97F69FB2322CB7E1EE66DEE5A84C3560F091-0
 -------------------  -------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)

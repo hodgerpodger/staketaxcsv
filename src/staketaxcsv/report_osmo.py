@@ -6,6 +6,7 @@ Prints transactions and writes CSV(s) to _reports/OSMO*.csv
 """
 import logging
 import math
+import pprint
 
 import staketaxcsv.osmo.api_data
 import staketaxcsv.osmo.processor
@@ -44,6 +45,13 @@ def txone(wallet_address, txid):
 
     exporter = Exporter(wallet_address, localconfig, TICKER_OSMO)
     txinfo = staketaxcsv.osmo.processor.process_tx(wallet_address, data, exporter)
+
+    if localconfig.debug:
+        logging.info("transaction data:")
+        pprint.pprint(data)
+
+        logging.info("txinfo:")
+        txinfo.print()
 
     return exporter
 
