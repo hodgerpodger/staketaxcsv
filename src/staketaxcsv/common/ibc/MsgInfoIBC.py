@@ -185,13 +185,21 @@ class MsgInfoIBC:
                 raise Exception("Unexpected amt_string: {}".format(amt_string))
             amount_raw, currency_raw = m.group(1), m.group(2)
 
+            amount, currency = self.amount_currency_single(amount_raw, currency_raw)
+
             # Convert from raw string to float amount and currency symbol
-            amount, currency = MsgInfoIBC.amount_currency_from_raw(
-                amount_raw, currency_raw, self.lcd_node, self.ibc_addresses)
+            #amount, currency = MsgInfoIBC.amount_currency_from_raw(
+            #    amount_raw, currency_raw, self.lcd_node, self.ibc_addresses)
 
             out.append((amount, currency))
 
         return out
+
+    def amount_currency_single(self, amount_raw, currency_raw):
+        # Convert from raw string to float amount and currency symbol
+        amount, currency = MsgInfoIBC.amount_currency_from_raw(
+            amount_raw, currency_raw, self.lcd_node, self.ibc_addresses)
+        return amount, currency
 
     @staticmethod
     def amount_currency_from_raw(amount_raw, currency_raw, lcd_node, ibc_addresses):

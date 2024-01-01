@@ -9,4 +9,5 @@ class localconfig(config):
     lp_treatment = et.LP_TREATMENT_DEFAULT
 
     ibc_addresses = {}
+    symbols = {}
     exponents = {}

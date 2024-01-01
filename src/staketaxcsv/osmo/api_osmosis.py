@@ -27,4 +27,4 @@ def get_exponent(currency):
 
     data = _query(uri_path, query_params)
 
-    return data["exponent"] if "exponent" in data else None
+    return int(data["exponent"]) if "exponent" in data else None
