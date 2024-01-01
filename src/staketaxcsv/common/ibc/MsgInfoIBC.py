@@ -1,9 +1,10 @@
 import logging
 import re
+from collections import defaultdict
 
 import staketaxcsv.common.ibc.constants as co
 from staketaxcsv.common.ibc.api_lcd_v1 import ibc_address_to_denom
-
+TINY_AMOUNT = .0000000000001
 COIN_RECEIVED = "coin_received"
 COIN_SPENT = "coin_spent"
 RECEIVER = "receiver"
@@ -29,6 +30,7 @@ class MsgInfoIBC:
         self.msg_type = self._msg_type(message)
         self.log = log
         self.transfers = self._transfers()
+        self.transfers_net = self._transfers_net(self.transfers)
         self.transfers_event = self._transfers_transfer_event(show_addrs=True)
         self.wasm = MsgInfoIBC.wasm(log)
         self.contract = self._contract(message)
@@ -60,6 +62,33 @@ class MsgInfoIBC:
             transfers_in, transfers_out = self._transfers_transfer_event()
 
         return transfers_in, transfers_out
+
+    def _transfers_net(self, transfers):
+        # 	Example:
+        # 	[(0.000528, 'TIA'), (0.001072, 'TIA'), (1.595204, 'TIA'), (0.003196, 'TIA')]
+        #   -> [(1.6, 'TIA')]
+        transfers_in, transfers_out = transfers
+
+        # Sum net amounts for each currency
+        net = defaultdict(float)
+        for amount, currency in transfers_in:
+            net[currency] += amount
+        for amount, currency in transfers_out:
+            net[currency] -= amount
+
+        # Convert to transfers_in, transfers_out lists
+        net_in, net_out = [], []
+        for cur, amt in net.items():
+            # Skip for neglible amounts
+            if -TINY_AMOUNT <= amt <= TINY_AMOUNT:
+                continue
+
+            if amt > 0:
+                net_in.append((amt, cur))
+            else:
+                net_out.append((-amt, cur))
+
+        return net_in, net_out
 
     def _has_event_type(self, target_event_type):
         events = self.log["events"]

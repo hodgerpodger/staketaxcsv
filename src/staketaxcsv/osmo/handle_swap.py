@@ -3,17 +3,13 @@ from collections import defaultdict
 from staketaxcsv.osmo.handle_claim import handle_claim
 from staketaxcsv.osmo.handle_unknown import handle_unknown_detect_transfers
 from staketaxcsv.osmo.make_tx import make_osmo_swap_tx
-TINY_AMOUNT = .00000000000001
 
 
 def handle_swap(exporter, txinfo, msginfo):
-    transfers_in, transfers_out = msginfo.transfers
+    transfers_in, transfers_out = msginfo.transfers_net
 
     # Preprocessing step to parse staking reward events first, if exists.
     handle_claim(exporter, txinfo, msginfo)
-
-    # Sum up by token
-    transfers_in, transfers_out = _aggregate_transfers(transfers_in, transfers_out)
 
     if len(transfers_in) == 1 and len(transfers_out) == 1:
         sent_amount, sent_currency = transfers_out[0]
