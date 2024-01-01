@@ -14,7 +14,6 @@ from unittest.mock import patch
 from tests.mock_osmo import mock_get_tx
 from tests.mock_lcd import MockLcdAPI_v1
 import staketaxcsv.report_osmo
-logging.basicConfig(level=logging.INFO)
 
 
 @patch("staketaxcsv.osmo.api_data.get_tx", mock_get_tx)
