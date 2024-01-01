@@ -45,5 +45,11 @@ def _handle_jupiter_aggregator(exporter, txinfo):
 
         row = make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
         exporter.ingest_row(row)
+    elif len(transfers_in) == 1 and len(transfers_out) == 0 and txinfo.fee > txinfo.fee_blockchain:
+        # Special case of swap of SOL -> token, when SOL amount small and gets mistaken as part of fee.
+        received_amount, received_currency, _, _ = transfers_in[0]
+
+        row = make_swap_tx(txinfo, txinfo.fee, CURRENCY_SOL, received_amount, received_currency, empty_fee=True)
+        exporter.ingest_row(row)
     else:
         handle_unknown_detect_transfers(exporter, txinfo)
