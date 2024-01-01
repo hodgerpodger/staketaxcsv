@@ -44,6 +44,8 @@ def _handle_message(exporter, txinfo, msginfo):
         # swaps
         if msg_type == co.MSG_TYPE_SWAP_IN:
             staketaxcsv.osmo.handle_swap.handle_swap(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_SPLIT_ROUTE_SWAP:
+            staketaxcsv.osmo.handle_swap.handle_swap(exporter, txinfo, msginfo)
 
         # lp transactions
         elif msg_type == co.MSG_TYPE_JOIN_POOL:

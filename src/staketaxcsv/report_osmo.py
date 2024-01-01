@@ -47,9 +47,6 @@ def txone(wallet_address, txid):
     txinfo = staketaxcsv.osmo.processor.process_tx(wallet_address, data, exporter)
 
     if localconfig.debug:
-        logging.info("transaction data:")
-        pprint.pprint(data)
-
         logging.info("txinfo:")
         txinfo.print()
 
