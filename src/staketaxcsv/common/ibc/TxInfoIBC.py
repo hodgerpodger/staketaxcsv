@@ -23,8 +23,6 @@ class TxInfoIBC(TxInfo):
             print("\tcontract: {}".format(msg.contract))
             print("\ttransfers_in: {}".format(msg.transfers[0]))
             print("\ttransfers_out: {}".format(msg.transfers[1]))
-            print("\ttransfers_net_in:{}".format(msg.transfers_net[0]))
-            print("\ttransfers_net_out:{}".format(msg.transfers_net[1]))
             print("\n\tmessage:")
             pprint.pprint(msg.message)
             print("\n\twasm:")
