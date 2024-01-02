@@ -460,8 +460,6 @@ def _query_wasm_deprecated(addr):
     return init_msg
 
 
-
-
 def _init_msg(data):
     init_msg_base64 = data["result"]["init_msg"]
     if type(init_msg_base64) is dict:

@@ -1084,7 +1084,7 @@ class Exporter:
         """ Writes CSV, suitable for import into ZenLedger """
         zen_tx_types = {
             et.TX_TYPE_AIRDROP: "airdrop",
-            et.TX_TYPE_STAKING: "staking return",
+            et.TX_TYPE_STAKING: "staking reward",
             et.TX_TYPE_TRADE: "Trade",
             et.TX_TYPE_TRANSFER: "transfer",
             et.TX_TYPE_INCOME: "misc reward",
