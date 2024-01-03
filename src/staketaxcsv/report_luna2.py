@@ -53,6 +53,10 @@ def txone(wallet_address, txid):
     exporter = Exporter(wallet_address, localconfig, TICKER_LUNA2)
     txinfo = staketaxcsv.luna2.processor.process_tx(wallet_address, data, exporter)
 
+    if localconfig.debug:
+        logging.info("txinfo:")
+        txinfo.print()
+
     return exporter
 
 

@@ -81,6 +81,9 @@ class MsgInfoIBC:
             event_type, attributes = event["type"], event["attributes"]
 
             if event_type == COIN_RECEIVED:
+                # Remove authz_msg_index key/values (if exists) so that uniform logic afterwards is consistent.
+                attributes = self._remove_authz_msg_index(attributes)
+
                 for i in range(0, len(attributes), self._num_keys(attributes)):
                     first_key = attributes[i]["key"]
 
@@ -100,6 +103,14 @@ class MsgInfoIBC:
 
         return transfers_in
 
+    def _remove_authz_msg_index(self, attributes):
+        out = []
+        for kv in attributes:
+            if kv["key"] == "authz_msg_index":
+                continue
+            out.append(kv)
+        return out
+
     def _transfers_coin_spent(self):
         transfers_out = []
 
@@ -108,6 +119,9 @@ class MsgInfoIBC:
             event_type, attributes = event["type"], event["attributes"]
 
             if event_type == COIN_SPENT:
+                # Remove authz_msg_index key/values (if exists) so that uniform logic afterwards is consistent.
+                attributes = self._remove_authz_msg_index(attributes)
+
                 for i in range(0, len(attributes), self._num_keys(attributes)):
                     first_key = attributes[i]["key"]
 
