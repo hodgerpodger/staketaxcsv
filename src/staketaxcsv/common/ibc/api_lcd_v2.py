@@ -67,12 +67,11 @@ class LcdAPI_v2(LcdAPI_v1):
         for p in range(p_start, p_end + 1):
             logging.info("Fetching p=%s ...", p)
             data = self._get_txs(wallet_address, events_type, p, 1, sleep_seconds)
+            total_count_txs = int(data["total"])
             elems.extend(data["tx_responses"])
 
-            if p == p_end:
-                total_count_txs = int(data["total"])
+            if p == p_end or p == total_count_txs:
                 is_last_page = (p >= math.ceil(total_count_txs))
-
                 return elems, total_count_txs, is_last_page
 
         return [], 0, True
