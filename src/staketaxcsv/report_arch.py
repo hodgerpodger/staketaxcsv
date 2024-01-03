@@ -28,11 +28,11 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(ARCH_NODE).account_exists(wallet_address)
+    return api_lcd.make_lcd_api(ARCH_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = api_lcd.get_tx(ARCH_NODE, txid)
+    elem = api_lcd.make_lcd_api(ARCH_NODE).get_tx(txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_ARCH)
     txinfo = staketaxcsv.arch.processor.process_tx(wallet_address, elem, exporter)

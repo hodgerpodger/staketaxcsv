@@ -42,11 +42,11 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.atom.api_lcd.account_exists(wallet_address)
+    return api_lcd.make_lcd_api(ATOM_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = api_lcd.get_tx(ATOM_NODE, txid)
+    elem = api_lcd.make_lcd_api(ATOM_NODE).get_tx(txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
     txinfo = staketaxcsv.atom.processor.process_tx(wallet_address, elem, exporter)
