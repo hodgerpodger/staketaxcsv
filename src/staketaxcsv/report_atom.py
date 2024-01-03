@@ -46,10 +46,7 @@ def wallet_exists(wallet_address):
 
 
 def txone(wallet_address, txid):
-    if localconfig.legacy:
-        elem = staketaxcsv.atom.cosmoshub123.api_cosmostation.get_tx(txid)
-    else:
-        elem = api_lcd.make_lcd_api(ATOM_NODE).get_tx(txid)
+    elem = api_lcd.get_tx(ATOM_NODE, txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
     txinfo = staketaxcsv.atom.processor.process_tx(wallet_address, elem, exporter)
@@ -58,7 +55,8 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address):
-    return SECONDS_PER_PAGE * staketaxcsv.atom.api_lcd.get_txs_count_pages(wallet_address)
+    max_txs = localconfig.limit
+    return SECONDS_PER_PAGE * api_lcd.get_txs_pages_count(ATOM_NODE, wallet_address, max_txs)
 
 
 def txhistory(wallet_address):

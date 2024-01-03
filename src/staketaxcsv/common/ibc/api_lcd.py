@@ -13,6 +13,10 @@ class NodeVersions:
     versions = {}
 
 
+def get_tx(node, txid):
+    return make_lcd_api(node).get_tx(txid)
+
+
 def get_txs_pages_count(node, address, max_txs, **kwargs):
     if _version_ge(_node_version(node), LCD_V2_MIN_VERSION):
         return api_lcd_v2.get_txs_pages_count(node, address, max_txs, **kwargs)
