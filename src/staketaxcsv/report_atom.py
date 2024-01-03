@@ -18,8 +18,7 @@ import staketaxcsv.api
 import staketaxcsv.atom.api_lcd
 import staketaxcsv.atom.cosmoshub123.api_cosmostation
 import staketaxcsv.atom.processor
-import staketaxcsv.common.ibc.api_lcd_v1
-from staketaxcsv.common.ibc.api_lcd_v1 import LcdAPI_v1
+from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.atom.config_atom import localconfig
 from staketaxcsv.atom.progress_atom import SECONDS_PER_PAGE, ProgressAtom
 from staketaxcsv.common import report_util
@@ -50,7 +49,7 @@ def txone(wallet_address, txid):
     if localconfig.legacy:
         elem = staketaxcsv.atom.cosmoshub123.api_cosmostation.get_tx(txid)
     else:
-        elem = LcdAPI_v1(ATOM_NODE).get_tx(txid)
+        elem = api_lcd.make_lcd_api(ATOM_NODE).get_tx(txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
     txinfo = staketaxcsv.atom.processor.process_tx(wallet_address, elem, exporter)
@@ -72,21 +71,11 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = staketaxcsv.atom.api_lcd.get_txs_count_pages(wallet_address)
+    count_pages = api_lcd.get_txs_pages_count(ATOM_NODE, wallet_address, max_txs)
     progress.set_estimate(count_pages)
 
-    # Fetch legacy transactions conditionally (cosmoshub-3)
-    elems = []
-    if localconfig.legacy:
-        elems.extend(_fetch_txs_legacy(wallet_address, progress))
-
     # Fetch transactions
-    elems.extend(
-        staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(
-            ATOM_NODE, wallet_address, progress, max_txs, debug=localconfig.debug
-        )
-    )
-    elems = _remove_duplicates(elems)
+    elems = api_lcd.get_txs_all(ATOM_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
 
     progress.report_message(f"Processing {len(elems)} ATOM transactions... ")
     staketaxcsv.atom.processor.process_txs(wallet_address, elems, exporter)
@@ -94,46 +83,6 @@ def txhistory(wallet_address):
     if localconfig.cache:
         Cache().set_ibc_addresses(localconfig.ibc_addresses)
     return exporter
-
-
-def _max_pages():
-    max_txs = localconfig.limit
-    max_pages = math.ceil(max_txs / LIMIT_PER_QUERY)
-    logging.info("max_txs: %s, max_pages: %s", max_txs, max_pages)
-    return max_pages
-
-
-def _fetch_txs_legacy(wallet_address, progress):
-    out = []
-    next_id = None
-    current_page = 0
-
-    for _ in range(0, _max_pages()):
-        message = f"Fetching page {current_page} for legacy transactions ..."
-        progress.report_message(message)
-        current_page += 1
-
-        elems, next_id = staketaxcsv.atom.cosmoshub123.api_cosmostation.get_txs_legacy(wallet_address, next_id)
-        out.extend(elems)
-        if next_id is None:
-            break
-
-    return out
-
-
-def _remove_duplicates(elems):
-    out = []
-    txids = set()
-
-    for elem in elems:
-        if elem["txhash"] in txids:
-            continue
-
-        out.append(elem)
-        txids.add(elem["txhash"])
-
-    out.sort(key=lambda x: x["timestamp"], reverse=True)
-    return out
 
 
 if __name__ == "__main__":
