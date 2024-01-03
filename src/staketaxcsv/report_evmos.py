@@ -13,6 +13,7 @@ import staketaxcsv.common.address
 import staketaxcsv.common.ibc.api_lcd_v2
 import staketaxcsv.common.ibc.api_lcd
 import staketaxcsv.evmos.processor
+from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
@@ -54,11 +55,11 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd.make_lcd_api(EVMOS_NODE).account_exists(wallet_address)
+    return api_lcd.make_lcd_api(EVMOS_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_lcd.make_lcd_api(EVMOS_NODE).get_tx(txid)
+    elem = api_lcd.make_lcd_api(EVMOS_NODE).get_tx(txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_EVMOS)
     txinfo = staketaxcsv.evmos.processor.process_tx(wallet_address, elem, exporter)
@@ -69,10 +70,10 @@ def txone(wallet_address, txid):
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
     try:
-        seconds = SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(
+        seconds = SECONDS_PER_PAGE * api_lcd.get_txs_pages_count(
             EVMOS_NODE, wallet_address, max_txs, limit=TXS_LIMIT_PER_QUERY_EVMOS)
     except KeyError as e:
-        seconds = SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(
+        seconds = SECONDS_PER_PAGE * api_lcd.get_txs_pages_count(
             EVMOS_NODE, wallet_address, max_txs, limit=TXS_LIMIT_PER_QUERY_EVMOS_SMALL)
     return seconds
 
@@ -103,12 +104,12 @@ def txhistory(wallet_address):
 
 def _count_and_fetch(wallet_address, max_txs, progress, limit):
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = staketaxcsv.common.ibc.api_lcd.get_txs_pages_count(
+    count_pages = api_lcd.get_txs_pages_count(
         EVMOS_NODE, wallet_address, max_txs, limit=limit, debug=localconfig.debug)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = staketaxcsv.common.ibc.api_lcd.get_txs_all(
+    elems = api_lcd.get_txs_all(
         EVMOS_NODE, wallet_address, progress, max_txs, limit=limit, debug=localconfig.debug)
 
     return elems

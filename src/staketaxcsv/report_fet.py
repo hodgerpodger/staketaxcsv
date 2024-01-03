@@ -10,6 +10,7 @@ import pprint
 import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.fet.fetchhub1.processor_legacy
 import staketaxcsv.fet.processor
+from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
@@ -34,7 +35,7 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(FET_NODE).account_exists(wallet_address)
+    return api_lcd.make_lcd_api(FET_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):

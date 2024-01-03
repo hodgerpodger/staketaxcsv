@@ -10,7 +10,6 @@ TODO: STARS CSVs are only in experimental state.  All "execute contract" transac
 import logging
 import pprint
 
-import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.common.ibc.api_rpc_multinode
 import staketaxcsv.stars.processor
 from staketaxcsv.common import report_util
@@ -19,6 +18,7 @@ from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import STARS_NODE, TICKER_STARS
 from staketaxcsv.stars.config_stars import localconfig
 from staketaxcsv.stars.progress_stars import SECONDS_PER_PAGE, ProgressStars
+from staketaxcsv.common.ibc import api_lcd
 
 
 def main():
@@ -32,11 +32,11 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(STARS_NODE).account_exists(wallet_address)
+    return api_lcd.make_lcd_api(STARS_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(STARS_NODE).get_tx(txid)
+    elem = api_lcd.make_lcd_api(STARS_NODE).get_tx(txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_STARS)
     txinfo = staketaxcsv.stars.processor.process_tx(wallet_address, elem, exporter)
@@ -46,7 +46,7 @@ def txone(wallet_address, txid):
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(
+    return SECONDS_PER_PAGE * api_lcd.get_txs_pages_count(
         STARS_NODE, wallet_address, max_txs)
 
 
@@ -60,7 +60,7 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_STARS)
 
     # Fetch count of transactions to estimate progress beforehand
-    count_pages = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(
+    count_pages = api_lcd.get_txs_pages_count(
         STARS_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_estimate(count_pages)
 

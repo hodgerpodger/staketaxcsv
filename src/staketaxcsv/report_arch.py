@@ -8,7 +8,6 @@ import logging
 import pprint
 
 import staketaxcsv.arch.processor
-import staketaxcsv.common.ibc.api_lcd_v1
 from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.arch.config_arch import localconfig
 from staketaxcsv.arch.progress_arch import SECONDS_PER_PAGE, ProgressArch
@@ -42,7 +41,7 @@ def txone(wallet_address, txid):
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(ARCH_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * api_lcd.get_txs_pages_count(ARCH_NODE, wallet_address, max_txs)
 
 
 def txhistory(wallet_address):

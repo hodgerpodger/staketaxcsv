@@ -19,6 +19,7 @@ import staketaxcsv.common.ibc.api_common
 import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.luna2.genesis_airdrop
 import staketaxcsv.luna2.processor
+from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
@@ -39,12 +40,12 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(LUNA2_NODE).account_exists(wallet_address)
+    return api_lcd.make_lcd_api(LUNA2_NODE).account_exists(wallet_address)
 
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(LUNA2_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * api_lcd.get_txs_pages_count(LUNA2_NODE, wallet_address, max_txs)
 
 
 def txone(wallet_address, txid):
@@ -74,7 +75,7 @@ def txhistory(wallet_address):
     staketaxcsv.luna2.genesis_airdrop.genesis_airdrop(wallet_address, exporter)
 
     # LCD - fetch count of transactions to estimate progress more accurately
-    pages = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(LUNA2_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    pages = api_lcd.get_txs_pages_count(LUNA2_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_estimate(pages)
 
     # FCD - fetch transactions

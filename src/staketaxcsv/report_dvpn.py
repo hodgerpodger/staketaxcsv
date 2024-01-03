@@ -8,7 +8,6 @@ Prints transactions and writes CSV(s) to _reports/DVPN*.csv
 import logging
 
 import staketaxcsv.common.ibc.api_common
-import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.common.ibc.api_rpc
 import staketaxcsv.dvpn.processor
 from staketaxcsv.common import report_util
@@ -18,6 +17,7 @@ from staketaxcsv.common.ibc.api_rpc import RpcAPI
 from staketaxcsv.dvpn.config_dvpn import localconfig
 from staketaxcsv.dvpn.progress_dvpn import LCD_SECONDS_PER_PAGE, ProgressDvpn
 from staketaxcsv.settings_csv import DVPN_NODE, DVPN_NODE_RPC, TICKER_DVPN
+from staketaxcsv.common.ibc import api_lcd
 
 
 def main():
@@ -31,16 +31,17 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(DVPN_NODE).account_exists(wallet_address)
+    return api_lcd.make_lcd_api(DVPN_NODE).account_exists(wallet_address)
 
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return LCD_SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(DVPN_NODE, wallet_address, max_txs)
+    return LCD_SECONDS_PER_PAGE * api_lcd.get_txs_pages_count(DVPN_NODE, wallet_address, max_txs)
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(DVPN_NODE).get_tx(txid)
+    elem = api_lcd.make_lcd_api(DVPN_NODE).get_tx(txid)
+
     if not elem:
         elem = RpcAPI(DVPN_NODE_RPC).get_tx(txid)
         staketaxcsv.common.ibc.api_rpc.normalize_rpc_txns(DVPN_NODE_RPC, [elem])
@@ -61,7 +62,7 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_DVPN)
 
     # LCD - fetch count of transactions to estimate progress more accurately
-    lcd_count_pages = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(
+    lcd_count_pages = api_lcd.get_txs_pages_count(
         DVPN_NODE, wallet_address, max_txs, debug=localconfig.debug)
     progress.set_lcd_estimate(lcd_count_pages)
     # RPC - fetch count of transactions to estimate progress more accurately
@@ -70,7 +71,7 @@ def txhistory(wallet_address):
     progress.set_rpc_estimate(rpc_count_pages)
 
     # LCD - fetch transactions
-    lcd_elems = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(DVPN_NODE, wallet_address, progress, max_txs,
+    lcd_elems = api_lcd.get_txs_all(DVPN_NODE, wallet_address, progress, max_txs,
                                                               debug=localconfig.debug,
                                                               stage_name="lcd")
 
