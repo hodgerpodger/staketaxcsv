@@ -3,27 +3,56 @@ Experimental class.  Not integrated yet into reports.
 
 """
 
+from urllib.parse import urlencode
 import logging
 import math
 import pprint
 import requests
+import time
+
+from staketaxcsv.common.query import get_with_retries
 from staketaxcsv.settings_csv import MINTSCAN_KEY
+from staketaxcsv.common.ibc.api_common import remove_duplicates
+
 TXS_LIMIT_PER_QUERY = 20
 
 
 class MintscanAPI:
     """ Mintscan API for fetching transaction data """
+    session = requests.Session()
 
     def __init__(self, network):
-        self.base_url = "https://apis.mintscan.io/v1"
         self.network = network
+        self.base_url = "https://apis.mintscan.io/v1/" + network
         self.headers = {
             'Authorization': f'Bearer {MINTSCAN_KEY}',
             'Accept': 'application/json, text/plain, */*'
         }
 
+    def _query(self, uri_path, query_params, sleep_seconds=0):
+        if not MINTSCAN_KEY:
+            raise Exception("Missing MINTSCAN_KEY")
+
+        url = self.base_url + uri_path
+        logging.info("Requesting url %s?%s ...", url, urlencode(query_params))
+        data = get_with_retries(self.session, url, query_params, headers=self.headers)
+
+        if sleep_seconds:
+            time.sleep(sleep_seconds)
+        return data
+
+    def _get_tx(self, txid):
+        uri_path = f"/txs/{txid}"
+        params = {}
+        data = self._query(uri_path, params)
+        return data
+
+    def get_tx(self, txid):
+        data = self._get_tx(txid)
+        return data[0]
+
     def _get_txs(self, address, search_after, limit, from_date=None, to_date=None):
-        uri_path = f"/{self.network}/accounts/{address}/transactions"
+        uri_path = f"/accounts/{address}/transactions"
         params = {
             'take': limit,
             'searchAfter': search_after,
@@ -33,11 +62,8 @@ class MintscanAPI:
         if to_date:
             params['toDateTime'] = to_date
 
-        response = requests.get(self.base_url + uri_path, headers=self.headers, params=params)
-        if response.status_code != 200:
-            raise Exception(f"Error fetching data: {response.text}")
-        logging.info("Fetched response from %s", response.url)
-        return response.json()
+        data = self._query(uri_path, params, sleep_seconds=0.1)
+        return data
 
     def get_txs(self, address, search_after=None, limit=TXS_LIMIT_PER_QUERY, from_date=None, to_date=None):
         # api truncates data to only one month if no fromDateTime.  So this is used to avoid this.
@@ -71,23 +97,8 @@ def get_txs_all(network, address, max_txs, from_date=None, to_date=None):
         if is_last_page:
             break
 
-    out = _remove_duplicates(out)
+    out = remove_duplicates(out)
     return out
-
-
-def _remove_duplicates(transactions):
-    """
-    Remove duplicate transactions from the list.
-    Assumes each transaction has a unique 'txhash'.
-    """
-    seen = set()
-    unique_transactions = []
-    for transaction in transactions:
-        txhash = transaction.get('txhash')
-        if txhash not in seen:
-            seen.add(txhash)
-            unique_transactions.append(transaction)
-    return unique_transactions
 
 
 def main():
@@ -98,6 +109,8 @@ def main():
     address = "juno1wl4nc3ysp8gft5ewkyf97ue547xjgu8jjh93la"
     max_txs = 1000  # Maximum number of transactions to fetch
     transactions = get_txs_all(network, address, max_txs)
+    api = MintscanAPI(network)
+    transaction = api.get_tx("E4CA3E5C86313DAFE7CD726A3AACC4BA6E96956CF2B50B68BE3CF2F261AD28DD")
 
     print("len is ")
     print(len(transactions))
@@ -107,6 +120,9 @@ def main():
 
     print("transaction timestamps are")
     pprint.pprint([t["timestamp"] for t in transactions])
+
+    print("transaction is ")
+    pprint.pprint(transaction)
 
 
 if __name__ == "__main__":

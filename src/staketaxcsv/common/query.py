@@ -19,7 +19,7 @@ def _make_request_with_retries(request_type, session, url, data, headers, retrie
     for attempt in range(retries):
         try:
             if request_type == REQUEST_TYPE_GET:
-                response = session.get(url, params=data)
+                response = session.get(url, params=data, headers=headers)
             elif request_type == REQUEST_TYPE_POST:
                 response = session.post(url, json=data, headers=headers)
             return response.json()  # Parse and return JSON here
