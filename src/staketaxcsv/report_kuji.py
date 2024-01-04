@@ -58,12 +58,12 @@ def txhistory(wallet_address):
 
     # Fetch count of transactions to estimate progress more accurately
     count_pages = api_lcd.get_txs_pages_count(
-        KUJI_NODE, wallet_address, max_txs, debug=localconfig.debug, limit=LIMIT_PER_QUERY)
+        KUJI_NODE, wallet_address, max_txs, limit=LIMIT_PER_QUERY)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
     elems = api_lcd.get_txs_all(
-        KUJI_NODE, wallet_address, progress, max_txs, debug=localconfig.debug, limit=LIMIT_PER_QUERY)
+        KUJI_NODE, wallet_address, progress, max_txs, limit=LIMIT_PER_QUERY)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.kuji.processor.process_txs(wallet_address, elems, exporter)

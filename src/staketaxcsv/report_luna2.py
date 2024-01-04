@@ -75,7 +75,7 @@ def txhistory(wallet_address):
     staketaxcsv.luna2.genesis_airdrop.genesis_airdrop(wallet_address, exporter)
 
     # LCD - fetch count of transactions to estimate progress more accurately
-    pages = api_lcd.get_txs_pages_count(LUNA2_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    pages = api_lcd.get_txs_pages_count(LUNA2_NODE, wallet_address, max_txs)
     progress.set_estimate(pages)
 
     # FCD - fetch transactions

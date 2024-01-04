@@ -55,11 +55,11 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_SCRT)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = api_lcd.get_txs_pages_count(SCRT_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    count_pages = api_lcd.get_txs_pages_count(SCRT_NODE, wallet_address, max_txs)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = api_lcd.get_txs_all(SCRT_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
+    elems = api_lcd.get_txs_all(SCRT_NODE, wallet_address, progress, max_txs)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.scrt.processor.process_txs(wallet_address, elems, exporter)

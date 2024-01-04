@@ -105,12 +105,12 @@ def txhistory(wallet_address):
 def _count_and_fetch(wallet_address, max_txs, progress, limit):
     # Fetch count of transactions to estimate progress more accurately
     count_pages = api_lcd.get_txs_pages_count(
-        EVMOS_NODE, wallet_address, max_txs, limit=limit, debug=localconfig.debug)
+        EVMOS_NODE, wallet_address, max_txs, limit=limit)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
     elems = api_lcd.get_txs_all(
-        EVMOS_NODE, wallet_address, progress, max_txs, limit=limit, debug=localconfig.debug)
+        EVMOS_NODE, wallet_address, progress, max_txs, limit=limit)
 
     return elems
 

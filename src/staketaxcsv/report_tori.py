@@ -55,11 +55,11 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_TORI)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(TORI_NODE, wallet_address, max_txs, debug=localconfig.debug)
+    count_pages = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(TORI_NODE, wallet_address, max_txs)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(TORI_NODE, wallet_address, progress, max_txs, debug=localconfig.debug)
+    elems = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(TORI_NODE, wallet_address, progress, max_txs)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.tori.processor.process_txs(wallet_address, elems, exporter)

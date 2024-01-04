@@ -61,11 +61,11 @@ def txhistory(wallet_address):
 
     # Fetch count of transactions to estimate progress beforehand
     count_pages = api_lcd.get_txs_pages_count(
-        STARS_NODE, wallet_address, max_txs, debug=localconfig.debug)
+        STARS_NODE, wallet_address, max_txs)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(STARS_NODE, wallet_address, progress, max_txs)
+    elems = api_lcd.get_txs_all(STARS_NODE, wallet_address, progress, max_txs)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.stars.processor.process_txs(wallet_address, elems, exporter)

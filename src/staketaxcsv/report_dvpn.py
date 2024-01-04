@@ -63,17 +63,15 @@ def txhistory(wallet_address):
 
     # LCD - fetch count of transactions to estimate progress more accurately
     lcd_count_pages = api_lcd.get_txs_pages_count(
-        DVPN_NODE, wallet_address, max_txs, debug=localconfig.debug)
+        DVPN_NODE, wallet_address, max_txs)
     progress.set_lcd_estimate(lcd_count_pages)
     # RPC - fetch count of transactions to estimate progress more accurately
     rpc_count_pages, _ = staketaxcsv.common.ibc.api_rpc.get_txs_pages_count(
-        DVPN_NODE_RPC, wallet_address, max_txs, debug=localconfig.debug)
+        DVPN_NODE_RPC, wallet_address, max_txs)
     progress.set_rpc_estimate(rpc_count_pages)
 
     # LCD - fetch transactions
-    lcd_elems = api_lcd.get_txs_all(DVPN_NODE, wallet_address, progress, max_txs,
-                                                              debug=localconfig.debug,
-                                                              stage_name="lcd")
+    lcd_elems = api_lcd.get_txs_all(DVPN_NODE, wallet_address, progress, max_txs, stage_name="lcd")
 
     # Some older transaction types can no longer be processed through the latest sentinelhub LCD api (version 0.9.2 at time of writing).
     # Example failure message:
@@ -84,7 +82,6 @@ def txhistory(wallet_address):
 
     # RPC - fetch transactions
     rpc_elems = staketaxcsv.common.ibc.api_rpc.get_txs_all(DVPN_NODE_RPC, wallet_address, progress, max_txs,
-                                                           debug=localconfig.debug,
                                                            stage_name="rpc",
                                                            events_types=[staketaxcsv.common.ibc.api_common.EVENTS_TYPE_SENDER])
 
