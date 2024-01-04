@@ -15,7 +15,7 @@ from staketaxcsv.settings_csv import ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE, 
 INDEXER_LIMIT = 2000
 
 
-# API documentation: https://algoexplorer.io/api-dev/indexer-v2
+# API documentation: https://editor.swagger.io/?url=https://openapi.algonode.cloud/indexer2.oas3.json
 class Indexer:
     session = None
 
