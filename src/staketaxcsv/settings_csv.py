@@ -34,10 +34,13 @@ TERRA_NODE = os.environ.get("STAKETAX_TERRA_NODE", "https://lcd.terra.dev")
 TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
 LUNA2_NODE = os.environ.get("STAKETAX_LUNA2_NODE", "https://phoenix-lcd.terra.dev")
 
-# Optional environment variables
+########### Optional environment variables ########################################################
 
 SOL_REWARDS_DB_READ = os.environ.get("STAKETAX_SOL_REWARDS_DB_READ", False)
 MINTSCAN_KEY = os.environ.get("STAKETAX_MINTSCAN_KEY", "")
+
+# i.e. "AKT,ATOM,EVMOS" to enable using tx data from mintscan api for these tickers
+MINTSCAN_DATA_ENABLED_FOR_TICKERS = os.environ.get("STAKETAX_MINTSCAN_DATA_ENABLED_FOR_TICKERS", "")
 
 # #############################################################################
 

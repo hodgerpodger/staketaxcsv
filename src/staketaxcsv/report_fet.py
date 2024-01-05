@@ -109,7 +109,7 @@ def txhistory(wallet_address):
 
     # fetchhub1
     elems_1 = staketaxcsv.fet.fetchhub1.api_rpc.get_txs_all(
-        co2.FET_FETCHUB1_NODE, wallet_address, progress, max_txs,
+        co2.FET_FETCHUB1_NODE, wallet_address, max_txs, progress=progress,
         stage_name=progress.STAGE_FET1_PAGES, events_types=EVENTS_TYPES_FET)
     # Update to more accurate estimate after removing duplicates
     progress.stages[progress.STAGE_FET1_TXS].total_tasks = len(elems_1)
@@ -118,22 +118,22 @@ def txhistory(wallet_address):
 
     # fetchhub2
     elems_2 = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(
-        co2.FET_FETCHUB2_NODE, wallet_address, progress, max_txs,
+        co2.FET_FETCHUB2_NODE, wallet_address, max_txs, progress=progress,
         stage_name=progress.STAGE_FET2, events_types=EVENTS_TYPES_FET)
     progress.report_message(f"Processing {len(elems_2)} transactions for fetchhub-2... ")
     staketaxcsv.fet.processor.process_txs(wallet_address, elems_2, exporter, co2.FET_FETCHUB2_NODE)
 
     # fetchhub3
     elems_3 = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(
-        co2.FET_FETCHUB3_NODE, wallet_address, progress, max_txs,
+        co2.FET_FETCHUB3_NODE, wallet_address, max_txs, progress=progress,
         stage_name=progress.STAGE_FET3, events_types=EVENTS_TYPES_FET)
     progress.report_message(f"Processing {len(elems_3)} transactions for fetchhub-3... ")
     staketaxcsv.fet.processor.process_txs(wallet_address, elems_3, exporter, co2.FET_FETCHUB3_NODE)
 
     # fetchhub4
     elems_4 = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(
-        FET_NODE, wallet_address, progress, max_txs, stage_name=progress.STAGE_FET4,
-        events_types=EVENTS_TYPES_FET
+        FET_NODE, wallet_address, max_txs, progress=progress,
+        stage_name=progress.STAGE_FET4, events_types=EVENTS_TYPES_FET
     )
     progress.report_message(f"Processing {len(elems_4)} transactions for fetchhub-4... ")
     staketaxcsv.fet.processor.process_txs(wallet_address, elems_4, exporter, FET_NODE)

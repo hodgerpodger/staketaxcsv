@@ -70,13 +70,11 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_COSMOSPLUS)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = api_lcd.get_txs_pages_count(
-        localconfig.node, wallet_address, max_txs)
+    count_pages = api_lcd.get_txs_pages_count(localconfig.node, wallet_address, max_txs)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = api_lcd.get_txs_all(
-        localconfig.node, wallet_address, progress, max_txs)
+    elems = api_lcd.get_txs_all(localconfig.node, wallet_address, max_txs, progress=progress)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.cosmosplus.processor.process_txs(wallet_address, elems, exporter)

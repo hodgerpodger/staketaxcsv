@@ -16,14 +16,29 @@ from staketaxcsv.common.ibc.api_common import remove_duplicates
 
 TXS_LIMIT_PER_QUERY = 20
 
+# ticker -> mintscan api network name (https://docs.cosmostation.io/apis#supported-chain-list)
+MINTSCAN_API_CHAINS = {
+    "AKT": "akash",
+    "ARCH": "archway",
+    "ATOM": "cosmos",
+    "TIA": "celestia",
+    "DYDX": "dydx",
+    "EVMOS": "evmos",
+    "INJ": "injective",
+    "JUNO": "juno",
+    "KAVA": "kava",
+    "NTRN": "neutron",
+    "OSMO": "osmosis",
+    "STRD": "stride",
+}
 
 class MintscanAPI:
     """ Mintscan API for fetching transaction data """
     session = requests.Session()
 
-    def __init__(self, network):
-        self.network = network
-        self.base_url = "https://apis.mintscan.io/v1/" + network
+    def __init__(self, ticker):
+        self.network = MINTSCAN_API_CHAINS[ticker]
+        self.base_url = "https://apis.mintscan.io/v1/" + self.network
         self.headers = {
             'Authorization': f'Bearer {MINTSCAN_KEY}',
             'Accept': 'application/json, text/plain, */*'
@@ -78,21 +93,25 @@ class MintscanAPI:
         return transactions, next_search_after, is_last_page
 
 
-def get_txs_all(network, address, max_txs, from_date=None, to_date=None):
-    api = MintscanAPI(network)
+def get_txs_all(ticker, address, max_txs, progress=None, from_date=None, to_date=None):
+    api = MintscanAPI(ticker)
     max_pages = math.ceil(max_txs / TXS_LIMIT_PER_QUERY)
 
     out = []
     search_after = None
 
+    progress.report_message(f"Starting fetch stage ...")
     for i in range(max_pages):
-        logging.info("Fetching page %i for address=%s using search_after=%s, from_date=%s, to_date=%s",
-                     i, address, search_after, from_date, to_date)
+        logging.info("Fetching mintscan page %i for address=%s using search_after=%s, from_date=%s, to_date=%s",
+                     i+1, address, search_after, from_date, to_date)
+
         elems, search_after, is_last_page = api.get_txs(
             address, search_after, limit=TXS_LIMIT_PER_QUERY, from_date=from_date, to_date=to_date)
-        logging.info("Got %s transactions in result", len(elems))
-
         out.extend(elems)
+
+        if progress:
+            message = f"Fetched page {i+1} ..."
+            progress.report(i+1, message)
 
         if is_last_page:
             break
@@ -104,12 +123,12 @@ def get_txs_all(network, address, max_txs, from_date=None, to_date=None):
 def main():
     logging.basicConfig(level=logging.INFO)
 
-    # Example usage
-    network = "juno"
+    # Example usaget
+    ticker = "JUNO"
     address = "juno1wl4nc3ysp8gft5ewkyf97ue547xjgu8jjh93la"
     max_txs = 1000  # Maximum number of transactions to fetch
-    transactions = get_txs_all(network, address, max_txs)
-    api = MintscanAPI(network)
+    transactions = get_txs_all(ticker, address, max_txs)
+    api = MintscanAPI(ticker)
     transaction = api.get_tx("E4CA3E5C86313DAFE7CD726A3AACC4BA6E96956CF2B50B68BE3CF2F261AD28DD")
 
     print("len is ")
@@ -118,11 +137,11 @@ def main():
     print("transactions are ")
     pprint.pprint([t["txhash"] for t in transactions])
 
-    print("transaction timestamps are")
+    print("transactions timestamps are")
     pprint.pprint([t["timestamp"] for t in transactions])
 
-    print("transaction is ")
-    pprint.pprint(transaction)
+    print("transaction timestamp is ")
+    pprint.pprint(transaction["timestamp"])
 
 
 if __name__ == "__main__":

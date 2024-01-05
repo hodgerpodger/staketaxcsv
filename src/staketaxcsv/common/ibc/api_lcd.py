@@ -20,11 +20,11 @@ def get_txs_pages_count(node, address, max_txs, **kwargs):
         return api_lcd_v1.get_txs_pages_count(node, address, max_txs, **kwargs)
 
 
-def get_txs_all(node, address, progress, max_txs, **kwargs):
+def get_txs_all(node, address, max_txs, progress=None, **kwargs):
     if _version_ge(_node_version(node), LCD_V2_MIN_VERSION):
-        return api_lcd_v2.get_txs_all(node, address, progress, max_txs, **kwargs)
+        return api_lcd_v2.get_txs_all(node, address, max_txs, progress=progress, **kwargs)
     else:
-        return api_lcd_v1.get_txs_all(node, address, progress, max_txs, **kwargs)
+        return api_lcd_v1.get_txs_all(node, address, max_txs, progress=progress, **kwargs)
 
 
 def make_lcd_api(node):

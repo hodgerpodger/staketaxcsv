@@ -59,7 +59,7 @@ def txhistory(wallet_address):
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = api_lcd.get_txs_all(ARCH_NODE, wallet_address, progress, max_txs)
+    elems = api_lcd.get_txs_all(ARCH_NODE, wallet_address, max_txs, progress=progress)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.arch.processor.process_txs(wallet_address, elems, exporter)

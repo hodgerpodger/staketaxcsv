@@ -135,9 +135,8 @@ class LcdAPI_v1:
         return data
 
 
-def get_txs_all(node, address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, sleep_seconds=1,
-                debug=False, stage_name="default", events_types=None):
-    LcdAPI_v1.debug = debug
+def get_txs_all(node, address, max_txs, progress=None, limit=TXS_LIMIT_PER_QUERY, sleep_seconds=1,
+                stage_name="default", events_types=None):
     api = LcdAPI_v1(node)
     events_types = events_types if events_types else EVENTS_TYPE_LIST_DEFAULT
     max_pages = math.ceil(max_txs / limit)
@@ -146,14 +145,17 @@ def get_txs_all(node, address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, sle
     pages_total = 0
     for events_type in events_types:
         offset = 0
+        if progress:
+            progress.report_message(f"Starting fetch for event_type={events_type}")
 
-        for i in range(0, max_pages):
-            message = f"Fetching page {i} for {events_type} ..."
+        for i in range(max_pages):
             elems, offset, _ = api.get_txs(address, events_type, offset, limit, sleep_seconds)
             out.extend(elems)
 
             pages_total += 1
-            progress.report(pages_total, message, stage_name)
+            if progress:
+                message = f"Fetched page {i+1} for {events_type} stage ..."
+                progress.report(pages_total, message, stage_name)
 
             if offset is None:
                 break
@@ -162,9 +164,7 @@ def get_txs_all(node, address, progress, max_txs, limit=TXS_LIMIT_PER_QUERY, sle
     return out
 
 
-def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY, debug=False,
-                        events_types=None, sleep_seconds=1):
-    LcdAPI_v1.debug = debug
+def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY, events_types=None, sleep_seconds=1):
     api = LcdAPI_v1(node)
     events_types = events_types if events_types else EVENTS_TYPE_LIST_DEFAULT
 

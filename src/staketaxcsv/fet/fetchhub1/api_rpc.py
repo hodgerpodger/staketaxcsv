@@ -97,7 +97,7 @@ class FetRpcAPI:
         return timestamp
 
 
-def get_txs_all(node, wallet_address, progress, max_txs, per_page=TXS_LIMIT_PER_QUERY, debug=False,
+def get_txs_all(node, wallet_address, max_txs, progress=None, per_page=TXS_LIMIT_PER_QUERY, debug=False,
                 stage_name="default", events_types=None):
     api = FetRpcAPI(node)
     api.debug = debug
@@ -108,9 +108,10 @@ def get_txs_all(node, wallet_address, progress, max_txs, per_page=TXS_LIMIT_PER_
     page_for_progress = 1
     for events_type in events_types:
         for page in range(1, max_pages + 1):
-            message = f"Fetching page {page_for_progress} ..."
-            progress.report(page_for_progress, message, stage_name)
-            page_for_progress += 1
+            if progress:
+                message = f"Fetching page {page_for_progress} ..."
+                progress.report(page_for_progress, message, stage_name)
+                page_for_progress += 1
 
             elems, next_page, _, _ = api.txs_search(wallet_address, events_type, page, per_page)
 

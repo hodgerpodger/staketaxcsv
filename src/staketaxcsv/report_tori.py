@@ -7,7 +7,6 @@ Prints transactions and writes CSV(s) to _reports/TORI*.csv
 import logging
 import pprint
 
-import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.tori.processor
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
@@ -15,6 +14,7 @@ from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import TORI_NODE, TICKER_TORI
 from staketaxcsv.tori.config_tori import localconfig
 from staketaxcsv.tori.progress_tori import SECONDS_PER_PAGE, ProgressTori
+from staketaxcsv.common.ibc import api_lcd
 
 
 def main():
@@ -28,11 +28,11 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    return staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(TORI_NODE).account_exists(wallet_address)
+    return api_lcd.make_lcd_api(TORI_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(TORI_NODE).get_tx(txid)
+    elem = api_lcd.make_lcd_api(TORI_NODE).get_tx(txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_TORI)
     txinfo = staketaxcsv.tori.processor.process_tx(wallet_address, elem, exporter)
@@ -42,7 +42,7 @@ def txone(wallet_address, txid):
 
 def estimate_duration(wallet_address):
     max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(TORI_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * api_lcd.get_txs_pages_count(TORI_NODE, wallet_address, max_txs)
 
 
 def txhistory(wallet_address):
@@ -55,11 +55,11 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_TORI)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(TORI_NODE, wallet_address, max_txs)
+    count_pages = api_lcd.get_txs_pages_count(TORI_NODE, wallet_address, max_txs)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = staketaxcsv.common.ibc.api_lcd_v1.get_txs_all(TORI_NODE, wallet_address, progress, max_txs)
+    elems = api_lcd.get_txs_all(TORI_NODE, wallet_address, max_txs, progress=progress)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.tori.processor.process_txs(wallet_address, elems, exporter)

@@ -63,11 +63,11 @@ def txhistory(wallet_address):
 
     # Fetch count of transactions to estimate progress more accurately
     staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
-        BLD_RPC_NODES, wallet_address, max_txs, progress, LIMIT_TXS_PER_QUERY)
+        BLD_RPC_NODES, wallet_address, max_txs, progress_rpc=progress, limit=LIMIT_TXS_PER_QUERY)
 
     # Fetch transactions
     elems = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_all(
-        BLD_RPC_NODES, wallet_address, progress, max_txs, limit=LIMIT_TXS_PER_QUERY
+        BLD_RPC_NODES, wallet_address, max_txs, progress_rpc=progress, limit=LIMIT_TXS_PER_QUERY
     )
 
     progress.report_message(f"Processing {len(elems)} transactions... ")

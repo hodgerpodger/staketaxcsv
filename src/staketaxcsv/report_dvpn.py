@@ -71,7 +71,7 @@ def txhistory(wallet_address):
     progress.set_rpc_estimate(rpc_count_pages)
 
     # LCD - fetch transactions
-    lcd_elems = api_lcd.get_txs_all(DVPN_NODE, wallet_address, progress, max_txs, stage_name="lcd")
+    lcd_elems = api_lcd.get_txs_all(DVPN_NODE, wallet_address, max_txs, progress=progress, stage_name="lcd")
 
     # Some older transaction types can no longer be processed through the latest sentinelhub LCD api (version 0.9.2 at time of writing).
     # Example failure message:
@@ -81,9 +81,9 @@ def txhistory(wallet_address):
     # Only found cases of this when the address is the sender, so the `events_types` queried are limited.
 
     # RPC - fetch transactions
-    rpc_elems = staketaxcsv.common.ibc.api_rpc.get_txs_all(DVPN_NODE_RPC, wallet_address, progress, max_txs,
-                                                           stage_name="rpc",
-                                                           events_types=[staketaxcsv.common.ibc.api_common.EVENTS_TYPE_SENDER])
+    rpc_elems = staketaxcsv.common.ibc.api_rpc.get_txs_all(
+        DVPN_NODE_RPC, wallet_address, max_txs, progress=progress, stage_name="rpc",
+        events_types=[staketaxcsv.common.ibc.api_common.EVENTS_TYPE_SENDER])
 
     # See if there were any missing transactions between the LCD and RPC scans
     lcd_tx_hashes = set([e["txhash"] for e in lcd_elems])

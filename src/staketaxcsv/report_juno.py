@@ -65,11 +65,11 @@ def txhistory(wallet_address):
 
     # Fetch count of transactions to estimate progress beforehand
     staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
-        JUNO_NODES_RPC, wallet_address, max_txs, progress)
+        JUNO_NODES_RPC, wallet_address, max_txs, progress_rpc=progress)
 
     # Fetch transactions
     elems = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_all(
-        JUNO_NODES_RPC, wallet_address, progress, max_txs)
+        JUNO_NODES_RPC, wallet_address, max_txs, progress_rpc=progress)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.juno.processor.process_txs(wallet_address, elems, exporter)
