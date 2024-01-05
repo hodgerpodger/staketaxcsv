@@ -4,13 +4,9 @@ import math
 from staketaxcsv.common.ibc.api_lcd_v1 import LcdAPI_v1
 from staketaxcsv.settings_csv import REPORTS_DIR
 from staketaxcsv.common.debug_util import use_debug_files
-from staketaxcsv.common.ibc.api_common import (
-    EVENTS_TYPE_LIST_DEFAULT,
-    EVENTS_TYPE_RECIPIENT,
-    EVENTS_TYPE_SENDER,
-    EVENTS_TYPE_SIGNER,
-    remove_duplicates,
-)
+from staketaxcsv.common.ibc.constants import EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SIGNER, \
+    EVENTS_TYPE_LIST_DEFAULT
+from staketaxcsv.common.ibc.util_ibc import remove_duplicates
 
 TXS_LIMIT_PER_QUERY = 100
 

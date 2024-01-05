@@ -12,7 +12,7 @@ import time
 
 from staketaxcsv.common.query import get_with_retries
 from staketaxcsv.settings_csv import MINTSCAN_KEY
-from staketaxcsv.common.ibc.api_common import remove_duplicates
+from staketaxcsv.common.ibc.util_ibc import remove_duplicates
 
 TXS_LIMIT_PER_QUERY = 20
 

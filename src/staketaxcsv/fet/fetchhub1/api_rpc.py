@@ -8,12 +8,8 @@ from urllib.parse import urlencode
 import requests
 from dateutil import parser
 from staketaxcsv.common.debug_util import use_debug_files
-from staketaxcsv.common.ibc.api_common import (
-    EVENTS_TYPE_LIST_DEFAULT,
-    EVENTS_TYPE_RECIPIENT,
-    EVENTS_TYPE_SENDER,
-    EVENTS_TYPE_SIGNER,
-)
+from staketaxcsv.common.ibc.constants import EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SIGNER, \
+    EVENTS_TYPE_LIST_DEFAULT
 from staketaxcsv.fet.config_fet import localconfig
 from staketaxcsv.settings_csv import REPORTS_DIR
 

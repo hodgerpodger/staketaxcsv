@@ -1,6 +1,7 @@
 """
 
-API wrapper to get transaction data.  Wrapper so that it is easy to switch between LCD and mintscan, as needed.
+API wrapper to get transaction data.  Wrapper so that it is easy to switch between
+LCD and mintscan transaction data, as needed.
 
 """
 import logging

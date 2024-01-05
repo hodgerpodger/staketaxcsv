@@ -1,5 +1,6 @@
 import staketaxcsv.common.ibc.api_rpc
-from staketaxcsv.common.ibc.api_common import remove_duplicates
+from staketaxcsv.common.ibc.util_ibc import remove_duplicates
+
 LIMIT_TXS_PER_QUERY = 50
 
 

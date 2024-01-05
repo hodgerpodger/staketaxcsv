@@ -7,8 +7,8 @@ Prints transactions and writes CSV(s) to _reports/DVPN*.csv
 
 import logging
 
-import staketaxcsv.common.ibc.api_common
 import staketaxcsv.common.ibc.api_rpc
+import staketaxcsv.common.ibc.constants
 import staketaxcsv.dvpn.processor
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
@@ -83,7 +83,7 @@ def txhistory(wallet_address):
     # RPC - fetch transactions
     rpc_elems = staketaxcsv.common.ibc.api_rpc.get_txs_all(
         DVPN_NODE_RPC, wallet_address, max_txs, progress=progress, stage_name="rpc",
-        events_types=[staketaxcsv.common.ibc.api_common.EVENTS_TYPE_SENDER])
+        events_types=[staketaxcsv.common.ibc.constants.EVENTS_TYPE_SENDER])
 
     # See if there were any missing transactions between the LCD and RPC scans
     lcd_tx_hashes = set([e["txhash"] for e in lcd_elems])

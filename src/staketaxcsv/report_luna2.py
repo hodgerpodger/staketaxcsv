@@ -15,7 +15,6 @@ import math
 import pprint
 
 import staketaxcsv.api
-import staketaxcsv.common.ibc.api_common
 import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.luna2.genesis_airdrop
 import staketaxcsv.luna2.processor

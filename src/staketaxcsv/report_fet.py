@@ -14,7 +14,7 @@ from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ibc.api_lcd_v1 import EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SENDER, EVENTS_TYPE_SIGNER
+from staketaxcsv.common.ibc.constants import EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SIGNER
 from staketaxcsv.fet.config_fet import localconfig
 from staketaxcsv.fet.fetchhub1 import constants as co2
 from staketaxcsv.fet.fetchhub1.api_rpc import FetRpcAPI
