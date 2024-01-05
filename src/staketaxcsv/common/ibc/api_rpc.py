@@ -10,8 +10,8 @@ import requests
 from dateutil import parser
 
 from staketaxcsv.common.query import get_with_retries
-from staketaxcsv.common.ibc.constants import EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SIGNER, \
-    EVENTS_TYPE_LIST_DEFAULT
+from staketaxcsv.common.ibc.constants import (
+    EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SIGNER, EVENTS_TYPE_LIST_DEFAULT)
 from staketaxcsv.common.ibc.util_ibc import remove_duplicates
 from staketaxcsv.common.ibc.protobuf_decoder import (
     CosmosTransactionFeeExtractor,
