@@ -40,7 +40,6 @@ MSG_TYPE_WITHDRAW_REWARD = "MsgWithdrawDelegatorReward"
 MSG_TYPE_TIMEOUT = "MsgTimeout"
 MSG_TYPE_MULTI_SEND = "MsgMultiSend"
 
-TXS_LIMIT_PER_QUERY = 50
 EVENTS_TYPE_SENDER = "sender"
 EVENTS_TYPE_RECIPIENT = "recipient"
 EVENTS_TYPE_SIGNER = "signer"
