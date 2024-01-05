@@ -100,7 +100,7 @@ See [README_reference.md](README_reference.md):
 * [Tests](README_reference.md#tests)
 * [Docker](README_reference.md#docker)
 * [PYTHONPATH Issues](README_reference.md#pythonpath-issues)
-* [Run CSV job with no transaction limit]README_reference.md#run-csv-job-with-no-transaction-limit
+* [Run CSV job with no transaction limit](README_reference.md#run-csv-job-with-no-transaction-limit)
 * [Ideal Configuration](README_reference.md#ideal-configuration)
   * [RPC Node Settings](README_reference.md#rpc-node-settings)
   * [DB Cache](README_reference.md#db-cache)
