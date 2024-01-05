@@ -1,6 +1,8 @@
 """
 Experimental class.  Not integrated yet into reports.
 
+For list of supported networks for mintscan api, see https://docs.cosmostation.io/apis#supported-chain-list .
+
 """
 
 from urllib.parse import urlencode
@@ -13,24 +15,9 @@ import time
 from staketaxcsv.common.query import get_with_retries
 from staketaxcsv.settings_csv import MINTSCAN_KEY
 from staketaxcsv.common.ibc.util_ibc import remove_duplicates
+from staketaxcsv.common.ibc.constants import MINTSCAN_LABELS
 
 TXS_LIMIT_PER_QUERY = 20
-
-# ticker -> mintscan api network name (https://docs.cosmostation.io/apis#supported-chain-list)
-MINTSCAN_API_CHAINS = {
-    "AKT": "akash",
-    "ARCH": "archway",
-    "ATOM": "cosmos",
-    "TIA": "celestia",
-    "DYDX": "dydx",
-    "EVMOS": "evmos",
-    "INJ": "injective",
-    "JUNO": "juno",
-    "KAVA": "kava",
-    "NTRN": "neutron",
-    "OSMO": "osmosis",
-    "STRD": "stride",
-}
 
 
 class MintscanAPI:
@@ -38,7 +25,7 @@ class MintscanAPI:
     session = requests.Session()
 
     def __init__(self, ticker):
-        self.network = MINTSCAN_API_CHAINS[ticker]
+        self.network = MINTSCAN_LABELS[ticker]
         self.base_url = "https://apis.mintscan.io/v1/" + self.network
         self.headers = {
             'Authorization': f'Bearer {MINTSCAN_KEY}',
