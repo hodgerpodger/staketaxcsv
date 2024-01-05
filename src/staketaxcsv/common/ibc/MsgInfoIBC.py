@@ -201,10 +201,6 @@ class MsgInfoIBC:
 
             amount, currency = self.amount_currency_single(amount_raw, currency_raw)
 
-            # Convert from raw string to float amount and currency symbol
-            #amount, currency = MsgInfoIBC.amount_currency_from_raw(
-            #    amount_raw, currency_raw, self.lcd_node, self.ibc_addresses)
-
             out.append((amount, currency))
 
         return out

@@ -56,7 +56,7 @@ class LcdAPI_v2(LcdAPI_v1):
 
     def _get_txs_one_by_one(self, wallet_address, events_type, page, limit, sleep_seconds):
         """ Rewrites original query by retrieving set of txs one-by-one. """
-        p_start = (page-1) * limit + 1
+        p_start = (page - 1) * limit + 1
         p_end = page * limit
 
         elems = []

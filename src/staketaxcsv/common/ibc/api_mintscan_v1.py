@@ -32,6 +32,7 @@ MINTSCAN_API_CHAINS = {
     "STRD": "stride",
 }
 
+
 class MintscanAPI:
     """ Mintscan API for fetching transaction data """
     session = requests.Session()
@@ -103,15 +104,15 @@ def get_txs_all(ticker, address, max_txs, progress=None, from_date=None, to_date
     progress.report_message(f"Starting fetch stage ...")
     for i in range(max_pages):
         logging.info("Fetching mintscan page %i for address=%s using search_after=%s, from_date=%s, to_date=%s",
-                     i+1, address, search_after, from_date, to_date)
+                     i + 1, address, search_after, from_date, to_date)
 
         elems, search_after, is_last_page = api.get_txs(
             address, search_after, limit=TXS_LIMIT_PER_QUERY, from_date=from_date, to_date=to_date)
         out.extend(elems)
 
         if progress:
-            message = f"Fetched page {i+1} ..."
-            progress.report(i+1, message)
+            message = f"Fetched page {i + 1} ..."
+            progress.report(i + 1, message)
 
         if is_last_page:
             break

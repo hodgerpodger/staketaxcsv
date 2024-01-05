@@ -171,10 +171,6 @@ def _transfers_log(log, wallet_address, multicurrency=False):
                     if k == "sender":
                         sender = v
 
-                #recipient = attributes[i]["value"]
-                #sender = attributes[i + 1]["value"]
-                #amount_string = attributes[i + 2]["value"]
-
                 if recipient == wallet_address:
                     if multicurrency:
                         for amount, currency in _amounts(amount_string):

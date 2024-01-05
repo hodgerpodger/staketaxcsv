@@ -33,7 +33,6 @@ class RpcAPI(object):
 
         return result
 
-
     @classmethod
     def fetch_account(cls, address):
         params_list = [address, {"encoding": "jsonParsed"}]
