@@ -18,7 +18,7 @@ from staketaxcsv.common.ibc.protobuf_decoder import (
     ProtobufParser,
     ProtobufParserCallback,
 )
-from staketaxcsv.fet.fetchhub1.api_rpc import TXS_LIMIT_PER_QUERY
+TXS_LIMIT_PER_QUERY = 50
 
 
 class RpcAPI:

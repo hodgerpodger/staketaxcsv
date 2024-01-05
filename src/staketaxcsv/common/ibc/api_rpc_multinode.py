@@ -1,7 +1,6 @@
 import staketaxcsv.common.ibc.api_rpc
 from staketaxcsv.common.ibc.util_ibc import remove_duplicates
-
-LIMIT_TXS_PER_QUERY = 50
+from staketaxcsv.common.ibc.api_rpc import TXS_LIMIT_PER_QUERY
 
 
 def get_tx(nodes, txid):
@@ -13,7 +12,7 @@ def get_tx(nodes, txid):
     return elem
 
 
-def get_txs_pages_count(nodes, wallet_address, max_txs, progress_rpc=None, limit=LIMIT_TXS_PER_QUERY):
+def get_txs_pages_count(nodes, wallet_address, max_txs, progress_rpc=None, limit=TXS_LIMIT_PER_QUERY):
     pages_total = 0
     txs_total = 0
     for node in nodes:
@@ -27,7 +26,7 @@ def get_txs_pages_count(nodes, wallet_address, max_txs, progress_rpc=None, limit
     return pages_total, txs_total
 
 
-def get_txs_all(nodes, wallet_address, max_txs, progress_rpc=None, limit=LIMIT_TXS_PER_QUERY):
+def get_txs_all(nodes, wallet_address, max_txs, progress_rpc=None, limit=TXS_LIMIT_PER_QUERY):
     elems = []
     for node in nodes:
         stage_name_fetch = node + "_fetch"
