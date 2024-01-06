@@ -15,7 +15,6 @@ from tests.mock_lcd import MockLcdAPI_v1, MockLcdAPI_v2
 from tests.mock_mintscan import MockMintscanAPI
 import staketaxcsv.report_atom
 
-logging.basicConfig(level=logging.INFO)
 
 @patch("staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1", new=MockLcdAPI_v1)
 @patch("staketaxcsv.common.ibc.api_lcd_v2.LcdAPI_v2", new=MockLcdAPI_v2)
