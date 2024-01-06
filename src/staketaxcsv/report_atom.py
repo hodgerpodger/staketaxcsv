@@ -11,19 +11,15 @@ https://node.atomscan.com/swagger/
 """
 
 import logging
-import math
 
-import staketaxcsv.atom.cosmoshub123.api_cosmostation
 import staketaxcsv.atom.processor
-from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.atom.config_atom import localconfig
 from staketaxcsv.atom.progress_atom import SECONDS_PER_PAGE, ProgressAtom
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import ATOM_NODE, TICKER_ATOM
-
-LIMIT_PER_QUERY = 50
+from staketaxcsv.common.ibc.TxData import TxData
 
 
 def main():
@@ -34,16 +30,22 @@ def read_options(options):
     """ Configure localconfig based on options dictionary. """
     report_util.read_common_options(localconfig, options)
 
-    localconfig.legacy = options.get("legacy", False)
+    localconfig.start_date = options.get("start_date", None)
+    localconfig.end_date = options.get("end_date", None)
     logging.info("localconfig: %s", localconfig.__dict__)
 
 
+def _txdata():
+    max_txs = localconfig.limit
+    return TxData(TICKER_ATOM, ATOM_NODE, max_txs)
+
+
 def wallet_exists(wallet_address):
-    return api_lcd.make_lcd_api(ATOM_NODE).account_exists(wallet_address)
+    return _txdata().account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = api_lcd.make_lcd_api(ATOM_NODE).get_tx(txid)
+    elem = _txdata().get_tx(txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
     txinfo = staketaxcsv.atom.processor.process_tx(wallet_address, elem, exporter)
@@ -52,8 +54,9 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address):
-    max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * api_lcd.get_txs_pages_count(ATOM_NODE, wallet_address, max_txs)
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+
+    return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address, start_date, end_date)
 
 
 def txhistory(wallet_address):
@@ -61,16 +64,17 @@ def txhistory(wallet_address):
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")
 
-    max_txs = localconfig.limit
+    start_date, end_date = localconfig.start_date, localconfig.end_date
     progress = ProgressAtom()
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
+    txdata = _txdata()
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = api_lcd.get_txs_pages_count(ATOM_NODE, wallet_address, max_txs)
+    count_pages = txdata.get_txs_pages_count(wallet_address, start_date, end_date)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = api_lcd.get_txs_all(ATOM_NODE, wallet_address, max_txs, progress=progress)
+    elems = txdata.get_txs_all(wallet_address, progress, start_date, end_date)
 
     progress.report_message(f"Processing {len(elems)} ATOM transactions... ")
     staketaxcsv.atom.processor.process_txs(wallet_address, elems, exporter)

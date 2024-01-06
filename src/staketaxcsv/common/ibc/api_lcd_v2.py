@@ -3,7 +3,7 @@ import math
 
 from staketaxcsv.common.ibc.api_lcd_v1 import LcdAPI_v1
 from staketaxcsv.settings_csv import REPORTS_DIR
-from staketaxcsv.common.debug_util import use_debug_files
+from staketaxcsv.common.debug_util import debug_cache
 from staketaxcsv.common.ibc.constants import (
     EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SIGNER, EVENTS_TYPE_LIST_DEFAULT)
 from staketaxcsv.common.ibc.util_ibc import remove_duplicates
@@ -14,7 +14,7 @@ TXS_LIMIT_PER_QUERY = 100
 class LcdAPI_v2(LcdAPI_v1):
     """ >= v0.46.x (cosmos sdk version), around 2023-01 """
 
-    @use_debug_files(None, REPORTS_DIR)
+    @debug_cache(REPORTS_DIR)
     def _get_txs(self, wallet_address, events_type, page, limit, sleep_seconds):
         uri_path = "/cosmos/tx/v1beta1/txs"
         query_params = {
@@ -105,9 +105,8 @@ def get_txs_all(node, address, max_txs, progress=None, limit=TXS_LIMIT_PER_QUERY
     return out
 
 
-def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY, debug=False,
+def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY,
                         events_types=None, sleep_seconds=1):
-    LcdAPI_v2.debug = debug
     api = LcdAPI_v2(node)
     events_types = events_types if events_types else EVENTS_TYPE_LIST_DEFAULT
 

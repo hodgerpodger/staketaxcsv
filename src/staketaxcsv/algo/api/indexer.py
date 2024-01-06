@@ -8,7 +8,7 @@ from requests import Session
 from requests.adapters import HTTPAdapter, Retry
 
 from staketaxcsv.algo.config_algo import localconfig
-from staketaxcsv.common.debug_util import use_debug_files
+from staketaxcsv.common.debug_util import debug_cache
 from staketaxcsv.settings_csv import ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE, REPORTS_DIR
 
 # https://developer.algorand.org/docs/get-details/indexer/#paginated-results
@@ -33,7 +33,7 @@ class Indexer:
 
         return status_code == 200
 
-    @use_debug_files(localconfig, os.path.join(REPORTS_DIR, "algo", "accounts"))
+    @debug_cache(os.path.join(REPORTS_DIR, "algo", "accounts"))
     def get_account(self, address: str) -> Optional[dict]:
         """
         This function retrieves account information for a given address.
@@ -120,7 +120,7 @@ class Indexer:
         else:
             return [], None
 
-    @use_debug_files(localconfig, os.path.join(REPORTS_DIR, "algo", "transactions"))
+    @debug_cache(os.path.join(REPORTS_DIR, "algo", "transactions"))
     def get_all_transactions(self, address: str) -> list:
         """
         This function retrieves all transactions for a given address within a specified date range and
@@ -177,7 +177,7 @@ class Indexer:
         else:
             return []
 
-    @use_debug_files(localconfig, os.path.join(REPORTS_DIR, "algo", "transactions"))
+    @debug_cache(os.path.join(REPORTS_DIR, "algo", "transactions"))
     def get_transactions_by_app(self, app_id: int, round: int, address: Optional[str] = None) -> list[dict]:
         """
         This function retrieves a list of transactions for a specific application ID, round, and optional
@@ -207,7 +207,7 @@ class Indexer:
         else:
             return []
 
-    @use_debug_files(localconfig, os.path.join(REPORTS_DIR, "algo", "assets"))
+    @debug_cache(os.path.join(REPORTS_DIR, "algo", "assets"))
     def get_asset(self, id: int) -> Optional[dict]:
         """
         This function retrieves asset information.
@@ -221,7 +221,7 @@ class Indexer:
         """
         return self._get_asset(ALGO_INDEXER_NODE, id)
 
-    @use_debug_files(localconfig, os.path.join(REPORTS_DIR, "algo", "assets"))
+    @debug_cache(os.path.join(REPORTS_DIR, "algo", "assets"))
     def get_deleted_asset(self, id: int) -> Optional[dict]:
         """
         This function retrieves information for an asset that has been deleted.

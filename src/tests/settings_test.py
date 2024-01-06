@@ -25,3 +25,12 @@ def rewards_db(func):
     if not staketaxcsv.settings_csv.SOL_REWARDS_DB_READ:
         return unittest.skip("Skipping test when SOL_REWARDS_DB_READ=False")(func)
     return func
+
+def mintscan_api(func):
+    """ @mintscan_api
+
+      * Decorator to only run if MINTSCAN_KEY is non-empty.
+    """
+    if not staketaxcsv.settings_csv.MINTSCAN_KEY:
+        return unittest.skip("Skipping test requiring MINTSCAN_KEY")(func)
+    return func

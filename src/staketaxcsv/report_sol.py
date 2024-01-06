@@ -91,24 +91,22 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address):
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+
     logging.info("Fetching staking addresses...")
     num_staking_addresses = len(RpcAPI.fetch_staking_addresses(wallet_address))
 
     logging.info("Fetching txids...")
-    num_txids = _num_txids(wallet_address)
+    num_txids = len(
+        get_txids_for_addresses([wallet_address], progress=None, start_date=start_date, end_date=end_date)
+    )
 
     return SECONDS_PER_STAKING_ADDRESS * num_staking_addresses + SECONDS_PER_TX * num_txids
 
 
-def _num_txids(wallet_address):
-    txids = get_txids_for_addresses([wallet_address], None)
-    return len(txids)
-
-
 def txhistory(wallet_address):
     logging.info("Using SOLANA_URL=%s...", SOL_NODE)
-    start_date = localconfig.start_date
-    end_date = localconfig.end_date
+    start_date, end_date = localconfig.start_date, localconfig.end_date
 
     progress = ProgressSol()
     exporter = Exporter(wallet_address, localconfig, TICKER_SOL)

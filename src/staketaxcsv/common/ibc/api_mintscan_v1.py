@@ -16,6 +16,8 @@ from staketaxcsv.common.query import get_with_retries
 from staketaxcsv.settings_csv import MINTSCAN_KEY
 from staketaxcsv.common.ibc.util_ibc import remove_duplicates
 from staketaxcsv.common.ibc.constants import MINTSCAN_LABELS
+from staketaxcsv.common.debug_util import debug_cache
+from staketaxcsv.settings_csv import REPORTS_DIR
 
 TXS_LIMIT_PER_QUERY = 20
 
@@ -52,54 +54,89 @@ class MintscanAPI:
 
     def get_tx(self, txid):
         data = self._get_tx(txid)
-        return data[0]
 
-    def _get_txs(self, address, search_after, limit, from_date=None, to_date=None):
+        elem = data[0]
+        self._normalize_to_lcd_tx_response(elem)
+
+        return elem
+
+    @debug_cache(REPORTS_DIR)
+    def _get_txs(self, address, search_after=None, limit=TXS_LIMIT_PER_QUERY, from_date_time=None, to_date_time=None):
         uri_path = f"/accounts/{address}/transactions"
         params = {
             'take': limit,
-            'searchAfter': search_after,
         }
-        if from_date:
-            params['fromDateTime'] = from_date
-        if to_date:
-            params['toDateTime'] = to_date
+        if search_after:
+            params["searchAfter"] = search_after
+        if from_date_time:
+            params['fromDateTime'] = from_date_time
+        if to_date_time:
+            params['toDateTime'] = to_date_time
 
         data = self._query(uri_path, params, sleep_seconds=0.1)
         return data
 
     def get_txs(self, address, search_after=None, limit=TXS_LIMIT_PER_QUERY, from_date=None, to_date=None):
+        """
+        from_date: YYYY-MM-DD (inclusive, UTC)
+        to_date: YYYY-MM-DD (inclusive, UTC)
+        """
         # api truncates data to only one month if no fromDateTime.  So this is used to avoid this.
         if from_date is None:
-            from_date = "2020-01-01"
+            from_date = "2016-01-01"
 
-        data = self._get_txs(address, search_after, limit, from_date, to_date)
+        from_date_ts = from_date + " 00:00:00"
+        to_date_ts = to_date + " 23:59:59" if to_date else None
+
+        data = self._get_txs(address, search_after, limit, from_date_ts, to_date_ts)
         transactions = data.get("transactions", [])
         next_search_after = data.get("pagination", {}).get("searchAfter")
+        total_txs = data.get("pagination", {}).get("totalCount")
         is_last_page = next_search_after is None
 
-        return transactions, next_search_after, is_last_page
+        for transaction in transactions:
+            self._normalize_to_lcd_tx_response(transaction)
+
+        return transactions, next_search_after, is_last_page, total_txs
+
+    def _normalize_to_lcd_tx_response(self, elem):
+        """ Change structure to LCD tx_response field, due to processors being based on this. """
+        if "type" in elem["tx"]:
+            tx_type = elem["tx"]["type"]
+            value = elem["tx"][tx_type]
+            elem["tx"].update(value)
+            del elem["tx"][tx_type]
+        elif "@type" in elem["tx"]:
+            tx_type = elem["tx"]["@type"]
+            field_tx_type = tx_type.replace(".", "-")  # i.e. "/cosmos.tx.v1beta1.Tx" -> "/cosmos-tx-v1beta1-Tx"
+            value = elem["tx"][field_tx_type]
+            elem["tx"].update(value)
+            del elem["tx"][field_tx_type]
 
 
-def get_txs_all(ticker, address, max_txs, progress=None, from_date=None, to_date=None):
+def get_txs_page_count(ticker, address, max_txs, start_date=None, end_date=None):
+    _, _, _, total_txs = MintscanAPI(ticker).get_txs(address, from_date=start_date, to_date=end_date)
+    num_txs = min(total_txs, max_txs)
+    num_pages = math.ceil(num_txs / TXS_LIMIT_PER_QUERY) if num_txs else 1
+    return num_pages
+
+
+def get_txs_all(ticker, address, max_txs, progress=None, start_date=None, end_date=None):
     api = MintscanAPI(ticker)
     max_pages = math.ceil(max_txs / TXS_LIMIT_PER_QUERY)
 
     out = []
     search_after = None
 
-    progress.report_message(f"Starting fetch stage ...")
+    if progress:
+        progress.report_message(f"Starting fetch stage ...")
     for i in range(max_pages):
-        logging.info("Fetching mintscan page %i for address=%s using search_after=%s, from_date=%s, to_date=%s",
-                     i + 1, address, search_after, from_date, to_date)
-
-        elems, search_after, is_last_page = api.get_txs(
-            address, search_after, limit=TXS_LIMIT_PER_QUERY, from_date=from_date, to_date=to_date)
+        elems, search_after, is_last_page, _ = api.get_txs(
+            address, search_after, limit=TXS_LIMIT_PER_QUERY, from_date=start_date, to_date=end_date)
         out.extend(elems)
 
         if progress:
-            message = f"Fetched page {i + 1} ..."
-            progress.report(i + 1, message)
+            progress.report(i + 1, f"Fetched page {i + 1} ...")
 
         if is_last_page:
             break
@@ -111,11 +148,14 @@ def get_txs_all(ticker, address, max_txs, progress=None, from_date=None, to_date
 def main():
     logging.basicConfig(level=logging.INFO)
 
-    # Example usaget
+    # Example usage
     ticker = "JUNO"
     address = "juno1wl4nc3ysp8gft5ewkyf97ue547xjgu8jjh93la"
     max_txs = 1000  # Maximum number of transactions to fetch
     transactions = get_txs_all(ticker, address, max_txs)
+
+    page_count = get_txs_page_count(ticker, address, 20000)
+
     api = MintscanAPI(ticker)
     transaction = api.get_tx("E4CA3E5C86313DAFE7CD726A3AACC4BA6E96956CF2B50B68BE3CF2F261AD28DD")
 
@@ -124,6 +164,9 @@ def main():
 
     print("transactions are ")
     pprint.pprint([t["txhash"] for t in transactions])
+
+    print("page_count is")
+    print(page_count)
 
     print("transactions timestamps are")
     pprint.pprint([t["timestamp"] for t in transactions])

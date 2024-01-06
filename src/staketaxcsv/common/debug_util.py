@@ -3,33 +3,27 @@ import logging
 import os
 
 
-def use_debug_files(localconfig, file_dir):
-    """ Decorator to read/write results of function to file (debug mode only) """
+def debug_cache(file_dir):
+    """ Decorator to read/write results of function to file when --debug_cache set or DEBUG_CACHE=1 in environment """
 
     def inner(func):
 
         def wrapper(*args, **kwargs):
-            # ### Move past this section only when a debug variable is True #####################
-            if localconfig is None:
-                # Workaround when localconfig not available, can use localconfig=None such that:
-                # Assumes class/instance method with self.debug or cls.debug is available.
-                if hasattr(args[0], "debug") and args[0].debug:
-                    pass
-                else:
-                    return func(*args, **kwargs)
+            # ###### Move past this section only when --debug_cache set or DEBUG_CACHE=1 ############
+
+            if os.environ.get("DEBUG_CACHE") == "1":
+                pass
             else:
-                if localconfig.debug:
-                    pass
-                else:
-                    return func(*args, **kwargs)
-            # ####################################################################################
+                return func(*args, **kwargs)
+
+            # ######################################################################################
 
             if not os.path.exists(file_dir):
                 os.makedirs(file_dir)
 
             debug_file = _debug_file_path(file_dir, args, func)
 
-            # Debugging only: when --debug flag set, read from cache file
+            # Debugging only: when --debug_cache flag set, read from cache file
             if os.path.exists(debug_file):
                 with open(debug_file, "r") as f:
                     out = json.load(f)
@@ -38,7 +32,7 @@ def use_debug_files(localconfig, file_dir):
 
             result = func(*args, **kwargs)
 
-            # Debugging only: when --debug flat set, write to cache file
+            # Debugging only: when --debug_cache flat set, write to cache file
             with open(debug_file, "w") as f:
                 json.dump(result, f, indent=4)
             logging.info("Wrote to %s for debugging", debug_file)

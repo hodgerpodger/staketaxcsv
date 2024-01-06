@@ -2,7 +2,7 @@ import logging
 import time
 
 import requests
-from staketaxcsv.common.debug_util import use_debug_files
+from staketaxcsv.common.debug_util import debug_cache
 from staketaxcsv.luna1.config_luna1 import localconfig
 from staketaxcsv.settings_csv import REPORTS_DIR
 
@@ -22,7 +22,7 @@ class FcdAPI:
         return data
 
     @classmethod
-    @use_debug_files(localconfig, REPORTS_DIR)
+    @debug_cache(REPORTS_DIR)
     def get_txs(cls, address, offset=None):
         url = "{}/v1/txs?account={}&limit={}".format(FCD_URL, address, LIMIT_FCD)
         if offset:

@@ -5,7 +5,7 @@ from urllib.parse import urlencode
 
 import requests
 import staketaxcsv.common.ibc.constants as co
-from staketaxcsv.common.debug_util import use_debug_files
+from staketaxcsv.common.debug_util import debug_cache
 from staketaxcsv.common.ibc.constants import (
     EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SIGNER, EVENTS_TYPE_LIST_DEFAULT)
 from staketaxcsv.common.ibc.util_ibc import remove_duplicates
@@ -68,7 +68,7 @@ class LcdAPI_v1:
         else:
             return False
 
-    @use_debug_files(None, REPORTS_DIR)
+    @debug_cache(REPORTS_DIR)
     def _get_txs(self, wallet_address, events_type, offset, limit, sleep_seconds):
         uri_path = "/cosmos/tx/v1beta1/txs"
         query_params = {

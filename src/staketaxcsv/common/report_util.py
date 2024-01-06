@@ -52,6 +52,11 @@ def parse_args(ticker):
         default=False,
     )
     parser.add_argument(
+        "--debug_cache",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
         "--cache",
         action="store_true",
         default=False,
@@ -132,6 +137,8 @@ def parse_args(ticker):
     if args.debug:
         options["debug"] = True
         logging.basicConfig(level=logging.DEBUG)
+    if args.debug_cache:
+        os.environ["DEBUG_CACHE"] = "1"
     if args.cache:
         options["cache"] = True
     if args.limit:

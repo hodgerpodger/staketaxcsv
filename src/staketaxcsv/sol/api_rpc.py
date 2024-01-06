@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 import requests
 
 from staketaxcsv.common.query import post_with_retries
-from staketaxcsv.common.debug_util import use_debug_files
+from staketaxcsv.common.debug_util import debug_cache
 from staketaxcsv.settings_csv import REPORTS_DIR, SOL_NODE
 from staketaxcsv.sol.config_sol import localconfig
 from staketaxcsv.sol.constants import BILLION, PROGRAMID_STAKE, PROGRAMID_TOKEN_ACCOUNTS
@@ -73,7 +73,7 @@ class RpcAPI(object):
         return out
 
     @classmethod
-    @use_debug_files(localconfig, REPORTS_DIR)
+    @debug_cache(REPORTS_DIR)
     def _get_inflation_reward(cls, staking_address, epoch):
         params_list = [
             [staking_address],
@@ -119,7 +119,7 @@ class RpcAPI(object):
         return addresses
 
     @classmethod
-    @use_debug_files(localconfig, REPORTS_DIR)
+    @debug_cache(REPORTS_DIR)
     def _fetch_staking_addresses(cls, wallet_address):
         params_list = [
             PROGRAMID_STAKE,
@@ -138,7 +138,7 @@ class RpcAPI(object):
         return cls._fetch("getProgramAccounts", params_list)
 
     @classmethod
-    @use_debug_files(localconfig, REPORTS_DIR)
+    @debug_cache(REPORTS_DIR)
     def fetch_tx(cls, txid):
         params_list = [txid, {"encoding": "jsonParsed", "maxSupportedTransactionVersion": 0}]
         return cls._fetch("getTransaction", params_list)
@@ -156,7 +156,7 @@ class RpcAPI(object):
         return result
 
     @classmethod
-    @use_debug_files(localconfig, REPORTS_DIR)
+    @debug_cache(REPORTS_DIR)
     def _fetch_token_accounts(cls, wallet_address):
         logging.info("Querying _fetch_token_accounts_()... wallet_address=%s", wallet_address)
         params_list = [
@@ -243,7 +243,7 @@ class RpcAPI(object):
         return out, last_txid
 
     @classmethod
-    @use_debug_files(localconfig, REPORTS_DIR)
+    @debug_cache(REPORTS_DIR)
     def _get_txids(cls, wallet_address, limit=None, before=None):
         config = {}
         if limit:

@@ -4,7 +4,6 @@ Transactions processor for cosmoshub1 transactions.
 
 
 import logging
-from datetime import datetime
 
 from staketaxcsv.atom.config_atom import localconfig
 from staketaxcsv.atom.constants import CHAIN_ID_COSMOSHUB1, CUR_ATOM, MILLION
@@ -18,11 +17,16 @@ from staketaxcsv.common.ExporterTypes import (
 from staketaxcsv.common.make_tx import make_simple_tx, make_transfer_out_tx, make_spend_fee_tx
 
 
+def _parse_timestamp(timestamp):
+    # 2019-12-04T18:12:09Z or '2019-12-04T18:12:09.0123345678Z'
+    return timestamp.split('.')[0].replace("Z", "").replace("T", " ")
+
+
 def process_tx(wallet_address, elem, exporter):
     txid = elem["txhash"]
 
     chain_id = CHAIN_ID_COSMOSHUB1
-    timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = _parse_timestamp(elem["timestamp"])
     fee = _get_fee(elem)
     url = "https://www.mintscan.io/cosmos/txs/{}".format(txid)
 

@@ -12,11 +12,12 @@ import unittest
 from unittest.mock import patch
 
 from tests.mock_lcd import MockLcdAPI_v1
+from tests.mock_mintscan import MockMintscanAPI
 import staketaxcsv.report_atom
 
 
-@patch("staketaxcsv.report_atom.LcdAPI_v1", new=MockLcdAPI_v1)
 @patch("staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1", new=MockLcdAPI_v1)
+@patch("staketaxcsv.common.ibc.api_mintscan_v1.MintscanAPI", new=MockMintscanAPI)
 def run_test(wallet_address, txid):
     exporter = staketaxcsv.report_atom.txone(wallet_address, txid)
     return exporter.export_for_test()

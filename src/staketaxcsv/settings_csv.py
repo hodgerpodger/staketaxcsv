@@ -40,7 +40,8 @@ SOL_REWARDS_DB_READ = os.environ.get("STAKETAX_SOL_REWARDS_DB_READ", False)
 MINTSCAN_KEY = os.environ.get("STAKETAX_MINTSCAN_KEY", "")
 
 # i.e. "AKT,ATOM,EVMOS" to enable using tx data from mintscan api for these tickers
-MINTSCAN_DATA_ENABLED_FOR_TICKERS = os.environ.get("STAKETAX_MINTSCAN_DATA_ENABLED_FOR_TICKERS", "")
+MINTSCAN_DATA_TICKERS_ENABLED = os.environ.get("STAKETAX_MINTSCAN_DATA_TICKERS_ENABLED", "")
+MINTSCAN_DATA_TICKERS = MINTSCAN_DATA_TICKERS_ENABLED.split(",") if MINTSCAN_DATA_TICKERS_ENABLED else []
 
 # #############################################################################
 

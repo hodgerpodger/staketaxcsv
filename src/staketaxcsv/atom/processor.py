@@ -15,14 +15,23 @@ def process_txs(wallet_address, elems, exporter):
 
 
 def _is_legacy_format_cosmoshub1(elem):
+    if elem.get("chain_id", "") == "cosmoshub-1":
+        return True
+
     return "value" in elem["tx"] and "logs" not in elem
 
 
 def _is_legacy_format_cosmoshub2(elem):
+    if elem.get("chain_id", "") == "cosmoshub-2":
+        return True
+
     return "value" in elem["tx"] and "logs" in elem and elem["logs"] and "events" not in elem["logs"][0]
 
 
 def _is_legacy_format_cosmoshub3(elem):
+    if elem.get("chain_id", "") == "cosmoshub-3":
+        return True
+
     return "value" in elem["tx"] and "logs" in elem and elem["logs"] and "events" in elem["logs"][0]
 
 
