@@ -113,6 +113,11 @@ class MintscanAPI:
                     for msg in msgs:
                         self._restructure_dict_with_type_field(msg)
 
+        if "value" in elem["tx"] and "msg" in elem["tx"]["value"]:
+            msg = elem["tx"]["value"]["msg"]
+            for m in msg:
+                self._restructure_dict_with_type_field(m)
+
     def _restructure_dict_with_type_field(self, x):
         if "type" in x:
             tx_type = x["type"]
