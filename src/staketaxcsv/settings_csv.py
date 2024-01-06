@@ -1,5 +1,8 @@
 import os
 
+# Required for ATOM report
+MINTSCAN_KEY = os.environ.get("STAKETAX_MINTSCAN_KEY", "")
+
 # Environment variables (required for each respective report)
 
 ALGO_HIST_INDEXER_NODE = os.environ.get("STAKETAX_ALGO_HIST_INDEXER_NODE", "https://indexer.algoexplorerapi.io")
@@ -37,11 +40,7 @@ LUNA2_NODE = os.environ.get("STAKETAX_LUNA2_NODE", "https://phoenix-lcd.terra.de
 # ########## Optional environment variables ########################################################
 
 SOL_REWARDS_DB_READ = os.environ.get("STAKETAX_SOL_REWARDS_DB_READ", False)
-MINTSCAN_KEY = os.environ.get("STAKETAX_MINTSCAN_KEY", "")
 
-# i.e. "AKT,ATOM,EVMOS" to enable using tx data from mintscan api for these tickers
-MINTSCAN_DATA_TICKERS_ENABLED = os.environ.get("STAKETAX_MINTSCAN_DATA_TICKERS_ENABLED", "")
-MINTSCAN_DATA_TICKERS = MINTSCAN_DATA_TICKERS_ENABLED.split(",") if MINTSCAN_DATA_TICKERS_ENABLED else []
 
 # #############################################################################
 

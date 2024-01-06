@@ -19,7 +19,8 @@ from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import ATOM_NODE, TICKER_ATOM
-from staketaxcsv.common.ibc.TxData import TxData
+from staketaxcsv.common.ibc.tx_data import TxDataMintscan
+from staketaxcsv.common.ibc import api_lcd
 
 
 def main():
@@ -37,11 +38,11 @@ def read_options(options):
 
 def _txdata():
     max_txs = localconfig.limit
-    return TxData(TICKER_ATOM, ATOM_NODE, max_txs)
+    return TxDataMintscan(TICKER_ATOM, max_txs)
 
 
 def wallet_exists(wallet_address):
-    return _txdata().account_exists(wallet_address)
+    return api_lcd.make_lcd_api(ATOM_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
