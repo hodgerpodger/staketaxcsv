@@ -101,17 +101,30 @@ class MintscanAPI:
 
     def _normalize_to_lcd_tx_response(self, elem):
         """ Change structure to LCD tx_response field, due to processors being based on this. """
-        if "type" in elem["tx"]:
-            tx_type = elem["tx"]["type"]
-            value = elem["tx"][tx_type]
-            elem["tx"].update(value)
-            del elem["tx"][tx_type]
-        elif "@type" in elem["tx"]:
-            tx_type = elem["tx"]["@type"]
+        self._restructure_dict_with_type_field(elem["tx"])
+
+        if "body" in elem["tx"] and "messages" in elem["tx"]["body"]:
+            messages = elem["tx"]["body"]["messages"]
+            for message in messages:
+                self._restructure_dict_with_type_field(message)
+
+                if "msgs" in message:
+                    msgs = message["msgs"]
+                    for msg in msgs:
+                        self._restructure_dict_with_type_field(msg)
+
+    def _restructure_dict_with_type_field(self, x):
+        if "type" in x:
+            tx_type = x["type"]
+            value = x[tx_type]
+            x.update(value)
+            del x[tx_type]
+        elif "@type" in x:
+            tx_type = x["@type"]
             field_tx_type = tx_type.replace(".", "-")  # i.e. "/cosmos.tx.v1beta1.Tx" -> "/cosmos-tx-v1beta1-Tx"
-            value = elem["tx"][field_tx_type]
-            elem["tx"].update(value)
-            del elem["tx"][field_tx_type]
+            value = x[field_tx_type]
+            x.update(value)
+            del x[field_tx_type]
 
 
 def get_txs_page_count(ticker, address, max_txs, start_date=None, end_date=None):

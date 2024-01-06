@@ -75,3 +75,27 @@ timestamp            tx_type  received_amount  received_currency  sent_amount  s
 -------------------  -------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+    def test_restake_multiple_withdraw_reward(self):
+        result = run_test(
+            "cosmos1c5j58jxg9y7yeehwun8mtkcrpu6aks5fw654l0",
+            "BBA8952489D33C0E4FF373660DBDF1908C42E325991612E0BD57B7F7A3C30628"
+        )
+        correct_result = """
+-------------------  -------  --------------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
+timestamp            tx_type  received_amount       received_currency  sent_amount  sent_currency  fee  fee_currency  txid
+2024-01-06 17:43:52  STAKING  0.000000027           stINJ                                                             BBA8952489D33C0E4FF373660DBDF1908C42E325991612E0BD57B7F7A3C30628-0
+2024-01-06 17:43:52  STAKING  0.000014333           stEVMOS                                                           BBA8952489D33C0E4FF373660DBDF1908C42E325991612E0BD57B7F7A3C30628-0
+2024-01-06 17:43:52  STAKING  0.013529999999999999  ATOM                                                              BBA8952489D33C0E4FF373660DBDF1908C42E325991612E0BD57B7F7A3C30628-0
+2024-01-06 17:43:52  STAKING  0.000090000           NTRN                                                              BBA8952489D33C0E4FF373660DBDF1908C42E325991612E0BD57B7F7A3C30628-0
+2024-01-06 17:43:52  STAKING  0.000012000           stOSMO                                                            BBA8952489D33C0E4FF373660DBDF1908C42E325991612E0BD57B7F7A3C30628-0
+2024-01-06 17:43:52  STAKING  0.000026000           STRD                                                              BBA8952489D33C0E4FF373660DBDF1908C42E325991612E0BD57B7F7A3C30628-0
+2024-01-06 17:43:52  STAKING  0.000019000           stSTARS                                                           BBA8952489D33C0E4FF373660DBDF1908C42E325991612E0BD57B7F7A3C30628-0
+2024-01-06 17:43:52  STAKING  0.000001000           stJUNO                                                            BBA8952489D33C0E4FF373660DBDF1908C42E325991612E0BD57B7F7A3C30628-0
+2024-01-06 17:43:52  STAKING  0.000001000           stATOM                                                            BBA8952489D33C0E4FF373660DBDF1908C42E325991612E0BD57B7F7A3C30628-0
+2024-01-06 17:43:52  STAKING  0.000015000           stUMEE                                                            BBA8952489D33C0E4FF373660DBDF1908C42E325991612E0BD57B7F7A3C30628-0
+2024-01-06 17:43:52  STAKING  0.000003000           stCMDX                                                            BBA8952489D33C0E4FF373660DBDF1908C42E325991612E0BD57B7F7A3C30628-0
+2024-01-06 17:43:52  STAKING  0.000014000           USDC                                                              BBA8952489D33C0E4FF373660DBDF1908C42E325991612E0BD57B7F7A3C30628-0
+-------------------  -------  --------------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
