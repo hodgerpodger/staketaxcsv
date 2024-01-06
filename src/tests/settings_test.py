@@ -26,6 +26,7 @@ def rewards_db(func):
         return unittest.skip("Skipping test when SOL_REWARDS_DB_READ=False")(func)
     return func
 
+
 def mintscan_api(func):
     """ @mintscan_api
 

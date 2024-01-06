@@ -30,8 +30,6 @@ class TestMintscan(unittest.TestCase):
 
         self.assertEqual(elem["timestamp"], "2024-01-04T21:10:01Z")
 
-        raise Exception("roger test")
-
     def test_get_txs_with_dates(self):
         api = MintscanAPI(TICKER_ATOM)
 
