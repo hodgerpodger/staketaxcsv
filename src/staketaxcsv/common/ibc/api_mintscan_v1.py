@@ -101,22 +101,17 @@ class MintscanAPI:
 
     def _normalize_to_lcd_tx_response(self, elem):
         """ Change structure to LCD tx_response field, due to processors being based on this. """
-        self._restructure_dict_with_type_field(elem["tx"])
+        self._restructure(elem["tx"])
 
-        if "body" in elem["tx"] and "messages" in elem["tx"]["body"]:
-            messages = elem["tx"]["body"]["messages"]
-            for message in messages:
-                self._restructure_dict_with_type_field(message)
+    def _restructure(self, x):
+        if isinstance(x, dict):
+            self._restructure_dict_with_type_field(x)
+            for k, v in x.items():
+                self._restructure(v)
 
-                if "msgs" in message:
-                    msgs = message["msgs"]
-                    for msg in msgs:
-                        self._restructure_dict_with_type_field(msg)
-
-        if "value" in elem["tx"] and "msg" in elem["tx"]["value"]:
-            msg = elem["tx"]["value"]["msg"]
-            for m in msg:
-                self._restructure_dict_with_type_field(m)
+        if isinstance(x, list):
+            for a in x:
+                self._restructure(a)
 
     def _restructure_dict_with_type_field(self, x):
         if "type" in x:
