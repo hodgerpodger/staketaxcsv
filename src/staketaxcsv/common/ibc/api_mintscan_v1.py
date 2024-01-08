@@ -136,7 +136,10 @@ class MintscanAPI:
 def get_txs_page_count(ticker, address, max_txs, start_date=None, end_date=None):
     _, _, _, total_txs = MintscanAPI(ticker).get_txs(address, from_date=start_date, to_date=end_date)
     num_txs = min(total_txs, max_txs)
-    num_pages = math.ceil(num_txs / TXS_LIMIT_PER_QUERY) if num_txs else 1
+
+    # "1 +" is because extra page that retries zero transactions
+    num_pages = 1 + math.ceil(num_txs / TXS_LIMIT_PER_QUERY) if num_txs else 1
+
     return num_pages
 
 

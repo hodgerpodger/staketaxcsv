@@ -36,13 +36,18 @@ def mock_query_six_args(func, arg1, arg2, arg3, arg4, arg5, arg6, dirname=""):
 
 def _mock_query(func, args, dirname=""):
     # Create a filename
-    dir = DATADIR + "/" + (dirname if dirname else _clean(func.__name__))
+    if dirname.startswith("/"):
+        # If absolute path, use it.
+        json_dir = dirname
+    else:
+        # If relative path, put in data directory for tests
+        json_dir = DATADIR + "/" + (dirname if dirname else _clean(func.__name__))
     filename_parts = [_clean(func.__name__)] + [_clean(x) for x in args]
-    json_path = dir + "/" + "-".join(filename_parts)
+    json_path = json_dir + "/" + "-".join(filename_parts)
 
     if not os.path.exists(json_path):
-        if not os.path.exists(dir):
-            os.makedirs(dir)
+        if not os.path.exists(json_dir):
+            os.makedirs(json_dir)
 
         # Run the function
         data = func(*args)

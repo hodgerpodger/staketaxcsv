@@ -30,7 +30,6 @@ def main():
 def read_options(options):
     """ Configure localconfig based on options dictionary. """
     report_util.read_common_options(localconfig, options)
-
     localconfig.start_date = options.get("start_date", None)
     localconfig.end_date = options.get("end_date", None)
     logging.info("localconfig: %s", localconfig.__dict__)
