@@ -1,6 +1,6 @@
 import os
 
-# Required for ATOM report
+# Required for ATOM/EVMOS report (See https://api.mintscan.io for details)
 MINTSCAN_KEY = os.environ.get("STAKETAX_MINTSCAN_KEY", "")
 
 # Environment variables (required for each respective report)

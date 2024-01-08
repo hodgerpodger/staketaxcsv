@@ -1,8 +1,5 @@
 """
-Experimental class.  Not integrated yet into reports.
-
 For list of supported networks for mintscan api, see https://docs.cosmostation.io/apis#supported-chain-list .
-
 """
 
 from urllib.parse import urlencode
