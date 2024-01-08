@@ -120,15 +120,17 @@ class MintscanAPI:
     def _restructure_dict_with_type_field(self, x):
         if "type" in x:
             tx_type = x["type"]
-            value = x[tx_type]
-            x.update(value)
-            del x[tx_type]
+            if tx_type in x:
+                value = x[tx_type]
+                x.update(value)
+                del x[tx_type]
         elif "@type" in x:
             tx_type = x["@type"]
             field_tx_type = tx_type.replace(".", "-")  # i.e. "/cosmos.tx.v1beta1.Tx" -> "/cosmos-tx-v1beta1-Tx"
-            value = x[field_tx_type]
-            x.update(value)
-            del x[field_tx_type]
+            if field_tx_type in x:
+                value = x[field_tx_type]
+                x.update(value)
+                del x[field_tx_type]
 
 
 def get_txs_page_count(ticker, address, max_txs, start_date=None, end_date=None):

@@ -10,17 +10,15 @@ Note:
 import logging
 
 import staketaxcsv.common.address
-import staketaxcsv.common.ibc.api_lcd_v2
-import staketaxcsv.common.ibc.api_lcd
 import staketaxcsv.evmos.processor
 from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT
 from staketaxcsv.evmos.config_evmos import localconfig
 from staketaxcsv.evmos.progress_evmos import SECONDS_PER_PAGE, ProgressEVMOS
 from staketaxcsv.settings_csv import EVMOS_NODE, TICKER_EVMOS
+from staketaxcsv.common.ibc.tx_data import TxDataMintscan
 
 TXS_LIMIT_PER_QUERY_EVMOS = 50
 TXS_LIMIT_PER_QUERY_EVMOS_SMALL = 5
@@ -54,28 +52,32 @@ def read_options(options):
     logging.info("localconfig: %s", localconfig.__dict__)
 
 
+def _txdata():
+    max_txs = localconfig.limit
+    return TxDataMintscan(TICKER_EVMOS, max_txs)
+
+
 def wallet_exists(wallet_address):
     return api_lcd.make_lcd_api(EVMOS_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = api_lcd.make_lcd_api(EVMOS_NODE).get_tx(txid)
+    elem = _txdata().get_tx(txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_EVMOS)
     txinfo = staketaxcsv.evmos.processor.process_tx(wallet_address, elem, exporter)
+
+    if localconfig.debug:
+        print("txinfo:")
+        txinfo.print()
 
     return exporter
 
 
 def estimate_duration(wallet_address):
-    max_txs = localconfig.limit
-    try:
-        seconds = SECONDS_PER_PAGE * api_lcd.get_txs_pages_count(
-            EVMOS_NODE, wallet_address, max_txs, limit=TXS_LIMIT_PER_QUERY_EVMOS)
-    except KeyError as e:
-        seconds = SECONDS_PER_PAGE * api_lcd.get_txs_pages_count(
-            EVMOS_NODE, wallet_address, max_txs, limit=TXS_LIMIT_PER_QUERY_EVMOS_SMALL)
-    return seconds
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+
+    return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address, start_date, end_date)
 
 
 def txhistory(wallet_address):
@@ -83,16 +85,17 @@ def txhistory(wallet_address):
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")
 
-    max_txs = localconfig.limit
+    start_date, end_date = localconfig.start_date, localconfig.end_date
     progress = ProgressEVMOS()
     exporter = Exporter(wallet_address, localconfig, TICKER_EVMOS)
+    txdata = _txdata()
 
-    # Fetch transactions with varying limits to get around "rpc: received message larger than max" error from txs api
-    try:
-        elems = _count_and_fetch(wallet_address, max_txs, progress, TXS_LIMIT_PER_QUERY_EVMOS)
-    except KeyError as e:
-        logging.info("Caught KeyError: %s", e)
-        elems = _count_and_fetch(wallet_address, max_txs, progress, TXS_LIMIT_PER_QUERY_EVMOS_SMALL)
+    # Fetch count of transactions to estimate progress more accurately
+    count_pages = txdata.get_txs_pages_count(wallet_address, start_date, end_date)
+    progress.set_estimate(count_pages)
+
+    # Fetch transactions
+    elems = txdata.get_txs_all(wallet_address, progress, start_date, end_date)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.evmos.processor.process_txs(wallet_address, elems, exporter)
@@ -100,17 +103,6 @@ def txhistory(wallet_address):
     if localconfig.cache:
         Cache().set_ibc_addresses(localconfig.ibc_addresses)
     return exporter
-
-
-def _count_and_fetch(wallet_address, max_txs, progress, limit):
-    # Fetch count of transactions to estimate progress more accurately
-    count_pages = api_lcd.get_txs_pages_count(EVMOS_NODE, wallet_address, max_txs, limit=limit)
-    progress.set_estimate(count_pages)
-
-    # Fetch transactions
-    elems = api_lcd.get_txs_all(EVMOS_NODE, wallet_address, max_txs, progress=progress, limit=limit)
-
-    return elems
 
 
 if __name__ == "__main__":

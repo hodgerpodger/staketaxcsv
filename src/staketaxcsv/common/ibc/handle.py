@@ -75,6 +75,11 @@ def _handle_transfer(exporter, txinfo, msginfo, transfers_in, transfers_out):
         row = make_tx.make_transfer_in_tx(txinfo, msginfo, amount, currency)
         exporter.ingest_row(row)
         return
+    elif len(transfers_in) <= 5 and len(transfers_out) == 0:
+        for amount, currency, _, _ in transfers_in:
+            row = make_tx.make_transfer_in_tx(txinfo, msginfo, amount, currency)
+            exporter.ingest_row(row)
+        return
     elif len(transfers_in) == 0 and len(transfers_out) == 1:
         amount, currency, source, dest = transfers_out[0]
         row = make_tx.make_transfer_out_tx(txinfo, msginfo, amount, currency, dest=dest)
