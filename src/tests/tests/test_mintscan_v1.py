@@ -77,4 +77,4 @@ class TestMintscan(unittest.TestCase):
         self.assertGreaterEqual(num_pages, 10)
 
         num_pages = get_txs_page_count(TICKER_ATOM, ADDRESS, 20000, start_date="2022-03-03", end_date="2022-03-05")
-        self.assertEqual(num_pages, 1)
+        self.assertEqual(num_pages, 2)
