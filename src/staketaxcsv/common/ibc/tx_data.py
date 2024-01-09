@@ -12,19 +12,30 @@ from staketaxcsv.common.ibc.api_mintscan_v1 import MintscanAPI
 
 class TxDataLcd:
 
-    def __init__(self, lcd_node, max_txs):
+    def __init__(self, lcd_node, max_txs, limit_per_query=None):
         self.lcd_node = lcd_node
         self.max_txs = max_txs
         self.api = api_lcd.make_lcd_api(lcd_node)
+        self.limit_per_query = limit_per_query
 
     def get_tx(self, txid):
         return self.api.get_tx(txid)
 
     def get_txs_all(self, address, progress):
-        return api_lcd.get_txs_all(self.lcd_node, address, self.max_txs, progress=progress)
+        # only include optional parameter limit if defined
+        kwargs = {}
+        if self.limit_per_query:
+            kwargs["limit"] = self.limit_per_query
+
+        return api_lcd.get_txs_all(self.lcd_node, address, self.max_txs, progress=progress, **kwargs)
 
     def get_txs_pages_count(self, address):
-        return api_lcd.get_txs_pages_count(self.lcd_node, address, self.max_txs)
+        # only include optional parameter limit if defined
+        kwargs = {}
+        if self.limit_per_query:
+            kwargs["limit"] = self.limit_per_query
+
+        return api_lcd.get_txs_pages_count(self.lcd_node, address, self.max_txs, **kwargs)
 
 
 class TxDataMintscan:
