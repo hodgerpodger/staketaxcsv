@@ -18,7 +18,7 @@ from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.evmos.config_evmos import localconfig
 from staketaxcsv.settings_csv import EVMOS_NODE, TICKER_EVMOS
 from staketaxcsv.common.ibc.tx_data import TxDataMintscan
-from staketaxcsv.common.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
+from staketaxcsv.common.ibc.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 
 
 def main():

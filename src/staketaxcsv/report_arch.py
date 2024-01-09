@@ -5,7 +5,6 @@ Prints transactions and writes CSV(s) to _reports/ARCH*.csv
 """
 
 import logging
-import pprint
 
 import staketaxcsv.arch.processor
 from staketaxcsv.common.ibc import api_lcd
@@ -15,7 +14,7 @@ from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import ARCH_NODE, TICKER_ARCH
 from staketaxcsv.common.ibc.tx_data import TxDataMintscan
-from staketaxcsv.common.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
+from staketaxcsv.common.ibc.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 
 
 def main():

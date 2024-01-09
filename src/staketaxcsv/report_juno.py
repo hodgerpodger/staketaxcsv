@@ -8,7 +8,6 @@ TODO: JUNO CSVs are only in experimental state.  All "execute contract" transact
 """
 
 import logging
-import pprint
 
 import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.common.ibc.api_rpc
@@ -21,7 +20,7 @@ from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.juno.config_juno import localconfig
 from staketaxcsv.settings_csv import JUNO_NODE, TICKER_JUNO
 from staketaxcsv.common.ibc.tx_data import TxDataMintscan
-from staketaxcsv.common.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
+from staketaxcsv.common.ibc.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 
 
 def main():

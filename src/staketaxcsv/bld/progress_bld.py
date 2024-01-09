@@ -1,5 +1,5 @@
 from staketaxcsv.bld.config_bld import localconfig
-from staketaxcsv.common.progress_rpc_nodes import ProgressRpc
+from staketaxcsv.common.ibc.progress_rpc_nodes import ProgressRpc
 
 SECONDS_PER_PAGE = 4
 SECONDS_PER_TX = 0.4

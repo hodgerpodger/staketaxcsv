@@ -15,7 +15,7 @@ from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import ATOM_NODE, TICKER_ATOM
 from staketaxcsv.common.ibc.tx_data import TxDataMintscan
 from staketaxcsv.common.ibc import api_lcd
-from staketaxcsv.common.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
+from staketaxcsv.common.ibc.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 
 
 def main():
