@@ -3,11 +3,6 @@ usage: python3 staketaxcsv/report_atom.py <walletaddress> [--format all|cointrac
 
 Prints transactions and writes CSV(s) to _reports/ATOM*.csv
 
-
-Notes:
-
-https://node.atomscan.com/swagger/
-
 """
 
 import logging

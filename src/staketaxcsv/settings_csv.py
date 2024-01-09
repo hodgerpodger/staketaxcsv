@@ -1,6 +1,6 @@
 import os
 
-# Required for ATOM/EVMOS report (See https://api.mintscan.io for details)
+# Required for default ATOM/EVMOS/JUNO report (See https://api.mintscan.io for details on key)
 MINTSCAN_KEY = os.environ.get("STAKETAX_MINTSCAN_KEY", "")
 
 # Environment variables (required for each respective report)
@@ -19,11 +19,14 @@ EVMOS_NODE = os.environ.get("STAKETAX_EVMOS_NODE", "")
 FET_NODE = os.environ.get("STAKETAX_FET_NODE", "https://rest-fetchhub.fetch.ai")
 HUAHUA_NODE = os.environ.get("STAKETAX_HUAHUA_NODE", "")
 JUNO_NODE = os.environ.get("STAKETAX_JUNO_NODE", "")
+
+# Deprecated
 JUNO_NODES_RPC = [
     "https://rpc-archive.junonetwork.io",      # 4136532 to now
     "https://rpc-v3-archive.junonetwork.io",   # 2578099 to #4136530
     "https://rpc-v2-archive.junonetwork.io",   # 1 to #2578097
 ]
+
 KUJI_NODE = os.environ.get("STAKETAX_KUJI_NODE", "")
 KYVE_NODE = os.environ.get("STAKETAX_KYVE_NODE", "https://api-eu-1.kyve.network")
 MNTL_NODE = os.environ.get("STAKETAX_MNTL_NODE", "https://rest.assetmantle.one")
@@ -40,7 +43,6 @@ LUNA2_NODE = os.environ.get("STAKETAX_LUNA2_NODE", "https://phoenix-lcd.terra.de
 # ########## Optional environment variables ########################################################
 
 SOL_REWARDS_DB_READ = os.environ.get("STAKETAX_SOL_REWARDS_DB_READ", False)
-
 
 # #############################################################################
 
