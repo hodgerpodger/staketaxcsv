@@ -1,7 +1,7 @@
 
 # staketaxcsv
 
-* Python repository to create blockchain CSVs for Algorand (ALGO), Archway (ARCH), Cosmos (ATOM), 
+* Python repository to create blockchain CSVs for Akash (AKT), Algorand (ALGO), Archway (ARCH), Cosmos (ATOM), 
   Agoric (BLD), Bitsong (BTSG), Sentinel (DVPN), Evmos (EVMOS), Fetch.ai (FET), Chihuahua (HUAHUA), 
   IoTex (IOTX), Juno (JUNO), Kujira (KUJI), KYVE Network (KYVE), Terra Classic (LUNC), Terra 2.0 (LUNA), 
   Osmosis (OSMO), Solana (SOL), and Stargaze (STARS) blockchains. 
