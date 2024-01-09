@@ -1,6 +1,6 @@
 import os
 
-# Required for default ATOM/EVMOS/JUNO report (See https://api.mintscan.io for details on key)
+# Required for ARCH/ATOM/EVMOS/JUNO reports (See https://api.mintscan.io for details on key)
 MINTSCAN_KEY = os.environ.get("STAKETAX_MINTSCAN_KEY", "")
 
 # Environment variables (required for each respective report)

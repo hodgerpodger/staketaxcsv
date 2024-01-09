@@ -1,0 +1,139 @@
+[
+    {
+        "height": "17481",
+        "txhash": "4C8B7AE1E56131FB815A4BB4385AAB3EF30B80EB0FC3653B5B7C43C06F790EEC",
+        "codespace": "",
+        "code": 0,
+        "data": "0A250A232F636F736D6F732E7374616B696E672E763162657461312E4D736744656C6567617465",
+        "info": "",
+        "gas_wanted": "264583",
+        "gas_used": "216529",
+        "tx": {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            "/cosmos-tx-v1beta1-Tx": {
+                "body": {
+                    "messages": [
+                        {
+                            "@type": "/cosmos.staking.v1beta1.MsgDelegate",
+                            "/cosmos-staking-v1beta1-MsgDelegate": {
+                                "delegator_address": "archway1w09nmhpeg3dxp649vdydn6rtrekx3k9uwuugsh",
+                                "validator_address": "archwayvaloper1846wx4dzcrm5guey0l5gp4kf6dp2zmqrj6rpcn",
+                                "amount": {
+                                    "denom": "aarch",
+                                    "amount": "3750000000000000000000"
+                                }
+                            }
+                        }
+                    ],
+                    "memo": "",
+                    "timeout_height": "0",
+                    "extension_options": [],
+                    "non_critical_extension_options": []
+                },
+                "auth_info": {
+                    "signer_infos": [
+                        {
+                            "public_key": {
+                                "@type": "/cosmos.crypto.secp256k1.PubKey",
+                                "/cosmos-crypto-secp256k1-PubKey": {
+                                    "key": "Am+pEzVUFq9fCSOxyfUsOM72D5oxQjvfOMEweOkW503k"
+                                }
+                            },
+                            "mode_info": {
+                                "single": {
+                                    "mode": "SIGN_MODE_DIRECT"
+                                }
+                            },
+                            "sequence": "0"
+                        }
+                    ],
+                    "fee": {
+                        "amount": [
+                            {
+                                "denom": "aarch",
+                                "amount": "264583000000000000"
+                            }
+                        ],
+                        "gas_limit": "264583",
+                        "payer": "",
+                        "granter": ""
+                    }
+                },
+                "signatures": [
+                    "kYfOSs91Ym0lm2Aqaeo/ZxJpnDjw7YUegmDlF4JvKPBn55LphPmGplKp3wdlpA2Q0JtFvT+dr2p4HlLgbyh1NA=="
+                ]
+            }
+        },
+        "timestamp": "2023-07-04T16:25:43Z",
+        "timestamp__@@date": 1688487943000,
+        "logs": [
+            {
+                "msg_index": 0,
+                "log": "",
+                "events": [
+                    {
+                        "type": "coin_received",
+                        "attributes": [
+                            {
+                                "key": "receiver",
+                                "value": "archway1fl48vsnmsdzcv85q5d2q4z5ajdha8yu3qs4tnq"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "3750000000000000000000aarch"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "coin_spent",
+                        "attributes": [
+                            {
+                                "key": "spender",
+                                "value": "archway1w09nmhpeg3dxp649vdydn6rtrekx3k9uwuugsh"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "3750000000000000000000aarch"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "delegate",
+                        "attributes": [
+                            {
+                                "key": "validator",
+                                "value": "archwayvaloper1846wx4dzcrm5guey0l5gp4kf6dp2zmqrj6rpcn"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "3750000000000000000000aarch"
+                            },
+                            {
+                                "key": "new_shares",
+                                "value": "3750000000000000000000.000000000000000000"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "action",
+                                "value": "/cosmos.staking.v1beta1.MsgDelegate"
+                            },
+                            {
+                                "key": "module",
+                                "value": "staking"
+                            },
+                            {
+                                "key": "sender",
+                                "value": "archway1w09nmhpeg3dxp649vdydn6rtrekx3k9uwuugsh"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "chain_id": "archway-1"
+    }
+]
