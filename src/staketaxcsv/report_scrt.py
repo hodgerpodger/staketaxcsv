@@ -15,6 +15,7 @@ from staketaxcsv.settings_csv import SCRT_NODE, TICKER_SCRT
 from staketaxcsv.scrt.config_scrt import localconfig
 from staketaxcsv.scrt.progress_scrt import SECONDS_PER_PAGE, ProgressScrt
 from staketaxcsv.common.ibc import api_lcd
+from staketaxcsv.common.ibc.tx_data import TxDataLcd
 
 
 def main():
@@ -27,12 +28,17 @@ def read_options(options):
     logging.info("localconfig: %s", localconfig.__dict__)
 
 
+def _txdata():
+    max_txs = localconfig.limit
+    return TxDataLcd(SCRT_NODE, max_txs)
+
+
 def wallet_exists(wallet_address):
     return api_lcd.make_lcd_api(SCRT_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
-    elem = api_lcd.make_lcd_api(SCRT_NODE).get_tx(txid)
+    elem = _txdata().get_tx(txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_SCRT)
     txinfo = staketaxcsv.scrt.processor.process_tx(wallet_address, elem, exporter)
@@ -41,8 +47,7 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address):
-    max_txs = localconfig.limit
-    return SECONDS_PER_PAGE * api_lcd.get_txs_pages_count(SCRT_NODE, wallet_address, max_txs)
+    return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address)
 
 
 def txhistory(wallet_address):
@@ -50,16 +55,16 @@ def txhistory(wallet_address):
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")
 
-    max_txs = localconfig.limit
     progress = ProgressScrt()
     exporter = Exporter(wallet_address, localconfig, TICKER_SCRT)
+    txdata = _txdata()
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = api_lcd.get_txs_pages_count(SCRT_NODE, wallet_address, max_txs)
+    count_pages = txdata.get_txs_pages_count(wallet_address)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = api_lcd.get_txs_all(SCRT_NODE, wallet_address, max_txs, progress=progress)
+    elems = txdata.get_txs_all(wallet_address, progress)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.scrt.processor.process_txs(wallet_address, elems, exporter)
