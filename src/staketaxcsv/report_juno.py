@@ -19,8 +19,9 @@ from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.juno.config_juno import localconfig
-from staketaxcsv.juno.progress_juno import SECONDS_PER_PAGE, ProgressJuno, SECONDS_PER_TX
-from staketaxcsv.settings_csv import JUNO_NODE, TICKER_JUNO, JUNO_NODES_RPC
+from staketaxcsv.settings_csv import JUNO_NODE, TICKER_JUNO
+from staketaxcsv.common.ibc.tx_data import TxDataMintscan
+from staketaxcsv.common.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 
 
 def main():
@@ -30,7 +31,14 @@ def main():
 def read_options(options):
     """ Configure localconfig based on options dictionary. """
     report_util.read_common_options(localconfig, options)
+    localconfig.start_date = options.get("start_date", None)
+    localconfig.end_date = options.get("end_date", None)
     logging.info("localconfig: %s", localconfig.__dict__)
+
+
+def _txdata():
+    max_txs = localconfig.limit
+    return TxDataMintscan(TICKER_JUNO, max_txs)
 
 
 def wallet_exists(wallet_address):
@@ -38,7 +46,7 @@ def wallet_exists(wallet_address):
 
 
 def txone(wallet_address, txid):
-    elem = staketaxcsv.common.ibc.api_rpc_multinode.get_tx(JUNO_NODES_RPC, txid)
+    elem = _txdata().get_tx(txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_JUNO)
     txinfo = staketaxcsv.juno.processor.process_tx(wallet_address, elem, exporter)
@@ -47,11 +55,8 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address):
-    max_txs = localconfig.limit
-    num_pages, num_txs = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
-        JUNO_NODES_RPC, wallet_address, max_txs)
-
-    return SECONDS_PER_PAGE * num_pages + SECONDS_PER_TX * num_txs
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+    return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address, start_date, end_date)
 
 
 def txhistory(wallet_address):
@@ -59,17 +64,17 @@ def txhistory(wallet_address):
         localconfig.ibc_addresses = Cache().get_ibc_addresses()
         logging.info("Loaded ibc_addresses from cache ...")
 
-    max_txs = localconfig.limit
-    progress = ProgressJuno()
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+    progress = ProgressMintScan(localconfig)
     exporter = Exporter(wallet_address, localconfig, TICKER_JUNO)
+    txdata = _txdata()
 
-    # Fetch count of transactions to estimate progress beforehand
-    staketaxcsv.common.ibc.api_rpc_multinode.get_txs_pages_count(
-        JUNO_NODES_RPC, wallet_address, max_txs, progress_rpc=progress)
+    # Fetch count of transactions to estimate progress more accurately
+    count_pages = txdata.get_txs_pages_count(wallet_address, start_date, end_date)
+    progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = staketaxcsv.common.ibc.api_rpc_multinode.get_txs_all(
-        JUNO_NODES_RPC, wallet_address, max_txs, progress_rpc=progress)
+    elems = txdata.get_txs_all(wallet_address, progress, start_date, end_date)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.juno.processor.process_txs(wallet_address, elems, exporter)

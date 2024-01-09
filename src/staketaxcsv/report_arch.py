@@ -10,12 +10,12 @@ import pprint
 import staketaxcsv.arch.processor
 from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.arch.config_arch import localconfig
-from staketaxcsv.arch.progress_arch import SECONDS_PER_PAGE, ProgressArch
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import ARCH_NODE, TICKER_ARCH
 from staketaxcsv.common.ibc.tx_data import TxDataMintscan
+from staketaxcsv.common.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 
 
 def main():
@@ -59,7 +59,7 @@ def txhistory(wallet_address):
         logging.info("Loaded ibc_addresses from cache ...")
 
     start_date, end_date = localconfig.start_date, localconfig.end_date
-    progress = ProgressArch()
+    progress = ProgressMintScan(localconfig)
     exporter = Exporter(wallet_address, localconfig, TICKER_ARCH)
     txdata = _txdata()
 

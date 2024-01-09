@@ -16,12 +16,9 @@ from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.evmos.config_evmos import localconfig
-from staketaxcsv.evmos.progress_evmos import SECONDS_PER_PAGE, ProgressEVMOS
 from staketaxcsv.settings_csv import EVMOS_NODE, TICKER_EVMOS
 from staketaxcsv.common.ibc.tx_data import TxDataMintscan
-
-TXS_LIMIT_PER_QUERY_EVMOS = 50
-TXS_LIMIT_PER_QUERY_EVMOS_SMALL = 5
+from staketaxcsv.common.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 
 
 def main():
@@ -88,7 +85,7 @@ def txhistory(wallet_address):
         logging.info("Loaded ibc_addresses from cache ...")
 
     start_date, end_date = localconfig.start_date, localconfig.end_date
-    progress = ProgressEVMOS()
+    progress = ProgressMintScan(localconfig)
     exporter = Exporter(wallet_address, localconfig, TICKER_EVMOS)
     txdata = _txdata()
 

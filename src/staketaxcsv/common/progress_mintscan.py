@@ -1,12 +1,11 @@
 from staketaxcsv.common.progress import Progress
-from staketaxcsv.evmos.config_evmos import localconfig
 
-SECONDS_PER_PAGE = 8
+SECONDS_PER_PAGE = 2
 
 
-class ProgressEVMOS(Progress):
+class ProgressMintScan(Progress):
 
-    def __init__(self):
+    def __init__(self, localconfig):
         super().__init__(localconfig)
 
     def set_estimate(self, count_pages):

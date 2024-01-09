@@ -2,6 +2,7 @@ import os
 
 # Required for ARCH/ATOM/EVMOS/JUNO reports (See https://api.mintscan.io for details on key)
 MINTSCAN_KEY = os.environ.get("STAKETAX_MINTSCAN_KEY", "")
+MINTSCAN_MAX_TXS = os.environ.get("STAKETAX_MINTSCAN_MAX_TXS", 5000)
 
 # Environment variables (required for each respective report)
 
