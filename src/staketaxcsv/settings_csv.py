@@ -6,6 +6,7 @@ MINTSCAN_MAX_TXS = os.environ.get("STAKETAX_MINTSCAN_MAX_TXS", 5000)
 
 # Environment variables (required for each respective report)
 
+AKT_NODE = os.environ.get("STAKETAX_AKT_NODE", "")
 ALGO_HIST_INDEXER_NODE = os.environ.get("STAKETAX_ALGO_HIST_INDEXER_NODE", "https://indexer.algoexplorerapi.io")
 ALGO_INDEXER_NODE = os.environ.get("STAKETAX_ALGO_INDEXER_NODE", "https://mainnet-idx.algonode.cloud")
 ALGO_NFDOMAINS = os.environ.get("STAKETAX_ALGO_NFDOMAINS", "https://api.nf.domains")
@@ -47,6 +48,7 @@ SOL_REWARDS_DB_READ = os.environ.get("STAKETAX_SOL_REWARDS_DB_READ", False)
 
 # #############################################################################
 
+TICKER_AKT = "AKT"
 TICKER_ALGO = "ALGO"
 TICKER_ATOM = "ATOM"
 TICKER_BLD = "BLD"

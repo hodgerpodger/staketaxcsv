@@ -6,7 +6,8 @@ import os
 import staketaxcsv.api
 from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS
 from staketaxcsv.settings_csv import (
-    REPORTS_DIR, TICKER_ALGO, TICKER_ATOM, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL, TICKER_COSMOSPLUS)
+    REPORTS_DIR, TICKER_AKT, TICKER_ALGO, TICKER_ARCH, TICKER_ATOM, TICKER_COSMOSPLUS,
+    TICKER_EVMOS, TICKER_JUNO, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL, )
 
 ALL = "all"
 
@@ -72,13 +73,12 @@ def parse_args(ticker):
         type=str,
         help="Path to the Koinly NullMap json file",
     )
-    if ticker in (TICKER_ALGO, TICKER_SOL):
+    if ticker in (TICKER_AKT, TICKER_ALGO, TICKER_ARCH, TICKER_ATOM, TICKER_EVMOS, TICKER_JUNO, TICKER_SOL):
         parser.add_argument(
             "--start_date",
             type=str,
             help="(YYYY-MM-DD) Only include transactions after start_date (inclusive)",
         )
-    if ticker in (TICKER_ALGO, TICKER_SOL):
         parser.add_argument(
             "--end_date",
             type=str,
@@ -99,13 +99,6 @@ def parse_args(ticker):
             default=LP_TREATMENT_TRANSFERS,
             help="Treat LP deposits/withdrawals as transfers(default), omit, or trades. "
                  "Not applicable to koinly CSV.",
-        )
-    if ticker == TICKER_ATOM:
-        parser.add_argument(
-            "--legacy",
-            action="store_true",
-            default=False,
-            help="include legacy transactions for cosmoshub-3",
         )
     if ticker in (TICKER_ALGO):
         parser.add_argument(
@@ -165,25 +158,6 @@ def parse_args(ticker):
         options["cosmosplus_ticker"] = args.cosmosplus_ticker
 
     return args.wallet_address, args.format, args.txid, options
-
-
-"""
-def run_exports(ticker, wallet_address, exporter, export_format):
-    if not os.path.exists(REPORTS_DIR):
-        os.mkdir(REPORTS_DIR)
-    exporter.sort_rows()
-
-    # Print transactions table to console
-    exporter.export_print()
-
-    # Get list of CSVs to write
-    formats_list = FORMATS if export_format == ALL else [export_format]
-
-    for cur_format in formats_list:
-        # Write one csv
-        csvpath = f"{REPORTS_DIR}/{ticker}.{wallet_address}.{cur_format}.csv"
-        exporter.export_format(cur_format, csvpath)
-"""
 
 
 def read_common_options(localconfig, options):
