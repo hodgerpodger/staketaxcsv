@@ -67,4 +67,3 @@ def aggregate_transfers_net(transfers_in, transfers_out):
             net_transfers_out.append((amount, currency))
 
     return net_transfers_in, net_transfers_out
-

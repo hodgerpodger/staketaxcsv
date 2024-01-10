@@ -3,8 +3,6 @@ import logging
 import os
 import requests
 
-
-
 import staketaxcsv.tia.constants as co
 from staketaxcsv.tia.make_tx import make_genesis_airdrop_tx
 
