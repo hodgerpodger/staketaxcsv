@@ -1,6 +1,9 @@
+import json
+import logging
 import os
 import requests
-import json
+
+
 
 import staketaxcsv.tia.constants as co
 from staketaxcsv.tia.make_tx import make_genesis_airdrop_tx
@@ -30,6 +33,7 @@ def _genesis_airdrop_celestia_amount(wallet_address):
 
 def _get_genesis_data():
     if not os.path.exists(GENESIS_JSON):
+        logging.info("Fetching genesis url %s ...", GENESIS_URL)
         response = requests.get(GENESIS_URL)
         with open(GENESIS_JSON, 'w') as file:
             file.write(response.text)
