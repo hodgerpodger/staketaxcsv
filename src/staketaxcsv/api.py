@@ -5,24 +5,26 @@ from staketaxcsv.settings_csv import (
     TICKER_EVMOS, TICKER_FET, TICKER_COSMOSPLUS, TICKER_HUAHUA,
     TICKER_IOTEX, TICKER_JUNO, TICKER_KUJI, TICKER_KYVE, TICKER_LUNA1,
     TICKER_LUNA2, TICKER_MNTL, TICKER_OSMO, TICKER_REGEN,
-    TICKER_ROWAN, TICKER_SCRT, TICKER_SOL, TICKER_STARS, TICKER_TIA,
+    TICKER_ROWAN, TICKER_SCRT, TICKER_SOL, TICKER_STARS, TICKER_STRD, TICKER_TIA,
     TICKER_TORI
 )
 from staketaxcsv.common.ExporterTypes import FORMATS
 
 import staketaxcsv.report_algo
 import staketaxcsv.report_akt
+import staketaxcsv.report_arch
 import staketaxcsv.report_atom
 import staketaxcsv.report_bld
 import staketaxcsv.report_btsg
+import staketaxcsv.report_cosmosplus
 import staketaxcsv.report_dvpn
 import staketaxcsv.report_evmos
 import staketaxcsv.report_fet
-import staketaxcsv.report_cosmosplus
 import staketaxcsv.report_huahua
 import staketaxcsv.report_iotex
 import staketaxcsv.report_juno
 import staketaxcsv.report_kuji
+import staketaxcsv.report_kyve
 import staketaxcsv.report_luna1
 import staketaxcsv.report_luna2
 import staketaxcsv.report_mntl
@@ -32,10 +34,10 @@ import staketaxcsv.report_rowan
 import staketaxcsv.report_scrt
 import staketaxcsv.report_sol
 import staketaxcsv.report_stars
+import staketaxcsv.report_strd
 import staketaxcsv.report_tia
 import staketaxcsv.report_tori
-import staketaxcsv.report_kyve
-import staketaxcsv.report_arch
+
 
 REPORT_MODULES = {
     TICKER_ALGO: staketaxcsv.report_algo,
@@ -62,6 +64,7 @@ REPORT_MODULES = {
     TICKER_SCRT: staketaxcsv.report_scrt,
     TICKER_SOL: staketaxcsv.report_sol,
     TICKER_STARS: staketaxcsv.report_stars,
+    TICKER_STRD: staketaxcsv.report_strd,
     TICKER_TIA: staketaxcsv.report_tia,
     TICKER_TORI: staketaxcsv.report_tori,
 }

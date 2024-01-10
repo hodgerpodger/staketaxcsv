@@ -7,7 +7,7 @@ import staketaxcsv.api
 from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS
 from staketaxcsv.settings_csv import (
     REPORTS_DIR, TICKER_AKT, TICKER_ALGO, TICKER_ARCH, TICKER_ATOM, TICKER_COSMOSPLUS,
-    TICKER_EVMOS, TICKER_JUNO, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL, )
+    TICKER_EVMOS, TICKER_JUNO, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL, TICKER_STRD, TICKER_TIA)
 
 ALL = "all"
 
@@ -73,7 +73,8 @@ def parse_args(ticker):
         type=str,
         help="Path to the Koinly NullMap json file",
     )
-    if ticker in (TICKER_AKT, TICKER_ALGO, TICKER_ARCH, TICKER_ATOM, TICKER_EVMOS, TICKER_JUNO, TICKER_SOL):
+    if ticker in (TICKER_AKT, TICKER_ALGO, TICKER_ARCH, TICKER_ATOM, TICKER_EVMOS,
+                  TICKER_JUNO, TICKER_STRD, TICKER_SOL, TICKER_TIA):
         parser.add_argument(
             "--start_date",
             type=str,

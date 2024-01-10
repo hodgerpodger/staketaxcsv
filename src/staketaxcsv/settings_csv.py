@@ -38,6 +38,7 @@ ROWAN_NODE = os.environ.get("STAKETAX_ROWAN_NODE", "")
 SCRT_NODE = os.environ.get("STAKETAX_SCRT_NODE", "")
 SOL_NODE = os.environ.get("STAKETAX_SOL_NODE", "https://api.mainnet-beta.solana.com")
 STARS_NODE = os.environ.get("STAKETAX_STARS_NODE", "")
+STRD_NODE = os.environ.get("STAKETAX_STRD_NODE", "")
 TERRA_NODE = os.environ.get("STAKETAX_TERRA_NODE", "https://lcd.terra.dev")
 TIA_NODE = os.environ.get("STAKETAX_TIA_NODE", "")
 TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
@@ -73,6 +74,7 @@ TICKER_ROWAN = "ROWAN"
 TICKER_SCRT = "SCRT"
 TICKER_SOL = "SOL"
 TICKER_STARS = "STARS"
+TICKER_STRD = "STRD"
 TICKER_TIA = "TIA"
 TICKER_TORI = "TORI"
 

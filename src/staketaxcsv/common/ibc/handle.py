@@ -75,11 +75,6 @@ def _handle_transfer(exporter, txinfo, msginfo, transfers_in, transfers_out):
         row = make_tx.make_transfer_in_tx(txinfo, msginfo, amount, currency)
         exporter.ingest_row(row)
         return
-    elif len(transfers_in) <= 5 and len(transfers_out) == 0:
-        for amount, currency, _, _ in transfers_in:
-            row = make_tx.make_transfer_in_tx(txinfo, msginfo, amount, currency)
-            exporter.ingest_row(row)
-        return
     elif len(transfers_in) == 0 and len(transfers_out) == 1:
         amount, currency, source, dest = transfers_out[0]
         row = make_tx.make_transfer_out_tx(txinfo, msginfo, amount, currency, dest=dest)
@@ -89,6 +84,16 @@ def _handle_transfer(exporter, txinfo, msginfo, transfers_in, transfers_out):
         # ibc transfers can come in batches with unrelated transfers
         # omitting orw because too noisy to include non-related messages
         return
+    elif len(transfers_in) > 0 or len(transfers_out) > 0:
+        net_transfers_in, net_transfers_out = util_ibc.aggregate_transfers_net(transfers_in, transfers_out)
+
+        for amount, currency in net_transfers_in:
+            row = make_tx.make_transfer_in_tx(txinfo, msginfo, amount, currency)
+            exporter.ingest_row(row)
+
+        for amount, currency in net_transfers_out:
+            row = make_tx.make_transfer_out_tx(txinfo, msginfo, amount, currency)
+            exporter.ingest_row(row)
     else:
         handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 

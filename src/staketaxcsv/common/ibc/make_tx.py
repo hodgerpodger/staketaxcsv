@@ -1,4 +1,5 @@
-from staketaxcsv.common.ExporterTypes import TX_TYPE_NOOP, TX_TYPE_STAKING, TX_TYPE_UNKNOWN, TX_TYPE_SPEND
+from staketaxcsv.common.ExporterTypes import (
+    TX_TYPE_AIRDROP, TX_TYPE_NOOP, TX_TYPE_STAKING, TX_TYPE_UNKNOWN, TX_TYPE_SPEND)
 from staketaxcsv.common import make_tx
 
 
@@ -53,6 +54,10 @@ def make_unknown_tx_with_transfer(txinfo, msginfo, sent_amount, sent_currency, r
 
 def make_reward_tx(txinfo, msginfo, received_amount, received_currency):
     return _make_tx(txinfo, msginfo, "", "", received_amount, received_currency, TX_TYPE_STAKING)
+
+
+def make_airdrop_tx(txinfo, msginfo, received_amount, received_currency):
+    return _make_tx(txinfo, msginfo, "", "", received_amount, received_currency, TX_TYPE_AIRDROP)
 
 
 def make_transfer_in_tx(txinfo, msginfo, received_amount, received_currency):
