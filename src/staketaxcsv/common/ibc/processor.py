@@ -31,7 +31,12 @@ def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, custom
     # Construct msgs: list of MsgInfoIBC objects
     msgs = []
     for i in range(len(elem["logs"])):
-        message = elem["tx"]["body"]["messages"][i]
+        if "body" in elem["tx"]:
+            message = elem["tx"]["body"]["messages"][i]
+        elif "value" in elem["tx"]:
+            message = elem["tx"]["value"]["msg"][i]
+        else:
+            raise Exception("Unable to deduce message")
         log = elem["logs"][i]
 
         if customMsgInfo:
@@ -45,7 +50,14 @@ def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, custom
 
 
 def _get_fee(wallet_address, elem, lcd_node, ibc_addresses):
-    amount_list = elem["tx"]["auth_info"]["fee"]["amount"]
+    if "auth_info" in elem["tx"]:
+        amount_list = elem["tx"]["auth_info"]["fee"]["amount"]
+    elif "value" in elem["tx"]:
+        # legacy version (2021-ish)
+        amount_list = elem["tx"]["value"]["fee"]["amount"]
+    else:
+        raise Exception("Unable to deduce fee")
+
     if len(amount_list) == 0:
         return "", ""
 
