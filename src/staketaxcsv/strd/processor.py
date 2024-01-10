@@ -38,6 +38,8 @@ def _handle_message(exporter, txinfo, msginfo):
 
         if msg_type == co.MSG_TYPE_CLAIM_FREE_AMOUNT:
             handle.handle_claim_free_amount(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_LIQUID_STAKE:
+            handle.handle_liquid_stake(exporter, txinfo, msginfo)
         else:
             staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
     except Exception as e:

@@ -52,3 +52,16 @@ timestamp            tx_type   received_amount  received_currency  sent_amount  
 -------------------  --------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+    def test_liquid_stake(self):
+        result = run_test(
+            "stride1hc6kkysu2kwx3ls0nhw29sw69wc9qx892xupmf",
+            "ED0F17700E65792D8372B197A660D9423E681D8575F170EE58566B8DB9E9C85D"
+        )
+        correct_result = """
+-------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
+timestamp            tx_type  received_amount  received_currency  sent_amount  sent_currency  fee  fee_currency  txid
+2022-11-23 12:53:15  TRADE    0.009645         stATOM             0.01         ATOM                              ED0F17700E65792D8372B197A660D9423E681D8575F170EE58566B8DB9E9C85D-0
+-------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)

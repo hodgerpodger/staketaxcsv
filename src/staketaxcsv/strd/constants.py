@@ -1,2 +1,3 @@
 MINTSCAN_LABEL_STRD = "stride"
 MSG_TYPE_CLAIM_FREE_AMOUNT = "MsgClaimFreeAmount"
+MSG_TYPE_LIQUID_STAKE = "MsgLiquidStake"
