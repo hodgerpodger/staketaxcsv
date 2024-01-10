@@ -1,0 +1,140 @@
+[
+    {
+        "height": "520923",
+        "txhash": "E3771EF7BA92EE3EAC6474656A3AE3103DBCF0EEE5B939854D21A1823A7C517B",
+        "codespace": "",
+        "code": 0,
+        "data": "122D0A2B2F636F736D6F732E7374616B696E672E763162657461312E4D736744656C6567617465526573706F6E7365",
+        "info": "",
+        "gas_wanted": "193237",
+        "gas_used": "148362",
+        "tx": {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            "/cosmos-tx-v1beta1-Tx": {
+                "body": {
+                    "messages": [
+                        {
+                            "@type": "/cosmos.staking.v1beta1.MsgDelegate",
+                            "/cosmos-staking-v1beta1-MsgDelegate": {
+                                "delegator_address": "celestia1keardu3hsg6kjj253gmgquu8ml4xuws4wve6zz",
+                                "validator_address": "celestiavaloper19v94c3z7ckarwsum76kaagma0wqsqhh5nl5zqg",
+                                "amount": {
+                                    "denom": "utia",
+                                    "amount": "1010000"
+                                }
+                            }
+                        }
+                    ],
+                    "memo": "",
+                    "timeout_height": "0",
+                    "extension_options": [],
+                    "non_critical_extension_options": []
+                },
+                "auth_info": {
+                    "signer_infos": [
+                        {
+                            "public_key": {
+                                "@type": "/cosmos.crypto.secp256k1.PubKey",
+                                "/cosmos-crypto-secp256k1-PubKey": {
+                                    "key": "AzjeIxdGKQQBLpRIkwtrZ2+xlB/G0RNZYnLQN614G5qX"
+                                }
+                            },
+                            "mode_info": {
+                                "single": {
+                                    "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                                }
+                            },
+                            "sequence": "0"
+                        }
+                    ],
+                    "fee": {
+                        "amount": [
+                            {
+                                "denom": "utia",
+                                "amount": "1933"
+                            }
+                        ],
+                        "gas_limit": "193237",
+                        "payer": "",
+                        "granter": ""
+                    },
+                    "tip": null
+                },
+                "signatures": [
+                    "n5oqjlkBgw0p6kfOVp1KTz8RhqwWkbgJaoH/PHZd6AAXB0fCesMNwVww+P8zTLl2EpuqShHiTLFFGGnLo/RGlA=="
+                ]
+            }
+        },
+        "timestamp": "2024-01-10T02:41:16Z",
+        "timestamp__@@date": 1704854476000,
+        "logs": [
+            {
+                "msg_index": 0,
+                "log": "",
+                "events": [
+                    {
+                        "type": "coin_received",
+                        "attributes": [
+                            {
+                                "key": "receiver",
+                                "value": "celestia1fl48vsnmsdzcv85q5d2q4z5ajdha8yu3y3clr6"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "1010000utia"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "coin_spent",
+                        "attributes": [
+                            {
+                                "key": "spender",
+                                "value": "celestia1keardu3hsg6kjj253gmgquu8ml4xuws4wve6zz"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "1010000utia"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "delegate",
+                        "attributes": [
+                            {
+                                "key": "validator",
+                                "value": "celestiavaloper19v94c3z7ckarwsum76kaagma0wqsqhh5nl5zqg"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "1010000utia"
+                            },
+                            {
+                                "key": "new_shares",
+                                "value": "1010000.000000000000000000"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "action",
+                                "value": "/cosmos.staking.v1beta1.MsgDelegate"
+                            },
+                            {
+                                "key": "module",
+                                "value": "staking"
+                            },
+                            {
+                                "key": "sender",
+                                "value": "celestia1keardu3hsg6kjj253gmgquu8ml4xuws4wve6zz"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "chain_id": "celestia"
+    }
+]

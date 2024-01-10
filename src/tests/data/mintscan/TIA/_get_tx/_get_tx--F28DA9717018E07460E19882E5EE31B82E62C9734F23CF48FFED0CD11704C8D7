@@ -1,0 +1,142 @@
+[
+    {
+        "height": "2523",
+        "txhash": "F28DA9717018E07460E19882E5EE31B82E62C9734F23CF48FFED0CD11704C8D7",
+        "codespace": "",
+        "code": 0,
+        "data": "12260A242F636F736D6F732E62616E6B2E763162657461312E4D736753656E64526573706F6E7365",
+        "info": "",
+        "gas_wanted": "108781",
+        "gas_used": "83439",
+        "tx": {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            "/cosmos-tx-v1beta1-Tx": {
+                "body": {
+                    "messages": [
+                        {
+                            "@type": "/cosmos.bank.v1beta1.MsgSend",
+                            "/cosmos-bank-v1beta1-MsgSend": {
+                                "from_address": "celestia1002cc5zkqvlvennxy5a5jrkywa052gdhdrqrlz",
+                                "to_address": "celestia1fd3mclxp4e2fh0wpau3eg55x2fsm7yjxzg29j2",
+                                "amount": [
+                                    {
+                                        "denom": "utia",
+                                        "amount": "3000000"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "memo": "104051904",
+                    "timeout_height": "0",
+                    "extension_options": [],
+                    "non_critical_extension_options": []
+                },
+                "auth_info": {
+                    "signer_infos": [
+                        {
+                            "public_key": {
+                                "@type": "/cosmos.crypto.secp256k1.PubKey",
+                                "/cosmos-crypto-secp256k1-PubKey": {
+                                    "key": "A7AQhWksOSpGrE9lvlFiXdTUxeuJhmAGfpj211uMGPwe"
+                                }
+                            },
+                            "mode_info": {
+                                "single": {
+                                    "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                                }
+                            },
+                            "sequence": "0"
+                        }
+                    ],
+                    "fee": {
+                        "amount": [
+                            {
+                                "denom": "utia",
+                                "amount": "21757"
+                            }
+                        ],
+                        "gas_limit": "108781",
+                        "payer": "",
+                        "granter": ""
+                    },
+                    "tip": null
+                },
+                "signatures": [
+                    "qI/qdIj5yrid5oGWUlaEU+aljzOaxNWp2k7qT0HG16MNfUtnwoxnCUi+zmXRYdu8FVx63m0pWRpbckipXt+RTg=="
+                ]
+            }
+        },
+        "timestamp": "2023-10-31T22:26:00Z",
+        "timestamp__@@date": 1698791160000,
+        "logs": [
+            {
+                "msg_index": 0,
+                "log": "",
+                "events": [
+                    {
+                        "type": "coin_received",
+                        "attributes": [
+                            {
+                                "key": "receiver",
+                                "value": "celestia1fd3mclxp4e2fh0wpau3eg55x2fsm7yjxzg29j2"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "3000000utia"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "coin_spent",
+                        "attributes": [
+                            {
+                                "key": "spender",
+                                "value": "celestia1002cc5zkqvlvennxy5a5jrkywa052gdhdrqrlz"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "3000000utia"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "action",
+                                "value": "/cosmos.bank.v1beta1.MsgSend"
+                            },
+                            {
+                                "key": "sender",
+                                "value": "celestia1002cc5zkqvlvennxy5a5jrkywa052gdhdrqrlz"
+                            },
+                            {
+                                "key": "module",
+                                "value": "bank"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "transfer",
+                        "attributes": [
+                            {
+                                "key": "recipient",
+                                "value": "celestia1fd3mclxp4e2fh0wpau3eg55x2fsm7yjxzg29j2"
+                            },
+                            {
+                                "key": "sender",
+                                "value": "celestia1002cc5zkqvlvennxy5a5jrkywa052gdhdrqrlz"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "3000000utia"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "chain_id": "celestia"
+    }
+]

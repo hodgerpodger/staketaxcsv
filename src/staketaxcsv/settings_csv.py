@@ -39,6 +39,7 @@ SCRT_NODE = os.environ.get("STAKETAX_SCRT_NODE", "")
 SOL_NODE = os.environ.get("STAKETAX_SOL_NODE", "https://api.mainnet-beta.solana.com")
 STARS_NODE = os.environ.get("STAKETAX_STARS_NODE", "")
 TERRA_NODE = os.environ.get("STAKETAX_TERRA_NODE", "https://lcd.terra.dev")
+TIA_NODE = os.environ.get("STAKETAX_TIA_NODE", "")
 TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
 LUNA2_NODE = os.environ.get("STAKETAX_LUNA2_NODE", "https://phoenix-lcd.terra.dev")
 
@@ -50,6 +51,7 @@ SOL_REWARDS_DB_READ = os.environ.get("STAKETAX_SOL_REWARDS_DB_READ", False)
 
 TICKER_AKT = "AKT"
 TICKER_ALGO = "ALGO"
+TICKER_ARCH = "ARCH"
 TICKER_ATOM = "ATOM"
 TICKER_BLD = "BLD"
 TICKER_BTSG = "BTSG"
@@ -71,8 +73,9 @@ TICKER_ROWAN = "ROWAN"
 TICKER_SCRT = "SCRT"
 TICKER_SOL = "SOL"
 TICKER_STARS = "STARS"
+TICKER_TIA = "TIA"
 TICKER_TORI = "TORI"
-TICKER_ARCH = "ARCH"
+
 
 DONATION_WALLETS = set([v for k, v in os.environ.items() if k.startswith("DONATION_WALLET_")])
 
