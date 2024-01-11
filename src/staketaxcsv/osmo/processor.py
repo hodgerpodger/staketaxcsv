@@ -7,11 +7,13 @@ import staketaxcsv.osmo.handle_staking
 import staketaxcsv.osmo.handle_superfluid
 import staketaxcsv.osmo.handle_swap
 import staketaxcsv.osmo.handle_unknown
+import staketaxcsv.osmo.handle_liquid
 from staketaxcsv.osmo import constants as co
 from staketaxcsv.osmo import util_osmo
 from staketaxcsv.osmo.config_osmo import localconfig
 from staketaxcsv.osmo.MsgInfoOsmo import MsgInfoOsmo
 from staketaxcsv.settings_csv import OSMO_NODE
+CONTRACT_LIQUID_STAKE = "osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0"
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -67,6 +69,10 @@ def _handle_message(exporter, txinfo, msginfo):
         elif msg_type in [co.MSG_TYPE_SUPERFLUID_UNDELEGATE, co.MSG_TYPE_SUPERFLUID_UNBOND_LOCK]:
             staketaxcsv.osmo.handle_superfluid.handle_undelegate_or_unbond(exporter, txinfo, msginfo)
 
+        # execute contract
+        elif msg_type == co.MSG_TYPE_EXECUTE_CONTRACT:
+            _handle_execute_contract(exporter, txinfo, msginfo)
+
         else:
             staketaxcsv.osmo.handle_unknown.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
     except Exception as e:
@@ -78,3 +84,12 @@ def _handle_message(exporter, txinfo, msginfo):
             raise e
 
     return txinfo
+
+
+def _handle_execute_contract(exporter, txinfo, msginfo):
+    contract = msginfo.contract
+
+    if contract == CONTRACT_LIQUID_STAKE:
+        staketaxcsv.osmo.handle_liquid.handle_liquid_stake(exporter, txinfo, msginfo)
+    else:
+        staketaxcsv.osmo.handle_unknown.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
