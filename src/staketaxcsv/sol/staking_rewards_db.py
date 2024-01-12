@@ -19,7 +19,7 @@ from staketaxcsv.sol.api_rpc import RpcAPI
 TABLE_STAKING_REWARDS = "staking_rewards"
 FIELD_EPOCH_TIMESTAMPS = "_epoch_timestamps"
 FIELD_PREFIX_ADDRESS = "addr_"
-REFERENCE_ADDRESS_WITH_ALL_EPOCH_REWARDS = "5uqNf9Vvivay6i4HUUwAo9Fsh9j4tQFxAuMWj5iRQ7E6"
+REFERENCE_ADDRESS_WITH_ALL_EPOCH_REWARDS = "8Vv2xVWSQtHji1Xf7Vj1vHKTa4em7zv7cAET96Vm2qt8"
 BATCH_SIZE_READ = 100   # Should match batch size read items limit for dynamodb
 TASK_SIZE_WRITE = 100   # Note: this is task write items size (not batch write items limit for dynamodb, which is 25)
 MAX_WORKERS = 32
@@ -174,7 +174,7 @@ class StakingRewardsDB:
                 results.append(f.result())
 
                 num_read_items = len(results) * BATCH_SIZE_READ
-                if num_read_items % 1000 == 0:
+                if num_read_items % 10000 == 0:
                     logging.info("%s of %s reads completed ... ", num_read_items, len(addrs))
             logging.info("All tasks completed.")
 
@@ -246,7 +246,7 @@ class StakingRewardsDB:
             num_write_items = 0
             for f in as_completed(futures):
                 num_write_items += TASK_SIZE_WRITE
-                if num_write_items % 1000 == 0:
+                if num_write_items % 10000 == 0:
                     logging.info("%s of %s writes completed ... ", num_write_items, len(addrs))
             logging.info("All tasks completed. ")
 
