@@ -13,5 +13,4 @@ def handle_liquid_stake(exporter, txinfo, msginfo):
 
         return
 
-
     raise Exception("Unable to handle tx in handle_liquid_stake()")

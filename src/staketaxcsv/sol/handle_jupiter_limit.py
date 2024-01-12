@@ -97,13 +97,10 @@ def handle_jupiter_limit(exporter, txinfo):
     transfers_in, transfers_out, _ = txinfo.transfers_net
 
     if "Swap" in log_instructions:
-
         _handle_swap(exporter, txinfo)
     elif "InitializeOrder" in log_instructions:
-
         _handle_open(exporter, txinfo)
     elif "CancelOrder" in log_instructions:
-
         _handle_cancel(exporter, txinfo)
     else:
         raise Exception("Unable to handle tx in handle_jupiter_limit()")

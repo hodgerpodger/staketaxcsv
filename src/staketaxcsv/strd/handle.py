@@ -2,6 +2,7 @@
 from staketaxcsv.common.ibc import make_tx, util_ibc
 from staketaxcsv.strd import constants as co
 
+
 def handle_claim_free_amount(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
 
@@ -28,8 +29,8 @@ def handle_liquid_stake(exporter, txinfo, msginfo):
         net_transfers_in, net_transfers_out = util_ibc.aggregate_transfers_net(transfers_in, transfers_out)
 
         # Should be sum of: one STRD claim amount and liquid stake trade
-        assert(len(net_transfers_in) == 2)
-        assert(len(net_transfers_out) == 1)
+        assert (len(net_transfers_in) == 2)
+        assert (len(net_transfers_out) == 1)
 
         amt1, cur1 = net_transfers_in[0]
         amt2, cur2 = net_transfers_in[1]
