@@ -1,7 +1,7 @@
 import logging
 
 from staketaxcsv.common.make_tx import make_swap_tx, make_simple_tx, make_spend_fee_tx
-from staketaxcsv.common.ExporterTypes import TX_TYPE_SOL_JUPITER_OPEN_DCA
+from staketaxcsv.common.ExporterTypes import TX_TYPE_SOL_JUPITER_DCA_OPEN
 from staketaxcsv.sol.handle_simple import handle_unknown_detect_transfers
 from staketaxcsv.sol.constants import CURRENCY_SOL
 
@@ -16,35 +16,30 @@ class DcaSeries:
         transfers_in, transfers_out, _ = txinfo_open_dca.transfers
 
         # Use contract wallet that receives funds for fee to ID the dca order
-        wallet_sol_deposit = inner_parsed["create"][0]["wallet"]
+        dca_order_id = inner_parsed["create"][0]["wallet"]
 
         # Find sol deposit amount
-        amount_sol_deposit = None
-        for amt, cur, _, _ in transfers_out:
-            if cur == CURRENCY_SOL:
-                amount_sol_deposit = amt
+        amount_sol_deposit = _get_sol_transfer_amount(transfers_out)
         assert (amount_sol_deposit is not None)
 
-        DcaSeries.sol_deposits[wallet_sol_deposit] = amount_sol_deposit
+        DcaSeries.sol_deposits[dca_order_id] = amount_sol_deposit
 
     def close(self, txinfo_close_dca):
         """ On close dca order, returns sol fee amount (fee = deposit - refund) """
         inner_parsed = txinfo_close_dca.inner_parsed
         transfers_in, transfers_out, _ = txinfo_close_dca.transfers_net
 
+        dca_order_id = inner_parsed["closeAccount"][0]["owner"]
+
         # Lookup sol deposit for this dca order
-        wallet_sol_deposit = inner_parsed["closeAccount"][0]["owner"]
-        amount_sol_deposit = DcaSeries.sol_deposits.get(wallet_sol_deposit, None)
+        amount_sol_deposit = DcaSeries.sol_deposits.get(dca_order_id, None)
 
         # Find sol refund amount
-        amount_sol_refund = None
-        for amt, cur, _, _ in transfers_in:
-            if cur == CURRENCY_SOL:
-                amount_sol_refund = amt
+        amount_sol_refund = _get_sol_transfer_amount(transfers_in)
         assert (amount_sol_refund is not None)
 
-        logging.info("wallet_sol_deposit:%s, amount_sol_deposit: %s, amount_sol_refund:%s",
-                     wallet_sol_deposit, amount_sol_deposit, amount_sol_refund)
+        logging.info("dca_order_id:%s, amount_sol_deposit: %s, amount_sol_refund:%s",
+                     dca_order_id, amount_sol_deposit, amount_sol_refund)
 
         if amount_sol_deposit and amount_sol_refund:
             fee_series = amount_sol_deposit - amount_sol_refund
@@ -83,7 +78,7 @@ def _handle_open_dca(exporter, txinfo):
     txinfo.comment += ".open_dca"
 
     # Ignore transfer of SOL since SOL deposit is returned at end of dca order (minus fees)
-    row = make_simple_tx(txinfo, TX_TYPE_SOL_JUPITER_OPEN_DCA)
+    row = make_simple_tx(txinfo, TX_TYPE_SOL_JUPITER_DCA_OPEN)
     row.fee = ""
     row.fee_currency = ""
     exporter.ingest_row(row)
@@ -151,3 +146,10 @@ def _amt_currency(txinfo, transfer_checked):
     amount = transfer_checked["tokenAmount"]["uiAmount"]
     currency = txinfo.mints[transfer_checked["mint"]]["currency"]
     return amount, currency
+
+
+def _get_sol_transfer_amount(transfers_list):
+    for amt, cur, _, _ in transfers_list:
+        if cur == CURRENCY_SOL:
+            return amt
+    return None

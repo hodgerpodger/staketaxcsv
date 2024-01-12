@@ -326,15 +326,6 @@ def _instruction_accounts(txid, wallet_address, instructions, inner):
                     if accounts.intersection(addresses_source):
                         accounts = accounts.union(addresses_source)
 
-                # if wallet associated with destination
-                if parsed.get("type") == "closeAccount":
-                    info = parsed["info"]
-                    account = info["account"]
-                    destination = info["destination"]
-
-                    if destination == wallet_address:
-                        accounts.add(account)
-
     return accounts
 
 
