@@ -46,4 +46,3 @@ def _is_many_execute_contracts(txinfo):
         if msginfo.msg_type != co.MSG_TYPE_EXECUTE_CONTRACT:
             return False
     return True
-

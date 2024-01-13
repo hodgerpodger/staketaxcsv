@@ -4,14 +4,13 @@ from staketaxcsv.osmo.make_tx import (
     make_osmo_lp_deposit_tx, make_osmo_lp_withdraw_tx, make_osmo_reward_tx)
 
 
-
 class PositionLiquidity:
 
-    liquidities = defaultdict(int)  #  <position_id> -> <liquidity>
+    liquidities = defaultdict(int)  # <position_id> -> <liquidity>
 
     @classmethod
     def create_position(cls, position_id, liquidity):
-        assert(position_id not in cls.liquidities)
+        assert (position_id not in cls.liquidities)
         cls.liquidities[position_id] = liquidity
 
     @classmethod
@@ -28,7 +27,7 @@ class PositionLiquidity:
 
     @classmethod
     def withdraw_position(cls, position_id, liquidity):
-        assert(position_id in cls.liquidities)
+        assert (position_id in cls.liquidities)
 
         cls.liquidities[position_id] -= liquidity
 
@@ -80,7 +79,7 @@ def handle_add_to_position(exporter, txinfo, msginfo):
         create_liquidity = float(events_by_type["create_position"]["liquidity"])
         create_pool_id = events_by_type["create_position"]["pool_id"]
 
-        assert(withdraw_pool_id == create_pool_id)
+        assert (withdraw_pool_id == create_pool_id)
 
         liquidity_added = PositionLiquidity.add_to_position(withdraw_position_id, create_position_id, create_liquidity)
 
@@ -162,6 +161,5 @@ def handle_withdraw_position(exporter, txinfo, msginfo):
         ]
         util_osmo._ingest_rows(exporter, rows, comment)
         return
-
 
     raise Exception("Unable to handle tx in handle_withdraw_position()")

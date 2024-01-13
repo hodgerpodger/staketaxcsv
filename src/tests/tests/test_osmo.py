@@ -81,4 +81,3 @@ timestamp            tx_type   received_amount  received_currency  sent_amount  
 -------------------  --------  ---------------  -----------------  -----------  -------------  ------  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
-
