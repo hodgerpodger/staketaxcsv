@@ -34,7 +34,7 @@ class MockRpcAPI(RpcAPI):
     @classmethod
     def fetch_account(cls, wallet_address):
         return mock_query_one_arg(
-            RpcAPI.fetch_account, wallet_address, TICKER_SOL, "/fetch_account")
+            RpcAPI.fetch_account, wallet_address, TICKER_SOL + "/fetch_account")
 
     @classmethod
     def get_block_time(cls, block):

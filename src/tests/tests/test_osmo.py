@@ -9,18 +9,7 @@ validator or contract.  This is to ensure good faith in maintaining privacy.
 
 import logging
 import unittest
-from unittest.mock import patch
-
-from tests.mock_osmo import mock_get_tx
-from tests.mock_lcd import MockLcdAPI_v1
-import staketaxcsv.report_osmo
-
-
-@patch("staketaxcsv.osmo.api_data.get_tx", mock_get_tx)
-@patch("staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1", new=MockLcdAPI_v1)
-def run_test(wallet_address, txid):
-    exporter = staketaxcsv.report_osmo.txone(wallet_address, txid)
-    return exporter.export_for_test()
+from tests.utils_osmo import run_test
 
 
 class TestOsmo(unittest.TestCase):
@@ -64,3 +53,32 @@ timestamp            tx_type  received_amount  received_currency  sent_amount  s
 -------------------  -------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+    def test_ibc_transfer_in(self):
+        logging.basicConfig(level=logging.INFO)
+
+        result = run_test(
+            "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86",
+            "43D62F41B6B0128C304C38BFC69D13CE2C3BE119E1866906E43F557FCF39F07F"
+        )
+        correct_result = """
+-------------------  --------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
+timestamp            tx_type   received_amount  received_currency  sent_amount  sent_currency  fee  fee_currency  txid
+2024-01-11 19:09:39  TRANSFER  3.957272         milkTIA                                                           43D62F41B6B0128C304C38BFC69D13CE2C3BE119E1866906E43F557FCF39F07F-2
+-------------------  --------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
+
+    def test_ibc_transfer_out(self):
+        result = run_test(
+            "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86",
+            "5BFEADF2D10FE460AF00BA60D07B16B65063EA0EA90AF67FB55853EF88E125F4"
+        )
+        correct_result = """
+-------------------  --------  ---------------  -----------------  -----------  -------------  ------  ------------  ------------------------------------------------------------------
+timestamp            tx_type   received_amount  received_currency  sent_amount  sent_currency  fee     fee_currency  txid
+2024-01-11 19:25:19  TRANSFER                                      3.957272     milkTIA        0.0125  OSMO          5BFEADF2D10FE460AF00BA60D07B16B65063EA0EA90AF67FB55853EF88E125F4-0
+-------------------  --------  ---------------  -----------------  -----------  -------------  ------  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
+

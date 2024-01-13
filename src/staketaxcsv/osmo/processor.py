@@ -1,13 +1,14 @@
 import logging
 
 import staketaxcsv.common.ibc.processor
+import staketaxcsv.osmo.handle_concentrated_lp
 import staketaxcsv.osmo.handle_general
+import staketaxcsv.osmo.handle_liquid
 import staketaxcsv.osmo.handle_lp
 import staketaxcsv.osmo.handle_staking
 import staketaxcsv.osmo.handle_superfluid
 import staketaxcsv.osmo.handle_swap
 import staketaxcsv.osmo.handle_unknown
-import staketaxcsv.osmo.handle_liquid
 from staketaxcsv.osmo import constants as co
 from staketaxcsv.osmo import util_osmo
 from staketaxcsv.osmo.config_osmo import localconfig
@@ -68,6 +69,18 @@ def _handle_message(exporter, txinfo, msginfo):
             staketaxcsv.osmo.handle_superfluid.handle_lp_stake(exporter, txinfo, msginfo)
         elif msg_type in [co.MSG_TYPE_SUPERFLUID_UNDELEGATE, co.MSG_TYPE_SUPERFLUID_UNBOND_LOCK]:
             staketaxcsv.osmo.handle_superfluid.handle_undelegate_or_unbond(exporter, txinfo, msginfo)
+
+        # concentrated liquidity
+        elif msg_type == co.MSG_TYPE_CREATE_POSITION:
+            staketaxcsv.osmo.handle_concentrated_lp.handle_create_position(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_ADD_TO_POSITION:
+            staketaxcsv.osmo.handle_concentrated_lp.handle_add_to_position(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_COLLECT_INCENTIVES:
+            staketaxcsv.osmo.handle_concentrated_lp.handle_collect_incentives(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_COLLECT_SPREAD_REWARDS:
+            staketaxcsv.osmo.handle_concentrated_lp.handle_collect_spread_rewards(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_WITHDRAW_POSITION:
+            staketaxcsv.osmo.handle_concentrated_lp.handle_withdraw_position(exporter, txinfo, msginfo)
 
         # execute contract
         elif msg_type == co.MSG_TYPE_EXECUTE_CONTRACT:
