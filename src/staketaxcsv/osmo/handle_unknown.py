@@ -4,6 +4,7 @@ from staketaxcsv.osmo.make_tx import make_osmo_unknown_tx, make_osmo_unknown_tx_
 
 def handle_unknown_detect_transfers(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
+    transfers_net_in, transfers_net_out = msginfo.transfers_net
 
     if len(transfers_in) == 0 and len(transfers_out) == 0:
         handle_unknown(exporter, txinfo, msginfo)
@@ -19,10 +20,10 @@ def handle_unknown_detect_transfers(exporter, txinfo, msginfo):
     else:
         # Handle unknown transaction as separate transfers for each row.
         rows = []
-        for sent_amount, sent_currency in transfers_out:
+        for sent_amount, sent_currency in transfers_net_out:
             rows.append(
                 make_osmo_unknown_tx_with_transfer(txinfo, msginfo, sent_amount, sent_currency, "", ""))
-        for received_amount, received_currency in transfers_in:
+        for received_amount, received_currency in transfers_net_in:
             rows.append(
                 make_osmo_unknown_tx_with_transfer(txinfo, msginfo, "", "", received_amount, received_currency))
         util_osmo._ingest_rows(exporter, rows, "")

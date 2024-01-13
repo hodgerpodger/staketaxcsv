@@ -119,6 +119,7 @@ def handle_multisend(exporter, txinfo, msginfo):
 
 def unknown_txs_detect_transfers(txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
+    transfers_net_in, transfers_net_out = msginfo.transfers_net
 
     if len(transfers_in) == 0 and len(transfers_out) == 0:
         row = make_tx.make_unknown_tx(txinfo, msginfo)
@@ -134,10 +135,10 @@ def unknown_txs_detect_transfers(txinfo, msginfo):
     else:
         # Handle unknown transaction as separate transfers for each row.
         rows = []
-        for sent_amount, sent_currency in transfers_out:
+        for sent_amount, sent_currency in transfers_net_out:
             rows.append(
                 make_tx.make_unknown_tx_with_transfer(txinfo, msginfo, sent_amount, sent_currency, "", ""))
-        for received_amount, received_currency in transfers_in:
+        for received_amount, received_currency in transfers_net_in:
             rows.append(
                 make_tx.make_unknown_tx_with_transfer(txinfo, msginfo, "", "", received_amount, received_currency))
         return rows

@@ -1,9 +1,11 @@
 import logging
+import pprint
 import re
 from collections import defaultdict
 
 import staketaxcsv.common.ibc.constants as co
 from staketaxcsv.common.ibc.api_lcd_v1 import ibc_address_to_denom
+from staketaxcsv.common.ibc import util_ibc
 
 COIN_RECEIVED = "coin_received"
 COIN_SPENT = "coin_spent"
@@ -30,9 +32,23 @@ class MsgInfoIBC:
         self.msg_type = self._msg_type(message)
         self.log = log
         self.transfers = self._transfers()
+        self.transfers_net = util_ibc.aggregate_transfers_net(self.transfers[0], self.transfers[1])
         self.transfers_event = self._transfers_transfer_event(show_addrs=True)
         self.wasm = MsgInfoIBC.wasm(log)
         self.contract = self._contract(message)
+
+    def print(self):
+        print("\nmsg{}:".format(self.msg_index))
+        print("\tmsg_type: {}".format(self.msg_type))
+        print("\tcontract: {}".format(self.contract))
+        print("\ttransfers_in: {}".format(self.transfers[0]))
+        print("\ttransfers_out: {}".format(self.transfers[1]))
+        print("\ttransfers_net_in: {}".format(self.transfers_net[0]))
+        print("\ttransfers_net_out: {}".format(self.transfers_net[1]))
+        print("\n\tmessage:")
+        pprint.pprint(self.message)
+        print("\n\twasm:")
+        pprint.pprint(self.wasm)
 
     def _msg_type(self, message):
         if "@type" in message:
