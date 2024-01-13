@@ -52,6 +52,7 @@ class LimitOrder:
 
         # Calculate fee of limit order series: fee = deposit - refund
         amount_sol_fee = round(amount_sol_deposit - amount_sol_refund, 9)
+        self._fee_sanity_check(amount_sol_fee)
 
         return limit_order_id, amount_sol_fee, sent_amount, sent_currency, received_amount, received_currency
 
@@ -69,11 +70,13 @@ class LimitOrder:
 
         # Calculate fee of limit order series: fee = deposit - refund
         amount_sol_fee = amount_sol_deposit - amount_sol_refund
+        self._fee_sanity_check(amount_sol_fee)
 
         # sanity check
+        return limit_order_id, amount_sol_fee, amount_sol_refund, received_amount, received_currency
+
+    def _fee_sanity_check(self, amount_sol_fee):
         if 0 < amount_sol_fee < 0.5:
-            return limit_order_id, amount_sol_fee, amount_sol_refund, received_amount, received_currency
-        else:
             raise Exception("Bad value for amount_sol_fee={}".format(amount_sol_fee))
 
     def _received_amounts(self, transfers_in):
