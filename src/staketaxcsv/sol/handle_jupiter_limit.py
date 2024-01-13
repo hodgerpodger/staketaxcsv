@@ -76,7 +76,7 @@ class LimitOrder:
         return limit_order_id, amount_sol_fee, amount_sol_refund, received_amount, received_currency
 
     def _fee_sanity_check(self, amount_sol_fee):
-        if 0 < amount_sol_fee < 0.5:
+        if amount_sol_fee > 0.5:
             raise Exception("Bad value for amount_sol_fee={}".format(amount_sol_fee))
 
     def _received_amounts(self, transfers_in):

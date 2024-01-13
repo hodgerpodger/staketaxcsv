@@ -1,4 +1,5 @@
 from collections import defaultdict
+TINY_AMOUNT = 0.000000000001
 
 
 def _ingest_rows(exporter, txinfo, msginfo, rows, comment):
@@ -34,7 +35,7 @@ def remove_duplicates(elems, tx_hash_key="txhash", timestamp_sort=True):
 
 
 def aggregate_transfers(transfers_list):
-    sums_by_currency = defaultdict(int)
+    sums_by_currency = defaultdict(float)
 
     for tup in transfers_list:
         amount, currency = tup[0], tup[1]
@@ -47,7 +48,7 @@ def aggregate_transfers(transfers_list):
 
 
 def aggregate_transfers_net(transfers_in, transfers_out):
-    sums_by_currency = defaultdict(int)
+    sums_by_currency = defaultdict(float)
 
     for tup in transfers_in:
         amount, currency = tup[0], tup[1]
@@ -61,9 +62,9 @@ def aggregate_transfers_net(transfers_in, transfers_out):
     net_transfers_out = []
 
     for currency, amount in sums_by_currency.items():
-        if amount > 0:
+        if amount > TINY_AMOUNT:
             net_transfers_in.append((amount, currency))
-        elif amount < 0:
+        elif amount < -TINY_AMOUNT:
             net_transfers_out.append((-amount, currency))
 
     return net_transfers_in, net_transfers_out
