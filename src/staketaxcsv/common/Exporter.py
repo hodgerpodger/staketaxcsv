@@ -955,6 +955,7 @@ class Exporter:
 
         # Global remap across all CSVs (especially suited for IBC currencies that appear in many CSVs)
         remap_global = {
+            "ARCH": "ID:10759253",
             "STARS": "ID:36899",
         }
 
