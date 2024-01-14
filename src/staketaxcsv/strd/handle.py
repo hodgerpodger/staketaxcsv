@@ -5,11 +5,14 @@ from staketaxcsv.strd import constants as co
 
 def handle_claim_free_amount(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
+    txinfo.comment = "claim_free_amount "
 
     if len(transfers_in) > 0 and len(transfers_out) == 0:
         for amount, currency in util_ibc.aggregate_transfers(transfers_in):
-            row = make_tx.make_airdrop_tx(txinfo, msginfo, amount, currency)
-            exporter.ingest_row(row)
+            txinfo.comment += "[" + str(amount) + " " + currency + "]"
+
+        row = make_tx.make_simple_tx(txinfo, msginfo)
+        exporter.ingest_row(row)
         return
 
     raise Exception("Unable to handle message in handle_claim_free_amount()")
