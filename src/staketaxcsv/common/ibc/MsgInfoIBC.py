@@ -36,6 +36,7 @@ class MsgInfoIBC:
         self.transfers_event = self._transfers_transfer_event(show_addrs=True)
         self.wasm = MsgInfoIBC.wasm(log)
         self.contract = self._contract(message)
+        self.events_by_type = self._events_by_type()
 
     def print(self):
         print("\nmsg{}:".format(self.msg_index))
@@ -49,6 +50,8 @@ class MsgInfoIBC:
         pprint.pprint(self.message)
         print("\n\twasm:")
         pprint.pprint(self.wasm)
+        print("\tevents_by_type:")
+        pprint.pprint(self.events_by_type)
 
     def _msg_type(self, message):
         if "@type" in message:
@@ -350,3 +353,23 @@ class MsgInfoIBC:
             return message["contract"]
         else:
             return None
+
+    def _events_by_type(self):
+        log = self.log
+
+        out = {}
+        for event in log["events"]:
+            attributes = event["attributes"]
+            event_type = event["type"]
+
+            if event_type not in out:
+                out[event_type] = {}
+
+            for attribute in attributes:
+                k, v = attribute.get("key"), attribute.get("value")
+
+                if k in out[event_type]:
+                    out[event_type][k] += "," + v
+                else:
+                    out[event_type][k] = v
+        return out

@@ -12,11 +12,6 @@ class MsgInfoOsmo(MsgInfoIBC):
         super().__init__(wallet_address, msg_index, message, log, lcd_node, ibc_addresses)
         self.events_by_type = self._events_by_type()
 
-    def print(self):
-        super().print()
-        print("\tevents_by_type:")
-        pprint.pprint(self.events_by_type)
-
     def amount_currency_single(self, amount_raw, currency_raw):
         amount, currency = MsgInfoIBC.amount_currency_from_raw(
             amount_raw, currency_raw, self.lcd_node, self.ibc_addresses)
@@ -54,22 +49,4 @@ class MsgInfoOsmo(MsgInfoIBC):
         exponents[currency] = exponent
         return exponent
 
-    def _events_by_type(self):
-        log = self.log
 
-        out = {}
-        for event in log["events"]:
-            attributes = event["attributes"]
-            event_type = event["type"]
-
-            if event_type not in out:
-                out[event_type] = {}
-
-            for attribute in attributes:
-                k, v = attribute["key"], attribute["value"]
-
-                if k in out[event_type]:
-                    out[event_type][k] += "," + v
-                else:
-                    out[event_type][k] = v
-        return out
