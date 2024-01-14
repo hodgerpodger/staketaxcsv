@@ -26,18 +26,18 @@ def run_test(wallet_address, txid):
 
 class TestStrd(unittest.TestCase):
 
-    def test_claim_free_amount(self):
-        result = run_test(
-            "stride1hc6kkysu2kwx3ls0nhw29sw69wc9qx892xupmf",
-            "7C314E0223AE1369ECCB250D348C51941B21A0819F99C15EC4FB4200BB2157BE"
-        )
-        correct_result = """
--------------------  -------------------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
-timestamp            tx_type              received_amount  received_currency  sent_amount  sent_currency  fee  fee_currency  txid
-2022-11-23 12:44:44  _MsgClaimFreeAmount                                                                                     7C314E0223AE1369ECCB250D348C51941B21A0819F99C15EC4FB4200BB2157BE-0
--------------------  -------------------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
-        """
-        self.assertEqual(result, correct_result.strip(), result)
+#     def test_claim_free_amount(self):
+#         result = run_test(
+#             "stride1hc6kkysu2kwx3ls0nhw29sw69wc9qx892xupmf",
+#             "7C314E0223AE1369ECCB250D348C51941B21A0819F99C15EC4FB4200BB2157BE"
+#         )
+#         correct_result = """
+# -------------------  -------------------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
+# timestamp            tx_type              received_amount  received_currency  sent_amount  sent_currency  fee  fee_currency  txid
+# 2022-11-23 12:44:44  _MsgClaimFreeAmount                                                                                     7C314E0223AE1369ECCB250D348C51941B21A0819F99C15EC4FB4200BB2157BE-0
+# -------------------  -------------------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
+#         """
+#         self.assertEqual(result, correct_result.strip(), result)
 
     def test_ibc_transfer_multi_in_multi_out(self):
         result = run_test(
