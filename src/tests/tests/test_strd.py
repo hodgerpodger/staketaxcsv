@@ -75,7 +75,7 @@ timestamp            tx_type  received_amount  received_currency  sent_amount  s
 -------------------  -------  ------------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
 timestamp            tx_type  received_amount     received_currency  sent_amount  sent_currency  fee  fee_currency  txid
 2023-02-28 16:21:43  STAKING  20.235576000000002  STRD                                                              65F7196CBDA2A1EEA9F9B2791DD30C0ED0A16C364CEB58933C5A33D4865AD397-0
-2023-02-28 16:21:43  TRADE    45.700027           45.700027          50.0         ATOM                              65F7196CBDA2A1EEA9F9B2791DD30C0ED0A16C364CEB58933C5A33D4865AD397-0
+2023-02-28 16:21:43  TRADE    45.700027           stATOM             50.0         ATOM                              65F7196CBDA2A1EEA9F9B2791DD30C0ED0A16C364CEB58933C5A33D4865AD397-0
 -------------------  -------  ------------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)

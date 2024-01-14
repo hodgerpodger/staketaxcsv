@@ -17,6 +17,7 @@ def handle_claim_free_amount(exporter, txinfo, msginfo):
 
 def handle_liquid_stake(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
+    txinfo.comment += "liquid_stake"
 
     if len(transfers_in) == 1 and len(transfers_out) == 1:
         received_amount, received_currency = transfers_in[0]
@@ -41,7 +42,7 @@ def handle_liquid_stake(exporter, txinfo, msginfo):
             received_amount, received_currency = amt2, cur2
         elif cur2 == co.CURRENCY_STRD:
             claim_amount = amt2
-            received_amount, received_currency = amt1, amt1
+            received_amount, received_currency = amt1, cur1
         else:
             raise Exception("Unexpected condition for cur1={}, cur2={}".format(cur1, cur2))
 
