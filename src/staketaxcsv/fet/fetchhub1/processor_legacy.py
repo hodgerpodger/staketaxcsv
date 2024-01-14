@@ -43,14 +43,16 @@ def _decode(elem):
         for kv in event["attributes"]:
             k, v = kv["key"], kv["value"]
 
-            kv["key"] = base64.b64decode(k).decode()
-            kv["value"] = base64.b64decode(v).decode()
+            kv["key"] = base64.b64decode(k).decode() if k else None
+            kv["value"] = base64.b64decode(v).decode() if v else None
 
     return elem
 
 
 def _txinfo(wallet_address, elem, node):
     txid = elem["hash"]
+
+
     height = elem["height"]
     timestamp = FetRpcAPI(node).block_time(height)
     fee = get_fee(elem)
