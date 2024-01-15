@@ -1,0 +1,283 @@
+[
+    {
+        "height": "13211354",
+        "txhash": "5BFEADF2D10FE460AF00BA60D07B16B65063EA0EA90AF67FB55853EF88E125F4",
+        "codespace": "",
+        "code": 0,
+        "data": "12390A312F6962632E6170706C69636174696F6E732E7472616E736665722E76312E4D73675472616E73666572526573706F6E7365120408D1A702",
+        "info": "",
+        "gas_wanted": "500000",
+        "gas_used": "451141",
+        "tx": {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            "/cosmos-tx-v1beta1-Tx": {
+                "body": {
+                    "messages": [
+                        {
+                            "@type": "/ibc.applications.transfer.v1.MsgTransfer",
+                            "/ibc-applications-transfer-v1-MsgTransfer": {
+                                "source_port": "transfer",
+                                "source_channel": "channel-188",
+                                "token": {
+                                    "denom": "factory/osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0/umilkTIA",
+                                    "amount": "3957272"
+                                },
+                                "sender": "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86",
+                                "receiver": "swth1f06vhp6m9fkghfpgafqwuetys9u74gy7we6yz3",
+                                "timeout_height": {
+                                    "revision_number": "0",
+                                    "revision_height": "0"
+                                },
+                                "timeout_timestamp": "1705002919000000000",
+                                "memo": ""
+                            }
+                        }
+                    ],
+                    "memo": "Demex_Date-2024-01-11T19:25:19",
+                    "timeout_height": "0",
+                    "extension_options": [],
+                    "non_critical_extension_options": []
+                },
+                "auth_info": {
+                    "signer_infos": [
+                        {
+                            "public_key": {
+                                "@type": "/cosmos.crypto.secp256k1.PubKey",
+                                "/cosmos-crypto-secp256k1-PubKey": {
+                                    "key": "AgnVfA4cnYLNrvWvaKlP1T3tL/2oy4SinG99SCYrKhjw"
+                                }
+                            },
+                            "mode_info": {
+                                "single": {
+                                    "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                                }
+                            },
+                            "sequence": "0"
+                        }
+                    ],
+                    "fee": {
+                        "amount": [
+                            {
+                                "denom": "uosmo",
+                                "amount": "12500"
+                            }
+                        ],
+                        "gas_limit": "500000",
+                        "payer": "",
+                        "granter": ""
+                    },
+                    "tip": null
+                },
+                "signatures": [
+                    "roVJXr+/1bkvVcxanIYhdOMmDLACyY/DxytmLi351UMuqFMN9qpL1/cwTJl1RZm6tSR6qoECUyXxgfZu13LoKQ=="
+                ]
+            }
+        },
+        "timestamp": "2024-01-11T19:25:19Z",
+        "timestamp__@@date": 1705001119000,
+        "logs": [
+            {
+                "msg_index": 0,
+                "log": "",
+                "events": [
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "action",
+                                "value": "/ibc.applications.transfer.v1.MsgTransfer"
+                            },
+                            {
+                                "key": "sender",
+                                "value": "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "coin_spent",
+                        "attributes": [
+                            {
+                                "key": "spender",
+                                "value": "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "3957272factory/osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0/umilkTIA"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "coin_received",
+                        "attributes": [
+                            {
+                                "key": "receiver",
+                                "value": "osmo1v9njymsdu8gdqp4malxvztx9583jqgd72e24hx"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "3957272factory/osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0/umilkTIA"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "transfer",
+                        "attributes": [
+                            {
+                                "key": "recipient",
+                                "value": "osmo1v9njymsdu8gdqp4malxvztx9583jqgd72e24hx"
+                            },
+                            {
+                                "key": "sender",
+                                "value": "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "3957272factory/osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0/umilkTIA"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "sender",
+                                "value": "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "sudo",
+                        "attributes": [
+                            {
+                                "key": "_contract_address",
+                                "value": "osmo17r7qdw2zk6jyw62cvwm6flmhtj9q7zd26r8zc6sqyf0pnaq46cfss8hgxg"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "wasm",
+                        "attributes": [
+                            {
+                                "key": "_contract_address",
+                                "value": "osmo17r7qdw2zk6jyw62cvwm6flmhtj9q7zd26r8zc6sqyf0pnaq46cfss8hgxg"
+                            },
+                            {
+                                "key": "method",
+                                "value": "try_transfer"
+                            },
+                            {
+                                "key": "channel_id",
+                                "value": "channel-188"
+                            },
+                            {
+                                "key": "denom",
+                                "value": "factory/osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0/umilkTIA"
+                            },
+                            {
+                                "key": "quota",
+                                "value": "none"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "send_packet",
+                        "attributes": [
+                            {
+                                "key": "packet_data",
+                                "value": "{\"amount\":\"3957272\",\"denom\":\"factory/osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0/umilkTIA\",\"receiver\":\"swth1f06vhp6m9fkghfpgafqwuetys9u74gy7we6yz3\",\"sender\":\"osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86\"}"
+                            },
+                            {
+                                "key": "packet_data_hex",
+                                "value": "7b22616d6f756e74223a2233393537323732222c2264656e6f6d223a22666163746f72792f6f736d6f316635766663706832647666657163716b6865747776373566646136397a3765356332646c646d336b76676a323363726b76367771636e343761302f756d696c6b544941222c227265636569766572223a227377746831663036766870366d39666b676866706761667177756574797339753734677937776536797a33222c2273656e646572223a226f736d6f31663036766870366d39666b6768667067616671777565747973397537346779376575727a3836227d"
+                            },
+                            {
+                                "key": "packet_timeout_height",
+                                "value": "0-0"
+                            },
+                            {
+                                "key": "packet_timeout_timestamp",
+                                "value": "1705002919000000000"
+                            },
+                            {
+                                "key": "packet_sequence",
+                                "value": "37841"
+                            },
+                            {
+                                "key": "packet_src_port",
+                                "value": "transfer"
+                            },
+                            {
+                                "key": "packet_src_channel",
+                                "value": "channel-188"
+                            },
+                            {
+                                "key": "packet_dst_port",
+                                "value": "transfer"
+                            },
+                            {
+                                "key": "packet_dst_channel",
+                                "value": "channel-0"
+                            },
+                            {
+                                "key": "packet_channel_ordering",
+                                "value": "ORDER_UNORDERED"
+                            },
+                            {
+                                "key": "packet_connection",
+                                "value": "connection-1412"
+                            },
+                            {
+                                "key": "connection_id",
+                                "value": "connection-1412"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "module",
+                                "value": "ibc_channel"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ibc_transfer",
+                        "attributes": [
+                            {
+                                "key": "sender",
+                                "value": "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86"
+                            },
+                            {
+                                "key": "receiver",
+                                "value": "swth1f06vhp6m9fkghfpgafqwuetys9u74gy7we6yz3"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "3957272"
+                            },
+                            {
+                                "key": "denom",
+                                "value": "factory/osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0/umilkTIA"
+                            },
+                            {
+                                "key": "memo",
+                                "value": ""
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "module",
+                                "value": "transfer"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "chain_id": "osmosis-1"
+    }
+]
