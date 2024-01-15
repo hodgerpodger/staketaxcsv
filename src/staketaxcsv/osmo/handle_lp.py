@@ -9,6 +9,7 @@ from staketaxcsv.osmo.make_tx import (
     make_osmo_lp_unstake_tx,
     make_osmo_lp_withdraw_tx,
 )
+from staketaxcsv.osmo.handle_general import handle_simple
 
 
 class LockedTokens:
@@ -136,3 +137,10 @@ def handle_lp_unstake(exporter, txinfo, msginfo):
         return
 
     handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+
+
+def handle_unlock_period_lock(exporter, txinfo, msginfo):
+    period_lock_id = util_osmo._period_lock_id(msginfo)
+    txinfo.comment = f"[period_lock_id={period_lock_id}]"
+
+    handle_simple(exporter, txinfo, msginfo)

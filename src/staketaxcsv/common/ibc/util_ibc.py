@@ -29,7 +29,7 @@ def remove_duplicates(elems, tx_hash_key="txhash", timestamp_sort=True):
         txids.add(elem[tx_hash_key])
 
     if timestamp_sort:
-        out.sort(key=lambda elem: elem["timestamp"], reverse=True)
+        out.sort(key=lambda elem: elem["timestamp"], reverse=False)
 
     return out
 

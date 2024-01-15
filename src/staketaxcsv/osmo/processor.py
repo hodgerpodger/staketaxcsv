@@ -61,6 +61,8 @@ def _handle_message(exporter, txinfo, msginfo):
             staketaxcsv.osmo.handle_lp.handle_lp_stake(exporter, txinfo, msginfo)
         elif msg_type == co.MSG_TYPE_BEGIN_UNLOCKING:
             staketaxcsv.osmo.handle_lp.handle_lp_unstake(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_UNLOCK_PERIOD_LOCK:
+            staketaxcsv.osmo.handle_lp.handle_unlock_period_lock(exporter, txinfo, msginfo)
 
         # superfluid
         elif msg_type == co.MSG_TYPE_SUPERFLUID_DELEGATE:

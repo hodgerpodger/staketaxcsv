@@ -88,6 +88,7 @@ MINTSCAN_LABELS = {
     "MNT": "asset-mantle",
     "NGM": "emoney",
     "NYX": "nyx",
+    "OSMO": "osmosis",
     "ONOMY": "onomy-protocol",
     "PASG": "passage",
     "QCK": "quicksilver",

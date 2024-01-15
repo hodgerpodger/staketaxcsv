@@ -29,7 +29,7 @@ def _period_lock_id(msginfo):
         event_type = event["type"]
         attributes = event["attributes"]
 
-        if event_type in ["lock_tokens", "begin_unlock", "add_tokens_to_lock"]:
+        if event_type in ["lock_tokens", "begin_unlock", "add_tokens_to_lock", "unlock"]:
             for kv in attributes:
                 k, v = kv["key"], kv["value"]
                 if k == "period_lock_id":
