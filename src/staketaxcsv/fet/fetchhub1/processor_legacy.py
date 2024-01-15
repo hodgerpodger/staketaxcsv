@@ -52,7 +52,6 @@ def _decode(elem):
 def _txinfo(wallet_address, elem, node):
     txid = elem["hash"]
 
-
     height = elem["height"]
     timestamp = FetRpcAPI(node).block_time(height)
     fee = get_fee(elem)

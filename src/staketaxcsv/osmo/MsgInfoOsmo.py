@@ -48,5 +48,3 @@ class MsgInfoOsmo(MsgInfoIBC):
 
         exponents[currency] = exponent
         return exponent
-
-
