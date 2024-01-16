@@ -10,7 +10,7 @@ import logging
 from datetime import datetime
 
 from staketaxcsv.common.ibc import constants as co
-from staketaxcsv.common.ibc import handle
+from staketaxcsv.common.ibc import handle, denoms
 from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 from staketaxcsv.common.ibc.TxInfoIBC import TxInfoIBC
 from staketaxcsv.common.make_tx import make_spend_fee_tx, make_simple_tx
@@ -67,7 +67,7 @@ def _get_fee(wallet_address, elem, lcd_node, ibc_addresses):
     # Get fee amount
     amount_string = amount_list[0]["amount"]
 
-    fee, fee_currency = MsgInfoIBC.amount_currency_from_raw(amount_string, denom, lcd_node, ibc_addresses)
+    fee, fee_currency = denoms.amount_currency_from_raw(amount_string, denom, lcd_node, ibc_addresses)
 
     if fee == 0:
         return "", ""

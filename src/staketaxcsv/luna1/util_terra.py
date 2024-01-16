@@ -4,12 +4,11 @@ import base64
 import json
 import logging
 
-import staketaxcsv.common.ibc.api_lcd_v1
-from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 from staketaxcsv.luna1.api_lcd import LcdAPI
 from staketaxcsv.luna1.config_luna1 import localconfig
 from staketaxcsv.luna1.constants import CUR_UST
 from staketaxcsv.settings_csv import LUNA1_NODE
+from staketaxcsv.common.ibc import denoms
 
 
 def _contracts(elem):
@@ -245,7 +244,7 @@ def _extract_amounts(amount_string):
             uamount, ibc_address = amount.split("ibc")
             ibc_address = "ibc" + ibc_address
 
-            _, currency = MsgInfoIBC.amount_currency_from_raw(0, ibc_address, LUNA1_NODE, localconfig.ibc_addresses)
+            _, currency = denoms.amount_currency_from_raw(0, ibc_address, LUNA1_NODE, localconfig.ibc_addresses)
             out[currency] = _float_amount(uamount, currency)
         else:
             # regular (i.e. 99700703uusd)

@@ -1,11 +1,10 @@
 import logging
 import pprint
 import re
-from collections import defaultdict
 
 import staketaxcsv.common.ibc.constants as co
 from staketaxcsv.common.ibc.api_lcd_v1 import ibc_address_to_denom
-from staketaxcsv.common.ibc import util_ibc
+from staketaxcsv.common.ibc import util_ibc, denoms
 
 COIN_RECEIVED = "coin_received"
 COIN_SPENT = "coin_spent"
@@ -226,93 +225,93 @@ class MsgInfoIBC:
 
     def amount_currency_single(self, amount_raw, currency_raw):
         # Convert from raw string to float amount and currency symbol
-        amount, currency = MsgInfoIBC.amount_currency_from_raw(
+        amount, currency = denoms.amount_currency_from_raw(
             amount_raw, currency_raw, self.lcd_node, self.ibc_addresses)
         return amount, currency
-
-    @staticmethod
-    def amount_currency_from_raw(amount_raw, currency_raw, lcd_node, ibc_addresses):
-        # example currency_raw:
-        # 'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4'
-        # 'uluna'
-        # 'aevmos'
-        if currency_raw is None:
-            return amount_raw, currency_raw
-        elif currency_raw.startswith("ibc/"):
-            # ibc address
-            denom = None
-            try:
-                denom = ibc_address_to_denom(
-                    lcd_node, currency_raw, ibc_addresses)
-                amount, currency = MsgInfoIBC._amount_currency_convert(amount_raw, denom)
-                return amount, currency
-            except Exception as e:
-                logging.warning("Unable to find symbol for ibc address %s, denom=%s, exception=%s",
-                                currency_raw, denom, str(e))
-                amount = float(amount_raw) / co.MILLION
-                currency = "unknown_{}".format(denom if denom else currency_raw)
-                return amount, currency
-        else:
-            return MsgInfoIBC._amount_currency_convert(amount_raw, currency_raw)
-
-    @staticmethod
-    def _amount_currency_convert(amount_raw, currency_raw):
-        # Special cases for nonconforming denoms/assets
-        # currency_raw -> (currency, exponent)
-        CURRENCY_RAW_MAP = {
-            co.CUR_CRO: (co.CUR_CRO, 8),
-            co.CUR_MOBX: (co.CUR_MOBX, 9),
-            "gravity0xfB5c6815cA3AC72Ce9F5006869AE67f18bF77006": (co.CUR_PSTAKE, 18),
-            "inj": (co.CUR_INJ, 18),
-            "OSMO": (co.CUR_OSMO, 6),
-            "osmo": (co.CUR_OSMO, 6),
-            "rowan": ("ROWAN", 18),
-            "basecro": (co.CUR_CRO, 8),
-            "uusd": (co.CUR_USTC, 6),
-        }
-
-        if currency_raw in CURRENCY_RAW_MAP:
-            currency, exponent = CURRENCY_RAW_MAP[currency_raw]
-            amount = float(amount_raw) / float(10 ** exponent)
-            return amount, currency
-        elif currency_raw.startswith("gamm/"):
-            # osmosis lp currencies
-            # i.e. "gamm/pool/6" -> "GAMM-6"
-            amount = float(amount_raw) / co.EXP18
-            _, _, num = currency_raw.split("/")
-            currency = "GAMM-{}".format(num)
-            return amount, currency
-        elif currency_raw.endswith("-wei"):
-            amount = float(amount_raw) / co.EXP18
-            currency, _ = currency_raw.split("-wei")
-            currency = currency.upper()
-            return amount, currency
-        elif currency_raw.startswith("a"):
-            amount = float(amount_raw) / co.EXP18
-            currency = currency_raw[1:].upper()
-            return amount, currency
-        elif currency_raw.startswith("nano"):
-            amount = float(amount_raw) / co.EXP9
-            currency = currency_raw[4:].upper()
-            return amount, currency
-        elif currency_raw.startswith("n"):
-            amount = float(amount_raw) / co.EXP9
-            currency = currency_raw[1:].upper()
-            return amount, currency
-        elif currency_raw.startswith("u"):
-            amount = float(amount_raw) / co.MILLION
-            currency = currency_raw[1:].upper()
-            return amount, currency
-        elif currency_raw.startswith("st"):
-            # i.e. stinj, stujuno, staevmos
-            amt, cur = MsgInfoIBC._amount_currency_convert(amount_raw, currency_raw[2:])
-            return amt, "st" + cur
-        else:
-            logging.error("_amount_currency_from_raw(): no case for amount_raw={}, currency_raw={}".format(
-                amount_raw, currency_raw))
-            amount = float(amount_raw) / co.MILLION
-            currency = "unknown_{}".format(currency_raw)
-            return amount, currency
+    #
+    # @staticmethod
+    # def amount_currency_from_raw(amount_raw, currency_raw, lcd_node, ibc_addresses):
+    #     # example currency_raw:
+    #     # 'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4'
+    #     # 'uluna'
+    #     # 'aevmos'
+    #     if currency_raw is None:
+    #         return amount_raw, currency_raw
+    #     elif currency_raw.startswith("ibc/"):
+    #         # ibc address
+    #         denom = None
+    #         try:
+    #             denom = denoms.ibc_address_to_denom(
+    #                 lcd_node, currency_raw, ibc_addresses)
+    #             amount, currency = MsgInfoIBC._amount_currency_convert(amount_raw, denom)
+    #             return amount, currency
+    #         except Exception as e:
+    #             logging.warning("Unable to find symbol for ibc address %s, denom=%s, exception=%s",
+    #                             currency_raw, denom, str(e))
+    #             amount = float(amount_raw) / co.MILLION
+    #             currency = "unknown_{}".format(denom if denom else currency_raw)
+    #             return amount, currency
+    #     else:
+    #         return MsgInfoIBC._amount_currency_convert(amount_raw, currency_raw)
+    #
+    # @staticmethod
+    # def _amount_currency_convert(amount_raw, currency_raw):
+    #     # Special cases for nonconforming denoms/assets
+    #     # currency_raw -> (currency, exponent)
+    #     CURRENCY_RAW_MAP = {
+    #         co.CUR_CRO: (co.CUR_CRO, 8),
+    #         co.CUR_MOBX: (co.CUR_MOBX, 9),
+    #         "gravity0xfB5c6815cA3AC72Ce9F5006869AE67f18bF77006": (co.CUR_PSTAKE, 18),
+    #         "inj": (co.CUR_INJ, 18),
+    #         "OSMO": (co.CUR_OSMO, 6),
+    #         "osmo": (co.CUR_OSMO, 6),
+    #         "rowan": ("ROWAN", 18),
+    #         "basecro": (co.CUR_CRO, 8),
+    #         "uusd": (co.CUR_USTC, 6),
+    #     }
+    #
+    #     if currency_raw in CURRENCY_RAW_MAP:
+    #         currency, exponent = CURRENCY_RAW_MAP[currency_raw]
+    #         amount = float(amount_raw) / float(10 ** exponent)
+    #         return amount, currency
+    #     elif currency_raw.startswith("gamm/"):
+    #         # osmosis lp currencies
+    #         # i.e. "gamm/pool/6" -> "GAMM-6"
+    #         amount = float(amount_raw) / co.EXP18
+    #         _, _, num = currency_raw.split("/")
+    #         currency = "GAMM-{}".format(num)
+    #         return amount, currency
+    #     elif currency_raw.endswith("-wei"):
+    #         amount = float(amount_raw) / co.EXP18
+    #         currency, _ = currency_raw.split("-wei")
+    #         currency = currency.upper()
+    #         return amount, currency
+    #     elif currency_raw.startswith("a"):
+    #         amount = float(amount_raw) / co.EXP18
+    #         currency = currency_raw[1:].upper()
+    #         return amount, currency
+    #     elif currency_raw.startswith("nano"):
+    #         amount = float(amount_raw) / co.EXP9
+    #         currency = currency_raw[4:].upper()
+    #         return amount, currency
+    #     elif currency_raw.startswith("n"):
+    #         amount = float(amount_raw) / co.EXP9
+    #         currency = currency_raw[1:].upper()
+    #         return amount, currency
+    #     elif currency_raw.startswith("u"):
+    #         amount = float(amount_raw) / co.MILLION
+    #         currency = currency_raw[1:].upper()
+    #         return amount, currency
+    #     elif currency_raw.startswith("st"):
+    #         # i.e. stinj, stujuno, staevmos
+    #         amt, cur = MsgInfoIBC._amount_currency_convert(amount_raw, currency_raw[2:])
+    #         return amt, "st" + cur
+    #     else:
+    #         logging.error("_amount_currency_from_raw(): no case for amount_raw={}, currency_raw={}".format(
+    #             amount_raw, currency_raw))
+    #         amount = float(amount_raw) / co.MILLION
+    #         currency = "unknown_{}".format(currency_raw)
+    #         return amount, currency
 
     @classmethod
     def wasm(cls, log):

@@ -1,8 +1,8 @@
 from staketaxcsv.common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI, extract_msg
-from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 from staketaxcsv.luna2.config_luna2 import localconfig
 from staketaxcsv.luna2.constants import MILLION
 from staketaxcsv.settings_csv import LUNA2_NODE
+from staketaxcsv.common.ibc import denoms
 
 
 def _contract_address_to_currency(address):
@@ -31,7 +31,7 @@ def asset_to_currency(amount_raw, asset):
         amount = float(amount_raw) / (10 ** decimals)
         return amount, currency
     else:
-        return MsgInfoIBC.amount_currency_from_raw(amount_raw, asset, LUNA2_NODE, localconfig.ibc_addresses)
+        return denoms.amount_currency_from_raw(amount_raw, asset, LUNA2_NODE, localconfig.ibc_addresses)
 
 
 def amount_assets_to_currency(amount_assets_raw):

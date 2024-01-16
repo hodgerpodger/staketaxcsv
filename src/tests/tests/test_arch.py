@@ -16,6 +16,7 @@ from tests.mock_mintscan import MockMintscanAPI
 import staketaxcsv.report_arch
 
 
+@patch("staketaxcsv.common.ibc.denoms.LcdAPI_v1", new=MockLcdAPI_v1)
 @patch("staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1", new=MockLcdAPI_v1)
 @patch("staketaxcsv.common.ibc.api_lcd_v2.LcdAPI_v2", new=MockLcdAPI_v2)
 @patch("staketaxcsv.common.ibc.tx_data.MintscanAPI", new=MockMintscanAPI)

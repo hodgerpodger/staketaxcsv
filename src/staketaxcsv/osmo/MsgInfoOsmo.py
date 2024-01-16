@@ -1,9 +1,9 @@
 import pprint
 
-import staketaxcsv.common.ibc.constants as co
 from staketaxcsv.osmo.api_osmosis import get_symbol, get_exponent
 from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 from staketaxcsv.osmo.config_osmo import localconfig
+from staketaxcsv.common.ibc import denoms
 
 
 class MsgInfoOsmo(MsgInfoIBC):
@@ -13,7 +13,7 @@ class MsgInfoOsmo(MsgInfoIBC):
         self.events_by_type = self._events_by_type()
 
     def amount_currency_single(self, amount_raw, currency_raw):
-        amount, currency = MsgInfoIBC.amount_currency_from_raw(
+        amount, currency = denoms.amount_currency_from_raw(
             amount_raw, currency_raw, self.lcd_node, self.ibc_addresses)
 
         if currency.startswith("unknown_"):
