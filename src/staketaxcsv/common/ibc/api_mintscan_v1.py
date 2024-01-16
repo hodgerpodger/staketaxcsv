@@ -129,6 +129,42 @@ class MintscanAPI:
                 x.update(value)
                 del x[field_tx_type]
 
+    @debug_cache(REPORTS_DIR)
+    def _get_balances(self, address, search_after=None, limit=TXS_LIMIT_PER_QUERY, from_date_time=None, to_date_time=None):
+        uri_path = f"/accounts/{address}/balances"
+        params = {
+            'take': limit,
+        }
+        if search_after:
+            params["searchAfter"] = search_after
+        if from_date_time:
+            params['fromDateTime'] = from_date_time
+        if to_date_time:
+            params['toDateTime'] = to_date_time
+
+        data = self._query(uri_path, params, sleep_seconds=0.1)
+        return data
+
+    def get_balances(self, address, search_after=None, limit=TXS_LIMIT_PER_QUERY, from_date=None, to_date=None):
+        """
+        from_date: YYYY-MM-DD (inclusive, UTC)
+        to_date: YYYY-MM-DD (inclusive, UTC)
+        """
+        # api truncates data to only one month if no fromDateTime.  So this is used to avoid this.
+        if from_date is None:
+            from_date = "2016-01-01"
+
+        from_date_ts = from_date + " 00:00:00"
+        to_date_ts = to_date + " 23:59:59" if to_date else None
+
+        data = self._get_balances(address, search_after, limit, from_date_ts, to_date_ts)
+
+        balances = data.get("balances", [])
+        next_search_after = data.get("pagination", {}).get("searchAfter")
+        is_last_page = next_search_after is None
+
+        return balances, next_search_after, is_last_page
+
 
 def get_txs_page_count(ticker, address, max_txs, start_date=None, end_date=None):
     _, _, _, total_txs = MintscanAPI(ticker).get_txs(address, from_date=start_date, to_date=end_date)
@@ -164,6 +200,26 @@ def get_txs_all(ticker, address, max_txs, progress=None, start_date=None, end_da
     return out
 
 
+def get_balances_all(ticker, address, max_txs, start_date=None, end_date=None):
+    api = MintscanAPI(ticker)
+    max_pages = math.ceil(max_txs / TXS_LIMIT_PER_QUERY)
+
+    out = []
+    search_after = None
+
+    for i in range(max_pages):
+        balances, search_after, is_last_page = api.get_balances(
+            address, search_after, limit=TXS_LIMIT_PER_QUERY, from_date=start_date, to_date=end_date)
+        out.extend(balances)
+
+        if is_last_page:
+            break
+
+    out.sort(key=lambda b: b["timestamp"], reverse=True)
+
+    return out
+
+
 def main():
     logging.basicConfig(level=logging.INFO)
 
@@ -192,6 +248,11 @@ def main():
 
     print("transaction timestamp is ")
     pprint.pprint(transaction["timestamp"])
+
+    balances = get_balances_all(ticker, address, max_txs)
+
+    print("balance timestamps are ")
+    pprint.pprint([b["timestamp"] for b in balances])
 
 
 if __name__ == "__main__":

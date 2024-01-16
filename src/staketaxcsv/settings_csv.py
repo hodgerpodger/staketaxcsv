@@ -31,6 +31,8 @@ JUNO_NODES_RPC = [
 
 KUJI_NODE = os.environ.get("STAKETAX_KUJI_NODE", "")
 KYVE_NODE = os.environ.get("STAKETAX_KYVE_NODE", "https://api-eu-1.kyve.network")
+LUNA1_NODE = os.environ.get("STAKETAX_LUNA1_NODE", "https://lcd.terra.dev")
+LUNA2_NODE = os.environ.get("STAKETAX_LUNA2_NODE", "https://phoenix-lcd.terra.dev")
 MNTL_NODE = os.environ.get("STAKETAX_MNTL_NODE", "https://rest.assetmantle.one")
 OSMO_NODE = os.environ.get("STAKETAX_OSMO_NODE", "https://lcd.osmosis.zone")
 REGEN_NODE = os.environ.get("STAKETAX_REGEN_NODE", "")
@@ -39,10 +41,9 @@ SCRT_NODE = os.environ.get("STAKETAX_SCRT_NODE", "")
 SOL_NODE = os.environ.get("STAKETAX_SOL_NODE", "https://api.mainnet-beta.solana.com")
 STARS_NODE = os.environ.get("STAKETAX_STARS_NODE", "")
 STRD_NODE = os.environ.get("STAKETAX_STRD_NODE", "")
-TERRA_NODE = os.environ.get("STAKETAX_TERRA_NODE", "https://lcd.terra.dev")
 TIA_NODE = os.environ.get("STAKETAX_TIA_NODE", "")
 TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
-LUNA2_NODE = os.environ.get("STAKETAX_LUNA2_NODE", "https://phoenix-lcd.terra.dev")
+
 
 # ########## Optional environment variables ########################################################
 

@@ -10,7 +10,7 @@ from urllib.parse import urlencode
 
 import requests
 from staketaxcsv.common.ibc.constants import EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SIGNER
-from staketaxcsv.settings_csv import TERRA_NODE
+from staketaxcsv.settings_csv import LUNA1_NODE
 
 LIMIT_TX_QUERY = 50
 
@@ -34,7 +34,7 @@ class LcdAPI:
 
     @classmethod
     def _query(cls, uri_path, query_params, sleep_seconds=1):
-        url = f"{TERRA_NODE}{uri_path}"
+        url = f"{LUNA1_NODE}{uri_path}"
         logging.info("Requesting url %s?%s", url, urlencode(query_params))
         response = cls.session.get(url, params=query_params)
 
