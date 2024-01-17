@@ -1,6 +1,9 @@
+# Separate CSV for historical balances (based on true wallet balance)
+FORMAT_HISTORICAL_BALANCES = "historicalbalances"
+
 # CSV formats
 FORMAT_DEFAULT = "default"
-FORMAT_BALANCES = "balances"
+FORMAT_BALANCES = "balances"  # based on CSV
 FORMAT_ACCOINTING = "accointing"
 FORMAT_AWAKENTAX = "awakentax"
 FORMAT_BITCOINTAX = "bitcointax"

@@ -30,4 +30,4 @@ Example usage:
 
 """
 
-from .api import csv, csv_all, formats, tickers, transaction, has_csv
+from .api import balances_csv, csv, csv_all, has_csv, formats, tickers, transaction

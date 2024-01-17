@@ -1748,6 +1748,7 @@ class Exporter:
         return dt.strftime("%m/%d/%Y %H:%M:%S")
 
     def export_balances_csv(self, csvpath, truncate=None):
+        """ Writes CSV, which shows balance history of wallet based on CSV. """
         self.sort_rows(reverse=False)
 
         # Find all currencies

@@ -46,10 +46,10 @@ REPORT_MODULES = {
     TICKER_ATOM: staketaxcsv.report_atom,
     TICKER_BLD: staketaxcsv.report_bld,
     TICKER_BTSG: staketaxcsv.report_btsg,
+    TICKER_COSMOSPLUS: staketaxcsv.report_cosmosplus,
     TICKER_DVPN: staketaxcsv.report_dvpn,
     TICKER_EVMOS: staketaxcsv.report_evmos,
     TICKER_FET: staketaxcsv.report_fet,
-    TICKER_COSMOSPLUS: staketaxcsv.report_cosmosplus,
     TICKER_HUAHUA: staketaxcsv.report_huahua,
     TICKER_IOTEX: staketaxcsv.report_iotex,
     TICKER_JUNO: staketaxcsv.report_juno,
@@ -178,3 +178,29 @@ def transaction(ticker, wallet_address, txid, csv_format="", path="", options=No
         exporter.export_print()
         path = path if path else "/tmp/{}.{}.csv".format(txid, csv_format)
         exporter.export_format(csv_format, path)
+
+
+def balances_csv(ticker, wallet_address, path=None, options=None):
+    """ Writes historical balances CSV file for this wallet_address
+
+        :param ticker: ALGO|ATOM|LUNA1|LUNA2|...   [see staketaxcsv.tickers()]
+        :param wallet_address: <string wallet address>
+        :param path: (optional) <string file path> .  By default, writes to /tmp .
+        :param options: (optional) dictionary [documentation not in great state; see parse_args() in
+               https://github.com/hodgerpodger/staketaxcsv/blob/main/src/staketaxcsv/common/report_util.py]
+        """
+    path = path if path else f"/tmp/{ticker}.{wallet_address}.balance_history.csv"
+    options = options if options else {}
+
+    module = REPORT_MODULES[ticker]
+
+    if hasattr(module, "balances"):
+        module.read_options(options)
+        exporter = module.balances(wallet_address)
+        if not exporter:
+            raise Exception("balances() did not return ExporterBalance object")
+        exporter.csv(path)
+    else:
+        logging.error("No balances() function found for module=%s", str(module))
+
+    return False

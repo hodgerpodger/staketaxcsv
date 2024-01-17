@@ -4,6 +4,7 @@ from staketaxcsv.osmo.api_osmosis import get_symbol, get_exponent
 from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 from staketaxcsv.osmo.config_osmo import localconfig
 from staketaxcsv.common.ibc import denoms
+from staketaxcsv.osmo import denoms as denoms_osmo
 
 
 class MsgInfoOsmo(MsgInfoIBC):
@@ -18,33 +19,11 @@ class MsgInfoOsmo(MsgInfoIBC):
 
         if currency.startswith("unknown_"):
             # try osmosis api
-            currency = self._symbol(currency_raw)
+            currency = denoms_osmo.symbol(currency_raw)
             if currency:
-                exponent = self._exponent(currency)
+                exponent = denoms_osmo.exponent(currency)
                 if exponent:
                     amount = float(amount_raw) / float(10 ** exponent)
                     return amount, currency
 
         return amount, currency
-
-    def _symbol(self, denom):
-        symbols = localconfig.symbols
-
-        if denom in symbols:
-            return symbols[denom]
-
-        symbol = get_symbol(denom)
-
-        symbols[denom] = symbol
-        return symbol
-
-    def _exponent(self, currency):
-        exponents = localconfig.exponents
-
-        if currency in exponents:
-            return exponents[currency]
-
-        exponent = get_exponent(currency)
-
-        exponents[currency] = exponent
-        return exponent

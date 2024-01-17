@@ -15,12 +15,14 @@ from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.common.ExporterTypes import LP_TREATMENT_TRANSFERS
+from staketaxcsv.common.ExporterBalances import ExporterBalance
 from staketaxcsv.osmo.config_osmo import localconfig
 from staketaxcsv.osmo.lp_rewards import lp_rewards
 from staketaxcsv.osmo.progress_osmo import ProgressOsmo
 from staketaxcsv.settings_csv import TICKER_OSMO
 from staketaxcsv.common.ibc.tx_data import TxDataMintscan
 from staketaxcsv.common.ibc.progress_mintscan import SECONDS_PER_PAGE
+from staketaxcsv.common.ibc import historical_balances
 
 
 def main():
@@ -114,6 +116,14 @@ def _cache_push(cache):
     cache.set_osmo_exponents(localconfig.exponents)
 
     logging.info("_cache_push(): push data to cache")
+
+
+def balances(wallet_address):
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+    max_txs = localconfig.limit
+
+    exporter = historical_balances.via_mintscan("uosmo", TICKER_OSMO, wallet_address, max_txs, start_date, end_date)
+    return exporter
 
 
 if __name__ == "__main__":

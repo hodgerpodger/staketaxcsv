@@ -15,6 +15,7 @@ from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import AKT_NODE, TICKER_AKT
 from staketaxcsv.common.ibc.tx_data import TxDataMintscan
 from staketaxcsv.common.ibc.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
+from staketaxcsv.common.ibc import historical_balances
 
 
 def main():
@@ -74,6 +75,14 @@ def txhistory(wallet_address):
 
     if localconfig.cache:
         Cache().set_ibc_addresses(localconfig.ibc_addresses)
+    return exporter
+
+
+def balances(wallet_address):
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+    max_txs = localconfig.limit
+
+    exporter = historical_balances.via_mintscan("uakt", TICKER_AKT, wallet_address, max_txs, start_date, end_date)
     return exporter
 
 

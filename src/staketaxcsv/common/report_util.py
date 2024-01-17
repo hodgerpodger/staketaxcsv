@@ -4,7 +4,8 @@ import logging
 import os
 
 import staketaxcsv.api
-from staketaxcsv.common.ExporterTypes import FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS
+from staketaxcsv.common.ExporterTypes import (
+    FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS, FORMAT_HISTORICAL_BALANCES)
 from staketaxcsv.settings_csv import (
     REPORTS_DIR, TICKER_AKT, TICKER_ALGO, TICKER_ARCH, TICKER_ATOM, TICKER_COSMOSPLUS,
     TICKER_EVMOS, TICKER_JUNO, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL, TICKER_STRD, TICKER_TIA)
@@ -13,8 +14,9 @@ ALL = "all"
 
 
 def main_default(ticker):
-    wallet_address, export_format, txid, options = parse_args(ticker)
+    logging.basicConfig(level=logging.INFO)
 
+    wallet_address, export_format, txid, options = parse_args(ticker)
     run_report(ticker, wallet_address, export_format, txid, options)
 
 
@@ -22,6 +24,9 @@ def run_report(ticker, wallet_address, export_format, txid, options):
     if txid:
         path = "{}/{}.{}.csv".format(REPORTS_DIR, txid, export_format)
         staketaxcsv.api.transaction(ticker, wallet_address, txid, export_format, path, options)
+    elif export_format == FORMAT_HISTORICAL_BALANCES:
+        path = "{}/{}.{}.{}.csv".format(REPORTS_DIR, ticker, wallet_address, FORMAT_HISTORICAL_BALANCES)
+        staketaxcsv.api.balances_csv(ticker, wallet_address, path, options)
     elif export_format == ALL:
         staketaxcsv.api.csv_all(ticker, wallet_address, REPORTS_DIR, options=options)
     else:
@@ -39,7 +44,7 @@ def parse_args(ticker):
         "--format",
         type=str,
         default=FORMAT_DEFAULT,
-        choices=FORMATS + [ALL],
+        choices=[ALL, FORMAT_HISTORICAL_BALANCES] + FORMATS,
     )
     parser.add_argument(
         "--txid",
@@ -99,7 +104,7 @@ def parse_args(ticker):
             choices=LP_TREATMENT_CHOICES,
             default=LP_TREATMENT_TRANSFERS,
             help="Treat LP deposits/withdrawals as transfers(default), omit, or trades. "
-                 "Not applicable to koinly CSV.",
+                 "Not applicable to CSV formats with native LP transactions.",
         )
     if ticker in (TICKER_ALGO):
         parser.add_argument(
@@ -147,8 +152,6 @@ def parse_args(ticker):
         options["minor_rewards"] = True
     if "lp_treatment" in args and args.lp_treatment:
         options["lp_treatment"] = args.lp_treatment
-    if "legacy" in args and args.legacy:
-        options["legacy"] = True
     if "exclude_asas" in args and args.exclude_asas:
         options["exclude_asas"] = args.exclude_asas
     if "track_block" in args and args.track_block:
