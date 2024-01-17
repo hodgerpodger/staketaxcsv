@@ -13,9 +13,6 @@ class PositionLiquidity:
         assert (position_id not in cls.liquidities)
         cls.liquidities[position_id] = liquidity
 
-        for key, value in cls.liquidities.items():
-            print(f"{key}: {value}")
-
     @classmethod
     def add_to_position(cls, old_position_id, new_position_id, new_position_liquidity):
         liquidity_added = new_position_liquidity - cls.liquidities[old_position_id]
@@ -26,17 +23,10 @@ class PositionLiquidity:
         # Write new liquidity to new position id
         cls.liquidities[new_position_id] = new_position_liquidity
 
-        for key, value in cls.liquidities.items():
-            print(f"{key}: {value}")
-
         return liquidity_added
 
     @classmethod
     def withdraw_position(cls, position_id, liquidity):
-
-        for key, value in cls.liquidities.items():
-            print(f"{key}: {value}")
-
         assert (position_id in cls.liquidities)
 
         cls.liquidities[position_id] -= liquidity
