@@ -177,20 +177,6 @@ def get_txs_pages_count(node, address, max_txs, limit=TXS_LIMIT_PER_QUERY, event
     return total_pages
 
 
-def ibc_address_to_denom(node, ibc_address, ibc_addresses):
-    if ibc_address in IBC_ADDRESSES_TO_DENOM:
-        return IBC_ADDRESSES_TO_DENOM[ibc_address]
-    if not node:
-        return None
-    if ibc_address in ibc_addresses:
-        return ibc_addresses[ibc_address]
-
-    denom = LcdAPI_v1(node).ibc_address_to_denom(ibc_address)
-
-    ibc_addresses[ibc_address] = denom
-    return denom
-
-
 # Add only if regular lcd api lookup is missing functional data
 IBC_ADDRESSES_TO_DENOM = {
     "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518": "uosmo",

@@ -19,12 +19,12 @@ from staketaxcsv.common.ExporterTypes import TX_TYPE_FAILED_NO_FEE
 MILLION = 1000000.0
 
 
-def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, customMsgInfo=None):
+def txinfo(wallet_address, elem, mintscan_label, lcd_node, customMsgInfo=None):
     """ Parses transaction data to return TxInfo object """
     txid = elem["txhash"]
 
     timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
-    fee, fee_currency = _get_fee(wallet_address, elem, lcd_node, ibc_addresses)
+    fee, fee_currency = _get_fee(wallet_address, elem, lcd_node)
     memo = _get_memo(elem)
     is_failed = ("code" in elem and elem["code"] > 0)
 
@@ -40,16 +40,16 @@ def txinfo(wallet_address, elem, mintscan_label, ibc_addresses, lcd_node, custom
         log = elem["logs"][i]
 
         if customMsgInfo:
-            msginfo = customMsgInfo(wallet_address, i, message, log, lcd_node, ibc_addresses)
+            msginfo = customMsgInfo(wallet_address, i, message, log, lcd_node)
         else:
-            msginfo = MsgInfoIBC(wallet_address, i, message, log, lcd_node, ibc_addresses)
+            msginfo = MsgInfoIBC(wallet_address, i, message, log, lcd_node)
         msgs.append(msginfo)
 
     txinfo = TxInfoIBC(txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, memo, is_failed)
     return txinfo
 
 
-def _get_fee(wallet_address, elem, lcd_node, ibc_addresses):
+def _get_fee(wallet_address, elem, lcd_node):
     if "auth_info" in elem["tx"]:
         amount_list = elem["tx"]["auth_info"]["fee"]["amount"]
     elif "value" in elem["tx"]:
@@ -67,7 +67,7 @@ def _get_fee(wallet_address, elem, lcd_node, ibc_addresses):
     # Get fee amount
     amount_string = amount_list[0]["amount"]
 
-    fee, fee_currency = denoms.amount_currency_from_raw(amount_string, denom, lcd_node, ibc_addresses)
+    fee, fee_currency = denoms.amount_currency_from_raw(amount_string, denom, lcd_node)
 
     if fee == 0:
         return "", ""

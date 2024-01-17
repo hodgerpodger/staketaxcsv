@@ -13,8 +13,7 @@ def process_txs(wallet_address, elems, exporter):
 
 
 def process_tx(wallet_address, elem, exporter):
-    txinfo = staketaxcsv.common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_EVMOS, localconfig.ibc_addresses, EVMOS_NODE)
+    txinfo = staketaxcsv.common.ibc.processor.txinfo(wallet_address, elem, co.MINTSCAN_LABEL_EVMOS, EVMOS_NODE)
 
     if txinfo.is_failed:
         staketaxcsv.common.ibc.processor.handle_failed_transaction(exporter, txinfo)

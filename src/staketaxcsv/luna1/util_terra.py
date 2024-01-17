@@ -244,7 +244,7 @@ def _extract_amounts(amount_string):
             uamount, ibc_address = amount.split("ibc")
             ibc_address = "ibc" + ibc_address
 
-            _, currency = denoms.amount_currency_from_raw(0, ibc_address, LUNA1_NODE, localconfig.ibc_addresses)
+            _, currency = denoms.amount_currency_from_raw(0, ibc_address, LUNA1_NODE)
             out[currency] = _float_amount(uamount, currency)
         else:
             # regular (i.e. 99700703uusd)

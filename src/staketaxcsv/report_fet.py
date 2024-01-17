@@ -85,10 +85,6 @@ def estimate_duration(wallet_address):
 
 
 def txhistory(wallet_address):
-    if localconfig.cache:
-        localconfig.ibc_addresses = Cache().get_ibc_addresses()
-        logging.info("Loaded ibc_addresses from cache ...")
-
     max_txs = localconfig.limit
     progress = ProgressFet()
     exporter = Exporter(wallet_address, localconfig, TICKER_FET)
@@ -138,8 +134,6 @@ def txhistory(wallet_address):
     progress.report_message(f"Processing {len(elems_4)} transactions for fetchhub-4... ")
     staketaxcsv.fet.processor.process_txs(wallet_address, elems_4, exporter, FET_NODE)
 
-    if localconfig.cache:
-        Cache().set_ibc_addresses(localconfig.ibc_addresses)
     return exporter
 
 

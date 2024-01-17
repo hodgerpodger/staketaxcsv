@@ -13,8 +13,7 @@ def process_txs(wallet_address, elems, exporter):
 
 
 def process_tx(wallet_address, elem, exporter):
-    txinfo = staketaxcsv.common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_BLD, localconfig.ibc_addresses, BLD_NODE)
+    txinfo = staketaxcsv.common.ibc.processor.txinfo(wallet_address, elem, co.MINTSCAN_LABEL_BLD, BLD_NODE)
     txinfo.url = "https://agoric.bigdipper.live/transactions/{}".format(txinfo.txid)
 
     if txinfo.is_failed:

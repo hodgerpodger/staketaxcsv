@@ -52,10 +52,6 @@ def estimate_duration(wallet_address):
 
 
 def txhistory(wallet_address):
-    if localconfig.cache:
-        localconfig.ibc_addresses = Cache().get_ibc_addresses()
-        logging.info("Loaded ibc_addresses from cache ...")
-
     progress = ProgressKuji()
     exporter = Exporter(wallet_address, localconfig, TICKER_KUJI)
     txdata = _txdata()
@@ -70,8 +66,6 @@ def txhistory(wallet_address):
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.kuji.processor.process_txs(wallet_address, elems, exporter)
 
-    if localconfig.cache:
-        Cache().set_ibc_addresses(localconfig.ibc_addresses)
     return exporter
 
 

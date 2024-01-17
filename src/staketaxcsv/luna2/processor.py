@@ -51,8 +51,7 @@ def process_tx(wallet_address, elem, exporter):
 
 
 def _txinfo(wallet_address, elem):
-    txinfo = staketaxcsv.common.ibc.processor.txinfo(
-        wallet_address, elem, "luna2", localconfig.ibc_addresses, LUNA2_NODE)
+    txinfo = staketaxcsv.common.ibc.processor.txinfo(wallet_address, elem, "luna2", LUNA2_NODE)
 
     # Edit url, since terra not in mintscan
     txid = elem["txhash"]

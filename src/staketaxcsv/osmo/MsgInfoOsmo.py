@@ -9,13 +9,13 @@ from staketaxcsv.osmo import denoms as denoms_osmo
 
 class MsgInfoOsmo(MsgInfoIBC):
 
-    def __init__(self, wallet_address, msg_index, message, log, lcd_node, ibc_addresses):
-        super().__init__(wallet_address, msg_index, message, log, lcd_node, ibc_addresses)
+    def __init__(self, wallet_address, msg_index, message, log, lcd_node):
+        super().__init__(wallet_address, msg_index, message, log, lcd_node)
         self.events_by_type = self._events_by_type()
 
     def amount_currency_single(self, amount_raw, currency_raw):
         amount, currency = denoms.amount_currency_from_raw(
-            amount_raw, currency_raw, self.lcd_node, self.ibc_addresses)
+            amount_raw, currency_raw, self.lcd_node)
 
         if currency.startswith("unknown_"):
             # try osmosis api

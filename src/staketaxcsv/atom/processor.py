@@ -47,7 +47,7 @@ def process_tx(wallet_address, elem, exporter):
         return
 
     txinfo = staketaxcsv.common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_ATOM, localconfig.ibc_addresses, ATOM_NODE
+        wallet_address, elem, co.MINTSCAN_LABEL_ATOM, ATOM_NODE
     )
 
     if txinfo.is_failed:

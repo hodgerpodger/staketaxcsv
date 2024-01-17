@@ -28,7 +28,7 @@ def process_tx(wallet_address, elem, exporter, node=None):
         return process_tx_legacy(wallet_address, elem, exporter, node)
 
     txinfo = staketaxcsv.common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_FET, localconfig.ibc_addresses, FET_NODE)
+        wallet_address, elem, co.MINTSCAN_LABEL_FET, FET_NODE)
 
     if txinfo.is_failed:
         staketaxcsv.common.ibc.processor.handle_failed_transaction(exporter, txinfo)

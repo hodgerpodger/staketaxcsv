@@ -53,10 +53,6 @@ def txone(wallet_address, txid):
 
 
 def txhistory(wallet_address):
-    if localconfig.cache:
-        localconfig.ibc_addresses = Cache().get_ibc_addresses()
-        logging.info("Loaded ibc_addresses from cache ...")
-
     max_txs = localconfig.limit
     progress = ProgressDvpn()
     exporter = Exporter(wallet_address, localconfig, TICKER_DVPN)
@@ -110,9 +106,6 @@ def txhistory(wallet_address):
     # These payments are kept off-chain and need to be calculated through various apis provided by sentinelhub.
     progress.set_usage_payment_estimate(0)
     staketaxcsv.dvpn.processor.process_usage_payments(wallet_address, exporter)
-
-    if localconfig.cache:
-        Cache().set_ibc_addresses(localconfig.ibc_addresses)
 
     return exporter
 

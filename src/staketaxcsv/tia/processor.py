@@ -14,7 +14,7 @@ def process_txs(wallet_address, elems, exporter):
 
 def process_tx(wallet_address, elem, exporter):
     txinfo = staketaxcsv.common.ibc.processor.txinfo(
-        wallet_address, elem, co.MINTSCAN_LABEL_TIA, localconfig.ibc_addresses, TIA_NODE)
+        wallet_address, elem, co.MINTSCAN_LABEL_TIA, TIA_NODE)
     txinfo.url = "https://www.mintscan.io/celestia/tx/{}".format(txinfo.txid)
 
     if txinfo.is_failed:

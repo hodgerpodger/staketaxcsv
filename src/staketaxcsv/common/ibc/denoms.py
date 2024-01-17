@@ -1,30 +1,41 @@
 import logging
 from staketaxcsv.common.ibc.api_lcd_v1 import LcdAPI_v1
 import staketaxcsv.common.ibc.constants as co
-
-# Add only if regular lcd api lookup is missing functional data
-IBC_ADDRESSES_TO_DENOM = {
-    "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518": "uosmo",
-    "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1": co.CUR_CRO,
-    "ibc/8318B7E036E50C0CF799848F23ED84778AAA8749D9C0BCD4FF3F4AF73C53387F": "uloop",
-}
+from staketaxcsv.common.Cache import Cache
 
 
-def ibc_address_to_denom(node, ibc_address, ibc_addresses):
-    if ibc_address in IBC_ADDRESSES_TO_DENOM:
-        return IBC_ADDRESSES_TO_DENOM[ibc_address]
+class IBC:
+
+    # Add hard-coded denoms only if lcd api lookup non-functional
+    # <ibc_address> -> <denom>
+    addrs = {
+        "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518": "uosmo",
+        "ibc/E6931F78057F7CC5DA0FD6CEF82FF39373A6E0452BF1FD76910B93292CF356C1": co.CUR_CRO,
+        "ibc/8318B7E036E50C0CF799848F23ED84778AAA8749D9C0BCD4FF3F4AF73C53387F": "uloop",
+    }
+
+    loaded = False
+
+
+def ibc_address_to_denom(node, ibc_address):
+    if not IBC.loaded:
+        addrs_cache = Cache().get_ibc_addresses()
+        IBC.addrs.update(addrs_cache)
+        IBC.loaded = True
+
+    if ibc_address in IBC.addrs:
+        return IBC.addrs[ibc_address]
+
     if not node:
         return None
-    if ibc_address in ibc_addresses:
-        return ibc_addresses[ibc_address]
 
     denom = LcdAPI_v1(node).ibc_address_to_denom(ibc_address)
 
-    ibc_addresses[ibc_address] = denom
+    IBC.addrs[ibc_address] = denom
     return denom
 
 
-def amount_currency_from_raw(amount_raw, currency_raw, lcd_node, ibc_addresses):
+def amount_currency_from_raw(amount_raw, currency_raw, lcd_node):
     # example currency_raw:
     # 'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4'
     # 'uluna'
@@ -36,7 +47,7 @@ def amount_currency_from_raw(amount_raw, currency_raw, lcd_node, ibc_addresses):
         denom = None
         try:
             denom = ibc_address_to_denom(
-                lcd_node, currency_raw, ibc_addresses)
+                lcd_node, currency_raw)
             amount, currency = _amount_currency_convert(amount_raw, denom)
             return amount, currency
         except Exception as e:

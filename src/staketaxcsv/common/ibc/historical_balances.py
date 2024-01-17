@@ -16,23 +16,34 @@ def via_mintscan(native_denom, ticker, address, max_txs, start_date=None, end_da
         # Process "bank" section
         for item in entry["bank"]:
             denom = item["denom"]
-            amount = int(item["amount"])
-            balance[denom] += amount
+            amount_raw = int(item["amount"])
+            amount, currency = _amount_currency(denom, amount_raw)
+
+            balance[currency] += amount
 
         # Process "delegation" section
         for item in entry["delegation"]:
             denom = item["balance"]["denom"]
-            amount = int(item["balance"]["amount"])
-            balance[denom] += amount
+            amount_raw = int(item["balance"]["amount"])
+            amount, currency = _amount_currency(denom, amount_raw)
+
+            balance[currency] += amount
 
         # Process "unbonding" section
         for item in entry["unbonding"]:
             for subitem in item["entries"]:
                 denom = native_denom
-                amount = int(subitem["balance"])
-                balance[denom] += amount
+                amount_raw = int(subitem["balance"])
+                amount, currency = _amount_currency(denom, amount_raw)
+
+                balance[currency] += amount
 
         # Ingest the summed balances into the exporter
         exporter.ingest_row(timestamp, dict(balance))
 
     return exporter
+
+
+def _amount_currency(denom, amount_raw):
+    return None, None
+

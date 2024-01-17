@@ -55,10 +55,6 @@ def estimate_duration(wallet_address):
 
 
 def txhistory(wallet_address):
-    if localconfig.cache:
-        localconfig.ibc_addresses = Cache().get_ibc_addresses()
-        logging.info("Loaded ibc_addresses from cache ...")
-
     start_date, end_date = localconfig.start_date, localconfig.end_date
     progress = ProgressMintScan(localconfig)
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
@@ -74,8 +70,6 @@ def txhistory(wallet_address):
     progress.report_message(f"Processing {len(elems)} ATOM transactions... ")
     staketaxcsv.atom.processor.process_txs(wallet_address, elems, exporter)
 
-    if localconfig.cache:
-        Cache().set_ibc_addresses(localconfig.ibc_addresses)
     return exporter
 
 
