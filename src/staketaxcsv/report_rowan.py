@@ -17,6 +17,7 @@ from staketaxcsv.rowan.config_rowan import localconfig
 from staketaxcsv.rowan.progress_rowan import SECONDS_PER_PAGE, ProgressRowan
 from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.common.ibc.tx_data import TxDataLcd
+from staketaxcsv.common.ibc.decorators import set_ibc_cache
 
 
 def main():
@@ -51,6 +52,7 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address)
 
 
+@set_ibc_cache(localconfig)
 def txhistory(wallet_address):
     progress = ProgressRowan()
     exporter = Exporter(wallet_address, localconfig, TICKER_ROWAN)

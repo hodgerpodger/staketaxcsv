@@ -11,7 +11,7 @@ def debug_cache(file_dir):
         def wrapper(*args, **kwargs):
             # ###### Move past this section only when --debug_cache set or DEBUG_CACHE=1 ############
 
-            if os.environ.get("DEBUG_CACHE") == "1":
+            if os.environ.get("STAKETAX_DEBUG_CACHE") == "1":
                 pass
             else:
                 return func(*args, **kwargs)

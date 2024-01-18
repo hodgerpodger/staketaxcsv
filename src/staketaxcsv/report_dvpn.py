@@ -18,6 +18,7 @@ from staketaxcsv.dvpn.config_dvpn import localconfig
 from staketaxcsv.dvpn.progress_dvpn import LCD_SECONDS_PER_PAGE, ProgressDvpn
 from staketaxcsv.settings_csv import DVPN_NODE, DVPN_NODE_RPC, TICKER_DVPN
 from staketaxcsv.common.ibc import api_lcd
+from staketaxcsv.common.ibc.decorators import set_ibc_cache
 
 
 def main():
@@ -52,6 +53,7 @@ def txone(wallet_address, txid):
     return exporter
 
 
+@set_ibc_cache(localconfig)
 def txhistory(wallet_address):
     max_txs = localconfig.limit
     progress = ProgressDvpn()

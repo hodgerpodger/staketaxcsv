@@ -16,6 +16,7 @@ from staketaxcsv.settings_csv import ATOM_NODE, TICKER_ATOM
 from staketaxcsv.common.ibc.tx_data import TxDataMintscan
 from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.common.ibc.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
+from staketaxcsv.common.ibc.decorators import set_ibc_cache
 
 
 def main():
@@ -54,6 +55,7 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address, start_date, end_date)
 
 
+@set_ibc_cache(localconfig)
 def txhistory(wallet_address):
     start_date, end_date = localconfig.start_date, localconfig.end_date
     progress = ProgressMintScan(localconfig)

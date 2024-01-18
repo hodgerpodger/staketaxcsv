@@ -26,6 +26,7 @@ from staketaxcsv.luna1.api_lcd import LcdAPI
 from staketaxcsv.luna1.config_luna1 import localconfig
 from staketaxcsv.luna1.progress_terra import SECONDS_PER_TX_FETCH, SECONDS_PER_TX_PROCESS, ProgressTerra
 from staketaxcsv.settings_csv import TICKER_LUNA1
+from staketaxcsv.common.ibc.decorators import set_ibc_cache
 
 
 def main():
@@ -72,6 +73,7 @@ def _max_queries():
     return max_queries
 
 
+@set_ibc_cache(localconfig)
 def txhistory(wallet_address):
     if localconfig.cache:
         cache = Cache()

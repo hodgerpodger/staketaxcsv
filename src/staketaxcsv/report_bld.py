@@ -15,6 +15,7 @@ from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import BLD_NODE, TICKER_BLD, BLD_NODE_RPC
 from staketaxcsv.common.ibc.tx_data import TxDataRpc
+from staketaxcsv.common.ibc.decorators import set_ibc_cache
 BLD_RPC_NODES = [BLD_NODE_RPC]
 LIMIT_TXS_PER_QUERY = 20
 
@@ -51,6 +52,7 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * num_pages + SECONDS_PER_TX * num_txs
 
 
+@set_ibc_cache(localconfig)
 def txhistory(wallet_address):
     """ Configure localconfig based on options dictionary. """
     progress = ProgressBld()

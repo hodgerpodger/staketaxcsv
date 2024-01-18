@@ -11,6 +11,8 @@ from staketaxcsv.settings_csv import (
     TICKER_EVMOS, TICKER_JUNO, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL, TICKER_STRD, TICKER_TIA)
 
 ALL = "all"
+STAKETAX_DEBUG_CACHE = "STAKETAX_DEBUG_CACHE"
+STAKETAX_CACHE = "STAKETAX_CACHE"
 
 
 def main_default(ticker):
@@ -137,9 +139,10 @@ def parse_args(ticker):
         options["debug"] = True
         logging.basicConfig(level=logging.DEBUG)
     if args.debug_cache:
-        os.environ["DEBUG_CACHE"] = "1"
+        os.environ[STAKETAX_DEBUG_CACHE] = "1"
     if args.cache:
         options["cache"] = True
+        os.environ[STAKETAX_CACHE] = "1"
     if args.limit:
         options["limit"] = args.limit
     if args.koinlynullmap:

@@ -20,6 +20,7 @@ from staketaxcsv.fet.fetchhub1 import constants as co2
 from staketaxcsv.fet.fetchhub1.api_rpc import FetRpcAPI
 from staketaxcsv.fet.progress_fet import SECONDS_PER_PAGE, ProgressFet
 from staketaxcsv.settings_csv import FET_NODE, TICKER_FET
+from staketaxcsv.common.ibc.decorators import set_ibc_cache
 
 EVENTS_TYPES_FET = (EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT)
 
@@ -84,6 +85,7 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(FET_NODE, wallet_address, max_txs)
 
 
+@set_ibc_cache(localconfig)
 def txhistory(wallet_address):
     max_txs = localconfig.limit
     progress = ProgressFet()

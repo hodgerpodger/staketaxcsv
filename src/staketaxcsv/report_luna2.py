@@ -26,6 +26,7 @@ from staketaxcsv.luna2.api_fcd import LIMIT_FCD, FcdAPI
 from staketaxcsv.luna2.config_luna2 import localconfig
 from staketaxcsv.luna2.progress_luna2 import SECONDS_PER_PAGE, ProgressLuna2
 from staketaxcsv.settings_csv import LUNA2_NODE, TICKER_LUNA2
+from staketaxcsv.common.ibc.decorators import set_ibc_cache
 
 
 def main():
@@ -60,6 +61,7 @@ def txone(wallet_address, txid):
     return exporter
 
 
+@set_ibc_cache(localconfig)
 def txhistory(wallet_address):
     if localconfig.cache:
         cache = Cache()

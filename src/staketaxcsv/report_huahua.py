@@ -17,6 +17,7 @@ from staketaxcsv.huahua.config_huahua import localconfig
 from staketaxcsv.huahua.progress_huahua import SECONDS_PER_PAGE, ProgressHuahua
 from staketaxcsv.settings_csv import HUAHUA_NODE, TICKER_HUAHUA
 from staketaxcsv.common.ibc.tx_data import TxDataLcd
+from staketaxcsv.common.ibc.decorators import set_ibc_cache
 LIMIT_PER_QUERY = 10
 
 
@@ -52,6 +53,7 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address)
 
 
+@set_ibc_cache(localconfig)
 def txhistory(wallet_address):
     progress = ProgressHuahua()
     exporter = Exporter(wallet_address, localconfig, TICKER_HUAHUA)

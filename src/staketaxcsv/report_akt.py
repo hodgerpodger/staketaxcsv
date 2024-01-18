@@ -16,6 +16,8 @@ from staketaxcsv.settings_csv import AKT_NODE, TICKER_AKT
 from staketaxcsv.common.ibc.tx_data import TxDataMintscan
 from staketaxcsv.common.ibc.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 from staketaxcsv.common.ibc import historical_balances
+from staketaxcsv.akt import constants as co
+from staketaxcsv.common.ibc.decorators import set_ibc_cache
 
 
 def main():
@@ -52,6 +54,7 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address, start_date, end_date)
 
 
+@set_ibc_cache(localconfig)
 def txhistory(wallet_address):
     """ Configure localconfig based on options dictionary. """
     start_date, end_date = localconfig.start_date, localconfig.end_date
@@ -76,7 +79,8 @@ def balances(wallet_address):
     start_date, end_date = localconfig.start_date, localconfig.end_date
     max_txs = localconfig.limit
 
-    exporter = historical_balances.via_mintscan("uakt", TICKER_AKT, wallet_address, max_txs, start_date, end_date)
+    exporter = historical_balances.via_mintscan(
+        co.NATIVE_DENOM, TICKER_AKT, wallet_address, max_txs, start_date, end_date)
     return exporter
 
 

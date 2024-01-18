@@ -1,10 +1,12 @@
 import logging
+import os
 from staketaxcsv.common.ibc.api_lcd_v1 import LcdAPI_v1
 import staketaxcsv.common.ibc.constants as co
 from staketaxcsv.common.Cache import Cache
+from staketaxcsv.common.report_util import STAKETAX_CACHE
 
 
-class IBC:
+class IBCAddrs:
 
     # Add hard-coded denoms only if lcd api lookup non-functional
     # <ibc_address> -> <denom>
@@ -16,23 +18,33 @@ class IBC:
 
     loaded = False
 
+    @classmethod
+    def ibc_address_to_denom(cls, node, ibc_address):
+        cls._load_cache()
+        if ibc_address in IBCAddrs.addrs:
+            return IBCAddrs.addrs[ibc_address]
+        if not node:
+            return None
 
-def ibc_address_to_denom(node, ibc_address):
-    if not IBC.loaded:
-        addrs_cache = Cache().get_ibc_addresses()
-        IBC.addrs.update(addrs_cache)
-        IBC.loaded = True
+        denom = LcdAPI_v1(node).ibc_address_to_denom(ibc_address)
 
-    if ibc_address in IBC.addrs:
-        return IBC.addrs[ibc_address]
+        IBCAddrs.addrs[ibc_address] = denom
+        return denom
 
-    if not node:
-        return None
+    @classmethod
+    def _load_cache(cls):
+        if os.environ.get(STAKETAX_CACHE) == "1" and not IBCAddrs.loaded:
+            # Load IBC.addrs
+            addrs_cache = Cache().get_ibc_addresses()
+            IBCAddrs.addrs.update(addrs_cache)
+            IBCAddrs.loaded = True
+            logging.info("Loaded cache into IBCAddrs.addrs ...")
 
-    denom = LcdAPI_v1(node).ibc_address_to_denom(ibc_address)
-
-    IBC.addrs[ibc_address] = denom
-    return denom
+    @classmethod
+    def set_cache(cls):
+        if IBCAddrs.loaded:
+            Cache().set_ibc_addresses(IBCAddrs.addrs)
+            logging.info("Set cache using IBCAddrs.addrs ...")
 
 
 def amount_currency_from_raw(amount_raw, currency_raw, lcd_node):
@@ -46,8 +58,7 @@ def amount_currency_from_raw(amount_raw, currency_raw, lcd_node):
         # ibc address
         denom = None
         try:
-            denom = ibc_address_to_denom(
-                lcd_node, currency_raw)
+            denom = IBCAddrs.ibc_address_to_denom(lcd_node, currency_raw)
             amount, currency = _amount_currency_convert(amount_raw, denom)
             return amount, currency
         except Exception as e:

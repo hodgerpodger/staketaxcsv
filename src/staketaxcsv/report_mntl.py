@@ -15,6 +15,7 @@ from staketaxcsv.mntl.config_mntl import localconfig
 from staketaxcsv.mntl.progress_mntl import SECONDS_PER_PAGE, ProgressMntl
 from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.common.ibc.tx_data import TxDataLcd
+from staketaxcsv.common.ibc.decorators import set_ibc_cache
 
 
 def main():
@@ -49,6 +50,7 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address)
 
 
+@set_ibc_cache(localconfig)
 def txhistory(wallet_address):
     progress = ProgressMntl()
     exporter = Exporter(wallet_address, localconfig, TICKER_MNTL)

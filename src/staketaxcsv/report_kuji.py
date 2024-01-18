@@ -16,6 +16,7 @@ from staketaxcsv.kuji.config_kuji import localconfig
 from staketaxcsv.kuji.progress_kuji import SECONDS_PER_PAGE, ProgressKuji
 from staketaxcsv.settings_csv import KUJI_NODE, TICKER_KUJI
 from staketaxcsv.common.ibc.tx_data import TxDataLcd
+from staketaxcsv.common.ibc.decorators import set_ibc_cache
 LIMIT_PER_QUERY = 15
 
 
@@ -51,6 +52,7 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address)
 
 
+@set_ibc_cache(localconfig)
 def txhistory(wallet_address):
     progress = ProgressKuji()
     exporter = Exporter(wallet_address, localconfig, TICKER_KUJI)
