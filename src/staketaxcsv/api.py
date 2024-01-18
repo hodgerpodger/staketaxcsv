@@ -180,7 +180,7 @@ def transaction(ticker, wallet_address, txid, csv_format="", path="", options=No
         exporter.export_format(csv_format, path)
 
 
-def balances_csv(ticker, wallet_address, path=None, options=None):
+def historical_balances(ticker, wallet_address, path=None, options=None):
     """ Writes historical balances CSV file for this wallet_address
 
         :param ticker: ALGO|ATOM|LUNA1|LUNA2|...   [see staketaxcsv.tickers()]
@@ -194,13 +194,13 @@ def balances_csv(ticker, wallet_address, path=None, options=None):
 
     module = REPORT_MODULES[ticker]
 
-    if hasattr(module, "balances"):
+    if hasattr(module, "balancehistory"):
         module.read_options(options)
-        exporter = module.balances(wallet_address)
+        exporter = module.balancehistory(wallet_address)
         if not exporter:
-            raise Exception("balances() did not return ExporterBalance object")
+            raise Exception("balancehistory() did not return ExporterBalance object")
         exporter.csv(path)
     else:
-        logging.error("No balances() function found for module=%s", str(module))
+        logging.error("No balancehistory() function found for module=%s", str(module))
 
     return False

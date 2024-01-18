@@ -20,8 +20,9 @@ def run_test(wallet_address, txid):
 @patch("staketaxcsv.common.ibc.tx_data.MintscanAPI", new=MockMintscanAPI)
 @patch("staketaxcsv.common.ibc.denoms.LcdAPI_v1", new=MockLcdAPI_v1)
 @patch("staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1", new=MockLcdAPI_v1)
-@patch("staketaxcsv.osmo.denoms.get_symbol", mock_get_symbol)
-@patch("staketaxcsv.osmo.denoms.get_exponent", mock_get_exponent)
+@patch("staketaxcsv.osmo.denoms._symbol", mock_get_symbol)
+@patch("staketaxcsv.osmo.denoms._exponent", mock_get_exponent)
+@patch("staketaxcsv.settings_csv.DB_CACHE", False)
 def run_test_txids(wallet_address, txids):
     exporter = Exporter(wallet_address, localconfig, TICKER_OSMO)
 

@@ -130,6 +130,16 @@ class LcdAPI_v1:
         data = self._query(uri_path, query_params)
         return data
 
+    def _staking_params(self):
+        uri_path = "/cosmos/staking/v1beta1/params"
+        query_params = {}
+        data = self._query(uri_path, query_params)
+        return data
+
+    def get_bond_denom(self):
+        data = self._staking_params()
+        return data["params"]["bond_denom"]
+
 
 def get_txs_all(node, address, max_txs, progress=None, limit=TXS_LIMIT_PER_QUERY, sleep_seconds=1,
                 stage_name="default", events_types=None):

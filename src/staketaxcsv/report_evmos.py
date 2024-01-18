@@ -11,9 +11,8 @@ import logging
 
 import staketaxcsv.common.address
 import staketaxcsv.evmos.processor
-from staketaxcsv.common.ibc import api_lcd
+from staketaxcsv.common.ibc import api_lcd, historical_balances
 from staketaxcsv.common import report_util
-from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.evmos.config_evmos import localconfig
 from staketaxcsv.settings_csv import EVMOS_NODE, TICKER_EVMOS
@@ -97,6 +96,16 @@ def txhistory(wallet_address):
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.evmos.processor.process_txs(wallet_address, elems, exporter)
 
+    return exporter
+
+
+def balancehistory(wallet_address):
+    """ Writes historical balances CSV rows to BalanceExporter object """
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+    max_txs = localconfig.limit
+
+    exporter = historical_balances.via_mintscan(
+        EVMOS_NODE, TICKER_EVMOS, wallet_address, max_txs, start_date, end_date)
     return exporter
 
 

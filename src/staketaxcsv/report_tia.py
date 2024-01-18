@@ -7,7 +7,7 @@ Prints transactions and writes CSV(s) to _reports/TIA*.csv
 import logging
 
 import staketaxcsv.tia.processor
-from staketaxcsv.common.ibc import api_lcd
+from staketaxcsv.common.ibc import api_lcd, historical_balances
 from staketaxcsv.tia.config_tia import localconfig
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
@@ -75,6 +75,16 @@ def txhistory(wallet_address):
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.tia.processor.process_txs(wallet_address, elems, exporter)
 
+    return exporter
+
+
+def balancehistory(wallet_address):
+    """ Writes historical balances CSV rows to BalanceExporter object """
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+    max_txs = localconfig.limit
+
+    exporter = historical_balances.via_mintscan(
+        TIA_NODE, TICKER_TIA, wallet_address, max_txs, start_date, end_date)
     return exporter
 
 

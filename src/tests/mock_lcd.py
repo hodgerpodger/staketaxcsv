@@ -27,6 +27,10 @@ class MockLcdAPI_v1(LcdAPI_v1):
     def _node_info(self):
         return mock_query_one_arg(LcdAPI_v1._node_info, self, LCDV1 + "/_node_info")
 
+    def _staking_params(self):
+        return mock_query_one_arg(LcdAPI_v1._staking_params, self, LCDV1 + "/_staking_params")
+
+
 
 class MockLcdAPI_v2(LcdAPI_v2):
 

@@ -5,7 +5,8 @@ import os
 
 import staketaxcsv.api
 from staketaxcsv.common.ExporterTypes import (
-    FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS, FORMAT_HISTORICAL_BALANCES)
+    FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS)
+from staketaxcsv.common.ExporterBalances import BALANCES_HISTORICAL
 from staketaxcsv.settings_csv import (
     REPORTS_DIR, TICKER_AKT, TICKER_ALGO, TICKER_ARCH, TICKER_ATOM, TICKER_COSMOSPLUS,
     TICKER_EVMOS, TICKER_JUNO, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL, TICKER_STRD, TICKER_TIA)
@@ -27,9 +28,9 @@ def run_report(ticker, wallet_address, export_format, txid, options):
     if txid:
         path = "{}/{}.{}.csv".format(REPORTS_DIR, txid, export_format)
         staketaxcsv.api.transaction(ticker, wallet_address, txid, export_format, path, options)
-    elif export_format == FORMAT_HISTORICAL_BALANCES:
-        path = "{}/{}.{}.{}.csv".format(REPORTS_DIR, ticker, wallet_address, FORMAT_HISTORICAL_BALANCES)
-        staketaxcsv.api.balances_csv(ticker, wallet_address, path, options)
+    elif options.get("historical"):
+        path = "{}/{}.{}.{}.csv".format(REPORTS_DIR, ticker, wallet_address, BALANCES_HISTORICAL)
+        staketaxcsv.api.historical_balances(ticker, wallet_address, path, options)
     elif export_format == ALL:
         staketaxcsv.api.csv_all(ticker, wallet_address, REPORTS_DIR, options=options)
     else:
@@ -47,13 +48,19 @@ def parse_args(ticker):
         "--format",
         type=str,
         default=FORMAT_DEFAULT,
-        choices=[ALL, FORMAT_HISTORICAL_BALANCES] + FORMATS,
+        choices=[ALL] + FORMATS,
     )
     parser.add_argument(
         "--txid",
         type=str,
         default="",
         help="If specified, runs report only on this one transaction (useful for debugging)",
+    )
+    parser.add_argument(
+        "--historical",
+        action="store_true",
+        default=False,
+        help="Create historical balances CSV (instead of default transactions CSV)"
     )
     parser.add_argument(
         "--debug",
@@ -69,13 +76,13 @@ def parse_args(ticker):
         "--dbcache",
         action="store_true",
         default=False,
-        help="use Cache class (must have dynamodb connection) (overrides environment variable setting)",
+        help="force use db Cache class (requires dynamodb and overrides environment DB_CACHE)",
     )
     parser.add_argument(
         "--no_dbcache",
         action="store_true",
         default=False,
-        help="don't use Cache class (overrides environment variable setting)"
+        help="force don't use db Cache class (overrides environment DB_CACHE)"
     )
     parser.add_argument(
         "--limit",
@@ -87,8 +94,8 @@ def parse_args(ticker):
         type=str,
         help="Path to the Koinly NullMap json file",
     )
-    if ticker in (TICKER_AKT, TICKER_ALGO, TICKER_ARCH, TICKER_ATOM, TICKER_EVMOS,
-                  TICKER_JUNO, TICKER_STRD, TICKER_SOL, TICKER_TIA):
+    if ticker in [TICKER_AKT, TICKER_ALGO, TICKER_ARCH, TICKER_ATOM, TICKER_EVMOS,
+                  TICKER_JUNO, TICKER_STRD, TICKER_SOL, TICKER_TIA]:
         parser.add_argument(
             "--start_date",
             type=str,
@@ -107,7 +114,7 @@ def parse_args(ticker):
             help="include minor currency rewards",
         )
 
-    if ticker in (TICKER_LUNA1, TICKER_OSMO, TICKER_ALGO):
+    if ticker in [TICKER_LUNA1, TICKER_OSMO, TICKER_ALGO]:
         parser.add_argument(
             "--lp_treatment",
             choices=LP_TREATMENT_CHOICES,
@@ -115,7 +122,7 @@ def parse_args(ticker):
             help="Treat LP deposits/withdrawals as transfers(default), omit, or trades. "
                  "Not applicable to CSV formats with native LP transactions.",
         )
-    if ticker in (TICKER_ALGO):
+    if ticker in [TICKER_ALGO]:
         parser.add_argument(
             "--exclude_asas",
             type=str,
@@ -127,21 +134,24 @@ def parse_args(ticker):
             default=False,
             help="Process transactions starting from the latest block in the previous run.",
         )
-    if ticker in (TICKER_COSMOSPLUS):
+
+    if ticker in [TICKER_COSMOSPLUS]:
         parser.add_argument(
             "--cosmosplus_node",
             type=str,
-            help="Full URL of LCD/RPC node (only used in report_cosmoplus_*.py)"
+            help="Full URL of LCD/RPC node (only used in report_cosmoplus.py)"
         )
         parser.add_argument(
             "--cosmosplus_ticker",
             type=str,
-            help="symbol of token (only used in report_cosmosplus_*.py)"
+            help="symbol of token (only used in report_cosmosplus.py)"
         )
 
     args = parser.parse_args()
 
     options = {}
+    if args.historical:
+        options["historical"] = args.historical
     if args.debug:
         options["debug"] = True
         logging.basicConfig(level=logging.DEBUG)

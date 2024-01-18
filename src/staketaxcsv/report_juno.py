@@ -13,9 +13,8 @@ import staketaxcsv.common.ibc.api_lcd_v1
 import staketaxcsv.common.ibc.api_rpc
 import staketaxcsv.common.ibc.api_rpc_multinode
 import staketaxcsv.juno.processor
-from staketaxcsv.common.ibc import api_lcd
+from staketaxcsv.common.ibc import api_lcd, historical_balances
 from staketaxcsv.common import report_util
-from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.juno.config_juno import localconfig
 from staketaxcsv.settings_csv import JUNO_NODE, TICKER_JUNO
@@ -80,6 +79,17 @@ def txhistory(wallet_address):
     staketaxcsv.juno.processor.process_txs(wallet_address, elems, exporter)
 
     return exporter
+
+
+def balancehistory(wallet_address):
+    """ Writes historical balances CSV rows to BalanceExporter object """
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+    max_txs = localconfig.limit
+
+    exporter = historical_balances.via_mintscan(
+        JUNO_NODE, TICKER_JUNO, wallet_address, max_txs, start_date, end_date)
+    return exporter
+
 
 
 if __name__ == "__main__":

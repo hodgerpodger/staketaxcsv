@@ -1,26 +1,40 @@
 from staketaxcsv.osmo.config_osmo import localconfig
-from staketaxcsv.osmo.api_osmosis import get_symbol, get_exponent
+from staketaxcsv.osmo import api_osmosis
+from staketaxcsv.common.ibc import denoms as denoms_common
 
 
-def symbol(denom):
+def amount_currency_from_raw(amount_raw, currency_raw, lcd_node):
+    amount, currency = denoms_common.amount_currency_from_raw(amount_raw, currency_raw, lcd_node)
+
+    if currency.startswith("unknown_"):
+        # try osmosis api
+        currency = _symbol(currency_raw)
+        if currency:
+            ex = _exponent(currency)
+            if ex:
+                amount = float(amount_raw) / float(10 ** ex)
+                return amount, currency
+
+    return amount, currency
+
+
+def _symbol(denom):
     symbols = localconfig.symbols
-
     if denom in symbols:
         return symbols[denom]
 
-    symbol = get_symbol(denom)
+    sym = api_osmosis.get_symbol(denom)
 
-    symbols[denom] = symbol
-    return symbol
+    symbols[denom] = sym
+    return sym
 
 
-def exponent(currency):
+def _exponent(currency):
     exponents = localconfig.exponents
-
     if currency in exponents:
         return exponents[currency]
 
-    exponent = get_exponent(currency)
+    ex = api_osmosis.get_exponent(currency)
 
-    exponents[currency] = exponent
-    return exponent
+    exponents[currency] = ex
+    return ex

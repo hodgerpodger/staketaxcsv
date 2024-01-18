@@ -25,6 +25,7 @@ from staketaxcsv.common.ibc.progress_mintscan import SECONDS_PER_PAGE
 from staketaxcsv.common.ibc import historical_balances
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
 from staketaxcsv import settings_csv
+from staketaxcsv.settings_csv import OSMO_NODE
 
 
 def main():
@@ -117,11 +118,13 @@ def _cache_push(cache):
     logging.info("_cache_push(): push data to cache")
 
 
-def balances(wallet_address):
+def balancehistory(wallet_address):
+    """ Writes historical balances CSV rows to BalanceExporter object """
     start_date, end_date = localconfig.start_date, localconfig.end_date
     max_txs = localconfig.limit
 
-    exporter = historical_balances.via_mintscan("uosmo", TICKER_OSMO, wallet_address, max_txs, start_date, end_date)
+    exporter = historical_balances.via_mintscan(
+        OSMO_NODE, TICKER_OSMO, wallet_address, max_txs, start_date, end_date)
     return exporter
 
 

@@ -1,5 +1,8 @@
+# Historical balances CSV
+
 import csv
 import logging
+BALANCES_HISTORICAL = "balances_historical"
 
 
 class ExporterBalance:
@@ -50,3 +53,4 @@ class ExporterBalance:
 
                 mywriter.writerow(line)
         logging.info("Wrote to %s", csvpath)
+

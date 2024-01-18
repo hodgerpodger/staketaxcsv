@@ -1,9 +1,7 @@
-# Separate CSV for historical balances (based on true wallet balance)
-FORMAT_HISTORICAL_BALANCES = "historicalbalances"
 
 # CSV formats
 FORMAT_DEFAULT = "default"
-FORMAT_BALANCES = "balances"  # based on CSV
+FORMAT_BALANCES_CALCULATED = "balances_calculated"  # based on CSV
 FORMAT_ACCOINTING = "accointing"
 FORMAT_AWAKENTAX = "awakentax"
 FORMAT_BITCOINTAX = "bitcointax"
@@ -28,7 +26,6 @@ FORMAT_ZENLEDGER = "zenledger"
 
 FORMATS = [
     FORMAT_DEFAULT,
-    FORMAT_BALANCES,
     FORMAT_ACCOINTING,
     FORMAT_AWAKENTAX,
     FORMAT_BITCOINTAX,
@@ -50,6 +47,7 @@ FORMATS = [
     FORMAT_TAXBIT,
     FORMAT_TOKENTAX,
     FORMAT_ZENLEDGER,
+    FORMAT_BALANCES_CALCULATED,
 ]
 
 # Other

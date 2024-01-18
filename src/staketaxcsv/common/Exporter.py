@@ -234,7 +234,7 @@ class Exporter:
     def export_format(self, csvformat, csvpath):
         if csvformat == et.FORMAT_DEFAULT:
             self.export_default_csv(csvpath)
-        elif csvformat == et.FORMAT_BALANCES:
+        elif csvformat == et.FORMAT_BALANCES_CALCULATED:
             self.export_balances_csv(csvpath)
         elif csvformat == et.FORMAT_ACCOINTING:
             self.export_accointing_csv(csvpath)
