@@ -46,4 +46,3 @@ def via_mintscan(native_denom, ticker, address, max_txs, start_date=None, end_da
 
 def _amount_currency(denom, amount_raw):
     return None, None
-

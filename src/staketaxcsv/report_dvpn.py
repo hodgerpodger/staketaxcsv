@@ -53,7 +53,7 @@ def txone(wallet_address, txid):
     return exporter
 
 
-@set_ibc_cache(localconfig)
+@set_ibc_cache()
 def txhistory(wallet_address):
     max_txs = localconfig.limit
     progress = ProgressDvpn()

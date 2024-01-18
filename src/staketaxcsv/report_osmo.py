@@ -24,6 +24,7 @@ from staketaxcsv.common.ibc.tx_data import TxDataMintscan
 from staketaxcsv.common.ibc.progress_mintscan import SECONDS_PER_PAGE
 from staketaxcsv.common.ibc import historical_balances
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
+from staketaxcsv import settings_csv
 
 
 def main():
@@ -68,9 +69,9 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address, start_date, end_date)
 
 
-@set_ibc_cache(localconfig)
+@set_ibc_cache()
 def txhistory(wallet_address):
-    if localconfig.cache:
+    if settings_csv.DB_CACHE:
         cache = Cache()
         _cache_load(cache)
 
@@ -101,7 +102,7 @@ def txhistory(wallet_address):
     # Log error stats if exists
     ErrorCounter.log(TICKER_OSMO, wallet_address)
 
-    if localconfig.cache:
+    if settings_csv.DB_CACHE:
         _cache_push(cache)
     return exporter
 

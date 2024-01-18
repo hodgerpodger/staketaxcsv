@@ -9,6 +9,7 @@ from staketaxcsv.common.ExporterTypes import (
 from staketaxcsv.settings_csv import (
     REPORTS_DIR, TICKER_AKT, TICKER_ALGO, TICKER_ARCH, TICKER_ATOM, TICKER_COSMOSPLUS,
     TICKER_EVMOS, TICKER_JUNO, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL, TICKER_STRD, TICKER_TIA)
+from staketaxcsv import settings_csv
 
 ALL = "all"
 STAKETAX_DEBUG_CACHE = "STAKETAX_DEBUG_CACHE"
@@ -65,10 +66,16 @@ def parse_args(ticker):
         default=False,
     )
     parser.add_argument(
-        "--cache",
+        "--dbcache",
         action="store_true",
         default=False,
-        help="use Cache class (only works if dynamodb setup or class implemented)",
+        help="use Cache class (must have dynamodb connection) (overrides environment variable setting)",
+    )
+    parser.add_argument(
+        "--no_dbcache",
+        action="store_true",
+        default=False,
+        help="don't use Cache class (overrides environment variable setting)"
     )
     parser.add_argument(
         "--limit",
@@ -140,9 +147,10 @@ def parse_args(ticker):
         logging.basicConfig(level=logging.DEBUG)
     if args.debug_cache:
         os.environ[STAKETAX_DEBUG_CACHE] = "1"
-    if args.cache:
-        options["cache"] = True
-        os.environ[STAKETAX_CACHE] = "1"
+    if args.dbcache:
+        settings_csv.DB_CACHE = True
+    if args.no_dbcache:
+        settings_csv.DB_CACHE = False
     if args.limit:
         options["limit"] = args.limit
     if args.koinlynullmap:
@@ -170,6 +178,5 @@ def parse_args(ticker):
 def read_common_options(localconfig, options):
     localconfig.job = options.get("job", None)
     localconfig.debug = options.get("debug", False)
-    localconfig.cache = options.get("cache", localconfig.job is not None)
     localconfig.limit = options.get("limit", localconfig.limit)
     localconfig.koinlynullmap = options.get("koinlynullmap", localconfig.koinlynullmap)

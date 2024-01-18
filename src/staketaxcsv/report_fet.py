@@ -85,7 +85,7 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * staketaxcsv.common.ibc.api_lcd_v1.get_txs_pages_count(FET_NODE, wallet_address, max_txs)
 
 
-@set_ibc_cache(localconfig)
+@set_ibc_cache()
 def txhistory(wallet_address):
     max_txs = localconfig.limit
     progress = ProgressFet()

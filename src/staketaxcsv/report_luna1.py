@@ -27,6 +27,7 @@ from staketaxcsv.luna1.config_luna1 import localconfig
 from staketaxcsv.luna1.progress_terra import SECONDS_PER_TX_FETCH, SECONDS_PER_TX_PROCESS, ProgressTerra
 from staketaxcsv.settings_csv import TICKER_LUNA1
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
+from staketaxcsv import settings_csv
 
 
 def main():
@@ -73,9 +74,9 @@ def _max_queries():
     return max_queries
 
 
-@set_ibc_cache(localconfig)
+@set_ibc_cache()
 def txhistory(wallet_address):
-    if localconfig.cache:
+    if settings_csv.DB_CACHE:
         cache = Cache()
         _cache_load(cache)
 
@@ -96,7 +97,7 @@ def txhistory(wallet_address):
     # Log error stats if exists
     ErrorCounter.log(TICKER_LUNA1, wallet_address)
 
-    if localconfig.cache:
+    if settings_csv.DB_CACHE:
         _cache_push(cache)
     return exporter
 

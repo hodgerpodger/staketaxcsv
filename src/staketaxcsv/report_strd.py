@@ -56,7 +56,7 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address, start_date, end_date)
 
 
-@set_ibc_cache(localconfig)
+@set_ibc_cache()
 def txhistory(wallet_address):
     """ Configure localconfig based on options dictionary. """
     start_date, end_date = localconfig.start_date, localconfig.end_date

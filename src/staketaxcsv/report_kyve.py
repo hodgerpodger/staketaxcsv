@@ -49,7 +49,7 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address)
 
 
-@set_ibc_cache(localconfig)
+@set_ibc_cache()
 def txhistory(wallet_address):
     """ Configure localconfig based on options dictionary. """
     progress = ProgressKYVE()

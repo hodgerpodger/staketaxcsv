@@ -52,7 +52,7 @@ def estimate_duration(wallet_address):
     return SECONDS_PER_PAGE * num_pages + SECONDS_PER_TX * num_txs
 
 
-@set_ibc_cache(localconfig)
+@set_ibc_cache()
 def txhistory(wallet_address):
     """ Configure localconfig based on options dictionary. """
     progress = ProgressBld()

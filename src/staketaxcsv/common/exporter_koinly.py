@@ -3,6 +3,7 @@ import logging
 import os
 
 from staketaxcsv.common.Cache import Cache
+from staketaxcsv import settings_csv
 
 KOINLY_NULL_MAP_JSON = os.path.dirname(os.path.realpath(__file__)) + "/../_reports/koinly_null_map.json"
 LOCAL_MAP = "local_map"
@@ -13,7 +14,7 @@ class NullMap:
     def __init__(self, localconfig=None):
         self.null_map = []
         self.cache = None
-        self.use_cache = localconfig.cache if localconfig else False
+        self.use_cache = settings_csv.DB_CACHE
         self.json_path = localconfig.koinlynullmap if (localconfig and localconfig.koinlynullmap) else KOINLY_NULL_MAP_JSON
 
         logging.info("koinly NullMap: use_cache=%s, json_path=%s", self.use_cache, self.json_path)

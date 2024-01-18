@@ -27,6 +27,7 @@ from staketaxcsv.luna2.config_luna2 import localconfig
 from staketaxcsv.luna2.progress_luna2 import SECONDS_PER_PAGE, ProgressLuna2
 from staketaxcsv.settings_csv import LUNA2_NODE, TICKER_LUNA2
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
+from staketaxcsv import settings_csv
 
 
 def main():
@@ -61,9 +62,9 @@ def txone(wallet_address, txid):
     return exporter
 
 
-@set_ibc_cache(localconfig)
+@set_ibc_cache()
 def txhistory(wallet_address):
-    if localconfig.cache:
+    if settings_csv.DB_CACHE:
         cache = Cache()
         _cache_load(cache)
 
@@ -86,7 +87,7 @@ def txhistory(wallet_address):
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.luna2.processor.process_txs(wallet_address, elems, exporter)
 
-    if localconfig.cache:
+    if settings_csv.DB_CACHE:
         _cache_push(cache)
 
     return exporter

@@ -4,6 +4,7 @@ from staketaxcsv.common.ibc.api_lcd_v1 import LcdAPI_v1
 import staketaxcsv.common.ibc.constants as co
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.report_util import STAKETAX_CACHE
+from staketaxcsv import settings_csv
 
 
 class IBCAddrs:
@@ -33,7 +34,10 @@ class IBCAddrs:
 
     @classmethod
     def _load_cache(cls):
-        if os.environ.get(STAKETAX_CACHE) == "1" and not IBCAddrs.loaded:
+        if not settings_csv.DB_CACHE:
+            return
+
+        if not IBCAddrs.loaded:
             # Load IBC.addrs
             addrs_cache = Cache().get_ibc_addresses()
             IBCAddrs.addrs.update(addrs_cache)
@@ -42,6 +46,9 @@ class IBCAddrs:
 
     @classmethod
     def set_cache(cls):
+        if not settings_csv.DB_CACHE:
+            return
+
         if IBCAddrs.loaded:
             Cache().set_ibc_addresses(IBCAddrs.addrs)
             logging.info("Set cache using IBCAddrs.addrs ...")

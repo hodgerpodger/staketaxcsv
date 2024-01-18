@@ -46,7 +46,7 @@ TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
 
 
 # ########## Optional environment variables ########################################################
-
+DB_CACHE = os.environ.get("STAKETAX_DB_CACHE", False)
 SOL_REWARDS_DB_READ = os.environ.get("STAKETAX_SOL_REWARDS_DB_READ", False)
 
 # #############################################################################
