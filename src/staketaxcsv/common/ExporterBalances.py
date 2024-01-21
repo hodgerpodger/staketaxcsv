@@ -5,7 +5,7 @@ import logging
 BALANCES_HISTORICAL = "balances_historical"
 
 
-class ExporterBalance:
+class ExporterBalances:
 
     def __init__(self, wallet_address):
         self.wallet_address = wallet_address

@@ -1,5 +1,5 @@
 from staketaxcsv.common.ibc.api_mintscan_v1 import get_balances_all
-from staketaxcsv.common.ExporterBalances import ExporterBalance
+from staketaxcsv.common.ExporterBalances import ExporterBalances
 from collections import defaultdict
 from dateutil import parser
 from staketaxcsv.common.ibc import denoms
@@ -9,7 +9,7 @@ from staketaxcsv.common.ibc.api_lcd import make_lcd_api
 
 
 def via_mintscan(lcd_node, ticker, address, max_txs, start_date=None, end_date=None):
-    exporter = ExporterBalance(address)
+    exporter = ExporterBalances(address)
 
     # Get native staking denom (to use for unbonding section)
     bond_denom = make_lcd_api(lcd_node).get_bond_denom()

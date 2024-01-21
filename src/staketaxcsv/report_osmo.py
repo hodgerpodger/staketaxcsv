@@ -15,7 +15,7 @@ from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.common.ExporterTypes import LP_TREATMENT_TRANSFERS
-from staketaxcsv.common.ExporterBalances import ExporterBalance
+from staketaxcsv.common.ExporterBalances import ExporterBalances
 from staketaxcsv.osmo.config_osmo import localconfig
 from staketaxcsv.osmo.lp_rewards import lp_rewards
 from staketaxcsv.osmo.progress_osmo import ProgressOsmo
@@ -118,8 +118,8 @@ def _cache_push(cache):
     logging.info("_cache_push(): push data to cache")
 
 
-def balancehistory(wallet_address):
-    """ Writes historical balances CSV rows to BalanceExporter object """
+def balhistory(wallet_address):
+    """ Writes historical balances CSV rows to ExporterBalances object """
     start_date, end_date = localconfig.start_date, localconfig.end_date
     max_txs = localconfig.limit
 

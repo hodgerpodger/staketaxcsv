@@ -196,7 +196,7 @@ def historical_balances(ticker, wallet_address, path=None, options=None):
 
     if hasattr(module, "balancehistory"):
         module.read_options(options)
-        exporter = module.balancehistory(wallet_address)
+        exporter = module.balhistory(wallet_address)
         if not exporter:
             raise Exception("balancehistory() did not return ExporterBalance object")
         exporter.csv(path)
