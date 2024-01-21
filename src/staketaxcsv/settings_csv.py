@@ -79,7 +79,6 @@ TICKER_STRD = "STRD"
 TICKER_TIA = "TIA"
 TICKER_TORI = "TORI"
 
-
 DONATION_WALLETS = set([v for k, v in os.environ.items() if k.startswith("DONATION_WALLET_")])
 
 MESSAGE_ADDRESS_NOT_FOUND = "Wallet address not found"

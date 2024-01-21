@@ -189,18 +189,18 @@ def historical_balances(ticker, wallet_address, path=None, options=None):
         :param options: (optional) dictionary [documentation not in great state; see parse_args() in
                https://github.com/hodgerpodger/staketaxcsv/blob/main/src/staketaxcsv/common/report_util.py]
         """
-    path = path if path else f"/tmp/{ticker}.{wallet_address}.balance_history.csv"
+    path = path if path else f"/tmp/{ticker}.{wallet_address}.balances_historical.csv"
     options = options if options else {}
 
     module = REPORT_MODULES[ticker]
 
-    if hasattr(module, "balancehistory"):
+    if hasattr(module, staketaxcsv.report_akt.balhistory.__name__):
         module.read_options(options)
         exporter = module.balhistory(wallet_address)
         if not exporter:
-            raise Exception("balancehistory() did not return ExporterBalance object")
+            raise Exception("balhistory() did not return ExporterBalance object")
         exporter.csv(path)
     else:
-        logging.error("No balancehistory() function found for module=%s", str(module))
+        logging.error("No balhistory() function found for module=%s", str(module))
 
     return False
