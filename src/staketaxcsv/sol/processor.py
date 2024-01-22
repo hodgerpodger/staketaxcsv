@@ -43,9 +43,6 @@ from staketaxcsv.sol.parser import parse_tx
 
 def process_tx(wallet_info, exporter, txid, data):
     txinfo = parse_tx(txid, data, wallet_info)
-    if localconfig.debug:
-        print("txinfo:")
-        txinfo.print()
 
     try:
         if not txinfo:

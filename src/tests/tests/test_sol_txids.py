@@ -12,7 +12,7 @@ import unittest
 from unittest.mock import patch
 import staketaxcsv.report_sol
 from tests.mock_sol import MockRpcAPI
-from staketaxcsv.sol.txids import get_txids_for_addresses
+from staketaxcsv.sol.txids import get_txids_for_accounts
 WALLET_ADDRESS = "4kLALtynrmd6pU2LkGXZCmUaMDfsnVixs7SkLjPKNJQG"
 TXIDS_FOR_WALLET = [
     '4J37RUc2otbqW4aNP9KmxvZJGfBhVyzuN2GwLgzh2bKCfxNQqgtbRCbYF1TFb4Yd7ivmqvEfJgMQRYuHoZXhocWN',
@@ -56,60 +56,60 @@ class TestSolTxids(unittest.TestCase):
         pass
 
     def test_txids_with_old_txs_no_timestamp(self):
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, None)
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, None)
         self.assertEqual(txids, TXIDS_FOR_WALLET)
 
     @patch("staketaxcsv.sol.txids.LIMIT_PER_QUERY", 5)
     def test_txids_low_limit_per_query(self):
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, None)
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, None)
         self.assertEqual(txids, TXIDS_FOR_WALLET)
 
     @patch("staketaxcsv.sol.txids.LIMIT_PER_QUERY", 5)
     def test_txids_start_date_only(self):
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, start_date="2021-02-09")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, start_date="2021-02-09")
         self.assertEqual(txids, TXIDS_FOR_WALLET[4:])
 
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, start_date="2021-02-10")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, start_date="2021-02-10")
         self.assertEqual(txids, TXIDS_FOR_WALLET[6:])
 
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, start_date="2025-02-10")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, start_date="2025-02-10")
         self.assertEqual(txids, [])
 
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, start_date="2023-11-29")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, start_date="2023-11-29")
         self.assertEqual(txids, TXIDS_FOR_WALLET[23:])
 
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, start_date="2001-11-29")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, start_date="2001-11-29")
         self.assertEqual(txids, TXIDS_FOR_WALLET)
 
     @patch("staketaxcsv.sol.txids.LIMIT_PER_QUERY", 5)
     def test_txids_end_date_only(self):
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, end_date="2021-02-09")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, end_date="2021-02-09")
         self.assertEqual(txids, TXIDS_FOR_WALLET[:6])
 
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, end_date="2021-02-10")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, end_date="2021-02-10")
         self.assertEqual(txids, TXIDS_FOR_WALLET[:8])
 
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, end_date="2025-02-10")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, end_date="2025-02-10")
         self.assertEqual(txids, TXIDS_FOR_WALLET)
 
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, end_date="2000-11-29")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, end_date="2000-11-29")
         self.assertEqual(txids, [])
 
     @patch("staketaxcsv.sol.txids.LIMIT_PER_QUERY", 5)
     def test_txids_start_date_end_date(self):
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, start_date="2001-01-01", end_date="2030-01-01")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, start_date="2001-01-01", end_date="2030-01-01")
         self.assertEqual(txids, TXIDS_FOR_WALLET)
 
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, start_date="2021-02-09", end_date="2021-02-09")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, start_date="2021-02-09", end_date="2021-02-09")
         self.assertEqual(txids, TXIDS_FOR_WALLET[4:6])
 
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, start_date="2021-02-08", end_date="2021-02-08")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, start_date="2021-02-08", end_date="2021-02-08")
         self.assertEqual(txids, [])
 
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, start_date="2001-01-08", end_date="2021-02-08")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, start_date="2001-01-08", end_date="2021-02-08")
         self.assertEqual(txids, TXIDS_FOR_WALLET[:4])
 
-        txids = get_txids_for_addresses([WALLET_ADDRESS], None, start_date="2001-01-08", end_date="2021-02-09")
+        txids = get_txids_for_accounts([WALLET_ADDRESS], None, start_date="2001-01-08", end_date="2021-02-09")
         self.assertEqual(txids, TXIDS_FOR_WALLET[:6])
 
 

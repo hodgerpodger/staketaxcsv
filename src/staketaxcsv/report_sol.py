@@ -20,7 +20,7 @@ from staketaxcsv.sol.config_sol import localconfig
 from staketaxcsv.sol.constants import PROGRAMID_STAKE
 from staketaxcsv.sol.progress_sol import SECONDS_PER_STAKING_ADDRESS, SECONDS_PER_TX, ProgressSol
 from staketaxcsv.sol.TxInfoSol import WalletInfo
-from staketaxcsv.sol.txids import get_txids, get_txids_for_addresses
+from staketaxcsv.sol.txids import get_txids, get_txids_for_accounts
 
 
 RPC_TIMEOUT = 600  # seconds
@@ -98,7 +98,7 @@ def estimate_duration(wallet_address):
 
     logging.info("Fetching txids...")
     num_txids = len(
-        get_txids_for_addresses([wallet_address], progress=None, start_date=start_date, end_date=end_date)
+        get_txids_for_accounts([wallet_address], progress=None, start_date=start_date, end_date=end_date)
     )
 
     return SECONDS_PER_STAKING_ADDRESS * num_staking_addresses + SECONDS_PER_TX * num_txids
