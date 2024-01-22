@@ -1,0 +1,95 @@
+{
+    "balances": [
+        {
+            "address": "celestia1jass7yq2juz2rsyf56lte3h2e4vyvwt5gztjts",
+            "txhash": "F53CE59F3D7D1C66676FF68BFDFEC7AB04EC46FF046F7930C99BD55EAAADB004",
+            "height": 0,
+            "timestamp": "2023-11-06T13:17:12Z",
+            "bank": [
+                {
+                    "denom": "utia",
+                    "amount": "170002"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "celestiavaloper1xqc7w3pe38kg4tswjt7mnvks7gy4p38vtsuycj",
+                        "shares": "2380952000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "utia",
+                        "amount": "2380952000000"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "celestiavaloper1xqc7w3pe38kg4tswjt7mnvks7gy4p38vtsuycj",
+                    "reward": [
+                        {
+                            "denom": "utia",
+                            "amount": "34286711056.598938918512000000"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        },
+        {
+            "address": "celestia1jass7yq2juz2rsyf56lte3h2e4vyvwt5gztjts",
+            "txhash": "9902967E972C56E7B0923CF703E5A012E6E28A634954F8E16A90F3F1BA780140",
+            "height": 0,
+            "timestamp": "2023-11-03T18:00:11Z",
+            "bank": [
+                {
+                    "denom": "utia",
+                    "amount": "170002"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "celestiavaloper1xqc7w3pe38kg4tswjt7mnvks7gy4p38vtsuycj",
+                        "shares": "2380952000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "utia",
+                        "amount": "2380952000000"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "celestiavaloper1xqc7w3pe38kg4tswjt7mnvks7gy4p38vtsuycj",
+                    "reward": [
+                        {
+                            "denom": "utia",
+                            "amount": "34108800513.273928024072000000"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        },
+        {
+            "address": "celestia1jass7yq2juz2rsyf56lte3h2e4vyvwt5gztjts",
+            "txhash": "7564805FC38F5C998EDE989BD000192D8E949CE9859CF96234B531149F517715",
+            "height": "23127",
+            "timestamp": "2023-11-03T17:41:52Z",
+            "bank": [
+                {
+                    "denom": "utia",
+                    "amount": "2380952380001"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        }
+    ],
+    "pagination": {
+        "totalCount": 3,
+        "searchAfter": "MTY5OTAzMzMxMjAwMA=="
+    }
+}

@@ -15,7 +15,7 @@ from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.common.ExporterTypes import LP_TREATMENT_TRANSFERS
-from staketaxcsv.common.ExporterBalances import ExporterBalances
+from staketaxcsv.common.BalExporter import BalExporter
 from staketaxcsv.osmo.config_osmo import localconfig
 from staketaxcsv.osmo.lp_rewards import lp_rewards
 from staketaxcsv.osmo.progress_osmo import ProgressOsmo
@@ -35,6 +35,8 @@ def main():
 def read_options(options):
     """ Configure localconfig based on options dictionary. """
     report_util.read_common_options(localconfig, options)
+    localconfig.start_date = options.get("start_date", None)
+    localconfig.end_date = options.get("end_date", None)
 
     localconfig.lp_treatment = options.get("lp_treatment", LP_TREATMENT_TRANSFERS)
     logging.info("localconfig: %s", localconfig.__dict__)
@@ -119,7 +121,7 @@ def _cache_push(cache):
 
 
 def balhistory(wallet_address):
-    """ Writes historical balances CSV rows to ExporterBalances object """
+    """ Writes historical balances CSV rows to BalExporter object """
     start_date, end_date = localconfig.start_date, localconfig.end_date
     max_txs = localconfig.limit
 

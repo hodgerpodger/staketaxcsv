@@ -18,3 +18,7 @@ class MockMintscanAPI(MintscanAPI):
     def _get_txs(self, address, search_after=None, limit=TXS_LIMIT_PER_QUERY, from_date_time=None, to_date_time=None):
         return mock_query_six_args(MintscanAPI._get_txs, self, address, search_after, limit,
                                    from_date_time, to_date_time, self._dir("_get_txs"))
+
+    def _get_balances(self, address, search_after=None, limit=TXS_LIMIT_PER_QUERY, from_date_time=None, to_date_time=None):
+        return mock_query_six_args(MintscanAPI._get_balances, self, address, search_after, limit,
+                                   from_date_time, to_date_time, self._dir("_get_balances"))

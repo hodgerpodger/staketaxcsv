@@ -15,6 +15,7 @@ from staketaxcsv.common.ibc.util_ibc import remove_duplicates
 from staketaxcsv.common.ibc.constants import MINTSCAN_LABELS
 from staketaxcsv.common.debug_util import debug_cache
 from staketaxcsv.settings_csv import REPORTS_DIR
+from urllib.parse import quote
 
 TXS_LIMIT_PER_QUERY = 20
 
@@ -40,7 +41,8 @@ class MintscanAPI:
             raise Exception("Missing MINTSCAN_KEY")
 
         url = self.base_url + uri_path
-        logging.info("Requesting url %s?%s ...", url, urlencode(query_params))
+        encoded_query = "&".join(f"{quote(str(k))}={quote(str(v))}" for k, v in query_params.items())
+        logging.info("Requesting url %s?%s ...", url, encoded_query)
         data = get_with_retries(self.session, url, query_params, headers=self.headers)
 
         if sleep_seconds:

@@ -1,0 +1,6 @@
+{
+    "denom_trace": {
+        "path": "transfer/channel-5",
+        "base_denom": "uosmo"
+    }
+}

@@ -1,0 +1,145 @@
+{
+    "balances": [
+        {
+            "address": "juno1enu0aefq33q8re7vawpsrla43du4zgp5x533zs",
+            "txhash": "DDF0F2A584A09038E3A1DA63D7F8A8FB131571DE2254C67C10C14F4D1B95A408",
+            "height": 0,
+            "timestamp": "2024-01-21T07:24:20Z",
+            "bank": [
+                {
+                    "denom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+                    "amount": "533"
+                },
+                {
+                    "denom": "ujuno",
+                    "amount": "705386"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        },
+        {
+            "address": "juno1enu0aefq33q8re7vawpsrla43du4zgp5x533zs",
+            "txhash": "0F4659D5F543C4B31A059470C8F334FFFD023659C6570C8781A8B96068D2B6B8",
+            "height": 0,
+            "timestamp": "2024-01-21T07:23:52Z",
+            "bank": [
+                {
+                    "denom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+                    "amount": "533"
+                },
+                {
+                    "denom": "ujuno",
+                    "amount": "705386"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        },
+        {
+            "address": "juno1enu0aefq33q8re7vawpsrla43du4zgp5x533zs",
+            "txhash": "",
+            "height": "13057763",
+            "timestamp": "2024-01-20 16:57:37",
+            "bank": [
+                {
+                    "denom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+                    "amount": "533"
+                },
+                {
+                    "denom": "ujuno",
+                    "amount": "315503"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": [
+                {
+                    "validator_address": "junovaloper1yy3tnegzmkdcm7czzcy3flw5z0zyr9vkkxrfse",
+                    "entries": [
+                        {
+                            "creation_height": "12580727",
+                            "completion_time": "2024-01-21T07:22:51.540421292Z",
+                            "initial_balance": "13990397959",
+                            "balance": "13990397959",
+                            "unbonding_id": "24899",
+                            "unbonding_on_hold_ref_count": "0"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "address": "juno1enu0aefq33q8re7vawpsrla43du4zgp5x533zs",
+            "txhash": "EAE79451DCA31C44F901F0BDEED6C350D1B7FC3C2837A0095CCF013DD5A27EE7",
+            "height": 0,
+            "timestamp": "2024-01-14T16:49:44Z",
+            "bank": [
+                {
+                    "denom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+                    "amount": "533"
+                },
+                {
+                    "denom": "ujuno",
+                    "amount": "315503"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": [
+                {
+                    "validator_address": "junovaloper1yy3tnegzmkdcm7czzcy3flw5z0zyr9vkkxrfse",
+                    "entries": [
+                        {
+                            "creation_height": "12580727",
+                            "completion_time": "2024-01-21T07:22:51.540421292Z",
+                            "initial_balance": "13990397959",
+                            "balance": "13990397959",
+                            "unbonding_id": "24899",
+                            "unbonding_on_hold_ref_count": "0"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "address": "juno1enu0aefq33q8re7vawpsrla43du4zgp5x533zs",
+            "txhash": "5BA8C958713AC23FE93142A6BFF88CFCA6F6670503BCEDAD88CF69CA07ACF598",
+            "height": 0,
+            "timestamp": "2024-01-14T16:49:32Z",
+            "bank": [
+                {
+                    "denom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
+                    "amount": "533"
+                },
+                {
+                    "denom": "ujuno",
+                    "amount": "315503"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": [
+                {
+                    "validator_address": "junovaloper1yy3tnegzmkdcm7czzcy3flw5z0zyr9vkkxrfse",
+                    "entries": [
+                        {
+                            "creation_height": "12580727",
+                            "completion_time": "2024-01-21T07:22:51.540421292Z",
+                            "initial_balance": "13990397959",
+                            "balance": "13990397959",
+                            "unbonding_id": "24899",
+                            "unbonding_on_hold_ref_count": "0"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "pagination": {
+        "totalCount": 5,
+        "searchAfter": "MTcwNTI1MDk3MjAwMA=="
+    }
+}

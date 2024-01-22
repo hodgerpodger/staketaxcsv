@@ -1,0 +1,291 @@
+{
+    "balances": [
+        {
+            "address": "osmo1af5tyfjgrjycv5zu3asnh4u3hruqu8xknqk7fl",
+            "txhash": "1286218E8DF44395D0075F0E806D3028F54F207302B05371669E6A24B7EC1490",
+            "height": 0,
+            "timestamp": "2024-01-20T19:44:22Z",
+            "bank": [
+                {
+                    "denom": "factory/osmo1pfyxruwvtwk00y8z06dh2lqjdj82ldvy74wzm3/WOSMO",
+                    "amount": "2000000000000"
+                },
+                {
+                    "denom": "ibc/0954E1C28EB7AF5B72D24F3BC2B47BBB2FDF91BDDFD57B74B99E133AED40972A",
+                    "amount": "1061529"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "osmovaloper1wlagucxdxvsmvj6330864x8q3vxz4x025rraa6",
+                        "shares": "500000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uosmo",
+                        "amount": "500000000000"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "osmovaloper1jvqv650snr7gaee2wsvkx9nf9gwuj946zxa7z4",
+                        "shares": "500000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uosmo",
+                        "amount": "500000000000"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "osmovaloper1cmqh34lt9d457ajk9g94eg2pswrpr08rxqwsyy",
+                        "shares": "500000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uosmo",
+                        "amount": "500000000000"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "osmovaloper1l38793cjjks9k70wkxdq7w3auhjmqu9s9l4njy",
+                        "shares": "500000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uosmo",
+                        "amount": "500000000000"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "osmovaloper1wlagucxdxvsmvj6330864x8q3vxz4x025rraa6",
+                    "reward": [
+                        {
+                            "denom": "uosmo",
+                            "amount": "31267811353.252985500000000000"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "osmovaloper1jvqv650snr7gaee2wsvkx9nf9gwuj946zxa7z4",
+                    "reward": [
+                        {
+                            "denom": "uosmo",
+                            "amount": "33004906930.688737000000000000"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "osmovaloper1cmqh34lt9d457ajk9g94eg2pswrpr08rxqwsyy",
+                    "reward": [
+                        {
+                            "denom": "uosmo",
+                            "amount": "31267802212.897726500000000000"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "osmovaloper1l38793cjjks9k70wkxdq7w3auhjmqu9s9l4njy",
+                    "reward": [
+                        {
+                            "denom": "uosmo",
+                            "amount": "33004907790.537993000000000000"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        },
+        {
+            "address": "osmo1af5tyfjgrjycv5zu3asnh4u3hruqu8xknqk7fl",
+            "txhash": "",
+            "height": "13219000",
+            "timestamp": "2024-01-20 19:18:22",
+            "bank": [
+                {
+                    "denom": "ibc/0954E1C28EB7AF5B72D24F3BC2B47BBB2FDF91BDDFD57B74B99E133AED40972A",
+                    "amount": "1061529"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "osmovaloper1wlagucxdxvsmvj6330864x8q3vxz4x025rraa6",
+                        "shares": "500000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uosmo",
+                        "amount": "500000000000"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "osmovaloper1jvqv650snr7gaee2wsvkx9nf9gwuj946zxa7z4",
+                        "shares": "500000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uosmo",
+                        "amount": "500000000000"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "osmovaloper1cmqh34lt9d457ajk9g94eg2pswrpr08rxqwsyy",
+                        "shares": "500000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uosmo",
+                        "amount": "500000000000"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "osmovaloper1l38793cjjks9k70wkxdq7w3auhjmqu9s9l4njy",
+                        "shares": "500000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uosmo",
+                        "amount": "500000000000"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "osmovaloper1wlagucxdxvsmvj6330864x8q3vxz4x025rraa6",
+                    "reward": [
+                        {
+                            "denom": "uosmo",
+                            "amount": "31267573073.893466000000000000"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "osmovaloper1jvqv650snr7gaee2wsvkx9nf9gwuj946zxa7z4",
+                    "reward": [
+                        {
+                            "denom": "uosmo",
+                            "amount": "33004655413.632026500000000000"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "osmovaloper1cmqh34lt9d457ajk9g94eg2pswrpr08rxqwsyy",
+                    "reward": [
+                        {
+                            "denom": "uosmo",
+                            "amount": "31267563933.636642500000000000"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "osmovaloper1l38793cjjks9k70wkxdq7w3auhjmqu9s9l4njy",
+                    "reward": [
+                        {
+                            "denom": "uosmo",
+                            "amount": "33004656273.490393000000000000"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        },
+        {
+            "address": "osmo1af5tyfjgrjycv5zu3asnh4u3hruqu8xknqk7fl",
+            "txhash": "",
+            "height": "12958567",
+            "timestamp": "2024-01-09 09:33:38",
+            "bank": [
+                {
+                    "denom": "ibc/0954E1C28EB7AF5B72D24F3BC2B47BBB2FDF91BDDFD57B74B99E133AED40972A",
+                    "amount": "1061529"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "osmovaloper1wlagucxdxvsmvj6330864x8q3vxz4x025rraa6",
+                        "shares": "500000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uosmo",
+                        "amount": "500000000000"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "osmovaloper1jvqv650snr7gaee2wsvkx9nf9gwuj946zxa7z4",
+                        "shares": "500000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uosmo",
+                        "amount": "500000000000"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "osmovaloper1cmqh34lt9d457ajk9g94eg2pswrpr08rxqwsyy",
+                        "shares": "500000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uosmo",
+                        "amount": "500000000000"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "osmovaloper1l38793cjjks9k70wkxdq7w3auhjmqu9s9l4njy",
+                        "shares": "500000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uosmo",
+                        "amount": "500000000000"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "osmovaloper1wlagucxdxvsmvj6330864x8q3vxz4x025rraa6",
+                    "reward": [
+                        {
+                            "denom": "uosmo",
+                            "amount": "29404420810.787539500000000000"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "osmovaloper1jvqv650snr7gaee2wsvkx9nf9gwuj946zxa7z4",
+                    "reward": [
+                        {
+                            "denom": "uosmo",
+                            "amount": "31037994981.026472000000000000"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "osmovaloper1cmqh34lt9d457ajk9g94eg2pswrpr08rxqwsyy",
+                    "reward": [
+                        {
+                            "denom": "uosmo",
+                            "amount": "29404412222.221237500000000000"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "osmovaloper1l38793cjjks9k70wkxdq7w3auhjmqu9s9l4njy",
+                    "reward": [
+                        {
+                            "denom": "uosmo",
+                            "amount": "31037995952.233572500000000000"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        }
+    ],
+    "pagination": {
+        "totalCount": 3,
+        "searchAfter": "MTcwNDc5MjgxODAwMA=="
+    }
+}

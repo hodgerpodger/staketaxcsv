@@ -1,0 +1,208 @@
+{
+    "balances": [
+        {
+            "address": "archway1rv52shjza8lv7pv4avr24nqpqmq4z90yhywwrc",
+            "txhash": "71192C5893DAE330C5C67C6E615530B21CBBEBA1A74562F5DB973E2E734313A1",
+            "height": 0,
+            "timestamp": "2024-01-12T00:43:52Z",
+            "bank": [
+                {
+                    "denom": "aarch",
+                    "amount": "41232761499283742830"
+                },
+                {
+                    "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                    "amount": "10000"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "archwayvaloper1tunvmmw4v6nedchg3w355k9swt00ld0k0cp3zh",
+                        "shares": "110000000000000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "aarch",
+                        "amount": "110000000000000000000"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "archwayvaloper1tunvmmw4v6nedchg3w355k9swt00ld0k0cp3zh",
+                    "reward": [
+                        {
+                            "denom": "aarch",
+                            "amount": "14995838004290.000000000000000000"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        },
+        {
+            "address": "archway1rv52shjza8lv7pv4avr24nqpqmq4z90yhywwrc",
+            "txhash": "",
+            "height": "2564190",
+            "timestamp": "2024-01-10 18:35:55",
+            "bank": [
+                {
+                    "denom": "aarch",
+                    "amount": "40036956426040297280"
+                },
+                {
+                    "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                    "amount": "10000"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "archwayvaloper1tunvmmw4v6nedchg3w355k9swt00ld0k0cp3zh",
+                        "shares": "110000000000000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "aarch",
+                        "amount": "110000000000000000000"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "archwayvaloper1tunvmmw4v6nedchg3w355k9swt00ld0k0cp3zh",
+                    "reward": [
+                        {
+                            "denom": "aarch",
+                            "amount": "1408406322784445490.000000000000000000"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        },
+        {
+            "address": "archway1rv52shjza8lv7pv4avr24nqpqmq4z90yhywwrc",
+            "txhash": "",
+            "height": "2484593",
+            "timestamp": "2023-12-24 22:15:24",
+            "bank": [
+                {
+                    "denom": "aarch",
+                    "amount": "40036956426040297280"
+                },
+                {
+                    "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                    "amount": "10000"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "archwayvaloper1tunvmmw4v6nedchg3w355k9swt00ld0k0cp3zh",
+                        "shares": "110000000000000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "aarch",
+                        "amount": "110000000000000000000"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "archwayvaloper1tunvmmw4v6nedchg3w355k9swt00ld0k0cp3zh",
+                    "reward": [
+                        {
+                            "denom": "aarch",
+                            "amount": "631772635642974650.000000000000000000"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        },
+        {
+            "address": "archway1rv52shjza8lv7pv4avr24nqpqmq4z90yhywwrc",
+            "txhash": "",
+            "height": "2433121",
+            "timestamp": "2023-12-18 18:19:26",
+            "bank": [
+                {
+                    "denom": "aarch",
+                    "amount": "40036956426040297280"
+                },
+                {
+                    "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                    "amount": "10000"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "archwayvaloper1tunvmmw4v6nedchg3w355k9swt00ld0k0cp3zh",
+                        "shares": "110000000000000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "aarch",
+                        "amount": "110000000000000000000"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "archwayvaloper1tunvmmw4v6nedchg3w355k9swt00ld0k0cp3zh",
+                    "reward": [
+                        {
+                            "denom": "aarch",
+                            "amount": "342971772318064450.000000000000000000"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        },
+        {
+            "address": "archway1rv52shjza8lv7pv4avr24nqpqmq4z90yhywwrc",
+            "txhash": "5E043DBEDECC2165DA6DBC46C3A97B742069A923BFF0F78040AF02A8354A9616",
+            "height": 0,
+            "timestamp": "2023-12-11T11:47:26Z",
+            "bank": [
+                {
+                    "denom": "aarch",
+                    "amount": "40036956426040297280"
+                },
+                {
+                    "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                    "amount": "10000"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "archwayvaloper1tunvmmw4v6nedchg3w355k9swt00ld0k0cp3zh",
+                        "shares": "110000000000000000000.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "aarch",
+                        "amount": "110000000000000000000"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "archwayvaloper1tunvmmw4v6nedchg3w355k9swt00ld0k0cp3zh",
+                    "reward": [
+                        {
+                            "denom": "aarch",
+                            "amount": "51167119821555980.000000000000000000"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        }
+    ],
+    "pagination": {
+        "totalCount": 5,
+        "searchAfter": "MTcwMjI5NTI0NjAwMA=="
+    }
+}

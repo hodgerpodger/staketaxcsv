@@ -73,8 +73,8 @@ def txhistory(wallet_address):
     return exporter
 
 
-def balancehistory(wallet_address):
-    """ Writes historical balances CSV rows to BalanceExporter object """
+def balhistory(wallet_address):
+    """ Writes historical balances CSV rows to BalExporter object """
     start_date, end_date = localconfig.start_date, localconfig.end_date
     max_txs = localconfig.limit
 

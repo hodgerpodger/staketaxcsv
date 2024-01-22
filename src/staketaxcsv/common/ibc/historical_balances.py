@@ -1,15 +1,16 @@
 from staketaxcsv.common.ibc.api_mintscan_v1 import get_balances_all
-from staketaxcsv.common.ExporterBalances import ExporterBalances
+from staketaxcsv.common.BalExporter import BalExporter
 from collections import defaultdict
 from dateutil import parser
 from staketaxcsv.common.ibc import denoms
 from staketaxcsv.osmo import denoms as denoms_osmo
 from staketaxcsv.settings_csv import TICKER_OSMO
 from staketaxcsv.common.ibc.api_lcd import make_lcd_api
+TINY_AMOUNT = .00001
 
 
 def via_mintscan(lcd_node, ticker, address, max_txs, start_date=None, end_date=None):
-    exporter = ExporterBalances(address)
+    exporter = BalExporter(address)
 
     # Get native staking denom (to use for unbonding section)
     bond_denom = make_lcd_api(lcd_node).get_bond_denom()
@@ -44,8 +45,18 @@ def via_mintscan(lcd_node, ticker, address, max_txs, start_date=None, end_date=N
 
                 balance[currency] += amount
 
+        # Purposely omitting "reward" section to better match txs CSVs, since they don't reflect
+        # rewards until redemption
+
+        # omit currencies with super tiny amounts
+        balance_edited = {}
+        for currency, amount in balance.items():
+            if amount < TINY_AMOUNT:
+                continue
+            balance_edited[currency] = amount
+
         # Ingest the summed balances into the exporter
-        exporter.ingest_row(timestamp, dict(balance))
+        exporter.ingest_row(timestamp, balance_edited)
 
     return exporter
 

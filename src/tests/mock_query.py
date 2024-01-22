@@ -35,15 +35,7 @@ def mock_query_six_args(func, arg1, arg2, arg3, arg4, arg5, arg6, dirname=""):
 
 
 def _mock_query(func, args, dirname=""):
-    # Create a filename
-    if dirname.startswith("/"):
-        # If absolute path, use it.
-        json_dir = dirname
-    else:
-        # If relative path, put in data directory for tests
-        json_dir = DATADIR + "/" + (dirname if dirname else _clean(func.__name__))
-    filename_parts = [_clean(func.__name__)] + [_clean(x) for x in args]
-    json_path = json_dir + "/" + "-".join(filename_parts)
+    json_dir, json_path, = _create_filename(func, args, dirname)
 
     if not os.path.exists(json_path):
         if not os.path.exists(json_dir):
@@ -57,13 +49,30 @@ def _mock_query(func, args, dirname=""):
             json.dump(data, f, indent=4)
         logging.info("Wrote to %s", json_path)
 
+    logging.info("Loading mock query result from json=%s", json_path)
     with open(json_path, 'r') as f:
         result = json.load(f)
     return result
 
 
+def _create_filename(func, args, dirname):
+    # Determine file directory
+    if dirname.startswith("/"):
+        # If absolute path, use it.
+        json_dir = dirname
+    else:
+        # If relative path, put in data directory for tests
+        json_dir = DATADIR + "/" + (dirname if dirname else _clean(func.__name__))
+
+    # Determine file path
+    filename_parts = [_clean(func.__name__)] + [_clean(x) for x in args]
+    json_path = json_dir + "/" + "-".join(filename_parts) + ".json"
+
+    return json_dir, json_path
+
+
 def _clean(arg):
     if type(arg) in (str, int, float):
-        return str(arg).replace("/", "")
+        return str(arg).replace("/", "#").replace(" ", "#")
     else:
         return ""

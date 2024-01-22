@@ -1,0 +1,463 @@
+{
+    "balances": [
+        {
+            "address": "stride1sjl5mhsxhxyxe3ael6qawu7m2qkaahdu4ymv47",
+            "txhash": "",
+            "height": "7313510",
+            "timestamp": "2024-01-20 06:24:00",
+            "bank": [
+                {
+                    "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                    "amount": "9"
+                },
+                {
+                    "denom": "ibc/D24B4564BCD51D3D02D9987D92571EAC5915676A9BD6D9B0C1D0254CB8A5EA34",
+                    "amount": "126"
+                },
+                {
+                    "denom": "staevmos",
+                    "amount": "5365600965291224604"
+                },
+                {
+                    "denom": "stinj",
+                    "amount": "7355770766691136"
+                },
+                {
+                    "denom": "stuatom",
+                    "amount": "558149"
+                },
+                {
+                    "denom": "stucmdx",
+                    "amount": "998682"
+                },
+                {
+                    "denom": "stujuno",
+                    "amount": "466220"
+                },
+                {
+                    "denom": "stuluna",
+                    "amount": "30243"
+                },
+                {
+                    "denom": "stuosmo",
+                    "amount": "2935948"
+                },
+                {
+                    "denom": "stusomm",
+                    "amount": "137119"
+                },
+                {
+                    "denom": "stustars",
+                    "amount": "7640569"
+                },
+                {
+                    "denom": "stuumee",
+                    "amount": "4912020"
+                },
+                {
+                    "denom": "ustrd",
+                    "amount": "20760029817"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        },
+        {
+            "address": "stride1sjl5mhsxhxyxe3ael6qawu7m2qkaahdu4ymv47",
+            "txhash": "",
+            "height": "7269206",
+            "timestamp": "2024-01-17 06:23:50",
+            "bank": [
+                {
+                    "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                    "amount": "9"
+                },
+                {
+                    "denom": "ibc/D24B4564BCD51D3D02D9987D92571EAC5915676A9BD6D9B0C1D0254CB8A5EA34",
+                    "amount": "126"
+                },
+                {
+                    "denom": "staevmos",
+                    "amount": "5365600965291224604"
+                },
+                {
+                    "denom": "stinj",
+                    "amount": "7355770766691136"
+                },
+                {
+                    "denom": "stuatom",
+                    "amount": "558149"
+                },
+                {
+                    "denom": "stucmdx",
+                    "amount": "998682"
+                },
+                {
+                    "denom": "stujuno",
+                    "amount": "466220"
+                },
+                {
+                    "denom": "stuluna",
+                    "amount": "30243"
+                },
+                {
+                    "denom": "stuosmo",
+                    "amount": "2935948"
+                },
+                {
+                    "denom": "stusomm",
+                    "amount": "137119"
+                },
+                {
+                    "denom": "stustars",
+                    "amount": "7640569"
+                },
+                {
+                    "denom": "stuumee",
+                    "amount": "4912020"
+                },
+                {
+                    "denom": "ustrd",
+                    "amount": "20760029817"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        },
+        {
+            "address": "stride1sjl5mhsxhxyxe3ael6qawu7m2qkaahdu4ymv47",
+            "txhash": "",
+            "height": "7225537",
+            "timestamp": "2024-01-14 06:23:35",
+            "bank": [
+                {
+                    "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                    "amount": "9"
+                },
+                {
+                    "denom": "ibc/D24B4564BCD51D3D02D9987D92571EAC5915676A9BD6D9B0C1D0254CB8A5EA34",
+                    "amount": "126"
+                },
+                {
+                    "denom": "staevmos",
+                    "amount": "5365600965291224604"
+                },
+                {
+                    "denom": "stinj",
+                    "amount": "7355770766691136"
+                },
+                {
+                    "denom": "stuatom",
+                    "amount": "558149"
+                },
+                {
+                    "denom": "stucmdx",
+                    "amount": "998682"
+                },
+                {
+                    "denom": "stujuno",
+                    "amount": "466220"
+                },
+                {
+                    "denom": "stuluna",
+                    "amount": "30243"
+                },
+                {
+                    "denom": "stuosmo",
+                    "amount": "2935948"
+                },
+                {
+                    "denom": "stusomm",
+                    "amount": "137119"
+                },
+                {
+                    "denom": "stustars",
+                    "amount": "7640569"
+                },
+                {
+                    "denom": "stuumee",
+                    "amount": "4912020"
+                },
+                {
+                    "denom": "ustrd",
+                    "amount": "20760029817"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        },
+        {
+            "address": "stride1sjl5mhsxhxyxe3ael6qawu7m2qkaahdu4ymv47",
+            "txhash": "",
+            "height": "7181302",
+            "timestamp": "2024-01-11 06:23:01",
+            "bank": [
+                {
+                    "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                    "amount": "9"
+                },
+                {
+                    "denom": "ibc/D24B4564BCD51D3D02D9987D92571EAC5915676A9BD6D9B0C1D0254CB8A5EA34",
+                    "amount": "126"
+                },
+                {
+                    "denom": "staevmos",
+                    "amount": "5365600965291224604"
+                },
+                {
+                    "denom": "stinj",
+                    "amount": "7355770766691136"
+                },
+                {
+                    "denom": "stuatom",
+                    "amount": "558149"
+                },
+                {
+                    "denom": "stucmdx",
+                    "amount": "998682"
+                },
+                {
+                    "denom": "stujuno",
+                    "amount": "466220"
+                },
+                {
+                    "denom": "stuluna",
+                    "amount": "30243"
+                },
+                {
+                    "denom": "stuosmo",
+                    "amount": "2935948"
+                },
+                {
+                    "denom": "stusomm",
+                    "amount": "137119"
+                },
+                {
+                    "denom": "stustars",
+                    "amount": "7640569"
+                },
+                {
+                    "denom": "stuumee",
+                    "amount": "4912020"
+                },
+                {
+                    "denom": "ustrd",
+                    "amount": "20760029817"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        },
+        {
+            "address": "stride1sjl5mhsxhxyxe3ael6qawu7m2qkaahdu4ymv47",
+            "txhash": "",
+            "height": "7136855",
+            "timestamp": "2024-01-08 06:22:37",
+            "bank": [
+                {
+                    "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                    "amount": "9"
+                },
+                {
+                    "denom": "ibc/D24B4564BCD51D3D02D9987D92571EAC5915676A9BD6D9B0C1D0254CB8A5EA34",
+                    "amount": "126"
+                },
+                {
+                    "denom": "staevmos",
+                    "amount": "5365600965291224604"
+                },
+                {
+                    "denom": "stinj",
+                    "amount": "7355770766691136"
+                },
+                {
+                    "denom": "stuatom",
+                    "amount": "558149"
+                },
+                {
+                    "denom": "stucmdx",
+                    "amount": "998682"
+                },
+                {
+                    "denom": "stujuno",
+                    "amount": "466220"
+                },
+                {
+                    "denom": "stuluna",
+                    "amount": "30243"
+                },
+                {
+                    "denom": "stuosmo",
+                    "amount": "2935948"
+                },
+                {
+                    "denom": "stusomm",
+                    "amount": "137119"
+                },
+                {
+                    "denom": "stustars",
+                    "amount": "7640569"
+                },
+                {
+                    "denom": "stuumee",
+                    "amount": "4912020"
+                },
+                {
+                    "denom": "ustrd",
+                    "amount": "20760029817"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        },
+        {
+            "address": "stride1sjl5mhsxhxyxe3ael6qawu7m2qkaahdu4ymv47",
+            "txhash": "",
+            "height": "7092498",
+            "timestamp": "2024-01-05 06:22:11",
+            "bank": [
+                {
+                    "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                    "amount": "9"
+                },
+                {
+                    "denom": "ibc/D24B4564BCD51D3D02D9987D92571EAC5915676A9BD6D9B0C1D0254CB8A5EA34",
+                    "amount": "126"
+                },
+                {
+                    "denom": "staevmos",
+                    "amount": "5365600965291224604"
+                },
+                {
+                    "denom": "stinj",
+                    "amount": "7355770766691136"
+                },
+                {
+                    "denom": "stuatom",
+                    "amount": "558149"
+                },
+                {
+                    "denom": "stucmdx",
+                    "amount": "998682"
+                },
+                {
+                    "denom": "stujuno",
+                    "amount": "466220"
+                },
+                {
+                    "denom": "stuluna",
+                    "amount": "30243"
+                },
+                {
+                    "denom": "stuosmo",
+                    "amount": "2935948"
+                },
+                {
+                    "denom": "stusomm",
+                    "amount": "137119"
+                },
+                {
+                    "denom": "stustars",
+                    "amount": "7640569"
+                },
+                {
+                    "denom": "stuumee",
+                    "amount": "4912020"
+                },
+                {
+                    "denom": "ustrd",
+                    "amount": "20760029817"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        },
+        {
+            "address": "stride1sjl5mhsxhxyxe3ael6qawu7m2qkaahdu4ymv47",
+            "txhash": "",
+            "height": "7048029",
+            "timestamp": "2024-01-02 06:21:22",
+            "bank": [
+                {
+                    "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                    "amount": "9"
+                },
+                {
+                    "denom": "ibc/D24B4564BCD51D3D02D9987D92571EAC5915676A9BD6D9B0C1D0254CB8A5EA34",
+                    "amount": "126"
+                },
+                {
+                    "denom": "staevmos",
+                    "amount": "5365600965291224604"
+                },
+                {
+                    "denom": "stinj",
+                    "amount": "7355770766691136"
+                },
+                {
+                    "denom": "stuatom",
+                    "amount": "558149"
+                },
+                {
+                    "denom": "stucmdx",
+                    "amount": "998682"
+                },
+                {
+                    "denom": "stujuno",
+                    "amount": "466220"
+                },
+                {
+                    "denom": "stuluna",
+                    "amount": "30243"
+                },
+                {
+                    "denom": "stuosmo",
+                    "amount": "2935948"
+                },
+                {
+                    "denom": "stusomm",
+                    "amount": "137119"
+                },
+                {
+                    "denom": "stustars",
+                    "amount": "7640569"
+                },
+                {
+                    "denom": "stuumee",
+                    "amount": "4912020"
+                },
+                {
+                    "denom": "ustrd",
+                    "amount": "10265197"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": [
+                {
+                    "validator_address": "stridevaloper1jj9z2xwxesuy65n90dujsak554eqkrr28aqpl0",
+                    "entries": [
+                        {
+                            "creation_height": "6869229",
+                            "completion_time": "2024-01-04T03:48:48.147223310Z",
+                            "initial_balance": "20749764620",
+                            "balance": "20749764620",
+                            "unbonding_id": "13000",
+                            "unbonding_on_hold_ref_count": "0"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "pagination": {
+        "totalCount": 7,
+        "searchAfter": "MTcwNDE3NjQ4MjAwMA=="
+    }
+}

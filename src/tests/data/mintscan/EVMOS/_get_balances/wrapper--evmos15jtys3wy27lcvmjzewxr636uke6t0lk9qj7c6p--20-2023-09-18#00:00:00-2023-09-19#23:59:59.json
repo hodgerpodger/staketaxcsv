@@ -1,0 +1,98 @@
+{
+    "balances": [
+        {
+            "address": "evmos15jtys3wy27lcvmjzewxr636uke6t0lk9qj7c6p",
+            "txhash": "BCEA4C236B9A9E549F7ADA568B7ECFDF237D2E954BC281DD11AEC8232C5BAC99",
+            "height": "15958908",
+            "timestamp": "2023-09-18T14:13:19Z",
+            "bank": [
+                {
+                    "denom": "aevmos",
+                    "amount": "2326191131740574613465107"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        },
+        {
+            "address": "evmos15jtys3wy27lcvmjzewxr636uke6t0lk9qj7c6p",
+            "txhash": "01DFF001A734C27833A13836C7B4B2321544E37C2ABFA9A6807B4C4A7A631CFF",
+            "height": "15958636",
+            "timestamp": "2023-09-18T13:54:18Z",
+            "bank": [
+                {
+                    "denom": "aevmos",
+                    "amount": "1958119123816437771349713"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        },
+        {
+            "address": "evmos15jtys3wy27lcvmjzewxr636uke6t0lk9qj7c6p",
+            "txhash": "CB7C2E989F7BF34524FC86561F7DC8A93167B7E3120A70EF16C0081300D24292",
+            "height": "15958625",
+            "timestamp": "2023-09-18T13:53:38Z",
+            "bank": [
+                {
+                    "denom": "aevmos",
+                    "amount": "1832507303566157628013286"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        },
+        {
+            "address": "evmos15jtys3wy27lcvmjzewxr636uke6t0lk9qj7c6p",
+            "txhash": "8FCE827A31D666867E04ECB1A1631AFCF01CB5E3EAEACDA5DFDDB6957AB75C0B",
+            "height": "15958617",
+            "timestamp": "2023-09-18T13:53:05Z",
+            "bank": [
+                {
+                    "denom": "aevmos",
+                    "amount": "945580132021877608666987"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        },
+        {
+            "address": "evmos15jtys3wy27lcvmjzewxr636uke6t0lk9qj7c6p",
+            "txhash": "1DC0822C2809BEF13840CC9A31FFAB7C26EB09B83EDC36C9C102CB9FFA85A8D1",
+            "height": "15958607",
+            "timestamp": "2023-09-18T13:52:21Z",
+            "bank": [
+                {
+                    "denom": "aevmos",
+                    "amount": "880226871071595810717835"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        },
+        {
+            "address": "evmos15jtys3wy27lcvmjzewxr636uke6t0lk9qj7c6p",
+            "txhash": "3914012845215A20B9E8D86600ACCADCD1D8EAE419F373AE5D1F9BD130C241CE",
+            "height": "15958577",
+            "timestamp": "2023-09-18T13:50:03Z",
+            "bank": [
+                {
+                    "denom": "aevmos",
+                    "amount": "465299238727240701097743"
+                }
+            ],
+            "delegation": [],
+            "reward": [],
+            "unbonding": []
+        }
+    ],
+    "pagination": {
+        "totalCount": 6,
+        "searchAfter": "MTY5NTA0NTAwMzAwMA=="
+    }
+}

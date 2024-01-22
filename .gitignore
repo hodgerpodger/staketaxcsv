@@ -9,6 +9,7 @@ src/staketaxcsv/_reports/*
 src/staketaxcsv/tia/genesis.json
 sample.env
 
+
 # pycharm
 .idea/*
 

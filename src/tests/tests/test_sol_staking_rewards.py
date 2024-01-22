@@ -112,6 +112,6 @@ def create_gold_json_file():
 
 
 if __name__ == "__main__":
-    # create_gold_json_file()
     logging.basicConfig(level=logging.INFO)
+    # create_gold_json_file()
     unittest.main()

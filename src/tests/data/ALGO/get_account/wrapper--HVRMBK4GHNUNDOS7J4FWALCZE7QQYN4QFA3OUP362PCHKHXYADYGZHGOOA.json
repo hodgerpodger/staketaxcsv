@@ -1,0 +1,19 @@
+{
+    "address": "HVRMBK4GHNUNDOS7J4FWALCZE7QQYN4QFA3OUP362PCHKHXYADYGZHGOOA",
+    "amount": 100000,
+    "amount-without-pending-rewards": 100000,
+    "created-at-round": 22714878,
+    "deleted": false,
+    "pending-rewards": 0,
+    "reward-base": 218288,
+    "rewards": 0,
+    "round": 35422889,
+    "sig-type": "sig",
+    "status": "Offline",
+    "total-apps-opted-in": 0,
+    "total-assets-opted-in": 0,
+    "total-box-bytes": 0,
+    "total-boxes": 0,
+    "total-created-apps": 0,
+    "total-created-assets": 0
+}

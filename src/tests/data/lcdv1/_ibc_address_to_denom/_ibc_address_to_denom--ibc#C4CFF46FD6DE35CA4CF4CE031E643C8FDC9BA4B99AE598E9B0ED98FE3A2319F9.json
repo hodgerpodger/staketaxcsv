@@ -1,0 +1,6 @@
+{
+    "denom_trace": {
+        "path": "transfer/channel-1",
+        "base_denom": "uatom"
+    }
+}

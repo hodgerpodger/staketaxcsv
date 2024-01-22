@@ -1,0 +1,12 @@
+{
+    "params": {
+        "unbonding_time": "1814400s",
+        "max_validators": 180,
+        "max_entries": 7,
+        "historical_entries": 10000,
+        "bond_denom": "uatom",
+        "validator_bond_factor": "250.000000000000000000",
+        "global_liquid_staking_cap": "0.250000000000000000",
+        "validator_liquid_staking_cap": "1.000000000000000000"
+    }
+}

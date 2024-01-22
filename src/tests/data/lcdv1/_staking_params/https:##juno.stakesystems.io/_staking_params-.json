@@ -1,0 +1,10 @@
+{
+    "params": {
+        "unbonding_time": "2419200s",
+        "max_validators": 150,
+        "max_entries": 7,
+        "historical_entries": 10000,
+        "bond_denom": "ujuno",
+        "min_commission_rate": "0.050000000000000000"
+    }
+}

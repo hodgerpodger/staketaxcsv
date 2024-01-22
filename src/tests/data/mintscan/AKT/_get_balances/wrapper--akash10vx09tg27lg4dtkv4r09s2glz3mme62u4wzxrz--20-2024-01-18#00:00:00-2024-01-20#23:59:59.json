@@ -1,0 +1,536 @@
+{
+    "balances": [
+        {
+            "address": "akash10vx09tg27lg4dtkv4r09s2glz3mme62u4wzxrz",
+            "txhash": "EB21016F9DC0982B5A50C064AF32809286F5AF464C5F35684D0A204553E4BAAB",
+            "height": 0,
+            "timestamp": "2024-01-20T23:53:14Z",
+            "bank": [
+                {
+                    "denom": "uakt",
+                    "amount": "80311205"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1qvsus5qg8yhre7k2c78xkkw4nvqqgev7zw5wzs",
+                        "shares": "0.001385828212258991"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "0"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1ycv5n4fe0c5z22nr74t6v5g37glwc6vt6sjyft",
+                        "shares": "193820492.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "193820492"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
+                        "shares": "213182050.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "213182050"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1x0sdgtmvdl8d6mp85sqlsh63l07jkg3fz5uaz6",
+                        "shares": "110995846.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "110995846"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper18tmu0lrfsdvke8e3a3jsd7fq2rs29krfkkw8gz",
+                        "shares": "172761272.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "172761272"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1f6eqjk9zjc7tkzmvdjnz589w0c4sjfx5hd9z3n",
+                        "shares": "110975638.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "110975638"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1vksj7nqkd89uvc4kh8f5mh4f3235megmu583u9",
+                        "shares": "0.013402589399486682"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "0"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper10wq46f8du234aqtlucv7h9jtrfuxmcnttf90s2",
+                        "shares": "323535955.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "323535955"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1strxz39h5fapp7zvn5mvf8xm0ea9aajqjstv6g",
+                        "shares": "274710357.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "274710357"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1n3mhyp9fvcmuu8l0q8qvjy07x0rql8q4cyw7r4",
+                        "shares": "110836105.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "110836105"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper14kn0kk33szpwus9nh8n87fjel8djx0y0uzn073",
+                        "shares": "111315597.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "111315597"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1cke3ja95gkg4drpf28vt454k7pt0pvcmm56lqj",
+                        "shares": "332326668.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "332326668"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1epnrvkylqpk0f2d3us3cvx7x9tlycz42lwf0v6",
+                        "shares": "110975381.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "110975381"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "akashvaloper1qvsus5qg8yhre7k2c78xkkw4nvqqgev7zw5wzs",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "0.000078273286799184"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1ycv5n4fe0c5z22nr74t6v5g37glwc6vt6sjyft",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "21.511959906968626596"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "23.660882014168895750"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1x0sdgtmvdl8d6mp85sqlsh63l07jkg3fz5uaz6",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "47.031205679212490502"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper18tmu0lrfsdvke8e3a3jsd7fq2rs29krfkkw8gz",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "19.174618763930651544"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1f6eqjk9zjc7tkzmvdjnz589w0c4sjfx5hd9z3n",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "11.668808806822760822"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1vksj7nqkd89uvc4kh8f5mh4f3235megmu583u9",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "0.000019297095362078"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper10wq46f8du234aqtlucv7h9jtrfuxmcnttf90s2",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "35.908945923509670635"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1strxz39h5fapp7zvn5mvf8xm0ea9aajqjstv6g",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "30.489848735013789120"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1n3mhyp9fvcmuu8l0q8qvjy07x0rql8q4cyw7r4",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "11.654110107267884590"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper14kn0kk33szpwus9nh8n87fjel8djx0y0uzn073",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "16.041319181668146528"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1cke3ja95gkg4drpf28vt454k7pt0pvcmm56lqj",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "35.719851857632223064"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1epnrvkylqpk0f2d3us3cvx7x9tlycz42lwf0v6",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "11.668779713341441691"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        },
+        {
+            "address": "akash10vx09tg27lg4dtkv4r09s2glz3mme62u4wzxrz",
+            "txhash": "ABDC1FD4AC2F1C4FBF7855803E3355C2A26684B4CACEF2EDDA798A8FBD03ABA4",
+            "height": 0,
+            "timestamp": "2024-01-18T16:56:42Z",
+            "bank": [
+                {
+                    "denom": "uakt",
+                    "amount": "80361980"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1qvsus5qg8yhre7k2c78xkkw4nvqqgev7zw5wzs",
+                        "shares": "0.001385828212258991"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "0"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1ycv5n4fe0c5z22nr74t6v5g37glwc6vt6sjyft",
+                        "shares": "193665364.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "193665364"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
+                        "shares": "213011409.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "213011409"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1x0sdgtmvdl8d6mp85sqlsh63l07jkg3fz5uaz6",
+                        "shares": "110906973.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "110906973"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper18tmu0lrfsdvke8e3a3jsd7fq2rs29krfkkw8gz",
+                        "shares": "172622950.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "172622950"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1f6eqjk9zjc7tkzmvdjnz589w0c4sjfx5hd9z3n",
+                        "shares": "110891490.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "110891490"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1vksj7nqkd89uvc4kh8f5mh4f3235megmu583u9",
+                        "shares": "0.013402589399486682"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "0"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper10wq46f8du234aqtlucv7h9jtrfuxmcnttf90s2",
+                        "shares": "323276900.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "323276900"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1strxz39h5fapp7zvn5mvf8xm0ea9aajqjstv6g",
+                        "shares": "274490423.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "274490423"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1n3mhyp9fvcmuu8l0q8qvjy07x0rql8q4cyw7r4",
+                        "shares": "110751963.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "110751963"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper14kn0kk33szpwus9nh8n87fjel8djx0y0uzn073",
+                        "shares": "111226473.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "111226473"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1cke3ja95gkg4drpf28vt454k7pt0pvcmm56lqj",
+                        "shares": "332069017.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "332069017"
+                    }
+                },
+                {
+                    "delegation": {
+                        "validator_address": "akashvaloper1epnrvkylqpk0f2d3us3cvx7x9tlycz42lwf0v6",
+                        "shares": "110891198.000000000000000000"
+                    },
+                    "balance": {
+                        "denom": "uakt",
+                        "amount": "110891198"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "akashvaloper1qvsus5qg8yhre7k2c78xkkw4nvqqgev7zw5wzs",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "0.000077162014315551"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1ycv5n4fe0c5z22nr74t6v5g37glwc6vt6sjyft",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "8.586799928110990356"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "9.444581826061559697"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1x0sdgtmvdl8d6mp85sqlsh63l07jkg3fz5uaz6",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "4.917433962378815622"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper18tmu0lrfsdvke8e3a3jsd7fq2rs29krfkkw8gz",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "7.653823508808533600"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1f6eqjk9zjc7tkzmvdjnz589w0c4sjfx5hd9z3n",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "4.657966384713442710"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1vksj7nqkd89uvc4kh8f5mh4f3235megmu583u9",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "0.000019297095362078"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper10wq46f8du234aqtlucv7h9jtrfuxmcnttf90s2",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "14.333553762787939600"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1strxz39h5fapp7zvn5mvf8xm0ea9aajqjstv6g",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "12.170456901601615290"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1n3mhyp9fvcmuu8l0q8qvjy07x0rql8q4cyw7r4",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "4.652096906477697117"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper14kn0kk33szpwus9nh8n87fjel8djx0y0uzn073",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "4.931603433141473304"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1cke3ja95gkg4drpf28vt454k7pt0pvcmm56lqj",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "14.258450812249477232"
+                        }
+                    ]
+                },
+                {
+                    "validator_address": "akashvaloper1epnrvkylqpk0f2d3us3cvx7x9tlycz42lwf0v6",
+                    "reward": [
+                        {
+                            "denom": "uakt",
+                            "amount": "4.657953053115288872"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        }
+    ],
+    "pagination": {
+        "totalCount": 2,
+        "searchAfter": "MTcwNTU5NzAwMjAwMA=="
+    }
+}

@@ -1,0 +1,80 @@
+{
+    "balances": [
+        {
+            "address": "evmos15jtys3wy27lcvmjzewxr636uke6t0lk9qj7c6p",
+            "txhash": "",
+            "height": "18306748",
+            "timestamp": "2024-01-16 02:31:55",
+            "bank": [
+                {
+                    "denom": "aevmos",
+                    "amount": "1111740574613465107"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "evmosvaloper1gj8uu6pxcncdtav707a86v3sqva2svn45sx62g",
+                        "shares": "2337879164710293466120063.251144583923428262"
+                    },
+                    "balance": {
+                        "denom": "aevmos",
+                        "amount": "2326190000000000000000010"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "evmosvaloper1gj8uu6pxcncdtav707a86v3sqva2svn45sx62g",
+                    "reward": [
+                        {
+                            "denom": "aevmos",
+                            "amount": "48110099167358236528229.999999999999999999"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        },
+        {
+            "address": "evmos15jtys3wy27lcvmjzewxr636uke6t0lk9qj7c6p",
+            "txhash": "C4FD478AB2074EC99280E03F8F14B9A241B8F31B9E0A7D8523D4A4F8A248D5B8",
+            "height": 0,
+            "timestamp": "2023-12-21T17:15:00Z",
+            "bank": [
+                {
+                    "denom": "aevmos",
+                    "amount": "1111740574613465107"
+                }
+            ],
+            "delegation": [
+                {
+                    "delegation": {
+                        "validator_address": "evmosvaloper1gj8uu6pxcncdtav707a86v3sqva2svn45sx62g",
+                        "shares": "2337879164710293466120063.251144583923428262"
+                    },
+                    "balance": {
+                        "denom": "aevmos",
+                        "amount": "2326190000000000000000000"
+                    }
+                }
+            ],
+            "reward": [
+                {
+                    "validator_address": "evmosvaloper1gj8uu6pxcncdtav707a86v3sqva2svn45sx62g",
+                    "reward": [
+                        {
+                            "denom": "aevmos",
+                            "amount": "175367514738815609.999999999999999999"
+                        }
+                    ]
+                }
+            ],
+            "unbonding": []
+        }
+    ],
+    "pagination": {
+        "totalCount": 2,
+        "searchAfter": "MTcwMzE3ODkwMDAwMA=="
+    }
+}

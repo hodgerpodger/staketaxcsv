@@ -39,6 +39,7 @@ TXIDS_FOR_WALLET = [
     '3R6T4EazgGQXErYAbSDCUb3hBgwqmda4f5pkXu9FdGHJeueE9p2YxwvhgiGZy4hUCbv2yFngrGvvAct9gmfPSES4',
     '5Z2RUsgYZrVAUpWSLFPs1tWLnVBnFx1iW8oQuvEq8vAhd57D9jz58usCttdn32mcpLi6AQJHh3q2XUwddwNaqMJu',
     '4aJsEPh1TtJw6T4bbDKnuTd4m94czT9Wt8yuVTBn7bppn2FWnVmZfCjuHwiSRe2fqRgiMvfXghULVeHZt1VPKCFV',
+    '5R1hm2BUEm6ks5kDCaUpMfAyvRGuZxSCTuANyPBHkLKs6hhmZ8aAgboB6jRC1jKRqwRTyYUNpFJbPvt7ygXEeQMk',
 ]
 
 

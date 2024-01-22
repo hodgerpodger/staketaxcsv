@@ -6,7 +6,7 @@ import os
 import staketaxcsv.api
 from staketaxcsv.common.ExporterTypes import (
     FORMAT_DEFAULT, FORMATS, LP_TREATMENT_CHOICES, LP_TREATMENT_TRANSFERS)
-from staketaxcsv.common.ExporterBalances import BALANCES_HISTORICAL
+from staketaxcsv.common.BalExporter import BALANCES_HISTORICAL
 from staketaxcsv.settings_csv import (
     REPORTS_DIR, TICKER_AKT, TICKER_ALGO, TICKER_ARCH, TICKER_ATOM, TICKER_COSMOSPLUS,
     TICKER_EVMOS, TICKER_JUNO, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL, TICKER_STRD, TICKER_TIA)

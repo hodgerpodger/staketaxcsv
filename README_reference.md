@@ -18,8 +18,11 @@
   ```
   cd src
   
-  # run all tests
+  # run tests
   python -m unittest
+  
+  # run tests with verbose output
+  python -m unittest -v
   
   # run tests matching ...
   python -m unittest -k "test_redelegate"
@@ -33,6 +36,9 @@
   
   # run tests in file
   python -m unittest tests/tests/test_osmo.py
+  
+  # run special tests that require certain network/db/settings
+  SPECIALTEST=1 python -m unittest
   ```
   
 * Tests located at tests/tests/test*.py

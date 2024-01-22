@@ -180,7 +180,7 @@ def transaction(ticker, wallet_address, txid, csv_format="", path="", options=No
         exporter.export_format(csv_format, path)
 
 
-def historical_balances(ticker, wallet_address, path=None, options=None):
+def historical_balances(ticker, wallet_address, path=None, options=None, isTest=False):
     """ Writes historical balances CSV file for this wallet_address
 
         :param ticker: ALGO|ATOM|LUNA1|LUNA2|...   [see staketaxcsv.tickers()]
@@ -188,7 +188,7 @@ def historical_balances(ticker, wallet_address, path=None, options=None):
         :param path: (optional) <string file path> .  By default, writes to /tmp .
         :param options: (optional) dictionary [documentation not in great state; see parse_args() in
                https://github.com/hodgerpodger/staketaxcsv/blob/main/src/staketaxcsv/common/report_util.py]
-        """
+    """
     path = path if path else f"/tmp/{ticker}.{wallet_address}.balances_historical.csv"
     options = options if options else {}
 
@@ -196,11 +196,12 @@ def historical_balances(ticker, wallet_address, path=None, options=None):
 
     if hasattr(module, staketaxcsv.report_akt.balhistory.__name__):
         module.read_options(options)
-        exporter = module.balhistory(wallet_address)
-        if not exporter:
+        bal_exporter = module.balhistory(wallet_address)
+        if not bal_exporter:
             raise Exception("balhistory() did not return ExporterBalance object")
-        exporter.csv(path)
+        if isTest:
+            return bal_exporter.export_for_test()
+        else:
+            bal_exporter.export_csv(path)
     else:
         logging.error("No balhistory() function found for module=%s", str(module))
-
-    return False

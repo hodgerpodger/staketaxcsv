@@ -10,11 +10,10 @@ import logging
 import staketaxcsv.atom.processor
 from staketaxcsv.atom.config_atom import localconfig
 from staketaxcsv.common import report_util
-from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import ATOM_NODE, TICKER_ATOM
 from staketaxcsv.common.ibc.tx_data import TxDataMintscan
-from staketaxcsv.common.ibc import api_lcd
+from staketaxcsv.common.ibc import api_lcd, historical_balances
 from staketaxcsv.common.ibc.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
 
@@ -72,6 +71,16 @@ def txhistory(wallet_address):
     progress.report_message(f"Processing {len(elems)} ATOM transactions... ")
     staketaxcsv.atom.processor.process_txs(wallet_address, elems, exporter)
 
+    return exporter
+
+
+def balhistory(wallet_address):
+    """ Writes historical balances CSV rows to BalExporter object """
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+    max_txs = localconfig.limit
+
+    exporter = historical_balances.via_mintscan(
+        ATOM_NODE, TICKER_ATOM, wallet_address, max_txs, start_date, end_date)
     return exporter
 
 

@@ -81,7 +81,7 @@ def txhistory(wallet_address):
     return exporter
 
 
-def balancehistory(wallet_address):
+def balhistory(wallet_address):
     """ Writes historical balances CSV rows to BalanceExporter object """
     start_date, end_date = localconfig.start_date, localconfig.end_date
     max_txs = localconfig.limit
@@ -89,7 +89,6 @@ def balancehistory(wallet_address):
     exporter = historical_balances.via_mintscan(
         JUNO_NODE, TICKER_JUNO, wallet_address, max_txs, start_date, end_date)
     return exporter
-
 
 
 if __name__ == "__main__":
