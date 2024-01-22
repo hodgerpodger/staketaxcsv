@@ -62,8 +62,8 @@ def _txids_one_account(address, start_date, end_date, max_txs, txids_seen):
                 block_time = _unix_timestamp("2020-01-01 00:00:00")
 
             # Check if txid is within the time range
-            if ((start_date is None or block_time >= start_ts) and
-                (end_date is None or block_time <= end_ts)):
+            if ((start_date is None or block_time >= start_ts)
+                 and (end_date is None or block_time <= end_ts)):
                 if txid not in txids_seen:
                     out.append(txid)
                     txids_seen.add(txid)

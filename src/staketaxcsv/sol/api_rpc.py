@@ -216,6 +216,8 @@ class RpcAPI(object):
 
     @classmethod
     def get_txids(cls, wallet_address, limit=None, before_txid=None):
+        exclude_failed = localconfig.exclude_failed
+
         data = cls._get_txids(wallet_address, limit, before_txid)
 
         if "result" not in data or data["result"] is None:
@@ -228,6 +230,11 @@ class RpcAPI(object):
                 continue
             if info["confirmationStatus"] != "finalized":
                 continue
+
+            # Omit failed transactions if exclude_failed setting is on.
+            if exclude_failed:
+                if info.get("err") is not None:
+                    continue
 
             txid = info["signature"]
             block_time = info["blockTime"]

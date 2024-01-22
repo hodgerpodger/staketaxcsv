@@ -35,6 +35,7 @@ def read_options(options):
     report_util.read_common_options(localconfig, options)
     localconfig.start_date = options.get("start_date", None)
     localconfig.end_date = options.get("end_date", None)
+    localconfig.exclude_failed = options.get("exclude_failed", localconfig.exclude_failed)
     logging.info("localconfig: %s", localconfig.__dict__)
 
 

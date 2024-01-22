@@ -134,7 +134,6 @@ def parse_args(ticker):
             default=False,
             help="Process transactions starting from the latest block in the previous run.",
         )
-
     if ticker in [TICKER_COSMOSPLUS]:
         parser.add_argument(
             "--cosmosplus_node",
@@ -145,6 +144,13 @@ def parse_args(ticker):
             "--cosmosplus_ticker",
             type=str,
             help="symbol of token (only used in report_cosmosplus.py)"
+        )
+    if ticker in [TICKER_SOL]:
+        parser.add_argument(
+            "--exclude_failed",
+            action="store_true",
+            default=False,
+            help="Exclude failed transactions"
         )
 
     args = parser.parse_args()
@@ -181,6 +187,8 @@ def parse_args(ticker):
         options["cosmosplus_node"] = args.cosmosplus_node
     if "cosmosplus_ticker" in args:
         options["cosmosplus_ticker"] = args.cosmosplus_ticker
+    if "exclude_failed" in args:
+        options["exclude_failed"] = args.exclude_failed
 
     return args.wallet_address, args.format, args.txid, options
 
