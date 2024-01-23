@@ -53,7 +53,7 @@ def _txids_one_account(address, start_date, end_date, max_txs, txids_seen):
     before_txid = None
     keep_fetching = True
     for j in range(ABSOLUTE_MAX_QUERIES):
-        logging.info("query %s for address=%s", j, address)
+        logging.info("query %s for address=%s, before_txid=%s", j, address, before_txid)
         txids, before_txid = RpcAPI.get_txids(address, limit=LIMIT_PER_QUERY, before_txid=before_txid)
 
         for txid, block_time in txids:
