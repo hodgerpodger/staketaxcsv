@@ -8,11 +8,19 @@ LIMIT_PER_QUERY = 1000
 
 
 def get_txids(wallet_address, progress, start_date=None, end_date=None):
+    exclude_associated = localconfig.exclude_associated
+
     # Sometimes, transactions do not all appear under main wallet address when querying transaction history.
     # So retrieve token addresses too.
     addresses = [wallet_address]
-    token_accounts = RpcAPI.fetch_token_accounts(wallet_address).keys()
-    addresses.extend(token_accounts)
+
+    if exclude_associated:
+        # exclude_associated=True : do not use associated token accounts' transactions
+        # (useful if intractable # of associated accounts)
+        pass
+    else:
+        token_accounts = RpcAPI.fetch_token_accounts(wallet_address).keys()
+        addresses.extend(token_accounts)
 
     out = get_txids_for_accounts(addresses, progress, start_date, end_date)
     return out
@@ -77,7 +85,7 @@ def _txids_one_account(address, start_date, end_date, max_txs, txids_seen):
         if before_txid is None:
             keep_fetching = False
         # Reached max transaction limit case
-        if len(txids) > max_txs:
+        if len(out) > max_txs:
             keep_fetching = False
 
         if not keep_fetching:

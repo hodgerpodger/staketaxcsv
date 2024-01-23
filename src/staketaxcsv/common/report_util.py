@@ -42,7 +42,7 @@ def parse_args(ticker):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "wallet_address",
-        help="wallet address (not staking address)",
+        help="Wallet address (not staking address)",
     )
     parser.add_argument(
         "--format",
@@ -76,18 +76,18 @@ def parse_args(ticker):
         "--dbcache",
         action="store_true",
         default=False,
-        help="force use db Cache class (requires dynamodb and overrides environment DB_CACHE)",
+        help="Force use db Cache class (requires dynamodb and overrides environment DB_CACHE)",
     )
     parser.add_argument(
         "--no_dbcache",
         action="store_true",
         default=False,
-        help="force don't use db Cache class (overrides environment DB_CACHE)"
+        help="Force don't use db Cache class (overrides environment DB_CACHE)"
     )
     parser.add_argument(
         "--limit",
         type=int,
-        help="change to non-default max transactions limit",
+        help="Change to non-default max transactions limit",
     )
     parser.add_argument(
         "--koinlynullmap",
@@ -111,7 +111,7 @@ def parse_args(ticker):
             "--minor_rewards",
             action="store_true",
             default=False,
-            help="include minor currency rewards",
+            help="Include minor currency rewards",
         )
 
     if ticker in [TICKER_LUNA1, TICKER_OSMO, TICKER_ALGO]:
@@ -143,7 +143,7 @@ def parse_args(ticker):
         parser.add_argument(
             "--cosmosplus_ticker",
             type=str,
-            help="symbol of token (only used in report_cosmosplus.py)"
+            help="Symbol of token (only used in report_cosmosplus.py)"
         )
     if ticker in [TICKER_SOL]:
         parser.add_argument(
@@ -151,6 +151,13 @@ def parse_args(ticker):
             action="store_true",
             default=False,
             help="Exclude failed transactions"
+        )
+        parser.add_argument(
+            "--exclude_associated",
+            action="store_true",
+            default=False,
+            help="Exclude associated token accounts' transactions "
+                 "(useful if intractable # of associated accounts)"
         )
 
     args = parser.parse_args()
@@ -189,6 +196,8 @@ def parse_args(ticker):
         options["cosmosplus_ticker"] = args.cosmosplus_ticker
     if "exclude_failed" in args:
         options["exclude_failed"] = args.exclude_failed
+    if "exclude_associated" in args:
+        options["exclude_associated"] = args.exclude_associated
 
     return args.wallet_address, args.format, args.txid, options
 
