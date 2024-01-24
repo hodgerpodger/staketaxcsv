@@ -6,7 +6,7 @@ MINTSCAN_MAX_TXS = os.environ.get("STAKETAX_MINTSCAN_MAX_TXS", 5000)
 
 # Environment variables (required for each respective report)
 
-AKT_NODE = os.environ.get("STAKETAX_AKT_NODE", "")
+AKT_NODE = os.environ.get("STAKETAX_AKT_NODE", "https://akash-api.polkachu.com")
 ALGO_HIST_INDEXER_NODE = os.environ.get("STAKETAX_ALGO_HIST_INDEXER_NODE", "https://indexer.algoexplorerapi.io")
 ALGO_INDEXER_NODE = os.environ.get("STAKETAX_ALGO_INDEXER_NODE", "https://mainnet-idx.algonode.cloud")
 ALGO_NFDOMAINS = os.environ.get("STAKETAX_ALGO_NFDOMAINS", "https://api.nf.domains")
@@ -17,18 +17,10 @@ BLD_NODE_RPC = os.environ.get("STAKETAX_BLD_NODE_RPC", "")
 BTSG_NODE = os.environ.get("STAKETAX_BTSG_NODE", "https://lcd.explorebitsong.com")
 DVPN_NODE = os.environ.get("STAKETAX_DVPN_NODE", "https://lcd.sentinel.co")
 DVPN_NODE_RPC = os.environ.get("STAKETAX_DVPN_NODE_RPC", "https://rpc.sentinel.co")
-EVMOS_NODE = os.environ.get("STAKETAX_EVMOS_NODE", "")
+EVMOS_NODE = os.environ.get("STAKETAX_EVMOS_NODE", "https://rest-evmos.ecostake.com")
 FET_NODE = os.environ.get("STAKETAX_FET_NODE", "https://rest-fetchhub.fetch.ai")
 HUAHUA_NODE = os.environ.get("STAKETAX_HUAHUA_NODE", "")
-JUNO_NODE = os.environ.get("STAKETAX_JUNO_NODE", "")
-
-# Deprecated
-JUNO_NODES_RPC = [
-    "https://rpc-archive.junonetwork.io",      # 4136532 to now
-    "https://rpc-v3-archive.junonetwork.io",   # 2578099 to #4136530
-    "https://rpc-v2-archive.junonetwork.io",   # 1 to #2578097
-]
-
+JUNO_NODE = os.environ.get("STAKETAX_JUNO_NODE", "https://juno-api.polkachu.com")
 KUJI_NODE = os.environ.get("STAKETAX_KUJI_NODE", "")
 KYVE_NODE = os.environ.get("STAKETAX_KYVE_NODE", "https://api-eu-1.kyve.network")
 LUNA1_NODE = os.environ.get("STAKETAX_LUNA1_NODE", "https://lcd.terra.dev")
@@ -40,8 +32,8 @@ ROWAN_NODE = os.environ.get("STAKETAX_ROWAN_NODE", "")
 SCRT_NODE = os.environ.get("STAKETAX_SCRT_NODE", "")
 SOL_NODE = os.environ.get("STAKETAX_SOL_NODE", "https://api.mainnet-beta.solana.com")
 STARS_NODE = os.environ.get("STAKETAX_STARS_NODE", "")
-STRD_NODE = os.environ.get("STAKETAX_STRD_NODE", "")
-TIA_NODE = os.environ.get("STAKETAX_TIA_NODE", "")
+STRD_NODE = os.environ.get("STAKETAX_STRD_NODE", "https://lcd-stride.whispernode.com")
+TIA_NODE = os.environ.get("STAKETAX_TIA_NODE", "https://celestia.api.kjnodes.com")
 TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
 
 

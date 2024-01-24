@@ -59,7 +59,6 @@ def _txids_one_account(address, start_date, end_date, max_txs, txids_seen):
 
     out = []
     before_txid = None
-    keep_fetching = True
     for j in range(ABSOLUTE_MAX_QUERIES):
         logging.info("query %s for address=%s, before_txid=%s", j, address, before_txid)
         txids, before_txid = RpcAPI.get_txids(address, limit=LIMIT_PER_QUERY, before_txid=before_txid)
@@ -78,18 +77,15 @@ def _txids_one_account(address, start_date, end_date, max_txs, txids_seen):
 
             # Reached start_date case
             if start_date is not None and block_time < start_ts:
-                keep_fetching = False
-                break
+                return out
+
+            # Reached max transaction limit case
+            if len(out) >= max_txs:
+                return out
 
         # No more transactions for address case
         if before_txid is None:
-            keep_fetching = False
-        # Reached max transaction limit case
-        if len(out) > max_txs:
-            keep_fetching = False
-
-        if not keep_fetching:
-            break
+            return out
 
     return out
 
