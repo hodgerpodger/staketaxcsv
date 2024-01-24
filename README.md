@@ -67,6 +67,7 @@ See [README_reference.md](README_reference.md):
 
 * [Linting](README_reference.md#linting)
 * [Tests](README_reference.md#tests)
+* [Usage as staketaxcsv module](README_reference.md#usage-as-staketaxcsv-module)
 * [Docker](README_reference.md#docker)
 * [PYTHONPATH Issues](README_reference.md#pythonpath-issues)
 * [Run CSV job with no transaction limit](README_reference.md#run-csv-job-with-no-transaction-limit)
