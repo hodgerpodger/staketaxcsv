@@ -124,9 +124,9 @@ Default code was made to work out of the box. These are changes that require man
 
 ## RPC Node settings
 
-* Default `sample.env` points to public RPC nodes.  This generally works, up to a point.
-* Edit/uncomment `sample.env` to change to point to more reliable private RPC node(s).
-  * Examples for private RPC nodes (Figment, Quicknode) are included.
+* Default `sample.env` points to public RPC nodes.  This generally works but sometimes better alternatives may exist (i.e. private nodes).
+* Edit/uncomment `sample.env` to change environment variable settings (and reload sample.env).
+
 
 ## DB Cache
 
