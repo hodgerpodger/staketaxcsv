@@ -53,9 +53,7 @@
   python3 staketaxcsv/report_osmo.py <wallet_address> --historical
   ```
 
-* Usage as staketaxcsv module
-  * See [Usage as staketaxcsv module](README_reference.md#usage-as-staketaxcsv-module)
-
+* Usage as staketaxcsv module: see [Usage as staketaxcsv module](README_reference.md#usage-as-staketaxcsv-module)
 
 # Contributing Code
 
