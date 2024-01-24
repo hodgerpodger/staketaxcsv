@@ -2,7 +2,7 @@ import logging
 
 from staketaxcsv.settings_csv import (
     TICKER_ALGO, TICKER_AKT, TICKER_ARCH, TICKER_ATOM, TICKER_BLD, TICKER_BTSG, TICKER_DVPN,
-    TICKER_EVMOS, TICKER_FET, TICKER_COSMOSPLUS, TICKER_HUAHUA,
+    TICKER_EVMOS, TICKER_FET, TICKER_COSMOSPLUS, TICKER_HUAHUA, TICKER_INJ,
     TICKER_IOTEX, TICKER_JUNO, TICKER_KUJI, TICKER_KYVE, TICKER_LUNA1,
     TICKER_LUNA2, TICKER_MNTL, TICKER_OSMO, TICKER_REGEN,
     TICKER_ROWAN, TICKER_SCRT, TICKER_SOL, TICKER_STARS, TICKER_STRD, TICKER_TIA,
@@ -21,6 +21,7 @@ import staketaxcsv.report_dvpn
 import staketaxcsv.report_evmos
 import staketaxcsv.report_fet
 import staketaxcsv.report_huahua
+import staketaxcsv.report_inj
 import staketaxcsv.report_iotex
 import staketaxcsv.report_juno
 import staketaxcsv.report_kuji
@@ -52,6 +53,7 @@ REPORT_MODULES = {
     TICKER_FET: staketaxcsv.report_fet,
     TICKER_HUAHUA: staketaxcsv.report_huahua,
     TICKER_IOTEX: staketaxcsv.report_iotex,
+    TICKER_INJ: staketaxcsv.report_inj,
     TICKER_JUNO: staketaxcsv.report_juno,
     TICKER_KUJI: staketaxcsv.report_kuji,
     TICKER_KYVE: staketaxcsv.report_kyve,

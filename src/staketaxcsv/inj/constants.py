@@ -1,0 +1,2 @@
+MINTSCAN_LABEL_INJ = "injective"
+CURRENCY_INJ = "INJ"
