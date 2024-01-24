@@ -7,3 +7,4 @@ class localconfig(config):
     node = ""
     ticker = TICKER_COSMOSPLUS
     mintscan_label = "generic"
+    limit = 5000
