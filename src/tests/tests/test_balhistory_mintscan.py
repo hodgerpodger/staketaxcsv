@@ -30,7 +30,7 @@ def run_test(ticker, wallet_address, start_date, end_date):
         wallet_address,
         path=None,
         options={"start_date": start_date, "end_date": end_date},
-        isTest=True
+        logs="test"
     )
 
 
