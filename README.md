@@ -60,13 +60,6 @@
 * See [Tests](README_reference.md#tests) for running unit tests.
 * See [Linting](README_reference.md#linting) to see code style feedback.
 * See [Docker](README_reference.md#docker) to alternatively install/run in docker container.
-* Providing a sample txid will expedite a pull request (email support@stake.tax,
-  DM @staketax, etc.):
-
-  ```
-  # For a given txid, your PR (most commonly) should print different output before/after:
-  python3 staketaxcsv/report_osmo.py <wallet_address> --txid <txid>
-  ```
 
 # Reference
 
