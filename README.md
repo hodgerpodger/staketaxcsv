@@ -48,6 +48,9 @@
   
   # Show CSV result for single transaction in debug mode (great for development/debugging)
   python3 staketaxcsv/report_osmo.py <wallet_address> --txid <txid> --debug
+
+  # Create historical balances CSV
+  python3 staketaxcsv/report_osmo.py <wallet_address> --historical
   ```
 
 * Usage as staketaxcsv module
@@ -77,6 +80,9 @@
     >>> # check address is valid
     >>> staketaxcsv.has_csv("OSMO", address)
     True
+    >>>> # write true wallet balance CSV
+    >>> staketaxcsv.historical_balances("OSMO", "osmo1ku03asknjnx7dse9jgujc529vwscp6n50z5wet")
+    ...
   ```
 
 # Contributing Code
