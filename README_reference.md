@@ -45,6 +45,37 @@
 * Note: test suite very limited at the moment.  It should expand over time.
 
 
+# Usage as staketaxcsv module
+```
+  >>> import staketaxcsv
+  >>> help(staketaxcsv.api)
+  >>>
+  >>> address = "<SOME_ADDRESS>"
+  >>> txid = "<SOME_TXID>"
+  >>>
+  >>> staketaxcsv.formats()
+  ['default', 'balances', 'accointing', 'bitcointax', 'coinledger', 'coinpanda', 'cointelli', 'cointracking', 'cointracker', 'cryptio', 'cryptocom', 'cryptotaxcalculator', 'cryptoworth', 'koinly', 'recap', 'taxbit', 'tokentax', 'zenledger']
+  >>>
+  >>> staketaxcsv.tickers()
+  ['ALGO', 'ATOM', 'BLD', 'BTSG', 'DVPN', 'EVMOS', 'FET', 'HUAHUA', 'IOTX', 'JUNO', 'KUJI', 'LUNA1', 'LUNA2', 'OSMO', 'REGEN', 'SOL', 'STARS']
+  >>>
+  >>> # write single transaction CSV
+  >>> staketaxcsv.transaction("ATOM", address, txid, "koinly")
+  ...
+  >>> # write koinly CSV
+  >>> staketaxcsv.csv("OSMO", address, "koinly")
+  ...
+  >>> # write all CSVs (koinly, cointracking, etc.)
+  >>> staketaxcsv.csv_all("OSMO", address)
+  ...
+  >>> # check address is valid
+  >>> staketaxcsv.has_csv("OSMO", address)
+  True
+  >>>> # write true wallet balance CSV
+  >>> staketaxcsv.historical_balances("OSMO", "osmo1ku03asknjnx7dse9jgujc529vwscp6n50z5wet")
+  ...
+```
+
 # Docker
 
 Sample of using a docker container
