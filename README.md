@@ -32,22 +32,22 @@
 
 * Usage as CLI
   * See [PYTHONPATH issues](README_reference.md#PYTHONPATH-issues) if encountering import errors.
-  * Same arguments apply for report_algo.py (ALGO), report_atom.py (ATOM), report_*.py:
+  * Same arguments apply for report_algo.py (ALGO), ..., report_*.py:
   
   ```sh
   cd src
   
   # Create default CSV
-  python3 staketaxcsv/report_atom.py <wallet_address>
+  python3 staketaxcsv/report_osmo.py <wallet_address>
   
   # Create all CSV formats (i.e. koinly, cointracking, etc.)
-  python3 staketaxcsv/report_atom.py <wallet_address> --format all
+  python3 staketaxcsv/report_osmo.py <wallet_address> --format all
   
   # Show CSV result for single transaction (great for development/debugging)
-  python3 staketaxcsv/report_atom.py <wallet_address> --txid <txid>
+  python3 staketaxcsv/report_osmo.py <wallet_address> --txid <txid>
   
   # Show CSV result for single transaction in debug mode (great for development/debugging)
-  python3 staketaxcsv/report_atom.py <wallet_address> --txid <txid> --debug
+  python3 staketaxcsv/report_osmo.py <wallet_address> --txid <txid> --debug
   ```
 
 * Usage as staketaxcsv module
@@ -69,13 +69,13 @@
     >>> staketaxcsv.transaction("ATOM", address, txid, "koinly")
     ...
     >>> # write koinly CSV
-    >>> staketaxcsv.csv("ATOM", address, "koinly")
+    >>> staketaxcsv.csv("OSMO", address, "koinly")
     ...
     >>> # write all CSVs (koinly, cointracking, etc.)
-    >>> staketaxcsv.csv_all("ATOM", address)
+    >>> staketaxcsv.csv_all("OSMO", address)
     ...
     >>> # check address is valid
-    >>> staketaxcsv.has_csv("ATOM", address)
+    >>> staketaxcsv.has_csv("OSMO", address)
     True
   ```
 
