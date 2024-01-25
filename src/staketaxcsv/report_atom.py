@@ -44,6 +44,8 @@ def txone(wallet_address, txid):
 
     exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
     txinfo = staketaxcsv.atom.processor.process_tx(wallet_address, elem, exporter)
+    if localconfig.debug:
+        txinfo.print()
 
     return exporter
 

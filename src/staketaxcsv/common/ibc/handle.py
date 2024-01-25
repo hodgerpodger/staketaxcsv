@@ -1,6 +1,7 @@
 
 from staketaxcsv.common.ibc import constants as co
 from staketaxcsv.common.ibc import make_tx, util_ibc
+from staketaxcsv.common.ibc import denoms
 
 
 def handle_simple(exporter, txinfo, msginfo):
@@ -34,17 +35,20 @@ def handle_simple_outbound(exporter, txinfo, msginfo):
 def handle_staking(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
 
+    # Gather claim/rewards amount(s)
     totals = {}
     for amount, currency in transfers_in:
         if currency not in totals:
             totals[currency] = 0
         totals[currency] += amount
 
+    delegate_comment = _comments_on_delegate(msginfo)
+
     if sum(totals.values()) > 0:
         i = 0
         for currency, total in totals.items():
             row = make_tx.make_reward_tx(txinfo, msginfo, total, currency)
-            row.comment = "claim reward in {}".format(msginfo.msg_type)
+            row.comment = f"claim reward in {msginfo.msg_type}{delegate_comment}"
 
             # Only first row should have fee (if exists)
             if i > 0:
@@ -56,7 +60,29 @@ def handle_staking(exporter, txinfo, msginfo):
     else:
         # No reward: add non-income delegation transaction just so transaction doesn't appear "missing"
         row = make_tx.make_simple_tx(txinfo, msginfo)
+        row.comment += delegate_comment
         exporter.ingest_row(row)
+
+
+def _comments_on_delegate(msginfo):
+    msg_type = msginfo.msg_type
+    message = msginfo.message
+
+    if msg_type == co.MSG_TYPE_DELEGATE:
+        action = "delegated"
+    elif msg_type == co.MSG_TYPE_REDELEGATE:
+        action = "redelegated"
+    elif msg_type == co.MSG_TYPE_UNDELEGATE:
+        action = "undelegated"
+    else:
+        return ""
+
+    if "amount" in message:
+        amount_raw, currency_raw = message["amount"]["amount"], message["amount"]["denom"]
+        amount, currency = denoms.amount_currency_from_raw(amount_raw, currency_raw, msginfo.lcd_node)
+        return f" [{action} {amount} {currency}]"
+    else:
+        return f" [{action}]"
 
 
 def handle_transfer_ibc(exporter, txinfo, msginfo):
