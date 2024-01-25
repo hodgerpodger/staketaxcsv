@@ -1,5 +1,6 @@
 from staketaxcsv.common.ExporterTypes import (
-    TX_TYPE_AIRDROP, TX_TYPE_NOOP, TX_TYPE_STAKING, TX_TYPE_UNKNOWN, TX_TYPE_SPEND, TX_TYPE_TRADE)
+    TX_TYPE_AIRDROP, TX_TYPE_NOOP, TX_TYPE_STAKING, TX_TYPE_UNKNOWN, TX_TYPE_SPEND, TX_TYPE_TRADE,
+    TX_TYPE_SELF_TRANSFER)
 from staketaxcsv.common import make_tx
 
 
@@ -76,6 +77,13 @@ def make_transfer_out_tx(txinfo, msginfo, sent_amount, sent_currency, dest=None)
     row = make_tx.make_transfer_out_tx(txinfo, sent_amount, sent_currency, dest)
     row.txid = "{}-{}".format(txinfo.txid, msginfo.msg_index)
     _add_memo(row, txinfo)
+
+    return row
+
+
+def make_self_transfer_tx(txinfo, msginfo):
+    row = _make_tx(txinfo, msginfo, "", "", "", "", tx_type=TX_TYPE_SELF_TRANSFER)
+    row.txid = "{}-{}".format(txinfo.txid, msginfo.msg_index)
 
     return row
 

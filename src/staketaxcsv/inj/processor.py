@@ -36,7 +36,6 @@ def _handle_message(exporter, txinfo, msginfo):
     try:
         msg_type = msginfo.msg_type
 
-
         staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
     except Exception as e:
         logging.error("Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))

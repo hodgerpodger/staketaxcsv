@@ -96,7 +96,11 @@ def handle_transfer(exporter, txinfo, msginfo):
 
 
 def _handle_transfer(exporter, txinfo, msginfo, transfers_in, transfers_out):
-    if len(transfers_in) == 1 and len(transfers_out) == 0:
+    if _is_self_transfer(msginfo):
+        row = make_tx.make_self_transfer_tx(txinfo, msginfo)
+        exporter.ingest_row(row)
+        return
+    elif len(transfers_in) == 1 and len(transfers_out) == 0:
         amount, currency, _, _ = transfers_in[0]
         row = make_tx.make_transfer_in_tx(txinfo, msginfo, amount, currency)
         exporter.ingest_row(row)
@@ -122,6 +126,16 @@ def _handle_transfer(exporter, txinfo, msginfo, transfers_in, transfers_out):
             exporter.ingest_row(row)
     else:
         handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+
+
+def _is_self_transfer(msginfo):
+    message = msginfo.message
+    from_address = message.get("from_address")
+    to_address = message.get("to_address")
+    if from_address and (from_address == to_address):
+        return True
+    else:
+        return False
 
 
 def handle_multisend(exporter, txinfo, msginfo):

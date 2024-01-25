@@ -95,6 +95,7 @@ TX_TYPE_WITHDRAW_COLLATERAL = "_WITHDRAW_COLLATERAL"
 TX_TYPE_STAKE = "_STAKE"
 TX_TYPE_UNSTAKE = "_UNSTAKE"
 TX_TYPE_FAILED_NO_FEE = "_FAILED_NO_FEE"
+TX_TYPE_SELF_TRANSFER = "_SELF_TRANSFER"
 
 # ### LUNA ##########################################################################################
 
