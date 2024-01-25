@@ -54,7 +54,7 @@ def handle_jupiter_dca(exporter, txinfo):
     txinfo.comment = "jupiter_dca"
     transfers_in, transfers_out, _ = txinfo.transfers_net
 
-    if "OpenDca" in txinfo.log_instructions:
+    if ("OpenDca" in txinfo.log_instructions or "OpenDcaV2" in txinfo.log_instructions):
         # open dca order tx
         _handle_open_dca(exporter, txinfo)
         return
