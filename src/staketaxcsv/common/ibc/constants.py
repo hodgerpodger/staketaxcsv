@@ -66,6 +66,7 @@ MINTSCAN_LABELS = {
     "DARC": "konstellation",
     "DESMOS": "desmos",
     "DVPN": "sentinel",
+    "DYDX": "dydx",
     "EVMOS": "evmos",
     "FET": "fetchai",
     "FIS": "stafi",

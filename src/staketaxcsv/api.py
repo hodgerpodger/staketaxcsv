@@ -1,13 +1,6 @@
 import logging
 
-from staketaxcsv.settings_csv import (
-    TICKER_ALGO, TICKER_AKT, TICKER_ARCH, TICKER_ATOM, TICKER_BLD, TICKER_BTSG, TICKER_DVPN,
-    TICKER_EVMOS, TICKER_FET, TICKER_COSMOSPLUS, TICKER_HUAHUA, TICKER_INJ,
-    TICKER_IOTEX, TICKER_JUNO, TICKER_KUJI, TICKER_KYVE, TICKER_LUNA1,
-    TICKER_LUNA2, TICKER_MNTL, TICKER_OSMO, TICKER_REGEN,
-    TICKER_ROWAN, TICKER_SCRT, TICKER_SOL, TICKER_STARS, TICKER_STRD, TICKER_TIA,
-    TICKER_TORI
-)
+from staketaxcsv import settings_csv as co
 from staketaxcsv.common.ExporterTypes import FORMATS
 
 import staketaxcsv.report_algo
@@ -18,6 +11,7 @@ import staketaxcsv.report_bld
 import staketaxcsv.report_btsg
 import staketaxcsv.report_cosmosplus
 import staketaxcsv.report_dvpn
+import staketaxcsv.report_dydx
 import staketaxcsv.report_evmos
 import staketaxcsv.report_fet
 import staketaxcsv.report_huahua
@@ -39,36 +33,36 @@ import staketaxcsv.report_strd
 import staketaxcsv.report_tia
 import staketaxcsv.report_tori
 
-
 REPORT_MODULES = {
-    TICKER_ALGO: staketaxcsv.report_algo,
-    TICKER_AKT: staketaxcsv.report_akt,
-    TICKER_ARCH: staketaxcsv.report_arch,
-    TICKER_ATOM: staketaxcsv.report_atom,
-    TICKER_BLD: staketaxcsv.report_bld,
-    TICKER_BTSG: staketaxcsv.report_btsg,
-    TICKER_COSMOSPLUS: staketaxcsv.report_cosmosplus,
-    TICKER_DVPN: staketaxcsv.report_dvpn,
-    TICKER_EVMOS: staketaxcsv.report_evmos,
-    TICKER_FET: staketaxcsv.report_fet,
-    TICKER_HUAHUA: staketaxcsv.report_huahua,
-    TICKER_IOTEX: staketaxcsv.report_iotex,
-    TICKER_INJ: staketaxcsv.report_inj,
-    TICKER_JUNO: staketaxcsv.report_juno,
-    TICKER_KUJI: staketaxcsv.report_kuji,
-    TICKER_KYVE: staketaxcsv.report_kyve,
-    TICKER_LUNA1: staketaxcsv.report_luna1,
-    TICKER_LUNA2: staketaxcsv.report_luna2,
-    TICKER_MNTL: staketaxcsv.report_mntl,
-    TICKER_OSMO: staketaxcsv.report_osmo,
-    TICKER_REGEN: staketaxcsv.report_regen,
-    TICKER_ROWAN: staketaxcsv.report_rowan,
-    TICKER_SCRT: staketaxcsv.report_scrt,
-    TICKER_SOL: staketaxcsv.report_sol,
-    TICKER_STARS: staketaxcsv.report_stars,
-    TICKER_STRD: staketaxcsv.report_strd,
-    TICKER_TIA: staketaxcsv.report_tia,
-    TICKER_TORI: staketaxcsv.report_tori,
+    co.TICKER_ALGO: staketaxcsv.report_algo,
+    co.TICKER_AKT: staketaxcsv.report_akt,
+    co.TICKER_ARCH: staketaxcsv.report_arch,
+    co.TICKER_ATOM: staketaxcsv.report_atom,
+    co.TICKER_BLD: staketaxcsv.report_bld,
+    co.TICKER_BTSG: staketaxcsv.report_btsg,
+    co.TICKER_COSMOSPLUS: staketaxcsv.report_cosmosplus,
+    co.TICKER_DVPN: staketaxcsv.report_dvpn,
+    co.TICKER_DYDX: staketaxcsv.report_dydx,
+    co.TICKER_EVMOS: staketaxcsv.report_evmos,
+    co.TICKER_FET: staketaxcsv.report_fet,
+    co.TICKER_HUAHUA: staketaxcsv.report_huahua,
+    co.TICKER_IOTEX: staketaxcsv.report_iotex,
+    co.TICKER_INJ: staketaxcsv.report_inj,
+    co.TICKER_JUNO: staketaxcsv.report_juno,
+    co.TICKER_KUJI: staketaxcsv.report_kuji,
+    co.TICKER_KYVE: staketaxcsv.report_kyve,
+    co.TICKER_LUNA1: staketaxcsv.report_luna1,
+    co.TICKER_LUNA2: staketaxcsv.report_luna2,
+    co.TICKER_MNTL: staketaxcsv.report_mntl,
+    co.TICKER_OSMO: staketaxcsv.report_osmo,
+    co.TICKER_REGEN: staketaxcsv.report_regen,
+    co.TICKER_ROWAN: staketaxcsv.report_rowan,
+    co.TICKER_SCRT: staketaxcsv.report_scrt,
+    co.TICKER_SOL: staketaxcsv.report_sol,
+    co.TICKER_STARS: staketaxcsv.report_stars,
+    co.TICKER_STRD: staketaxcsv.report_strd,
+    co.TICKER_TIA: staketaxcsv.report_tia,
+    co.TICKER_TORI: staketaxcsv.report_tori,
 }
 
 

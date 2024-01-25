@@ -1,24 +1,24 @@
 """
-usage: python3 staketaxcsv/report_inj.py <walletaddress> [--format all|cointracking|koinly|..]
+usage: python3 staketaxcsv/report_dydx.py <walletaddress> [--format all|cointracking|koinly|..]
 
-Prints transactions and writes CSV(s) to _reports/INJ*.csv
+Prints transactions and writes CSV(s) to _reports/DYDX*.csv
 """
 
 import logging
 
-import staketaxcsv.inj.processor
+import staketaxcsv.dydx.processor
 from staketaxcsv.common.ibc import api_lcd, historical_balances
-from staketaxcsv.inj.config_inj import localconfig
+from staketaxcsv.dydx.config_dydx import localconfig
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.settings_csv import INJ_NODE, TICKER_INJ
+from staketaxcsv.settings_csv import DYDX_NODE, TICKER_DYDX
 from staketaxcsv.common.ibc.tx_data import TxDataMintscan
 from staketaxcsv.common.ibc.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
 
 
 def main():
-    report_util.main_default(TICKER_INJ)
+    report_util.main_default(TICKER_DYDX)
 
 
 def read_options(options):
@@ -30,18 +30,18 @@ def read_options(options):
 
 def _txdata():
     max_txs = localconfig.limit
-    return TxDataMintscan(TICKER_INJ, max_txs)
+    return TxDataMintscan(TICKER_DYDX, max_txs)
 
 
 def wallet_exists(wallet_address):
-    return api_lcd.make_lcd_api(INJ_NODE).account_exists(wallet_address)
+    return api_lcd.make_lcd_api(DYDX_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
     elem = _txdata().get_tx(txid)
 
-    exporter = Exporter(wallet_address, localconfig, TICKER_INJ)
-    txinfo = staketaxcsv.inj.processor.process_tx(wallet_address, elem, exporter)
+    exporter = Exporter(wallet_address, localconfig, TICKER_DYDX)
+    txinfo = staketaxcsv.dydx.processor.process_tx(wallet_address, elem, exporter)
 
     if localconfig.debug:
         print("txinfo:")
@@ -60,7 +60,7 @@ def txhistory(wallet_address):
     """ Configure localconfig based on options dictionary. """
     start_date, end_date = localconfig.start_date, localconfig.end_date
     progress = ProgressMintScan(localconfig)
-    exporter = Exporter(wallet_address, localconfig, TICKER_INJ)
+    exporter = Exporter(wallet_address, localconfig, TICKER_DYDX)
     txdata = _txdata()
 
     # Fetch count of transactions to estimate progress more accurately
@@ -71,7 +71,7 @@ def txhistory(wallet_address):
     elems = txdata.get_txs_all(wallet_address, progress, start_date, end_date)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
-    staketaxcsv.inj.processor.process_txs(wallet_address, elems, exporter)
+    staketaxcsv.dydx.processor.process_txs(wallet_address, elems, exporter)
 
     return exporter
 
@@ -82,7 +82,7 @@ def balhistory(wallet_address):
     max_txs = localconfig.limit
 
     exporter = historical_balances.via_mintscan(
-        INJ_NODE, TICKER_INJ, wallet_address, max_txs, start_date, end_date)
+        DYDX_NODE, TICKER_DYDX, wallet_address, max_txs, start_date, end_date)
     return exporter
 
 
