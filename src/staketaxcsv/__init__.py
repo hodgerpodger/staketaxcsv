@@ -27,6 +27,9 @@ Example usage:
     >>> # check address is valid
     >>> staketaxcsv.has_csv("ATOM", address)
     True
+    >>> # write balance history CSV
+    >>> staketaxcsv.historical_balances("ATOM", address)
+    ...
 
 """
 
