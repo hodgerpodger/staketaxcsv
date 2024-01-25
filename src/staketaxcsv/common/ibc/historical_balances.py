@@ -45,8 +45,14 @@ def via_mintscan(lcd_node, ticker, address, max_txs, start_date=None, end_date=N
 
                 balance[currency] += amount
 
-        # Purposely omitting "reward" section to better match txs CSVs, since they don't reflect
-        # rewards until redemption
+        # Process "reward" section
+        for item in entry["reward"]:
+            for subitem in item["reward"]:
+                denom = subitem["denom"]
+                amount_raw = float(subitem["amount"])
+                amount, currency = _amount_currency(amount_raw, denom, lcd_node, ticker)
+
+                balance[currency] += amount
 
         # omit currencies with super tiny amounts
         balance_edited = {}
