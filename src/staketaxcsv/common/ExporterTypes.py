@@ -178,6 +178,9 @@ TX_TYPE_OSMO_SET_WITHDRAW_ADDRESS = "_SET_WITHDRAW_ADDRESS"
 TX_TYPE_OSMO_SUBMIT_PROPOSAL = "_SUBMIT_PROPOSAL"
 TX_TYPE_OSMO_DEPOSIT = "_DEPOSIT"
 
+# INJECTIVE
+TX_TYPE_DUPLICATE_DEPOSIT_CLAIM = "_DUPLICATE_DEPOSIT_CLAIM"
+
 ################################################################################################
 
 # Types included for all CSVs (i.e. koinly, cointracking, etc).

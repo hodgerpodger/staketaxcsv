@@ -1,0 +1,99 @@
+[
+    {
+        "height": "5499114",
+        "txhash": "16D3104F4CFD25D8C6D761E61F5320802FD64F3D3DA9A9671FF68A817697A993",
+        "codespace": "",
+        "code": 0,
+        "data": "0A250A232F696E6A6563746976652E70656767792E76312E4D73674465706F736974436C61696D",
+        "info": "",
+        "gas_wanted": "132609",
+        "gas_used": "98806",
+        "tx": {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            "/cosmos-tx-v1beta1-Tx": {
+                "body": {
+                    "messages": [
+                        {
+                            "@type": "/injective.peggy.v1.MsgDepositClaim",
+                            "/injective-peggy-v1-MsgDepositClaim": {
+                                "event_nonce": "3851",
+                                "block_height": "13784739",
+                                "token_contract": "0xe28b3B32B6c345A34Ff64674606124Dd5Aceca30",
+                                "amount": "100104790000000000000000",
+                                "ethereum_sender": "0xDCf232F89CAce1a6c14969730F58f32CAF121a11",
+                                "cosmos_receiver": "inj1mner97yu4ns6ds2fd9es7k8n9jh3yxs3jkzh86",
+                                "orchestrator": "inj1c46l02nzcjhgzyddujuv45cmuavwuhzwvlla29"
+                            }
+                        }
+                    ],
+                    "memo": "",
+                    "timeout_height": "0",
+                    "extension_options": [],
+                    "non_critical_extension_options": []
+                },
+                "auth_info": {
+                    "signer_infos": [
+                        {
+                            "public_key": {
+                                "@type": "/injective.crypto.v1beta1.ethsecp256k1.PubKey",
+                                "/injective-crypto-v1beta1-ethsecp256k1-PubKey": {
+                                    "key": "A/sPIIwaUIvg1j0AVWhS4UgXizY5nO123ldwOrY+vyQb"
+                                }
+                            },
+                            "mode_info": {
+                                "single": {
+                                    "mode": "SIGN_MODE_DIRECT"
+                                }
+                            },
+                            "sequence": "4957"
+                        }
+                    ],
+                    "fee": {
+                        "amount": [
+                            {
+                                "denom": "inj",
+                                "amount": "66304500000000"
+                            }
+                        ],
+                        "gas_limit": "132609",
+                        "payer": "",
+                        "granter": ""
+                    }
+                },
+                "signatures": [
+                    "APRDk44Equw/vdC5HVrFnOqIGtDVD1jggUy5JuVGcUZ83G9OO6k45TCL5bmnEmSimYD0vFFrh10jgiImIrCaywA="
+                ]
+            }
+        },
+        "timestamp": "2021-12-11T15:49:25Z",
+        "timestamp__@@date": 1639237765000,
+        "id": "injective-1-5499114-16D3104F4CFD25D8C6D761E61F5320802FD64F3D3DA9A9671FF68A817697A993",
+        "chain_id": "injective-1",
+        "logs": [
+            {
+                "msg_index": 0,
+                "log": "",
+                "events": [
+                    {
+                        "type": "injective.peggy.v1.EventDepositClaim",
+                        "attributes": [
+                            {
+                                "key": "attestation_id",
+                                "value": "\"BQAAAAAAAA8LCybJqrC4tK9pYZFVr8flEF/Ev8u5PG2o+3m/tgK+sLY=\""
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "action",
+                                "value": "/injective.peggy.v1.MsgDepositClaim"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

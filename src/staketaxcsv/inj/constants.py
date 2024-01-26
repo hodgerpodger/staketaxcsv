@@ -1,2 +1,6 @@
 MINTSCAN_LABEL_INJ = "injective"
 CURRENCY_INJ = "INJ"
+
+MSG_TYPE_DEPOSIT_CLAIM = "MsgDepositClaim"
+
+EXP_18 = 10**18

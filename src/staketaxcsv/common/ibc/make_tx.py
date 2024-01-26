@@ -31,8 +31,8 @@ def make_simple_tx_with_transfers(txinfo, msginfo, sent_amount, sent_currency, r
     return _make_tx(txinfo, msginfo, sent_amount, sent_currency, received_amount, received_currency)
 
 
-def make_simple_tx(txinfo, msginfo):
-    return _make_tx(txinfo, msginfo, "", "", "", "")
+def make_simple_tx(txinfo, msginfo, tx_type=None):
+    return _make_tx(txinfo, msginfo, "", "", "", "", tx_type=tx_type)
 
 
 def make_spend_tx_fee(txinfo, msginfo):

@@ -5,7 +5,7 @@ import staketaxcsv.common.ibc.handle
 import staketaxcsv.common.ibc.processor
 from staketaxcsv.inj.config_inj import localconfig
 from staketaxcsv.settings_csv import INJ_NODE
-from staketaxcsv.inj import handle
+from staketaxcsv.inj import handle_deposit_claim
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -36,7 +36,10 @@ def _handle_message(exporter, txinfo, msginfo):
     try:
         msg_type = msginfo.msg_type
 
-        staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+        if msg_type == co.MSG_TYPE_DEPOSIT_CLAIM:
+            handle_deposit_claim.handle_deposit_claim(exporter, txinfo, msginfo)
+        else:
+            staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
     except Exception as e:
         logging.error("Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
         staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
