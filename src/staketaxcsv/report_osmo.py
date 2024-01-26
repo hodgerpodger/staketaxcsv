@@ -15,7 +15,7 @@ from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.common.ExporterTypes import LP_TREATMENT_TRANSFERS
-from staketaxcsv.common.BalExporter import BalExporter
+from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.osmo.config_osmo import localconfig
 from staketaxcsv.osmo.lp_rewards import lp_rewards
 from staketaxcsv.osmo.progress_osmo import ProgressOsmo
@@ -48,10 +48,7 @@ def _txdata():
 
 
 def wallet_exists(wallet_address):
-    if not wallet_address.startswith("osmo"):
-        return False
-    count = staketaxcsv.osmo.api_data.get_count_txs(wallet_address)
-    return count > 0
+    return api_lcd.make_lcd_api(OSMO_NODE).account_exists(wallet_address)
 
 
 def txone(wallet_address, txid):
