@@ -16,6 +16,7 @@ from staketaxcsv.sol.handle_jupiter import (
     handle_jupiter_aggregator_v4,
     handle_jupiter_aggregator_v6,
 )
+from staketaxcsv.sol.handle_jupiter_airdrop import handle_wen_airdrop
 from staketaxcsv.sol.handle_jupiter_dca import handle_jupiter_dca
 from staketaxcsv.sol.handle_jupiter_limit import handle_jupiter_limit
 from staketaxcsv.sol.handle_marinade import handle_marinade
@@ -113,6 +114,8 @@ def process_tx(wallet_info, exporter, txid, data):
             handle_jupiter_aggregator_v4(exporter, txinfo)
         elif co.PROGRAMID_JUPITER_AGGREGATOR_V6 in program_ids:
             handle_jupiter_aggregator_v6(exporter, txinfo)
+        elif co.PROGRAMID_JUPITER_WEN_AIRDROP in program_ids:
+            handle_wen_airdrop(exporter, txinfo)
 
         # Metaplex NFT Candy Machinine program
         elif co.PROGRAMID_METAPLEX_CANDY in program_ids:
