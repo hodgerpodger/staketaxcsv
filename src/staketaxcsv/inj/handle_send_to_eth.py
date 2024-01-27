@@ -19,5 +19,5 @@ def handle_send_to_eth(exporter, txinfo, msginfo):
 
     txinfo.fee += bridge_fee_amount
     row = make_tx.make_transfer_out_tx(txinfo, msginfo, sent_amount, co.CURRENCY_INJ)
-    row.comment += f"send to eth [eth_dest={eth_dest}]"
+    row.comment += f"send to eth bridge [eth_dest={eth_dest}]"
     exporter.ingest_row(row)
