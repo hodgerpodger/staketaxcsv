@@ -1726,6 +1726,7 @@ class Exporter:
             "STARS": "STARS3",
             "TNS": "TNS2",
             "TWD": "TWD2",
+            "WEN": "WEN3",
             "WHALE": "WHALE3",
             "WTUST": "UST3",
         }
