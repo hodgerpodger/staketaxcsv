@@ -2,5 +2,6 @@ MINTSCAN_LABEL_INJ = "injective"
 CURRENCY_INJ = "INJ"
 
 MSG_TYPE_DEPOSIT_CLAIM = "MsgDepositClaim"
+MSG_TYPE_SEND_TO_ETH = "MsgSendToEth"
 
 EXP_18 = 10**18

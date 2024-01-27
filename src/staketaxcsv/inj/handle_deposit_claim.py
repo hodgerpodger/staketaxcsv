@@ -2,9 +2,7 @@ import logging
 
 from staketaxcsv.common.ibc import make_tx
 from staketaxcsv.common.ExporterTypes import TX_TYPE_DUPLICATE_DEPOSIT_CLAIM
-from staketaxcsv.common.ibc import denoms
 from staketaxcsv.inj import constants as co
-
 
 
 class Deposits:

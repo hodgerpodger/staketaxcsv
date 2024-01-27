@@ -93,3 +93,16 @@ timestamp            tx_type                   received_amount     received_curr
 -------------------  ------------------------  ------------------  -----------------  -----------  -------------  -----------  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+    def test_send_to_eth(self):
+        result = run_test(
+            "inj1mner97yu4ns6ds2fd9es7k8n9jh3yxs3jkzh86",
+            "9295E239680531D7734A97B7AB3F190A5DFA8A5E7074AEF450DAAC7363257D76"
+        )
+        correct_result = """
+-------------------  --------  ---------------  -----------------  ------------------  -------------  ------------------  ------------  ------------------------------------------------------------------
+timestamp            tx_type   received_amount  received_currency  sent_amount         sent_currency  fee                 fee_currency  txid
+2022-03-20 05:42:58  TRANSFER                                      7266.7749815498155  INJ            1.8452184501845017  INJ           9295E239680531D7734A97B7AB3F190A5DFA8A5E7074AEF450DAAC7363257D76-0
+-------------------  --------  ---------------  -----------------  ------------------  -------------  ------------------  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)

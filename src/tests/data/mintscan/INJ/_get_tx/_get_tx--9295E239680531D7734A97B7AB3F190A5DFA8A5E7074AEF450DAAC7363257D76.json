@@ -1,0 +1,195 @@
+[
+    {
+        "height": "8876342",
+        "txhash": "9295E239680531D7734A97B7AB3F190A5DFA8A5E7074AEF450DAAC7363257D76",
+        "codespace": "",
+        "code": 0,
+        "data": "0A220A202F696E6A6563746976652E70656767792E76312E4D736753656E64546F457468",
+        "info": "",
+        "gas_wanted": "400000",
+        "gas_used": "120082",
+        "tx": {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            "/cosmos-tx-v1beta1-Tx": {
+                "body": {
+                    "messages": [
+                        {
+                            "@type": "/injective.peggy.v1.MsgSendToEth",
+                            "/injective-peggy-v1-MsgSendToEth": {
+                                "sender": "inj1mner97yu4ns6ds2fd9es7k8n9jh3yxs3jkzh86",
+                                "eth_dest": "0xDCf232F89CAce1a6c14969730F58f32CAF121a11",
+                                "amount": {
+                                    "denom": "inj",
+                                    "amount": "7266774981549815498155"
+                                },
+                                "bridge_fee": {
+                                    "denom": "inj",
+                                    "amount": "1845018450184501845"
+                                }
+                            }
+                        }
+                    ],
+                    "memo": "",
+                    "timeout_height": "8876379",
+                    "extension_options": [
+                        {
+                            "@type": "/injective.types.v1beta1.ExtensionOptionsWeb3Tx",
+                            "/injective-types-v1beta1-ExtensionOptionsWeb3Tx": {
+                                "typedDataChainID": "1",
+                                "feePayer": "",
+                                "feePayerSig": null
+                            }
+                        }
+                    ],
+                    "non_critical_extension_options": []
+                },
+                "auth_info": {
+                    "signer_infos": [
+                        {
+                            "public_key": {
+                                "@type": "/injective.crypto.v1beta1.ethsecp256k1.PubKey",
+                                "/injective-crypto-v1beta1-ethsecp256k1-PubKey": {
+                                    "key": "AleX2zhn9P/IItX7Yf2DCbBLIZo/hiB44eDYtxvHcB26"
+                                }
+                            },
+                            "mode_info": {
+                                "single": {
+                                    "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                                }
+                            },
+                            "sequence": "15"
+                        }
+                    ],
+                    "fee": {
+                        "amount": [
+                            {
+                                "denom": "inj",
+                                "amount": "200000000000000"
+                            }
+                        ],
+                        "gas_limit": "400000",
+                        "payer": "",
+                        "granter": ""
+                    }
+                },
+                "signatures": [
+                    "vdGdhSlEDIAb9oJDGCwFKiIIXfs9SxvnKxQUeRFeKwxUBCXQGONnDN5zl+o+irqi9oBaelb4QY2cAha1ngEKfBw="
+                ]
+            }
+        },
+        "timestamp": "2022-03-20T05:42:58Z",
+        "timestamp__@@date": 1647754978000,
+        "id": "injective-1-8876342-9295E239680531D7734A97B7AB3F190A5DFA8A5E7074AEF450DAAC7363257D76",
+        "chain_id": "injective-1",
+        "logs": [
+            {
+                "msg_index": 0,
+                "log": "",
+                "events": [
+                    {
+                        "type": "burn",
+                        "attributes": [
+                            {
+                                "key": "burner",
+                                "value": "inj1979qcq0kdz72w0k9rsxcmfmagx2cydrs40q2xg"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "7268620000000000000000inj"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "coin_received",
+                        "attributes": [
+                            {
+                                "key": "receiver",
+                                "value": "inj1979qcq0kdz72w0k9rsxcmfmagx2cydrs40q2xg"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "7268620000000000000000inj"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "coin_spent",
+                        "attributes": [
+                            {
+                                "key": "spender",
+                                "value": "inj1mner97yu4ns6ds2fd9es7k8n9jh3yxs3jkzh86"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "7268620000000000000000inj"
+                            },
+                            {
+                                "key": "spender",
+                                "value": "inj1979qcq0kdz72w0k9rsxcmfmagx2cydrs40q2xg"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "7268620000000000000000inj"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "injective.peggy.v1.EventSendToEth",
+                        "attributes": [
+                            {
+                                "key": "outgoing_tx_id",
+                                "value": "\"1787\""
+                            },
+                            {
+                                "key": "sender",
+                                "value": "\"inj1mner97yu4ns6ds2fd9es7k8n9jh3yxs3jkzh86\""
+                            },
+                            {
+                                "key": "receiver",
+                                "value": "\"0xDCf232F89CAce1a6c14969730F58f32CAF121a11\""
+                            },
+                            {
+                                "key": "amount",
+                                "value": "{\"denom\":\"inj\",\"amount\":\"7266774981549815498155\"}"
+                            },
+                            {
+                                "key": "bridge_fee",
+                                "value": "{\"denom\":\"inj\",\"amount\":\"1845018450184501845\"}"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "action",
+                                "value": "/injective.peggy.v1.MsgSendToEth"
+                            },
+                            {
+                                "key": "sender",
+                                "value": "inj1mner97yu4ns6ds2fd9es7k8n9jh3yxs3jkzh86"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "transfer",
+                        "attributes": [
+                            {
+                                "key": "recipient",
+                                "value": "inj1979qcq0kdz72w0k9rsxcmfmagx2cydrs40q2xg"
+                            },
+                            {
+                                "key": "sender",
+                                "value": "inj1mner97yu4ns6ds2fd9es7k8n9jh3yxs3jkzh86"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "7268620000000000000000inj"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
