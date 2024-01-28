@@ -1,5 +1,5 @@
 from collections import defaultdict
-TINY_AMOUNT = 0.000000000001
+TINY_AMOUNT = 0.00000000001
 
 
 def _ingest_rows(exporter, txinfo, msginfo, rows, comment):
