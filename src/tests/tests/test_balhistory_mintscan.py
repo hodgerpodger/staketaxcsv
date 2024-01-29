@@ -108,12 +108,12 @@ timestamp            ATOM      JUNO
     def test_osmo_balhistory(self):
         result = run_test(co.TICKER_OSMO, "osmo1af5tyfjgrjycv5zu3asnh4u3hruqu8xknqk7fl", "2024-01-01", "2024-01-20")
         correct_result = """
- -------------------  ------------------  --------  -----------------------------------------------------------------
-timestamp            OSMO                SCRT      unknown_factory/osmo1pfyxruwvtwk00y8z06dh2lqjdj82ldvy74wzm3/WOSMO
+-------------------  ------------------  --------  ---------
+timestamp            OSMO                SCRT      WOSMO
 2024-01-20 19:44:22  2128545.4282873776  1.061529  2000000.0
 2024-01-20 19:18:22  2128544.4486946524  1.061529
 2024-01-09 09:33:38  2120884.823966269   1.061529
--------------------  ------------------  --------  -----------------------------------------------------------------
+-------------------  ------------------  --------  ---------
         """
         self.assertEqual(result, correct_result.strip(), result)
 

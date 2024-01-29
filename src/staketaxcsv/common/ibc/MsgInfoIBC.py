@@ -277,7 +277,7 @@ class MsgInfoIBC:
                 out[event_type] = {}
 
             for attribute in attributes:
-                k, v = attribute.get("key"), attribute.get("value")
+                k, v = str(attribute.get("key")), str(attribute.get("value"))
 
                 if k in out[event_type]:
                     out[event_type][k] += "," + v
