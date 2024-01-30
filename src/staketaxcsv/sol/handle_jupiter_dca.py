@@ -1,9 +1,15 @@
 import logging
 
 from staketaxcsv.common.make_tx import make_swap_tx, make_simple_tx, make_spend_fee_tx
-from staketaxcsv.common.ExporterTypes import TX_TYPE_SOL_JUPITER_DCA_OPEN
+from staketaxcsv.common.ExporterTypes import TX_TYPE_SOL_JUPITER_DCA_OPEN, TX_TYPE_SOL_JUPITER_DCA_CLOSE
 from staketaxcsv.sol.handle_simple import handle_unknown_detect_transfers
 from staketaxcsv.sol.constants import CURRENCY_SOL
+
+SHARED_ACCOUNTS_ROUTE = "SharedAccountsRoute"
+OPEN_DCA = "OpenDca"
+OPEN_DCA_V2 = "OpenDcaV2"
+ROUTE = "Route"
+END_AND_CLOSE = "EndAndClose"
 
 
 class DcaSeries:
@@ -54,29 +60,41 @@ def handle_jupiter_dca(exporter, txinfo):
     txinfo.comment = "jupiter_dca"
     transfers_in, transfers_out, _ = txinfo.transfers_net
 
-    if ("OpenDca" in txinfo.log_instructions or "OpenDcaV2" in txinfo.log_instructions):
+    if (OPEN_DCA in txinfo.log_instructions or OPEN_DCA_V2 in txinfo.log_instructions):
         # open dca order tx
+        txinfo.comment += ".open_dca"
         _handle_open_dca(exporter, txinfo)
         return
-    elif ("SharedAccountsRoute" in txinfo.log_instructions
-          and "EndAndClose" in txinfo.log_instructions):
-        # last swap + close dca order tx
+    elif (SHARED_ACCOUNTS_ROUTE in txinfo.log_instructions and END_AND_CLOSE in txinfo.log_instructions):
+        # last swap + close dca order tx ('SharedAccountsRoute' instruction)
+        txinfo.comment += ".swap_and_close_dca.shared"
+        _handle_swap_shared_accounts_route(exporter, txinfo)
         _handle_close_dca(exporter, txinfo)
         return
-    elif "SharedAccountsRoute" in txinfo.log_instructions:
-        # not-last swap tx
-        txinfo.comment += ".swap"
-        _handle_swap(exporter, txinfo)
+    elif SHARED_ACCOUNTS_ROUTE in txinfo.log_instructions:
+        # not-last swap tx ('SharedAccountsRoute' instruction)
+        txinfo.comment += ".swap.shared"
+        _handle_swap_shared_accounts_route(exporter, txinfo)
         return
+    elif (ROUTE in txinfo.log_instructions and END_AND_CLOSE in txinfo.log_instructions):
+        # last swap + close dca order tx ('Route' instruction)
+        txinfo.comment += ".swap_and_close_dca.route"
+        _handle_swap_route(exporter, txinfo)
+        _handle_close_dca(exporter, txinfo)
+        return
+    elif ROUTE in txinfo.log_instructions:
+        # not-last swap tx ('Route' instruction)
+        txinfo.comment += ".swap.route"
+        _handle_swap_route(exporter, txinfo)
+        return
+    elif END_AND_CLOSE in txinfo.log_instructions:
+        _handle_close_dca(exporter, txinfo)
     else:
         logging.error("Unknown log_instructions")
-
-    handle_unknown_detect_transfers(exporter, txinfo)
+        handle_unknown_detect_transfers(exporter, txinfo)
 
 
 def _handle_open_dca(exporter, txinfo):
-    txinfo.comment += ".open_dca"
-
     # Ignore transfer of SOL since SOL deposit is returned at end of dca order (minus fees)
     row = make_simple_tx(txinfo, TX_TYPE_SOL_JUPITER_DCA_OPEN)
     row.fee = ""
@@ -87,11 +105,6 @@ def _handle_open_dca(exporter, txinfo):
 
 
 def _handle_close_dca(exporter, txinfo):
-    txinfo.comment += ".swap_and_close_dca"
-
-    # report swap tx
-    _handle_swap(exporter, txinfo)
-
     # determine sol fee for entire dca order series (fee = deposit - refund)
     amount_sol = DcaSeries().close(txinfo)
 
@@ -102,9 +115,42 @@ def _handle_close_dca(exporter, txinfo):
         row.fee_currency = ""
         row.comment += " [SOL fee for dca order (deposit - refund)]"
         exporter.ingest_row(row)
+    else:
+        row = make_simple_tx(txinfo, TX_TYPE_SOL_JUPITER_DCA_CLOSE)
+        exporter.ingest_row(row)
 
 
-def _handle_swap(exporter, txinfo):
+def _handle_swap_route(exporter, txinfo):
+    # swap tx with 'Route' instruction
+    transfers_in, transfers_out, _ = txinfo.transfers_net
+    inner_parsed = txinfo.inner_parsed
+    account_to_mint = txinfo.account_to_mint
+    mints = txinfo.mints
+
+    if "transfer" in inner_parsed:
+        transfers_list = inner_parsed["transfer"]
+
+        # receive amount/currency from transfers_in
+        received_amount, received_currency, _, _ = transfers_in[0]
+        assert (len(transfers_in) == 1)
+
+        # sent amount/currency from instruction's transfer data
+        sent_amount_raw = transfers_list[0]["amount"]
+        destination = transfers_list[0]["destination"]
+        sent_mint = account_to_mint[destination]
+        sent_currency = mints[sent_mint]["currency"]
+        sent_amount = float(sent_amount_raw) / (10**mints[sent_mint]["decimals"])
+
+        row = make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
+        exporter.ingest_row(row)
+        return True
+
+    logging.error("Unable to handle jupiter dca swap in _handle_swap_route()")
+    return False
+
+
+def _handle_swap_shared_accounts_route(exporter, txinfo):
+    # swap tx with 'SharedAccountsRoute' instruction
     transfers_in, transfers_out, _ = txinfo.transfers_net
     inner_parsed = txinfo.inner_parsed
 
@@ -138,7 +184,7 @@ def _handle_swap(exporter, txinfo):
         exporter.ingest_row(row)
         return True
 
-    logging.error("Unable to handle jupiter dca swap in _handle_swap()")
+    logging.error("Unable to handle jupiter dca swap in _handle_swap_shared_accounts_route()")
     return False
 
 
