@@ -293,12 +293,20 @@ def _inner_parsed(inner_instructions):
     for elem in inner_instructions:
         if "parsed" in elem:
             parsed = elem["parsed"]
-            info = parsed["info"]
-            type = parsed["type"]
 
-            if type not in out:
-                out[type] = []
-            out[type].append(info)
+            if isinstance(parsed, str):
+                # rare occurrence
+                if "parsed_string" not in out:
+                    out["parsed_string"] = []
+                out["parsed_string"].append(parsed)
+                continue
+            else:
+                info = parsed["info"]
+                elem_type = parsed["type"]
+
+                if elem_type not in out:
+                    out[elem_type] = []
+                out[elem_type].append(info)
 
     return out
 
