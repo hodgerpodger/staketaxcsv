@@ -122,21 +122,21 @@ def _handle_close_dca(exporter, txinfo):
     # determine sol fee for entire dca order series (fee = deposit - refund)
     amount_sol = DcaSeries().close(txinfo)
 
-    # report spend fee tx
     if amount_sol:
+        # report as spend fee tx
         row = make_spend_fee_tx(txinfo, amount_sol, CURRENCY_SOL)
         row.fee = ""
         row.fee_currency = ""
-        row.comment += " [SOL fee for dca order (deposit - refund)]"
-        exporter.ingest_row(row)
+        row.comment += " [SOL fee = deposit - refund]"
     else:
         row = make_simple_tx(txinfo, TX_TYPE_SOL_JUPITER_DCA_CLOSE)
-        # Add comment on amount returned for dca order
-        for amt, cur, _, _ in transfers_in:
-            if cur != CURRENCY_SOL:
-                row.comment += f" [{amt} {cur} returned]"
 
-        exporter.ingest_row(row)
+    # Add comment on amount returned for dca order
+    for amt, cur, _, _ in transfers_in:
+        if cur != CURRENCY_SOL:
+            row.comment += f" [{amt} {cur} returned]"
+
+    exporter.ingest_row(row)
 
 
 
