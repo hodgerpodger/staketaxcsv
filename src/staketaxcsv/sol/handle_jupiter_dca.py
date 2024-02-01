@@ -10,6 +10,7 @@ OPEN_DCA = "OpenDca"
 OPEN_DCA_V2 = "OpenDcaV2"
 ROUTE = "Route"
 END_AND_CLOSE = "EndAndClose"
+CLOSE_DCA = "CloseDca"
 
 
 class DcaSeries:
@@ -65,7 +66,8 @@ def handle_jupiter_dca(exporter, txinfo):
         txinfo.comment += ".open_dca"
         _handle_open_dca(exporter, txinfo)
         return
-    elif (SHARED_ACCOUNTS_ROUTE in txinfo.log_instructions and END_AND_CLOSE in txinfo.log_instructions):
+    elif (SHARED_ACCOUNTS_ROUTE in txinfo.log_instructions and
+          (END_AND_CLOSE in txinfo.log_instructions or CLOSE_DCA in txinfo.log_instructions)):
         # last swap + close dca order tx ('SharedAccountsRoute' instruction)
         txinfo.comment += ".swap_and_close_dca.shared"
         _handle_swap_shared_accounts_route(exporter, txinfo)
@@ -76,7 +78,8 @@ def handle_jupiter_dca(exporter, txinfo):
         txinfo.comment += ".swap.shared"
         _handle_swap_shared_accounts_route(exporter, txinfo)
         return
-    elif (ROUTE in txinfo.log_instructions and END_AND_CLOSE in txinfo.log_instructions):
+    elif (ROUTE in txinfo.log_instructions and
+          (END_AND_CLOSE in txinfo.log_instructions or CLOSE_DCA in txinfo.log_instructions)):
         # last swap + close dca order tx ('Route' instruction)
         txinfo.comment += ".swap_and_close_dca.route"
         _handle_swap_route(exporter, txinfo)
@@ -87,7 +90,8 @@ def handle_jupiter_dca(exporter, txinfo):
         txinfo.comment += ".swap.route"
         _handle_swap_route(exporter, txinfo)
         return
-    elif END_AND_CLOSE in txinfo.log_instructions:
+    elif END_AND_CLOSE in txinfo.log_instructions or CLOSE_DCA in txinfo.log_instructions:
+        txinfo.comment += ".close_dca"
         _handle_close_dca(exporter, txinfo)
     else:
         logging.error("Unknown log_instructions")
@@ -95,16 +99,26 @@ def handle_jupiter_dca(exporter, txinfo):
 
 
 def _handle_open_dca(exporter, txinfo):
+    transfers_in, transfers_out, _ = txinfo.transfers_net
+
     # Ignore transfer of SOL since SOL deposit is returned at end of dca order (minus fees)
     row = make_simple_tx(txinfo, TX_TYPE_SOL_JUPITER_DCA_OPEN)
     row.fee = ""
     row.fee_currency = ""
+
+    # Add comment on amount deposited for dca order
+    for amt, cur, _, _ in transfers_out:
+        if cur != CURRENCY_SOL:
+            row.comment += f" [{amt} {cur} deposited]"
+
     exporter.ingest_row(row)
 
     DcaSeries().open(txinfo)
 
 
 def _handle_close_dca(exporter, txinfo):
+    transfers_in, transfers_out, _ = txinfo.transfers_net
+
     # determine sol fee for entire dca order series (fee = deposit - refund)
     amount_sol = DcaSeries().close(txinfo)
 
@@ -117,7 +131,13 @@ def _handle_close_dca(exporter, txinfo):
         exporter.ingest_row(row)
     else:
         row = make_simple_tx(txinfo, TX_TYPE_SOL_JUPITER_DCA_CLOSE)
+        # Add comment on amount returned for dca order
+        for amt, cur, _, _ in transfers_in:
+            if cur != CURRENCY_SOL:
+                row.comment += f" [{amt} {cur} returned]"
+
         exporter.ingest_row(row)
+
 
 
 def _handle_swap_route(exporter, txinfo):
