@@ -989,26 +989,33 @@ class Exporter:
             for row in rows:
                 # Determine type field
                 if row.tx_type == et.TX_TYPE_STAKING:
-                    type = "interest"
+                    ctype = "interest"
                 elif row.tx_type == et.TX_TYPE_AIRDROP:
-                    type = "airdrop"
+                    ctype = "airdrop"
                 elif row.tx_type == et.TX_TYPE_TRADE:
-                    type = "sell"
+                    ctype = "sell"
                 elif row.tx_type == et.TX_TYPE_TRANSFER:
                     if row.received_amount:
-                        type = "transfer-in"
+                        ctype = "transfer-in"
                     elif row.sent_amount:
-                        type = "transfer-out"
+                        ctype = "transfer-out"
+                    elif row.received_amount == "":
+                        ctype = "transfer-out"
+                    elif row.sent_amount == "":
+                        ctype = "transfer_in"
+                    else:
+                        ctype = ""
+                        logging.critical("No ctype determined for row", row.as_array())
                 elif row.tx_type == et.TX_TYPE_INCOME:
-                    type = "income"
+                    ctype = "income"
                 elif row.tx_type == et.TX_TYPE_SPEND:
-                    type = "sell"
+                    ctype = "sell"
                 elif row.tx_type == et.TX_TYPE_BORROW:
-                    type = "borrow"
+                    ctype = "borrow"
                 elif row.tx_type == et.TX_TYPE_REPAY:
-                    type = "loan-repayment"
+                    ctype = "loan-repayment"
                 else:
-                    type = ""
+                    ctype = ""
                     logging.critical("No type determined for tx_type=%s", row.tx_type)
 
                 # Determine base_currency, base_amount, quote_currency, quote_amount
@@ -1036,7 +1043,7 @@ class Exporter:
 
                 line = [
                     self._calculator_timestamp(row.timestamp),  # Timestamp
-                    type,                                       # Type
+                    ctype,                                      # Type
                     base_currency,                              # Base Currency
                     base_amount,                                # Base Amount
                     quote_currency,                             # Quote Currency
