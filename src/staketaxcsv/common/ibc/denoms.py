@@ -91,7 +91,8 @@ def _amount_currency_convert(amount_raw, currency_raw):
         "rowan": ("ROWAN", 18),
         "basecro": (co.CUR_CRO, 8),
         "uusd": (co.CUR_USTC, 6),
-        "factory/osmo1pfyxruwvtwk00y8z06dh2lqjdj82ldvy74wzm3/WOSMO": (co.CUR_WOSMO, 6)
+        "factory/osmo1pfyxruwvtwk00y8z06dh2lqjdj82ldvy74wzm3/WOSMO": (co.CUR_WOSMO, 6),
+        "peggy0xdAC17F958D2ee523a2206206994597C13D831ec7": (co.CUR_USDT, 6),
     }
 
     if currency_raw in CURRENCY_RAW_MAP:
