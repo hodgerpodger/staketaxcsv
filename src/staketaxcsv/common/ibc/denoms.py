@@ -93,6 +93,8 @@ def _amount_currency_convert(amount_raw, currency_raw):
         "uusd": (co.CUR_USTC, 6),
         "factory/osmo1pfyxruwvtwk00y8z06dh2lqjdj82ldvy74wzm3/WOSMO": (co.CUR_WOSMO, 6),
         "peggy0xdAC17F958D2ee523a2206206994597C13D831ec7": (co.CUR_USDT, 6),
+        "cw20:terra1lxx40s29qvkrcj8fsa3yzyehy7w50umdvvnls2r830rys6lu2zns63eelv": (co.CUR_ROAR, 6),
+        "erc20/0xAE6D3334989a22A65228732446731438672418F2": (co.CUR_CNTO, 18),
     }
 
     if currency_raw in CURRENCY_RAW_MAP:

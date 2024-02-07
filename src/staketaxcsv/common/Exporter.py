@@ -957,6 +957,8 @@ class Exporter:
         remap_global = {
             "ARCH": "ID:10759253",
             "STARS": "ID:36899",
+            "ROAR": "ID:16962317",
+            "CNTO": "ID:19886237",
         }
 
         if self._is_koinly_lp(currency):
