@@ -14,7 +14,7 @@ from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.kuji.config_kuji import localconfig
 from staketaxcsv.kuji.progress_kuji import SECONDS_PER_PAGE, ProgressKuji
-from staketaxcsv.settings_csv import KUJI_NODE, TICKER_KUJI
+from staketaxcsv.settings_csv import KUJI_NODE, KUJI_NODE_TXS, TICKER_KUJI
 from staketaxcsv.common.ibc.tx_data import TxDataLcd
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
 LIMIT_PER_QUERY = 15
@@ -32,7 +32,7 @@ def read_options(options):
 
 def _txdata():
     max_txs = localconfig.limit
-    return TxDataLcd(KUJI_NODE, max_txs, limit_per_query=LIMIT_PER_QUERY)
+    return TxDataLcd(KUJI_NODE_TXS, max_txs, limit_per_query=LIMIT_PER_QUERY)
 
 
 def wallet_exists(wallet_address):
