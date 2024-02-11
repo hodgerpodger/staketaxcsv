@@ -62,7 +62,7 @@ def txhistory(wallet_address):
     txdata = _txdata()
 
     # Fetch/add genesis airdrop to csv
-    progress.report_message("Fetching genesis airdrop amount...")
+    progress.report_message("Getting genesis airdrop amount...")
     genesis_airdrop(wallet_address, exporter)
 
     # Fetch count of transactions to estimate progress more accurately

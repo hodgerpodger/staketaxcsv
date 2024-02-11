@@ -5,7 +5,7 @@ from staketaxcsv.tia import constants as co
 
 def make_genesis_airdrop_tx(amount_tia, wallet_address):
     row = Row(
-        timestamp="2023-10-31 10:00:00",  # timestamp of height 1 (https://www.mintscan.io/celestia/block/1)
+        timestamp="2023-10-31 14:00:00",  # timestamp of height 1 (https://www.mintscan.io/celestia/block/1)
         tx_type=TX_TYPE_AIRDROP,
         received_amount=amount_tia,
         received_currency=co.CURRENCY_TIA,

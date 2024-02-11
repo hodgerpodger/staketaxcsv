@@ -11,6 +11,7 @@ import logging
 
 import staketaxcsv.common.address
 import staketaxcsv.evmos.processor
+from staketaxcsv.common.address import evmo_addrs
 from staketaxcsv.common.ibc import api_lcd, historical_balances
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Exporter import Exporter
@@ -25,22 +26,10 @@ def main():
     wallet_address, export_format, txid, options = report_util.parse_args(TICKER_EVMOS)
 
     # Use "evmos..." format for wallet_address before proceeding with rest of script
-    wallet_address, hex_address = all_address_formats(wallet_address)
+    wallet_address, hex_address = evmo_addrs(wallet_address)
     logging.info("wallet_address: %s, hex_address: %s", wallet_address, hex_address)
 
     report_util.run_report(TICKER_EVMOS, wallet_address, export_format, txid, options)
-
-
-def all_address_formats(wallet_address):
-    """ Returns ('evmos...', '0x...') given wallet_address in either format """
-    if wallet_address.startswith("0x"):
-        bech32_address = staketaxcsv.common.address.from_hex_to_bech32("evmos", wallet_address)
-        return bech32_address, wallet_address
-    elif wallet_address.startswith("evmos"):
-        hex_address = staketaxcsv.common.address.from_bech32_to_hex("evmos", wallet_address)
-        return wallet_address, hex_address
-    else:
-        return None, None
 
 
 def read_options(options):

@@ -12,6 +12,7 @@ import staketaxcsv.report_btsg
 import staketaxcsv.report_cosmosplus
 import staketaxcsv.report_dvpn
 import staketaxcsv.report_dydx
+import staketaxcsv.report_dym
 import staketaxcsv.report_evmos
 import staketaxcsv.report_fet
 import staketaxcsv.report_huahua
@@ -43,6 +44,7 @@ REPORT_MODULES = {
     co.TICKER_COSMOSPLUS: staketaxcsv.report_cosmosplus,
     co.TICKER_DVPN: staketaxcsv.report_dvpn,
     co.TICKER_DYDX: staketaxcsv.report_dydx,
+    co.TICKER_DYM: staketaxcsv.report_dym,
     co.TICKER_EVMOS: staketaxcsv.report_evmos,
     co.TICKER_FET: staketaxcsv.report_fet,
     co.TICKER_HUAHUA: staketaxcsv.report_huahua,

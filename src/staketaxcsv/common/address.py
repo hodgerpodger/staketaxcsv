@@ -74,3 +74,24 @@ def from_bech32_to_hex(hrp: str, address: str) -> Optional[str]:
     except Exception as e:
         logging.error("Exception converting address %s, exception=%s", address, str(e))
         return None
+
+
+def evmo_addrs(wallet_address):
+    """ Returns ('evmos...', '0x...') given wallet_address in either format """
+    return _both_formats("evmos", wallet_address)
+
+
+def dym_addrs(wallet_address):
+    """ Returns ('dym...', '0x...') given wallet_address in either format """
+    return _both_formats("dym", wallet_address)
+
+
+def _both_formats(prefix, wallet_address):
+    if wallet_address.startswith("0x"):
+        bech32_address = from_hex_to_bech32(prefix, wallet_address)
+        return bech32_address, wallet_address
+    elif wallet_address.startswith(prefix):
+        hex_address = from_bech32_to_hex(prefix, wallet_address)
+        return wallet_address, hex_address
+    else:
+        return None, None
