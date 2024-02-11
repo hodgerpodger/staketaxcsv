@@ -6,7 +6,7 @@ import requests
 from staketaxcsv.dym.make_tx import make_genesis_airdrop_tx
 from staketaxcsv.dym.constants import EXP18
 
-GENESIS_JSON = os.path.join(os.path.dirname(__file__), "genesis.json")
+GENESIS_JSON = os.environ.get("STAKETAX_DYM_GENESIS_JSON", os.path.join(os.path.dirname(__file__), "genesis.json"))
 GENESIS_URL = "https://github.com/dymensionxyz/networks/raw/main/mainnet/dymension/genesis.json"
 
 

@@ -6,7 +6,7 @@ import requests
 import staketaxcsv.tia.constants as co
 from staketaxcsv.tia.make_tx import make_genesis_airdrop_tx
 
-GENESIS_JSON = os.path.join(os.path.dirname(__file__), "genesis.json")
+GENESIS_JSON = os.environ.get("STAKETAX_TIA_GENESIS_JSON", os.path.join(os.path.dirname(__file__), "genesis.json"))
 GENESIS_URL = "https://raw.githubusercontent.com/celestiaorg/networks/master/celestia/genesis.json"
 
 
