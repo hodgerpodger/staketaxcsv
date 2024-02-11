@@ -37,7 +37,7 @@ timestamp            tx_type  received_amount  received_currency  sent_amount  s
         """
         self.assertEqual(result, correct_result.strip(), result)
 
-    def test_eth_tx_transfer(self):
+    def test_eth_tx_transfer_in(self):
         result = run_test(
             "dym1gxe3ryxw8h957yghtp87as24pt66hpvee4lj52",
             "98544CCA5B3066DCE71ED6B28EE11E9261E45136E83AB9F18A122AB7990CC5F9"
@@ -47,6 +47,19 @@ timestamp            tx_type  received_amount  received_currency  sent_amount  s
 timestamp            tx_type   received_amount  received_currency  sent_amount  sent_currency  fee  fee_currency  txid
 2024-02-11 00:50:59  TRANSFER  55.8             DYM                                                               98544CCA5B3066DCE71ED6B28EE11E9261E45136E83AB9F18A122AB7990CC5F9-0
 -------------------  --------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
+
+    def test_eth_tx_transfer_out(self):
+        result = run_test(
+            "dym1c2l43ugygxrz6qc3j38zhhvkcdrm89r9tpplu8",
+            "1869529F1B04C72AE7EA1535C12680E6270DC488A914F056A783E715F592C473"
+        )
+        correct_result = """
+-------------------  --------  ---------------  -----------------  -----------  -------------  ----------  ------------  ------------------------------------------------------------------
+timestamp            tx_type   received_amount  received_currency  sent_amount  sent_currency  fee         fee_currency  txid
+2024-02-07 12:51:12  TRANSFER                                      28.5         DYM            0.00197589  DYM           1869529F1B04C72AE7EA1535C12680E6270DC488A914F056A783E715F592C473-0
+-------------------  --------  ---------------  -----------------  -----------  -------------  ----------  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
 
