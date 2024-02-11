@@ -60,7 +60,7 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address):
-     return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address, start_date, end_date)
+     return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address)
 
 
 @set_ibc_cache()
