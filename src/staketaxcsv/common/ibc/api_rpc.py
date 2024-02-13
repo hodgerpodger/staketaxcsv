@@ -57,7 +57,15 @@ class RpcAPI:
         else:
             raise Exception("Add case for events_type: {}".format(events_type))
 
-        data = self._query(uri_path, query_params, sleep_seconds=1)
+        # Retry up to 5 times, in case of unstable server
+        for i in range(5):
+            data = self._query(uri_path, query_params, sleep_seconds=1)
+            if data.get("error", {}).get("code") == -32603:
+                # unstable server returns this sometimes
+                logging.info("Found seen error condition that requires retry")
+                continue
+            else:
+                break
 
         return data
 
@@ -85,7 +93,6 @@ class RpcAPI:
     @functools.lru_cache
     def block_time(self, height):
         data = self._block(height)
-
         return data["result"]["block"]["header"]["time"]
 
 
@@ -213,7 +220,15 @@ def _add_timestamp_from_block_time(elem, node):
     # it's also converted from the RPC format to the LCD format:
     #     i.e. "2021-08-26T21:08:44.86954814Z" -> "2021-08-26T21:08:44Z"
     height = elem["height"]
-    block_timestamp = RpcAPI(node).block_time(height)
+
+    # Retry up to 5 times, in case of unstable server
+    for i in range(5):
+        try:
+            block_timestamp = RpcAPI(node).block_time(height)
+            break
+        except KeyError as e:
+            continue
+
     block_timestamp = parser.parse(block_timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
     elem["timestamp"] = block_timestamp
 
