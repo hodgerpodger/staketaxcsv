@@ -62,7 +62,9 @@ class RpcAPI:
             data = self._query(uri_path, query_params, sleep_seconds=1)
             if data.get("error", {}).get("code") == -32603:
                 # unstable server returns this sometimes
-                logging.info("Found seen error condition that requires retry")
+                seconds = i * 2
+                logging.info("Error condition indicating unstable server.  Retrying in %s seconds", seconds)
+                time.sleep(seconds)
                 continue
             else:
                 break
@@ -227,6 +229,9 @@ def _add_timestamp_from_block_time(elem, node):
             block_timestamp = RpcAPI(node).block_time(height)
             break
         except KeyError as e:
+            seconds = i * 2
+            logging.info("KeyError.  Retrying in %s seconds", seconds)
+            time.sleep(seconds)
             continue
 
     block_timestamp = parser.parse(block_timestamp).strftime("%Y-%m-%dT%H:%M:%SZ")
