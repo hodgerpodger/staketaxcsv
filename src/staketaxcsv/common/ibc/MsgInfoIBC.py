@@ -1,6 +1,7 @@
 import logging
 import pprint
 import re
+import base64
 
 import staketaxcsv.common.ibc.constants as co
 from staketaxcsv.common.ibc import util_ibc, denoms
@@ -95,6 +96,9 @@ class MsgInfoIBC:
         for event in events:
             event_type, attributes = event["type"], event["attributes"]
 
+            # In rare cases, base64 decode required.
+            self._handle_base64_attributes(attributes)
+
             if event_type == COIN_RECEIVED:
                 # Remove authz_msg_index key/values (if exists) so that uniform logic afterwards is consistent.
                 attributes = self._remove_authz_msg_index(attributes)
@@ -118,6 +122,18 @@ class MsgInfoIBC:
 
         return transfers_in
 
+    def _handle_base64_attributes(self, attributes):
+        # In rare cases, base64 decode required for elements under attributes
+        if len(attributes) > 0 and "index" in attributes[0]:
+            try:
+                for attr in attributes:
+                    if "key" in attr:
+                        attr["key"] = base64.b64decode(attr["key"]).decode()
+                    if "value" in attr:
+                        attr["value"] = base64.b64decode(attr["value"]).decode()
+            except Exception as e:
+                pass
+
     def _remove_authz_msg_index(self, attributes):
         out = []
         for kv in attributes:
@@ -132,6 +148,9 @@ class MsgInfoIBC:
         events = self.log["events"]
         for event in events:
             event_type, attributes = event["type"], event["attributes"]
+
+            # In rare cases, base64 decode required.
+            self._handle_base64_attributes(attributes)
 
             if event_type == COIN_SPENT:
                 # Remove authz_msg_index key/values (if exists) so that uniform logic afterwards is consistent.
@@ -164,6 +183,9 @@ class MsgInfoIBC:
         events = self.log["events"]
         for event in events:
             event_type, attributes = event["type"], event["attributes"]
+
+            # In rare cases, base64 decode required.
+            self._handle_base64_attributes(attributes)
 
             if event_type == "transfer":
                 # ignore MsgMultiSend case (uses different format)
