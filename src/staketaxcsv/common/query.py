@@ -5,7 +5,7 @@ REQUEST_TYPE_GET = "GET"
 REQUEST_TYPE_POST = "POST"
 
 
-def get_with_retries(session, url, params, headers, retries=3, backoff_factor=1):
+def get_with_retries(session, url, params, headers, retries=4, backoff_factor=2):
     return _make_request_with_retries(
         REQUEST_TYPE_GET, session, url, params, headers, retries, backoff_factor)
 
