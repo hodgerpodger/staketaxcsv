@@ -123,6 +123,17 @@ def _is_swap(actions):
 
 
 def _handle_swap(txinfo, msginfo):
+    transfers_in, transfer_out = msginfo.transfers_net
+
+    if len(transfers_in) == 1 and len(transfer_out) == 1:
+        sent_amount, sent_currency = transfer_out[0]
+        receive_amount, receive_currency = transfers_in[0]
+        row = staketaxcsv.common.make_tx.make_swap_tx(txinfo, sent_amount, sent_currency, receive_amount, receive_currency)
+        return [row]
+
+    raise Exception("Unable to handle swap")
+
+
     actions = msginfo.wasm
     swap_actions = [action for action in actions if action["action"] == "swap"]
 
