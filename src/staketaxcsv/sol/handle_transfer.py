@@ -41,4 +41,4 @@ def handle_transfer(exporter, txinfo):
         row = make_transfer_in_tx(txinfo, amount, currency)
         exporter.ingest_row(row)
     else:
-        raise Exception("Bad condition in handle_transfer() txid=%s", txid)
+        raise Exception(f"Bad condition in handle_transfer(), txid={txid}")

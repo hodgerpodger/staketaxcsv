@@ -134,29 +134,37 @@ def _balance_changes_tokens(data, mints):
     post_token_balances = data["result"]["meta"]["postTokenBalances"]
     pre_token_balances = data["result"]["meta"]["preTokenBalances"]
 
+    # Convert data into balance dict by account address
     a = {}
     b = {}
-    balance_changes = {}
     for row in pre_token_balances:
-        account_address, currency_a, amount_a, _ = _row_to_amount_currency(row, account_keys, mints)
-        a[account_address] = (currency_a, amount_a)
-
+        account_address, currency_a, amount_a, decimals_a = _row_to_amount_currency(row, account_keys, mints)
+        a[account_address] = (currency_a, amount_a, decimals_a)
     for row in post_token_balances:
-        account_address, currency_b, amount_b, decimals = _row_to_amount_currency(row, account_keys, mints)
-        b[account_address] = (currency_b, amount_b)
+        account_address, currency_b, amount_b, decimals_b = _row_to_amount_currency(row, account_keys, mints)
+        b[account_address] = (currency_b, amount_b, decimals_b)
 
-        # calculate change in balance
-        currency_a, amount_a = a.get(account_address, (currency_b, 0.0))
-        amount_change = round(amount_b - amount_a, decimals)
-
-        # add to result
-        balance_changes[account_address] = (currency_a, amount_change)
-
-    # Handle case where post_token_balance doesn't exist for token (aka zero balance)
+    # fill in amount=0 when token/account doesn't exist for pre and post
     for row in pre_token_balances:
-        account_address, currency_a, amount_a, _ = _row_to_amount_currency(row, account_keys, mints)
-        if account_address not in balance_changes:
-            balance_changes[account_address] = (currency_a, -amount_a)
+        account_address, currency_a, _, decimals_a = _row_to_amount_currency(row, account_keys, mints)
+        if account_address not in b:
+            b[account_address] = (currency_a, 0.0, decimals_a)
+    for row in post_token_balances:
+        account_address, currency_b, _, decimals_b = _row_to_amount_currency(row, account_keys, mints)
+        if account_address not in a:
+            a[account_address] = (currency_b, 0.0, decimals_b)
+
+    # calculate change in balance
+    balance_changes = {}
+    for account_address in a:
+        currency_a, amount_a, decimals_a = a[account_address]
+        currency_b, amount_b, decimals_b = b[account_address]
+        amount_change = round(amount_b - amount_a, decimals_a)
+
+        assert (currency_a == currency_b)
+        assert (decimals_a == decimals_b)
+
+        balance_changes[account_address] = (currency_a, amount_change)
 
     return balance_changes
 
@@ -322,7 +330,7 @@ def _instruction_accounts(txid, wallet_address, instructions, inner):
             parsed = instruction["parsed"]
             if type(parsed) is dict:
                 # if wallet associated with source
-                if parsed.get("type") in ["initializeAccount", "approve", "transfer", "transferChecked"]:
+                if parsed.get("type") in ["initializeAccount", "initializeAccount3", "approve", "transfer", "transferChecked"]:
                     info = parsed["info"]
 
                     # Grab set of addresses associated with source

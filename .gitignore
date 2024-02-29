@@ -9,6 +9,7 @@ src/staketaxcsv/_reports/*
 src/staketaxcsv/tia/genesis.json
 src/staketaxcsv/dym/genesis.json
 sample.env
+src/tests/data/lcdv1/_node_info/*
 
 
 # pycharm
