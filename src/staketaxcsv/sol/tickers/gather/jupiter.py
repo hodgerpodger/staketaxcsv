@@ -1,7 +1,8 @@
 """
 usage: python3 staketaxcsv/sol/tickers/gather/jupiter.py
 
-* Writes tickers json file to staketaxcsv/sol/tickers/token_lists/jupiter.YYYYMMDD.json
+* Writes tickers json file to staketaxcsv/sol/tickers/token_lists/jupiter.YYYYMMDD.json, 
+  which effectively updates the recognized token symbols for the solana report.
 
 """
 import logging

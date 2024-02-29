@@ -168,3 +168,10 @@ Alternatively, you may implement your own Cache class (common/cache.py).
   # install pip packages (same as README.md)
   pip3 install -r requirements.txt
   ```
+
+# Update recognized tokens for solana report to latest
+
+```
+cd src
+python staketaxcsv/sol/tickers/gather/jupiter.py
+```
