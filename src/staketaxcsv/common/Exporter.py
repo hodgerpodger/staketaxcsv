@@ -11,7 +11,7 @@ import pytz
 from pytz import timezone
 from staketaxcsv.common import ExporterTypes as et
 from staketaxcsv.common.exporter_koinly import NullMap
-from staketaxcsv.settings_csv import TICKER_ALGO, TICKER_LUNA1, TICKER_LUNA2
+from staketaxcsv.settings_csv import TICKER_ALGO, TICKER_LUNA1, TICKER_LUNA2, TICKER_OSMO
 from tabulate import tabulate
 
 
@@ -1741,7 +1741,7 @@ class Exporter:
         }
         if self.ticker == TICKER_LUNA1:
             remap["LUNA"] = "LUNA2"  # Terra Classic
-        elif self.ticker == TICKER_LUNA2:
+        else:
             remap["LUNA"] = "LUNA3"  # Terra v2
 
         if currency and currency.upper() in remap:
