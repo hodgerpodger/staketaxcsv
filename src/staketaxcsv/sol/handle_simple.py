@@ -64,6 +64,8 @@ def _handle_generic(exporter, txinfo, tx_type):
     row.comment = "fee for {}".format(tx_type)
     exporter.ingest_row(row)
 
+    return row
+
 
 def handle_unknown_detect_transfers(exporter, txinfo):
     transfers_net_in, transfers_net_out, _ = txinfo.transfers_net

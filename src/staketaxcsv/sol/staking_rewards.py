@@ -6,6 +6,8 @@ from staketaxcsv.sol.make_tx import make_sol_reward_tx
 from staketaxcsv.settings_csv import SOL_REWARDS_DB_READ
 from staketaxcsv.sol.staking_rewards_common import slot_to_timestamp, get_epochs_all
 from staketaxcsv.sol.staking_rewards_db import StakingRewardsDB
+from staketaxcsv.sol.api_marinade import MarinadeAPI
+from staketaxcsv.sol.constants import BILLION
 
 
 def reward_txs(wallet_info, exporter, progress, start_date=None, end_date=None):
@@ -21,6 +23,9 @@ def reward_txs(wallet_info, exporter, progress, start_date=None, end_date=None):
             txid = f"{staking_address}.{epoch}"
             row = make_sol_reward_tx(timestamp, reward, wallet_address, txid)
             exporter.ingest_row(row)
+
+    # Add marinade native staking rewards separately
+    _rewards_txs_marinade_native(wallet_info, exporter, start_date, end_date)
 
 
 def _rewards(staking_address, start_date=None, end_date=None):
@@ -91,3 +96,30 @@ def _lookup_reward_via_rpc(staking_address, epoch):
         return ts, amount
     else:
         return None, None
+
+
+def _rewards_txs_marinade_native(wallet_info, exporter, start_date, end_date):
+    if not wallet_info.has_marinade_native:
+        return
+
+    wallet_address = wallet_info.wallet_address
+
+    # Query marinade native staking rewards (all time)
+    rewards = []
+    data = MarinadeAPI.native_staking_rewards(wallet_address)
+    for points in data["data_points"]:
+        epoch = points["epoch"]                          # i.e. 542
+        inflation_rewards = points["inflation_rewards"]  # i.e. 882019919",
+        created_at = points["created_at"]                # i.e. "2023-12-10T01:17:22Z"
+
+        ts = created_at.replace('T', ' ').replace('Z', '')
+        amount_sol = float(inflation_rewards) / BILLION
+        rewards.append((epoch, ts, amount_sol))
+
+    rewards = _filter_date(rewards, start_date, end_date)
+
+    # Add to exporter
+    for epoch, ts, amount in rewards:
+        txid = f"marinade_native_epoch.{epoch}"
+        row = make_sol_reward_tx(ts, amount, wallet_address, txid)
+        exporter.ingest_row(row)

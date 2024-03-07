@@ -106,9 +106,16 @@ class WalletInfo:
     def __init__(self, wallet_address):
         self.wallet_address = wallet_address
         self.staking_addrs = set()
+        self.marinade_native = False
 
     def add_staking_address(self, address):
         self.staking_addrs.add(address)
 
     def get_staking_addresses(self):
         return self.staking_addrs
+
+    def set_marinade_native(self):
+        self.marinade_native = True
+
+    def has_marinade_native(self):
+        return self.marinade_native

@@ -9,7 +9,9 @@ from datetime import datetime, timezone
 import staketaxcsv.sol.util_sol
 from staketaxcsv.sol import util_sol
 from staketaxcsv.sol.api_rpc import RpcAPI
-from staketaxcsv.sol.constants import BILLION, CURRENCY_SOL, INSTRUCTION_TYPE_DELEGATE, MINT_SOL, PROGRAM_STAKE
+from staketaxcsv.sol.constants import (
+    BILLION, CURRENCY_SOL, INSTRUCTION_TYPE_DELEGATE, INSTRUCTION_TYPE_INITIALIZE,
+    MINT_SOL, PROGRAM_STAKE, MARINADE_STAKER_AUTHORITY)
 from staketaxcsv.sol.handle_transfer import is_transfer
 from staketaxcsv.sol.tickers.tickers import Tickers
 from staketaxcsv.sol.TxInfoSol import TxInfoSol
@@ -70,15 +72,20 @@ def parse_tx(txid, data, wallet_info):
     txinfo.lp_transfers_net, txinfo.lp_fee = _transfers_net(
         txinfo, txinfo.lp_transfers, mint_to=True)
 
-    # Update wallet_info with any staking addresses found
-    addresses = _staking_addresses_found(wallet_address, txinfo.instructions)
-    for address in addresses:
-        wallet_info.add_staking_address(address)
+    # Update wallet_info with staking addresses
+    _update_wallet_info(wallet_info, wallet_address, txinfo.instructions)
 
     return txinfo
 
 
-def _staking_addresses_found(wallet_address, instructions):
+def _update_wallet_info(wallet_info, wallet_address, instructions):
+    # Add any historical staking addresses to wallet_info object
+    staking_addrs = _get_staking_addresses(wallet_address, instructions)
+    for addr in staking_addrs:
+        wallet_info.add_staking_address(addr)
+
+
+def _get_staking_addresses(wallet_address, instructions):
     out = []
     for instruction in instructions:
         parsed = instruction.get("parsed", None)
@@ -90,7 +97,6 @@ def _staking_addresses_found(wallet_address, instructions):
             stake_authority = parsed["info"]["stakeAuthority"]
             if stake_authority == wallet_address:
                 out.append(stake_account)
-
     return out
 
 

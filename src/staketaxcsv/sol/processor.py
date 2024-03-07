@@ -19,7 +19,8 @@ from staketaxcsv.sol.handle_jupiter import (
 from staketaxcsv.sol.handle_jupiter_airdrop import handle_wen_airdrop
 from staketaxcsv.sol.handle_jupiter_dca import handle_jupiter_dca
 from staketaxcsv.sol.handle_jupiter_limit import handle_jupiter_limit
-from staketaxcsv.sol.handle_marinade import handle_marinade
+from staketaxcsv.sol.handle_marinade import (
+    handle_marinade, is_marinade_native_staking_create_tx, handle_marinade_native_staking_create_tx)
 from staketaxcsv.sol.handle_metaplex import handle_metaplex, handle_nft_mint, is_nft_mint
 from staketaxcsv.sol.handle_nft_market import get_nft_program, handle_nft_exchange
 from staketaxcsv.sol.handle_notimestamp import handle_notimestamp_tx, is_notimestamp_tx
@@ -66,6 +67,8 @@ def process_tx(wallet_info, exporter, txid, data):
         # Marinade Finance
         elif co.PROGRAMID_MARINADE in program_ids:
             handle_marinade(exporter, txinfo)
+        elif is_marinade_native_staking_create_tx(txinfo):
+            handle_marinade_native_staking_create_tx(wallet_info, exporter, txinfo)
 
         # Unknown programs
         elif co.PROGRAMID_UNKNOWN_DJV in program_ids:
