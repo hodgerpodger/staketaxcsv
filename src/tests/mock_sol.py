@@ -27,9 +27,9 @@ class MockRpcAPI(RpcAPI):
             RpcAPI._get_txids, wallet_address, limit, before, TICKER_SOL + "/_get_txids")
 
     @classmethod
-    def _fetch_token_accounts(cls, wallet_address):
-        return mock_query_one_arg(
-            RpcAPI._fetch_token_accounts, wallet_address, TICKER_SOL + "/_fetch_token_accounts")
+    def _fetch_token_accounts(cls, wallet_address, program_id):
+        return mock_query_two_args(
+            RpcAPI._fetch_token_accounts, wallet_address, program_id, TICKER_SOL + "/_fetch_token_accounts")
 
     @classmethod
     def fetch_account(cls, wallet_address):

@@ -7,7 +7,7 @@ from staketaxcsv.common.query import post_with_retries
 from staketaxcsv.common.debug_util import debug_cache
 from staketaxcsv.settings_csv import REPORTS_DIR, SOL_NODE
 from staketaxcsv.sol.config_sol import localconfig
-from staketaxcsv.sol.constants import BILLION, PROGRAMID_STAKE, PROGRAMID_TOKEN_ACCOUNTS
+from staketaxcsv.sol.constants import BILLION, PROGRAMID_STAKE, PROGRAMID_TOKEN_ACCOUNTS, PROGRAMID_TOKEN_2022
 TOKEN_ACCOUNTS = {}
 
 
@@ -148,21 +148,25 @@ class RpcAPI(object):
         if wallet_address in TOKEN_ACCOUNTS:
             return TOKEN_ACCOUNTS[wallet_address]
 
-        data = cls._fetch_token_accounts(wallet_address)
+        data = cls._fetch_token_accounts(wallet_address, PROGRAMID_TOKEN_ACCOUNTS)
+        data2 = cls._fetch_token_accounts(wallet_address, PROGRAMID_TOKEN_2022)
 
-        result = cls._extract_token_accounts(data["result"]["value"])
+        result = {}
+        result.update(cls._extract_token_accounts(data["result"]["value"]))
+        result.update(cls._extract_token_accounts(data2["result"]["value"]))
+
         TOKEN_ACCOUNTS[wallet_address] = result
-
         return result
 
     @classmethod
     @debug_cache(REPORTS_DIR)
-    def _fetch_token_accounts(cls, wallet_address):
-        logging.info("Querying _fetch_token_accounts_()... wallet_address=%s", wallet_address)
+    def _fetch_token_accounts(cls, wallet_address, program_id):
+        logging.info("Querying _fetch_token_accounts_()... wallet_address=%s, program_id=%s",
+                     wallet_address, program_id)
         params_list = [
             wallet_address,
             {
-                "programId": PROGRAMID_TOKEN_ACCOUNTS
+                "programId": program_id
             },
             {
                 "encoding": "jsonParsed"
