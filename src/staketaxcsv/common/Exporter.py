@@ -129,7 +129,10 @@ class Exporter:
 
     def _rows_export(self, format, reverse=True):
         self.sort_rows(reverse)
-        rows = filter(lambda row: row.tx_type in et.TX_TYPES_CSVEXPORT, self.rows)
+
+        rows = self.rows
+        if(format != et.FORMAT_CRYPTOTAXCALCULATOR):
+            rows = filter(lambda row: row.tx_type in et.TX_TYPES_CSVEXPORT, self.rows)
 
         if format in [et.FORMAT_COINTRACKING, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI,
                       et.FORMAT_DIVLY, et.FORMAT_CRYPTOBOOKS, et.FORMAT_KOINLY]:
@@ -1026,22 +1029,37 @@ class Exporter:
                     base_amount = row.sent_amount
                     quote_currency = row.received_currency
                     quote_amount = row.received_amount
+                    if(ctype == ""):
+                        ctype = "unknown"
                 elif row.received_amount:
                     base_currency = row.received_currency
                     base_amount = row.received_amount
                     quote_currency = ""
                     quote_amount = ""
+                    if(ctype == ""):
+                        ctype = "in"
                 elif row.sent_amount:
                     base_currency = row.sent_currency
                     base_amount = row.sent_amount
                     quote_currency = ""
                     quote_amount = ""
+                    if(ctype == ""):
+                        ctype = "out"
+                elif row.fee:
+                    base_currency = ""
+                    base_amount = ""
+                    quote_currency = ""
+                    quote_amount = ""
+                    if(ctype == ""):
+                        ctype = "fee"
                 else:
                     logging.error("Bad condition.  No received amount and no sent amount.")
                     base_currency = ""
                     base_amount = ""
                     quote_currency = ""
                     quote_amount = ""
+                    if(ctype == ""):
+                        ctype = "unknown"
 
                 line = [
                     self._calculator_timestamp(row.timestamp),  # Timestamp
