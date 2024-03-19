@@ -127,12 +127,17 @@ class Exporter:
                 reverse=reverse)
             self.is_reverse = reverse
 
-    def _rows_export(self, format, reverse=True):
+    def _rows_export(self, csv_format, reverse=True, export_all=False):
         self.sort_rows(reverse)
-        rows = filter(lambda row: row.tx_type in et.TX_TYPES_CSVEXPORT, self.rows)
 
-        if format in [et.FORMAT_COINTRACKING, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI,
-                      et.FORMAT_DIVLY, et.FORMAT_CRYPTOBOOKS, et.FORMAT_KOINLY]:
+        if export_all:
+            # custom behavior: exports rows with tx_type=_* (.i.e _UNKNOWN)
+            rows = self.rows
+        else:
+            rows = filter(lambda row: row.tx_type in et.TX_TYPES_CSVEXPORT, self.rows)
+
+        if csv_format in [et.FORMAT_COINTRACKING, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI,
+                          et.FORMAT_DIVLY, et.FORMAT_CRYPTOBOOKS, et.FORMAT_KOINLY]:
             return rows
 
         # For non-koinly CSVs, convert LP_DEPOSIT/LP_WITHDRAW into transfers/omit/trades
@@ -979,7 +984,7 @@ class Exporter:
 
     def export_calculator_csv(self, csvpath):
         """ Write CSV, suitable for import into cryptataxcalculator.io """
-        rows = self._rows_export(et.FORMAT_CRYPTOTAXCALCULATOR)
+        rows = self._rows_export(et.FORMAT_CRYPTOTAXCALCULATOR, export_all=True)
 
         with open(csvpath, 'w', newline='', encoding='utf-8') as f:
             mywriter = csv.writer(f)
@@ -1018,7 +1023,7 @@ class Exporter:
                     ctype = "loan-repayment"
                 else:
                     ctype = ""
-                    logging.critical("No type determined for tx_type=%s", row.tx_type)
+                    logging.info("No type determined for tx_type=%s", row.tx_type)
 
                 # Determine base_currency, base_amount, quote_currency, quote_amount
                 if row.received_amount and row.sent_amount:
@@ -1026,22 +1031,37 @@ class Exporter:
                     base_amount = row.sent_amount
                     quote_currency = row.received_currency
                     quote_amount = row.received_amount
+                    if ctype == "":
+                        ctype = "unknown"
                 elif row.received_amount:
                     base_currency = row.received_currency
                     base_amount = row.received_amount
                     quote_currency = ""
                     quote_amount = ""
+                    if ctype == "":
+                        ctype = "in"
                 elif row.sent_amount:
                     base_currency = row.sent_currency
                     base_amount = row.sent_amount
                     quote_currency = ""
                     quote_amount = ""
+                    if ctype == "":
+                        ctype = "out"
+                elif row.fee:
+                    base_currency = ""
+                    base_amount = ""
+                    quote_currency = ""
+                    quote_amount = ""
+                    if ctype == "":
+                        ctype = "fee"
                 else:
                     logging.error("Bad condition.  No received amount and no sent amount.")
                     base_currency = ""
                     base_amount = ""
                     quote_currency = ""
                     quote_amount = ""
+                    if ctype == "":
+                        ctype = "unknown"
 
                 line = [
                     self._calculator_timestamp(row.timestamp),  # Timestamp
