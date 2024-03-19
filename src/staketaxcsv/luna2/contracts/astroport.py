@@ -133,7 +133,6 @@ def _handle_swap(txinfo, msginfo):
 
     raise Exception("Unable to handle swap")
 
-
     actions = msginfo.wasm
     swap_actions = [action for action in actions if action["action"] == "swap"]
 

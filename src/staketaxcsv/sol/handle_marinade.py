@@ -29,9 +29,9 @@ def is_marinade_native_staking_create_tx(txinfo):
         program = instruction.get("program")
 
         if (
-            program == PROGRAM_STAKE and
-            instruction_type == INSTRUCTION_TYPE_INITIALIZE and
-            parsed.get("info", {}).get("authorized", {}).get("staker", {}) == MARINADE_STAKER_AUTHORITY
+            program == PROGRAM_STAKE
+            and instruction_type == INSTRUCTION_TYPE_INITIALIZE
+            and parsed.get("info", {}).get("authorized", {}).get("staker", {}) == MARINADE_STAKER_AUTHORITY
         ):
             return True
 
@@ -42,4 +42,3 @@ def handle_marinade_native_staking_create_tx(wallet_info, exporter, txinfo):
     wallet_info.set_marinade_native()
     row = _handle_generic(exporter, txinfo, TX_TYPE_SOL_STAKING_CREATE)
     row.comment += " [marinade_native]"
-

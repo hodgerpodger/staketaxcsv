@@ -66,8 +66,8 @@ def handle_jupiter_dca(exporter, txinfo):
         txinfo.comment += ".open_dca"
         _handle_open_dca(exporter, txinfo)
         return
-    elif (SHARED_ACCOUNTS_ROUTE in txinfo.log_instructions and
-          (END_AND_CLOSE in txinfo.log_instructions or CLOSE_DCA in txinfo.log_instructions)):
+    elif (SHARED_ACCOUNTS_ROUTE in txinfo.log_instructions
+          and (END_AND_CLOSE in txinfo.log_instructions or CLOSE_DCA in txinfo.log_instructions)):
         # last swap + close dca order tx ('SharedAccountsRoute' instruction)
         txinfo.comment += ".swap_and_close_dca.shared"
         _handle_swap_shared_accounts_route(exporter, txinfo)
@@ -78,8 +78,8 @@ def handle_jupiter_dca(exporter, txinfo):
         txinfo.comment += ".swap.shared"
         _handle_swap_shared_accounts_route(exporter, txinfo)
         return
-    elif (ROUTE in txinfo.log_instructions and
-          (END_AND_CLOSE in txinfo.log_instructions or CLOSE_DCA in txinfo.log_instructions)):
+    elif (ROUTE in txinfo.log_instructions
+          and (END_AND_CLOSE in txinfo.log_instructions or CLOSE_DCA in txinfo.log_instructions)):
         # last swap + close dca order tx ('Route' instruction)
         txinfo.comment += ".swap_and_close_dca.route"
         _handle_swap_route(exporter, txinfo)
@@ -137,7 +137,6 @@ def _handle_close_dca(exporter, txinfo):
             row.comment += f" [{amt} {cur} returned]"
 
     exporter.ingest_row(row)
-
 
 
 def _handle_swap_route(exporter, txinfo):
