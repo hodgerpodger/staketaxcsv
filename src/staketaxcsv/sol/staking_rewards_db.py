@@ -53,6 +53,7 @@ def rewards_all_users_write_db():
             # Retrieve rewards for all users in this epoch
             logging.info("Retrieving block rewards for epoch=%s ...", epoch)
             block_rewards = RpcAPI.get_block_rewards(slot)
+            logging.info("Found len(block_rewards)=%s", len(block_rewards))
             time.sleep(30)  # throttled at times if too frequent
 
             list_block_rewards.append((epoch, slot, block_rewards))
