@@ -142,20 +142,21 @@ def txhistory(wallet_address):
     return exporter
 
 
-def _fetch_and_process_txs(txids, wallet_info, exporter, progress):
+def _fetch_and_process_txs(txids, wallet_info, exporter, progress=None):
     total_count = len(txids)
 
     for i, txid in enumerate(txids):
         elem = RpcAPI.fetch_tx(txid)
         staketaxcsv.sol.processor.process_tx(wallet_info, exporter, txid, elem)
 
-        if i % 10 == 0:
+        if progress and i % 10 == 0:
             # Update progress to db every so often for user
             message = f"Fetched {i + 1} of {total_count} transactions"
             progress.report(i, message, "txs")
 
-    message = f"Finished fetching {total_count} transactions"
-    progress.report(total_count, message, "txs")
+    if progress:
+        message = f"Finished fetching {total_count} transactions"
+        progress.report(total_count, message, "txs")
 
 
 if __name__ == "__main__":

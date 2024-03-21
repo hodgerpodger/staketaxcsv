@@ -8,7 +8,7 @@ validator or contract.  This is to ensure good faith in maintaining privacy.
 """
 
 import unittest
-from tests.tests.test_sol import run_test
+from tests.utils_sol import run_test
 
 
 class TestSolJupiter(unittest.TestCase):

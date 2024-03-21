@@ -56,6 +56,37 @@ class LimitOrder:
 
         return limit_order_id, amount_sol_fee, sent_amount, sent_currency, received_amount, received_currency
 
+    def route(self, txinfo_route):
+        balance_changes_all = txinfo_route.balance_changes_all
+        transfers_in, transfers_out, _ = txinfo_route.transfers_net
+
+        # Identify contract token account that receives sent currency from user wallet
+        token_accounts = set(balance_changes_all.keys()) & set(LimitOrder.orders.keys())
+        if len(token_accounts) != 1:
+            raise Exception("Unable to identify sent currency")
+        limit_order_id = list(token_accounts)[0]
+
+        # Find sent amount/currency (technically withdrawn from contract token account)
+        sent_currency, sent_amount = balance_changes_all[limit_order_id]
+        assert(sent_amount < 0)
+        sent_amount = -sent_amount
+
+        # Get received amount/currency from user wallet balance change
+        if len(transfers_in) == 1:
+            # Non-last tx in limit order series
+            received_amount, received_currency, _, _ = transfers_in[0]
+            amount_sol_fee = 0
+        elif len(transfers_in) == 2:
+            # Last tx in limit order series (remaining SOL deposit minus fee is returned)
+            amount_sol_refund, received_amount, received_currency = self._received_amounts(transfers_in)
+
+            # Calculate SOL fee of limit order series: fee = deposit - refund
+            amount_sol_deposit = LimitOrder.orders[limit_order_id]["amount_sol_deposit"]
+            amount_sol_fee = round(amount_sol_deposit - amount_sol_refund, 9)
+            self._fee_sanity_check(amount_sol_fee)
+
+        return limit_order_id, amount_sol_fee, sent_amount, sent_currency, received_amount, received_currency
+
     def cancel(self, txinfo_cancel):
         inner_parsed = txinfo_cancel.inner_parsed
         transfers_in, transfers_out, _ = txinfo_cancel.transfers_net
@@ -99,13 +130,16 @@ def handle_jupiter_limit(exporter, txinfo):
     log_instructions = txinfo.log_instructions
     transfers_in, transfers_out, _ = txinfo.transfers_net
 
-    if "Swap" in log_instructions:
-        _handle_swap(exporter, txinfo)
+    if "Route" in log_instructions or "SharedAccountsRoute" in log_instructions:
+        _handle_route(exporter, txinfo)
+    #elif "Swap" in log_instructions:
+    #    _handle_swap(exporter, txinfo)
     elif "InitializeOrder" in log_instructions:
         _handle_open(exporter, txinfo)
     elif "CancelOrder" in log_instructions:
         _handle_cancel(exporter, txinfo)
     else:
+        return
         raise Exception("Unable to handle tx in handle_jupiter_limit()")
 
 
@@ -125,6 +159,8 @@ def _handle_open(exporter, txinfo):
 
 
 def _handle_swap(exporter, txinfo):
+    # potentially redundant function that never gets triggered but leaving in for now.
+
     txinfo.comment += ".swap_execute_order"
 
     limit_order_id, amount_sol_fee, sent_amount, sent_currency, received_amount, received_currency = LimitOrder().swap(txinfo)
@@ -135,6 +171,22 @@ def _handle_swap(exporter, txinfo):
     row = make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
     row.fee = amount_sol_fee
     row.fee_currency = CURRENCY_SOL
+    exporter.ingest_row(row)
+
+
+def _handle_route(exporter, txinfo):
+    txinfo.comment += ".route_execute_order"
+
+    limit_order_id, amount_sol_fee, sent_amount, sent_currency, received_amount, received_currency = LimitOrder().route(
+        txinfo)
+
+    txinfo.comment += f" [limit_order_id={limit_order_id[:6]}]"
+    txinfo.comment += f" [received {received_amount} {received_currency}]"
+
+    row = make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
+    if amount_sol_fee:
+        row.fee = amount_sol_fee
+        row.fee_currency = CURRENCY_SOL
     exporter.ingest_row(row)
 
 
