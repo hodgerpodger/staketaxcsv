@@ -53,7 +53,8 @@ class RpcAPI(object):
             int(slot),
             {
                 "encoding": "jsonParsed",
-                "rewards": True
+                "rewards": True,
+                "maxSupportedTransactionVersion": 64,  # just choosing accepted high number
             }
         ]
         data = cls._fetch("getBlock", params_list)
@@ -61,6 +62,9 @@ class RpcAPI(object):
         try:
             rewards = data["result"]["rewards"]
         except KeyError:
+            logging.error("Unknown result in rpc method getBlock")
+            logging.error("data:%s", data)
+
             return None
 
         out = []
