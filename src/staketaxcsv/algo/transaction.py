@@ -13,7 +13,7 @@ def get_transaction_txinfo(wallet_address, elem):
     timestamp = datetime.utcfromtimestamp(elem["round-time"]).strftime('%Y-%m-%d %H:%M:%S')
     fee = Algo(0)
 
-    url = "https://allo.info/tx/{}".format(urllib.parse.quote(txid))
+    url = "https://explorer.perawallet.app/tx/{}".format(urllib.parse.quote(txid))
 
     return TxInfo(txid, timestamp, fee, fee.ticker, wallet_address, co.EXCHANGE_ALGORAND_BLOCKCHAIN, url)
 
