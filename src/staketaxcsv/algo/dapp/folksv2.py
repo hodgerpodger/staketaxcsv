@@ -411,7 +411,8 @@ class FolksV2(Dapp):
         return self._is_folksv2_repay_with_txn(group[2:])
 
     def _is_folksv2_governance_commit(self, group):
-        if len(group) != 5:
+        length = len(group)
+        if length < 4 or length > 5:
             return False
 
         if not is_app_call(group[-1], APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR, FOLKSV2_TRANSACTION_GOVERNANCE):
