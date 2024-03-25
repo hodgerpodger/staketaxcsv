@@ -37,6 +37,7 @@ def main():
 def read_options(options):
     """ Configure localconfig based on options dictionary. """
     report_util.read_common_options(localconfig, options)
+    localconfig.include_tiny_vesting = options.get("include_tiny_vesting", localconfig.include_tiny_vesting)
     logging.info("localconfig: %s", localconfig.__dict__)
 
 

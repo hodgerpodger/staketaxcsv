@@ -5,6 +5,7 @@ import staketaxcsv.luna2.constants as co
 from staketaxcsv.luna2.make_tx import make_genesis_airdrop1_tx, make_vesting_airdrop_tx
 from staketaxcsv.settings_csv import LUNA2_NODE
 from datetime import datetime, timedelta
+from staketaxcsv.luna2.config_luna2 import localconfig
 
 
 def genesis_airdrops(wallet_address, exporter):
@@ -61,7 +62,7 @@ def _vesting_airdrops(wallet_address, exporter):
                 daily_amount_luna = amount_luna / length_days if length_days > 0 else 0
 
                 # If neglible amount, omit from CSV
-                if daily_amount_luna <= 0.005:
+                if not localconfig.include_tiny_vesting and daily_amount_luna <= 0.005:
                     continue
 
                 for day in range(1, length_days+1):

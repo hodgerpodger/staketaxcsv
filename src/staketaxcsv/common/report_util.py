@@ -9,7 +9,7 @@ from staketaxcsv.common.ExporterTypes import (
 from staketaxcsv.common.BalExporter import BALANCES_HISTORICAL
 from staketaxcsv.settings_csv import (
     REPORTS_DIR, TICKER_AKT, TICKER_ALGO, TICKER_ARCH, TICKER_ATOM, TICKER_COSMOSPLUS,
-    TICKER_EVMOS, TICKER_JUNO, TICKER_LUNA1, TICKER_OSMO, TICKER_SOL, TICKER_STRD, TICKER_TIA)
+    TICKER_EVMOS, TICKER_JUNO, TICKER_LUNA1, TICKER_LUNA2, TICKER_OSMO, TICKER_SOL, TICKER_STRD, TICKER_TIA)
 from staketaxcsv import settings_csv
 
 ALL = "all"
@@ -106,13 +106,7 @@ def parse_args(ticker):
             type=str,
             help="(YYYY-MM-DD) Only include transactions before end_date (inclusive)",
         )
-    if ticker == TICKER_LUNA1:
-        parser.add_argument(
-            "--minor_rewards",
-            action="store_true",
-            default=False,
-            help="Include minor currency rewards",
-        )
+
 
     if ticker in [TICKER_LUNA1, TICKER_OSMO, TICKER_ALGO]:
         parser.add_argument(
@@ -144,6 +138,20 @@ def parse_args(ticker):
             "--cosmosplus_ticker",
             type=str,
             help="Symbol of token (only used in report_cosmosplus.py)"
+        )
+    if ticker == TICKER_LUNA1:
+        parser.add_argument(
+            "--minor_rewards",
+            action="store_true",
+            default=False,
+            help="Include minor currency rewards",
+        )
+    if ticker == TICKER_LUNA2:
+        parser.add_argument(
+            "--include_tiny_vesting",
+            action="store_true",
+            default=False,
+            help="Include tiny amounts of LUNA vesting airdrops"
         )
     if ticker in [TICKER_SOL]:
         parser.add_argument(
@@ -198,6 +206,8 @@ def parse_args(ticker):
         options["exclude_failed"] = args.exclude_failed
     if "exclude_associated" in args:
         options["exclude_associated"] = args.exclude_associated
+    if "include_tiny_vesting" in args:
+        options["include_tiny_vesting"] = args.include_tiny_vesting
 
     return args.wallet_address, args.format, args.txid, options
 
