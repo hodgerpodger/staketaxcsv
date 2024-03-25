@@ -56,17 +56,20 @@ class LcdAPI_v1:
         data = self._query(uri_path, {}, sleep_seconds=1)
         return data.get("tx_response", None)
 
-    def _account_exists(self, wallet_address):
+    def _account(self, wallet_address):
         uri_path = f"/cosmos/auth/v1beta1/accounts/{wallet_address}"
         data = self._query(uri_path, {})
         return data
 
     def account_exists(self, wallet_address):
-        data = self._account_exists(wallet_address)
+        data = self._account(wallet_address)
         if "account" in data:
             return True
         else:
             return False
+
+    def account(self, wallet_address):
+        return self._account(wallet_address)
 
     @debug_cache(REPORTS_DIR)
     def _get_txs(self, wallet_address, events_type, offset, limit, sleep_seconds):

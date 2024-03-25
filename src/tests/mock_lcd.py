@@ -9,8 +9,8 @@ LCDV2 = "lcdv2"
 
 class MockLcdAPI_v1(LcdAPI_v1):
 
-    def _account_exists(self, wallet_address):
-        return mock_query_two_args(LcdAPI_v1._account_exists, self, wallet_address, LCDV1 + "/_account_exists")
+    def _account(self, wallet_address):
+        return mock_query_two_args(LcdAPI_v1._account, self, wallet_address, LCDV1 + "/_account_exists")
 
     def _get_txs(self, wallet_address, events_type, offset, limit, sleep_seconds):
         return mock_query_six_args(

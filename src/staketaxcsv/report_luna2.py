@@ -16,7 +16,7 @@ import pprint
 
 import staketaxcsv.api
 import staketaxcsv.common.ibc.api_lcd_v1
-import staketaxcsv.luna2.genesis_airdrop
+import staketaxcsv.luna2.genesis_airdrops
 import staketaxcsv.luna2.processor
 from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.common import report_util
@@ -74,7 +74,7 @@ def txhistory(wallet_address):
 
     # Fetch/add genesis airdrop to csv
     progress.report_message("Fetching genesis airdrop amount...")
-    staketaxcsv.luna2.genesis_airdrop.genesis_airdrop(wallet_address, exporter)
+    staketaxcsv.luna2.genesis_airdrops.genesis_airdrops(wallet_address, exporter)
 
     # LCD - fetch count of transactions to estimate progress more accurately
     pages = api_lcd.get_txs_pages_count(LUNA2_NODE, wallet_address, max_txs)
