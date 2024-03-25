@@ -56,13 +56,13 @@ def _vesting_airdrops(wallet_address, exporter):
             length_days = length_seconds // 86400
             amount = period["amount"]
 
-            # Omit the first vesting period, as it has negligible amounts and indicates a cliff
-            if length_seconds == 15552000:
-                continue
-
             if len(amount) > 0:
                 amount_luna = float(amount[0]["amount"]) / co.MILLION
                 daily_amount_luna = amount_luna / length_days if length_days > 0 else 0
+
+                # If neglible amount, omit from CSV
+                if daily_amount_luna <= 0.005:
+                    continue
 
                 for day in range(1, length_days+1):
                     # Calculate and format the timestamp for this day of the vesting period
