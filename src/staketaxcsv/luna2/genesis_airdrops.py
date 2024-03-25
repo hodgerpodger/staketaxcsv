@@ -64,7 +64,7 @@ def _vesting_airdrops(wallet_address, exporter):
                 amount_luna = float(amount[0]["amount"]) / co.MILLION
                 daily_amount_luna = amount_luna / length_days if length_days > 0 else 0
 
-                for day in range(length_days):
+                for day in range(1, length_days+1):
                     # Calculate and format the timestamp for this day of the vesting period
                     timestamp_date = datetime.utcfromtimestamp(cur_time + day * 86400)
                     timestamp_str = timestamp_date.strftime("%Y-%m-%d %H:%M:%S")
