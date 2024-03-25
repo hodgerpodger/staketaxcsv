@@ -1,6 +1,5 @@
 
 import logging
-import urllib.parse
 from datetime import datetime
 
 from staketaxcsv.algo import constants as co
@@ -29,7 +28,7 @@ def get_group_txinfo(wallet_address, transaction):
     txid = groupid
     timestamp = datetime.utcfromtimestamp(transaction["round-time"]).strftime('%Y-%m-%d %H:%M:%S')
     fee = Algo(0)
-    url = "https://allo.info/tx/group/{}".format(urllib.parse.quote_plus(groupid))
+    url = f"https://explorer.perawallet.app/tx-group/{groupid}/"
     txinfo = TxInfo(txid, timestamp, fee, fee.ticker, wallet_address, co.EXCHANGE_ALGORAND_BLOCKCHAIN, url)
 
     return txinfo
