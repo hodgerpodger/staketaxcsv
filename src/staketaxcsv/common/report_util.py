@@ -106,8 +106,6 @@ def parse_args(ticker):
             type=str,
             help="(YYYY-MM-DD) Only include transactions before end_date (inclusive)",
         )
-
-
     if ticker in [TICKER_LUNA1, TICKER_OSMO, TICKER_ALGO]:
         parser.add_argument(
             "--lp_treatment",

@@ -65,7 +65,7 @@ def _vesting_airdrops(wallet_address, exporter):
                 if not localconfig.include_tiny_vesting and daily_amount_luna <= 0.005:
                     continue
 
-                for day in range(1, length_days+1):
+                for day in range(1, length_days + 1):
                     # Calculate and format the timestamp for this day of the vesting period
                     timestamp_date = datetime.utcfromtimestamp(cur_time + day * 86400)
                     timestamp_str = timestamp_date.strftime("%Y-%m-%d %H:%M:%S")
