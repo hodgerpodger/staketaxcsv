@@ -7,3 +7,6 @@ class localconfig(config):
     start_date = None
     end_date = None
     limit = MINTSCAN_MAX_TXS
+
+    # caches
+    contracts = {}

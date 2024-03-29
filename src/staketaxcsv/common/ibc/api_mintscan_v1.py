@@ -45,7 +45,7 @@ class MintscanAPI:
         logging.info("Requesting url %s?%s ...", url, encoded_query)
         data = get_with_retries(self.session, url, query_params, headers=self.headers)
 
-        if data.get("statusCode") == 406:
+        if data is dict and data.get("statusCode") == 406:
             # message="LIMITED_EXCEEDED"
             # error="All allowed credits for today have been used."
             raise Exception(f"statusCode=406.  Daily api credit limit exceeded")

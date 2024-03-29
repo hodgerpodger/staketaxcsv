@@ -5,6 +5,8 @@ import staketaxcsv.common.ibc.handle
 import staketaxcsv.common.ibc.processor
 from staketaxcsv.ntrn.config_ntrn import localconfig
 from staketaxcsv.settings_csv import NTRN_NODE
+from staketaxcsv.common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI
+import staketaxcsv.ntrn.astroport
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -26,6 +28,33 @@ def process_tx(wallet_address, elem, exporter):
         if result:
             continue
 
-        staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+        if msginfo.msg_type == co.MSG_TYPE_EXECUTE_CONTRACT:
+            _handle_execute_contract(exporter, txinfo, msginfo)
+        else:
+            staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
     return txinfo
+
+
+def _handle_execute_contract(exporter, txinfo, msginfo):
+    try:
+        contract = msginfo.contract
+        contract_data = _get_contract_data(contract)
+
+        if staketaxcsv.ntrn.astroport.is_astroport_pair_contract(contract_data):
+            staketaxcsv.ntrn.astroport.handle_astroport_swap(exporter, txinfo, msginfo)
+        return
+    except Exception as e:
+        logging.error("Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
+        staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+
+
+def _get_contract_data(address):
+    if address in localconfig.contracts:
+        return localconfig.contracts[address]
+
+    data = CosmWasmLcdAPI(NTRN_NODE).contract(address)
+
+    localconfig.contracts[address] = data
+    return data
+
