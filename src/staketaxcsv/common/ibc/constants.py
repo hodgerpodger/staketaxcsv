@@ -93,6 +93,7 @@ MINTSCAN_LABELS = {
     "MED": "medibloc",
     "MNT": "asset-mantle",
     "NGM": "emoney",
+    "NTRN": "neutron",
     "NYX": "nyx",
     "OSMO": "osmosis",
     "ONOMY": "onomy-protocol",

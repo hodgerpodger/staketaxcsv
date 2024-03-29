@@ -4,8 +4,8 @@
 * Python repository to create blockchain CSVs for Akash (AKT), Algorand (ALGO), Archway (ARCH), Cosmos (ATOM), 
   Agoric (BLD), Bitsong (BTSG), Sentinel (DVPN), dYdX (DYDX), Dymension (DYM), Evmos (EVMOS), Fetch.ai (FET),
   Chihuahua (HUAHUA), IoTex (IOTX), Injective (INJ), Juno (JUNO), Kujira (KUJI), KYVE Network (KYVE),
-  Terra Classic (LUNC), Terra 2.0 (LUNA), Osmosis (OSMO), Solana (SOL), Stargaze (STARS), Stride (STRD),
-  and Celestia (TIA). 
+  Terra Classic (LUNC), Terra 2.0 (LUNA), Neutron (NTRN), Osmosis (OSMO), Solana (SOL), Stargaze (STARS), 
+  Stride (STRD), and Celestia (TIA). 
 * CSV codebase for <https://stake.tax>
 * Contributions/PRs highly encouraged, such as support for new txs, blockchains, or CSV formats.  Examples:
   * Add cosmo-based-blockchain CSV: https://docs.stake.tax/devs/adding-csv-in-cosmos-based-ecosystem
@@ -52,6 +52,9 @@
 
   # Create historical balances CSV
   python3 staketaxcsv/report_osmo.py <wallet_address> --historical
+  
+  # Create cosmos+ CSV
+  python3 staketaxcsv/report_cosmosplus <wallet_address> --cosmosplus_node <url_lcd_node> --cosmosplus_ticker <token_symbol>
   ```
 
 * Usage as staketaxcsv module: see [Usage as staketaxcsv module](README_reference.md#usage-as-staketaxcsv-module)
