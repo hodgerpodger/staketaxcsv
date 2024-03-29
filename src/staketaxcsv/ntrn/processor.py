@@ -43,10 +43,11 @@ def _handle_execute_contract(exporter, txinfo, msginfo):
 
         if staketaxcsv.ntrn.astroport.is_astroport_pair_contract(contract_data):
             staketaxcsv.ntrn.astroport.handle_astroport_swap(exporter, txinfo, msginfo)
-        return
+            return
     except Exception as e:
         logging.error("Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
-        staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+
+    staketaxcsv.common.ibc.handle.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
 
 
 def _get_contract_data(address):
