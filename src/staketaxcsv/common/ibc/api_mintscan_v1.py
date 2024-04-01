@@ -26,7 +26,7 @@ class MintscanAPI:
 
     def __init__(self, ticker):
         if not MINTSCAN_KEY:
-            raise Exception("Must specify MINTSCAN_KEY environment variable to continue.  "
+            raise Exception("Must specify STAKETAX_MINTSCAN_KEY environment variable to continue.  "
                             "For details, see https://api.mintscan.io/")
 
         self.network = MINTSCAN_LABELS[ticker]
@@ -38,14 +38,20 @@ class MintscanAPI:
 
     def _query(self, uri_path, query_params, sleep_seconds=0):
         if not MINTSCAN_KEY:
-            raise Exception("Missing MINTSCAN_KEY")
+            raise Exception("Missing STAKETAX_MINTSCAN_KEY environment variable")
 
         url = self.base_url + uri_path
         encoded_query = "&".join(f"{quote(str(k))}={quote(str(v))}" for k, v in query_params.items())
         logging.info("Requesting url %s?%s ...", url, encoded_query)
         data = get_with_retries(self.session, url, query_params, headers=self.headers)
 
-        if data is dict and data.get("statusCode") == 406:
+        if isinstance(data, dict) and data.get("statusCode") == 401:
+            # message "Unauthorized"
+            raise Exception(f"statusCode=401.  Unauthorized.  Your mintscan key is likely invalid or in "
+                            f"pending stage.  You may need to email mintscan team for approval.  "
+                            f"See https://docs.cosmostation.io/apis")
+
+        if isinstance(data, dict) and data.get("statusCode") == 406:
             # message="LIMITED_EXCEEDED"
             # error="All allowed credits for today have been used."
             raise Exception(f"statusCode=406.  Daily api credit limit exceeded")
