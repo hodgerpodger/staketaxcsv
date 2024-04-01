@@ -27,7 +27,7 @@ class MintscanAPI:
     def __init__(self, ticker):
         if not MINTSCAN_KEY:
             raise Exception("Must specify STAKETAX_MINTSCAN_KEY environment variable to continue.  "
-                            "For details, see https://api.mintscan.io/")
+                            "For details, see https://api.mintscan.io/ and https://docs.cosmostation.io/apis")
 
         self.network = MINTSCAN_LABELS[ticker]
         self.base_url = "https://apis.mintscan.io/v1/" + self.network
