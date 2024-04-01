@@ -15,6 +15,7 @@ import staketaxcsv.report_dydx
 import staketaxcsv.report_dym
 import staketaxcsv.report_evmos
 import staketaxcsv.report_fet
+import staketaxcsv.report_grav
 import staketaxcsv.report_huahua
 import staketaxcsv.report_inj
 import staketaxcsv.report_iotex
@@ -48,6 +49,7 @@ REPORT_MODULES = {
     co.TICKER_DYM: staketaxcsv.report_dym,
     co.TICKER_EVMOS: staketaxcsv.report_evmos,
     co.TICKER_FET: staketaxcsv.report_fet,
+    co.TICKER_GRAV: staketaxcsv.report_grav,
     co.TICKER_HUAHUA: staketaxcsv.report_huahua,
     co.TICKER_IOTEX: staketaxcsv.report_iotex,
     co.TICKER_INJ: staketaxcsv.report_inj,
