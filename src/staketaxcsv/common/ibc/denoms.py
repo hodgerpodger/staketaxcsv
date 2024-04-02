@@ -1,10 +1,13 @@
+import json
 import logging
 import os
 from staketaxcsv.common.ibc.api_lcd_v1 import LcdAPI_v1
 import staketaxcsv.common.ibc.constants as co
 from staketaxcsv.common.Cache import Cache
-from staketaxcsv.common.report_util import STAKETAX_CACHE
 from staketaxcsv import settings_csv
+
+# downloaded from https://raw.githubusercontent.com/PulsarDefi/IBC-Token-Data-Cosmos/main/native_token_data.json
+PULSAR_DATA = os.path.dirname(os.path.realpath(__file__)) + "/pulsar_data.json"
 
 
 class IBCAddrs:
@@ -52,6 +55,49 @@ class IBCAddrs:
         if IBCAddrs.loaded:
             Cache().set_ibc_addresses(IBCAddrs.addrs)
             logging.info("Set cache using IBCAddrs.addrs ...")
+
+
+class PulsarData:
+
+    loaded = False
+    denoms = {}
+
+    @classmethod
+    def _load(cls):
+        if not cls.loaded:
+            with open(PULSAR_DATA, 'r') as f:
+                # Parse the JSON file and convert it into a Python dictionary
+                data = json.load(f)
+
+                for s, val in data.items():
+                    # i.e. erc20/0x2Cbea61fdfDFA520Ee99700F104D5b75ADf50B0c__acrechain
+                    # i.e. factory/neutron1p8d89wvxyjcnawmgw72klknr3lg9gwwl6ypxda/newt__neutron
+                    denom, _ = s.split("__")
+                    cls.denoms[denom] = {
+                        "symbol": val["symbol"],
+                        "decimals": val["decimals"]
+                    }
+
+            cls.loaded = True
+
+    @classmethod
+    def has_denom(cls, denom):
+        cls._load()
+
+        return denom in cls.denoms
+
+
+    @classmethod
+    def denom_to_symbol(cls, denom):
+        cls._load()
+
+        if denom in cls.denoms:
+            symbol = cls.denoms[denom]["symbol"]
+            decimals = cls.denoms[denom]["decimals"]
+            return symbol, decimals
+        else:
+            return None, None
+
 
 
 def amount_currency_from_raw(amount_raw, currency_raw, lcd_node):
@@ -134,6 +180,10 @@ def _amount_currency_convert(amount_raw, currency_raw):
         # i.e. stinj, stujuno, staevmos
         amt, cur = _amount_currency_convert(amount_raw, currency_raw[2:])
         return amt, "st" + cur
+    elif PulsarData.has_denom(currency_raw):
+        currency, decimals = PulsarData.denom_to_symbol(currency_raw)
+        amount = float(amount_raw) / (10**decimals)
+        return amount, currency
     else:
         logging.error("_amount_currency_from_raw(): no case for amount_raw={}, currency_raw={}".format(
             amount_raw, currency_raw))

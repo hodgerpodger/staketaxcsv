@@ -3,7 +3,10 @@ import staketaxcsv.common.make_tx
 
 def is_astroport_pair_contract(contract_data):
     return ("contract_info" in contract_data
-            and contract_data["contract_info"].get("label") in ("Astroport pair", "Astroport LP token"))
+            and contract_data["contract_info"].get("label") in (
+                "Astroport pair", "Astroport LP token", "Astroport Router"))
+
+
 
 
 def handle_astroport_swap(exporter, txinfo, msginfo):
