@@ -7,6 +7,7 @@ from staketaxcsv.common.debug_util import debug_cache
 from staketaxcsv.common.ibc.constants import (
     EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SIGNER, EVENTS_TYPE_LIST_DEFAULT)
 from staketaxcsv.common.ibc.util_ibc import remove_duplicates
+import time
 
 TXS_LIMIT_PER_QUERY = 100
 
@@ -47,6 +48,18 @@ class LcdAPI_v2(LcdAPI_v1):
             logging.warning("Received grpc message too large.  "
                             "Will retry by getting one tx at a time...")
             return self._get_txs_one_by_one(wallet_address, events_type, page, limit, sleep_seconds)
+
+        # Special case just for STARS, to get around non-deterministic bad results sometimes.
+        if wallet_address.startswith("stars") and data.get("code") == 2:
+            for i in range(5):
+                seconds_sleep = 2**i
+                logging.info("STARS: Sleeping for %s seconds ... Then retrying attempt i=%s ...", seconds_sleep, i)
+                time.sleep(seconds_sleep)
+                data = self._get_txs(wallet_address, events_type, page, limit, sleep_seconds)
+                if data.get("code") == 2:
+                    pass
+                else:
+                    break
 
         elems = data["tx_responses"]
         total_count_txs = int(data["total"])
