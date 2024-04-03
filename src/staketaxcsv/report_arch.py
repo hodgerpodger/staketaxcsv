@@ -12,8 +12,8 @@ from staketaxcsv.arch.config_arch import localconfig
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.settings_csv import ARCH_NODE, TICKER_ARCH
-from staketaxcsv.common.ibc.tx_data import TxDataMintscan
+from staketaxcsv.settings_csv import ARCH_NODE, TICKER_ARCH, MINTSCAN_ON
+from staketaxcsv.common.ibc.tx_data import TxDataMintscan, TxDataLcd
 from staketaxcsv.common.ibc.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
 
@@ -31,7 +31,7 @@ def read_options(options):
 
 def _txdata():
     max_txs = localconfig.limit
-    return TxDataMintscan(TICKER_ARCH, max_txs)
+    return TxDataMintscan(TICKER_ARCH, max_txs) if MINTSCAN_ON else TxDataLcd(ARCH_NODE, max_txs)
 
 
 def wallet_exists(wallet_address):

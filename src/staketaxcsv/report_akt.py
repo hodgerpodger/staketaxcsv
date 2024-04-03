@@ -11,8 +11,8 @@ from staketaxcsv.common.ibc import api_lcd, historical_balances
 from staketaxcsv.akt.config_akt import localconfig
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.settings_csv import AKT_NODE, TICKER_AKT
-from staketaxcsv.common.ibc.tx_data import TxDataMintscan
+from staketaxcsv.settings_csv import AKT_NODE, TICKER_AKT, MINTSCAN_ON
+from staketaxcsv.common.ibc.tx_data import TxDataMintscan, TxDataLcd
 from staketaxcsv.common.ibc.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
 
@@ -30,7 +30,7 @@ def read_options(options):
 
 def _txdata():
     max_txs = localconfig.limit
-    return TxDataMintscan(TICKER_AKT, max_txs)
+    return TxDataMintscan(TICKER_AKT, max_txs) if MINTSCAN_ON else TxDataLcd(AKT_NODE, max_txs)
 
 
 def wallet_exists(wallet_address):

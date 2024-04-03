@@ -21,7 +21,7 @@ class TxDataLcd:
     def get_tx(self, txid):
         return self.api.get_tx(txid)
 
-    def get_txs_all(self, address, progress):
+    def get_txs_all(self, address, progress, start_date=None, end_date=None):
         # only include optional parameter limit if defined
         kwargs = {}
         if self.limit_per_query:
@@ -29,7 +29,7 @@ class TxDataLcd:
 
         return api_lcd.get_txs_all(self.lcd_node, address, self.max_txs, progress=progress, **kwargs)
 
-    def get_txs_pages_count(self, address):
+    def get_txs_pages_count(self, address, start_date=None, end_date=None):
         # only include optional parameter limit if defined
         kwargs = {}
         if self.limit_per_query:

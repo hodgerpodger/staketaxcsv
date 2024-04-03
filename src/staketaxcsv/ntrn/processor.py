@@ -7,6 +7,7 @@ from staketaxcsv.ntrn.config_ntrn import localconfig
 from staketaxcsv.settings_csv import NTRN_NODE
 from staketaxcsv.common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI
 import staketaxcsv.ntrn.astroport
+import staketaxcsv.ntrn.vote
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -43,6 +44,9 @@ def _handle_execute_contract(exporter, txinfo, msginfo):
 
         if staketaxcsv.ntrn.astroport.is_astroport_pair_contract(contract_data):
             staketaxcsv.ntrn.astroport.handle_astroport_swap(exporter, txinfo, msginfo)
+            return
+        if staketaxcsv.ntrn.vote.is_vote(contract_data):
+            staketaxcsv.ntrn.vote.handle_vote(exporter, txinfo, msginfo)
             return
     except Exception as e:
         logging.error("Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))

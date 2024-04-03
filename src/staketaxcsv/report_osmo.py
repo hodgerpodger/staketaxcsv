@@ -19,8 +19,8 @@ from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.osmo.config_osmo import localconfig
 from staketaxcsv.osmo.lp_rewards import lp_rewards
 from staketaxcsv.osmo.progress_osmo import ProgressOsmo
-from staketaxcsv.settings_csv import TICKER_OSMO
-from staketaxcsv.common.ibc.tx_data import TxDataMintscan
+from staketaxcsv.settings_csv import TICKER_OSMO, MINTSCAN_ON
+from staketaxcsv.common.ibc.tx_data import TxDataMintscan, TxDataLcd
 from staketaxcsv.common.ibc.progress_mintscan import SECONDS_PER_PAGE
 from staketaxcsv.common.ibc import historical_balances
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
@@ -44,7 +44,7 @@ def read_options(options):
 
 def _txdata():
     max_txs = localconfig.limit
-    return TxDataMintscan(TICKER_OSMO, max_txs)
+    return TxDataMintscan(TICKER_OSMO, max_txs) if MINTSCAN_ON else TxDataLcd(OSMO_NODE, max_txs)
 
 
 def wallet_exists(wallet_address):
