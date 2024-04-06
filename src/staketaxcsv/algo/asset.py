@@ -108,8 +108,13 @@ class Asset:
             params = self.asset_list[id]
         else:
             resp = self.indexer.get_asset(id)
+            if resp is None:
+                raise ValueError(f"Failed to retrieve asset {id}")
+
             if resp["deleted"]:
                 resp = self.indexer.get_deleted_asset(id)
+                if resp is None:
+                    raise ValueError(f"Failed to retrieve deleted asset {id}")
 
             params = _parse_asset(resp["params"])
             if params is not None:

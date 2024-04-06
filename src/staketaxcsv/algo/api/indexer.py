@@ -9,7 +9,7 @@ from requests.adapters import HTTPAdapter, Retry
 
 from staketaxcsv.algo.config_algo import localconfig
 from staketaxcsv.common.debug_util import debug_cache
-from staketaxcsv.settings_csv import ALGO_HIST_INDEXER_NODE, ALGO_INDEXER_NODE, REPORTS_DIR
+from staketaxcsv.settings_csv import ALGO_INDEXER_NODE, REPORTS_DIR
 
 # https://developer.algorand.org/docs/get-details/indexer/#paginated-results
 INDEXER_LIMIT = 2000
@@ -22,7 +22,7 @@ class Indexer:
     def __init__(self):
         if not Indexer.session:
             Indexer.session = Session()
-            retries = Retry(total=5, backoff_factor=5)
+            retries = Retry(total=5, backoff_factor=2, status_forcelist=[429, 500, 502, 503, 504])
             Indexer.session.mount("https://", HTTPAdapter(max_retries=retries))
 
     def account_exists(self, address):
@@ -49,9 +49,6 @@ class Indexer:
         params = {"include-all": True}
 
         data, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
-
-        if status_code == 599:
-            data, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
 
         if status_code == 200:
             return data["account"]
@@ -170,7 +167,7 @@ class Indexer:
         endpoint = "v2/transactions"
         params = {"group-id": group_id}
 
-        data, status_code = self._query(ALGO_HIST_INDEXER_NODE, endpoint, params)
+        data, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
 
         if status_code == 200:
             return data["transactions"]
@@ -219,7 +216,19 @@ class Indexer:
           A dictionary containing asset details if successful, `None` otherwise.
           See asset params schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Asset
         """
-        return self._get_asset(ALGO_INDEXER_NODE, id)
+        endpoint = f"v2/assets/{id}"
+        params = {"include-all": True}
+
+        # Temporarily slow down asset requests until we either cache them
+        # or https://github.com/algorand/go-algorand/issues/5250 is resolved.
+        time.sleep(0.1)
+
+        data, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
+
+        if status_code == 200:
+            return data["asset"]
+        else:
+            return None
 
     @debug_cache(os.path.join(REPORTS_DIR, "algo", "assets"))
     def get_deleted_asset(self, id: int) -> Optional[dict]:
@@ -233,23 +242,13 @@ class Indexer:
           A dictionary containing asset details if successful, `None` otherwise.
           See asset params schema at https://app.swaggerhub.com/apis/algonode/indexer/2.0#/Asset
         """
-        return self._get_asset(ALGO_HIST_INDEXER_NODE, id)
+        endpoint = f"v2/assets/{id}/transactions"
+        params = {"tx-type": "acfg"}
 
-    def _get_asset(self, node_url, id):
-        endpoint = f"v2/assets/{id}"
-        params = {"include-all": True}
+        data, status_code = self._query(ALGO_INDEXER_NODE, endpoint, params)
 
-        # Temporarily slow down asset requests until we either cache them
-        # or https://github.com/algorand/go-algorand/issues/5250 is resolved.
-        time.sleep(0.1)
-
-        data, status_code = self._query(node_url, endpoint, params)
-
-        if status_code == 599:
-            data, status_code = self._query(node_url, endpoint, params)
-
-        if status_code == 200:
-            return data["asset"]
+        if status_code == 200 and len(data.get("transactions", [])) > 0:
+            return data["transactions"][0]["asset-config-transaction"]
         else:
             return None
 

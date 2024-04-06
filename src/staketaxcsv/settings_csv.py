@@ -8,7 +8,6 @@ MINTSCAN_ON = (MINTSCAN_KEY != "")
 # Environment variables (required for each respective report)
 
 AKT_NODE = os.environ.get("STAKETAX_AKT_NODE", "https://akash-api.polkachu.com")
-ALGO_HIST_INDEXER_NODE = os.environ.get("STAKETAX_ALGO_HIST_INDEXER_NODE", "https://indexer.algoexplorerapi.io")
 ALGO_INDEXER_NODE = os.environ.get("STAKETAX_ALGO_INDEXER_NODE", "https://mainnet-idx.algonode.cloud")
 ALGO_NFDOMAINS = os.environ.get("STAKETAX_ALGO_NFDOMAINS", "https://api.nf.domains")
 ARCH_NODE = os.environ.get("STAKETAX_ARCH_NODE", "https://rest-archway.theamsolutions.info")
