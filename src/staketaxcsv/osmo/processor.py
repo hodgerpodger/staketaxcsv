@@ -5,6 +5,7 @@ import staketaxcsv.osmo.handle_concentrated_lp
 import staketaxcsv.osmo.handle_general
 import staketaxcsv.osmo.handle_liquid
 import staketaxcsv.osmo.handle_lp
+import staketaxcsv.osmo.handle_mars
 import staketaxcsv.osmo.handle_staking
 import staketaxcsv.osmo.handle_superfluid
 import staketaxcsv.osmo.handle_swap
@@ -15,6 +16,7 @@ from staketaxcsv.osmo.config_osmo import localconfig
 from staketaxcsv.osmo.MsgInfoOsmo import MsgInfoOsmo
 from staketaxcsv.settings_csv import OSMO_NODE
 CONTRACT_LIQUID_STAKE = "osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0"
+CONTRACT_MARS_INCENTIVES = "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm"
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -106,5 +108,7 @@ def _handle_execute_contract(exporter, txinfo, msginfo):
 
     if contract == CONTRACT_LIQUID_STAKE:
         staketaxcsv.osmo.handle_liquid.handle_liquid_stake(exporter, txinfo, msginfo)
+    elif contract == CONTRACT_MARS_INCENTIVES:
+        staketaxcsv.osmo.handle_mars.handle_claim_rewards(exporter, txinfo, msginfo)
     else:
         staketaxcsv.osmo.handle_unknown.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
