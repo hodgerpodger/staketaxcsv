@@ -1,0 +1,6 @@
+{
+    "denom_trace": {
+        "path": "transfer/channel-208",
+        "base_denom": "yieldeth-wei"
+    }
+}

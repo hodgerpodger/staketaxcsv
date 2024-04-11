@@ -11,4 +11,4 @@ def handle_claim_rewards(exporter, txinfo, msginfo):
         exporter.ingest_row(row)
         return
 
-    raise Exception("Unable to handle tx in handle_claim_rewards()")
+    raise Exception("Unable to handle tx in handle_mars.handle_claim_rewards()")

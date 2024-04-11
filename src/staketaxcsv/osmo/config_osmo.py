@@ -11,3 +11,4 @@ class localconfig(config):
     end_date = None
     symbols = {}
     exponents = {}
+    contracts = {}

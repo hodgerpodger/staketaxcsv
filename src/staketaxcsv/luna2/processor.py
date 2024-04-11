@@ -7,7 +7,7 @@ import staketaxcsv.common.make_tx
 import staketaxcsv.luna2.contracts.astroport
 import staketaxcsv.luna2.contracts.general
 import staketaxcsv.luna2.contracts.valkyrie
-from staketaxcsv.common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI
+from staketaxcsv.common.ibc.api_lcd_cosmwasm import CosmWasmLcdAPI, contract_label
 from staketaxcsv.luna2.config_luna2 import localconfig
 
 # These imports add to CONTRACTS dict
@@ -75,9 +75,9 @@ def _handle_execute_contract(exporter, elem, txinfo):
         handler_func = CONTRACTS[contract]
     else:
         # Query contract data (to identify it)
-        contract_data = _get_contract_data(contract)
+        label = contract_label(contract, localconfig, LUNA2_NODE)
 
-        if staketaxcsv.luna2.contracts.astroport.is_astroport_pair_contract(contract_data):
+        if label in ("Astroport pair", "Astroport LP token"):
             handler_func = staketaxcsv.luna2.contracts.astroport.handle_astroport
         else:
             # No handler found for this contract
@@ -97,16 +97,6 @@ def _handle_execute_contract(exporter, elem, txinfo):
 
         if localconfig.debug:
             raise e
-
-
-def _get_contract_data(address):
-    if address in localconfig.contracts:
-        return localconfig.contracts[address]
-
-    data = CosmWasmLcdAPI(LUNA2_NODE).contract(address)
-
-    localconfig.contracts[address] = data
-    return data
 
 
 def _handle_unknown(exporter, txinfo):

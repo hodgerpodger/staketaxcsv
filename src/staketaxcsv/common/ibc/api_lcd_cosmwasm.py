@@ -25,3 +25,18 @@ def extract_msg(data):
             return msg
 
     return None
+
+
+def contract_label(contract, localconfig, lcd_node):
+    data = _get_contract_data(contract, localconfig, lcd_node)
+    return data.get("contract_info", {}).get("label", "")
+
+
+def _get_contract_data(contract, localconfig, lcd_node):
+    if contract in localconfig.contracts:
+        return localconfig.contracts[contract]
+
+    data = CosmWasmLcdAPI(lcd_node).contract(contract)
+
+    localconfig.contracts[contract] = data
+    return data

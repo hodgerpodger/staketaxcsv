@@ -12,7 +12,7 @@ import unittest
 from tests.utils_osmo import run_test
 
 
-class TestOsmo(unittest.TestCase):
+class TestOsmoMars(unittest.TestCase):
 
     def test_mars_claim_rewards(self):
         result = run_test(

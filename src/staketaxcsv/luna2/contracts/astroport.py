@@ -10,11 +10,6 @@ CONTRACT_ASTROPORT_GENERATOR = "terra1ksvlfex49desf4c452j6dewdjs6c48nafemetuwjyj
 CONTRACT_ASTROPORT_ROUTER_2 = "terra19hz374h6ruwtzrnm8ytkae782uv79h9yt9tuytgvt94t26c4793qnfg7vn"
 
 
-def is_astroport_pair_contract(contract_data):
-    return ("contract_info" in contract_data
-           and contract_data["contract_info"].get("label") in ("Astroport pair", "Astroport LP token"))
-
-
 def handle_astroport(elem, txinfo):
     rows = []
 

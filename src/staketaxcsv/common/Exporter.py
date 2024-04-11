@@ -88,7 +88,13 @@ class Exporter:
         self.rows = []
         self.is_reverse = None  # last sorted direction
         self.ticker = ticker
-        self.koinly_nullmap = NullMap(localconfig)
+
+        if localconfig and hasattr(localconfig, "koinlynullmap"):
+            json_path = localconfig.koinlynullmap
+        else:
+            json_path = None
+        self.koinly_nullmap = NullMap(json_path)
+
         if localconfig and hasattr(localconfig, "lp_treatment") and localconfig.lp_treatment:
             self.lp_treatment = localconfig.lp_treatment
         else:
