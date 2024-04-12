@@ -3,10 +3,7 @@ import logging
 import staketaxcsv.common.ibc.processor
 import staketaxcsv.osmo.handle_concentrated_lp
 import staketaxcsv.osmo.handle_general
-import staketaxcsv.osmo.handle_liquid
 import staketaxcsv.osmo.handle_lp
-import staketaxcsv.osmo.handle_mars
-import staketaxcsv.osmo.handle_quasar
 import staketaxcsv.osmo.handle_staking
 import staketaxcsv.osmo.handle_superfluid
 import staketaxcsv.osmo.handle_swap
@@ -17,6 +14,9 @@ from staketaxcsv.osmo.config_osmo import localconfig
 from staketaxcsv.osmo.MsgInfoOsmo import MsgInfoOsmo
 from staketaxcsv.settings_csv import OSMO_NODE
 from staketaxcsv.common.ibc.api_lcd_cosmwasm import contract_label
+import staketaxcsv.osmo.contracts.liquid
+import staketaxcsv.osmo.contracts.mars
+import staketaxcsv.osmo.contracts.quasar
 CONTRACT_LIQUID_STAKE = "osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0"
 CONTRACT_MARS_INCENTIVES = "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm"
 CONTRACT_QUASAR_VAULT = "osmo15uk8m3wchpee8gjl02lwelxlsl4uuy3pdy7u6kz7cu7krlph2xpscf53cy"
@@ -110,13 +110,13 @@ def _handle_execute_contract(exporter, txinfo, msginfo):
     contract = msginfo.contract
 
     if contract == CONTRACT_LIQUID_STAKE:
-        staketaxcsv.osmo.handle_liquid.handle_liquid_stake(exporter, txinfo, msginfo)
+        staketaxcsv.osmo.contracts.liquid.handle_liquid_stake(exporter, txinfo, msginfo)
     elif contract == CONTRACT_MARS_INCENTIVES:
-        staketaxcsv.osmo.handle_mars.handle_claim_rewards(exporter, txinfo, msginfo)
+        staketaxcsv.osmo.contracts.mars.handle_claim_rewards(exporter, txinfo, msginfo)
     else:
         label = contract_label(contract, localconfig, OSMO_NODE)
 
         if label.startswith("quasar-cl-vault-"):
-            staketaxcsv.osmo.handle_quasar.handle(exporter, txinfo, msginfo)
+            staketaxcsv.osmo.contracts.quasar.handle(exporter, txinfo, msginfo)
         else:
             staketaxcsv.osmo.handle_unknown.handle_unknown_detect_transfers(exporter, txinfo, msginfo)

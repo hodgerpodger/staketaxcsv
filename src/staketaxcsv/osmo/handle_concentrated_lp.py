@@ -127,7 +127,6 @@ def handle_add_to_position(exporter, txinfo, msginfo):
 
         return
 
-
     raise Exception("Unable to handle tx in handle_add_to_position()")
 
 
@@ -214,6 +213,5 @@ def handle_withdraw_position(exporter, txinfo, msginfo):
         ]
         util_osmo._ingest_rows(exporter, rows, comment)
         return
-
 
     raise Exception("Unable to handle tx in handle_withdraw_position()")
