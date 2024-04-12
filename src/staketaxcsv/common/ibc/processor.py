@@ -31,13 +31,17 @@ def txinfo(wallet_address, elem, mintscan_label, lcd_node, customMsgInfo=None):
     # Construct msgs: list of MsgInfoIBC objects
     msgs = []
     for i in range(len(elem["logs"])):
+        log = elem["logs"][i]
+
+        if "body" in elem["tx"] and log.get("msg_index") is None:
+            continue
+
         if "body" in elem["tx"]:
             message = elem["tx"]["body"]["messages"][i]
         elif "value" in elem["tx"]:
             message = elem["tx"]["value"]["msg"][i]
         else:
             raise Exception("Unable to deduce message")
-        log = elem["logs"][i]
 
         if customMsgInfo:
             msginfo = customMsgInfo(wallet_address, i, message, log, lcd_node)
