@@ -33,7 +33,8 @@ def txinfo(wallet_address, elem, mintscan_label, lcd_node, customMsgInfo=None):
     for i in range(len(elem["logs"])):
         log = elem["logs"][i]
 
-        if "body" in elem["tx"] and log.get("msg_index") is None:
+        # Prevent crash in rare cases where msg_index field exists, with null value
+        if "body" in elem["tx"] and "msg_index" in log and log["msg_index"] is None:
             continue
 
         if "body" in elem["tx"]:
