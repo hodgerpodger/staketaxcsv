@@ -192,6 +192,12 @@ class MsgInfoIBC:
                 if self.msg_type == co.MSG_TYPE_MULTI_SEND:
                     continue
 
+                # Prevent crash in weird data where key="authz_msg_index" for last 2 attributes
+                if (len(attributes) > 1 and
+                    attributes[-1]["key"] == "authz_msg_index" and
+                    attributes[-2]["key"] == "authz_msg_index"):
+                    attributes.pop()
+
                 # Handle all other cases
                 for i in range(0, len(attributes), self._num_keys(attributes)):
                     first_key = attributes[i]["key"]
