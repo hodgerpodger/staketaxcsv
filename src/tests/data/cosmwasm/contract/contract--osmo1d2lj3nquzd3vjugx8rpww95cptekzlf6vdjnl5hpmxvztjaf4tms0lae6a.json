@@ -1,0 +1,15 @@
+{
+    "address": "osmo1d2lj3nquzd3vjugx8rpww95cptekzlf6vdjnl5hpmxvztjaf4tms0lae6a",
+    "contract_info": {
+        "code_id": "280",
+        "creator": "osmo1p577t98ggzlucph3wwehmtmhqr75fda0rzuwwq",
+        "admin": "osmo1ed6ezqx9t4e9sfm6nfgulq3005umrh6hkclagk",
+        "label": "quasar-cl-vault-yieldeth/eth-dynamic-s+",
+        "created": {
+            "block_height": "12167355",
+            "tx_index": "472794"
+        },
+        "ibc_port_id": "",
+        "extension": null
+    }
+}

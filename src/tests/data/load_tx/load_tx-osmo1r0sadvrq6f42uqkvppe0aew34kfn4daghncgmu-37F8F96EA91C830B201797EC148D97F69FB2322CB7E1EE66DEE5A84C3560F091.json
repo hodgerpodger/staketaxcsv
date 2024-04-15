@@ -1,0 +1,389 @@
+{
+    "height": "13034725",
+    "txhash": "37F8F96EA91C830B201797EC148D97F69FB2322CB7E1EE66DEE5A84C3560F091",
+    "codespace": "",
+    "code": 0,
+    "data": "12470A392F6F736D6F7369732E706F6F6C6D616E616765722E763162657461312E4D7367537761704578616374416D6F756E74496E526573706F6E7365120A0A083132353336343931",
+    "info": "",
+    "gas_wanted": "2971521",
+    "gas_used": "1988127",
+    "tx": {
+        "@type": "/cosmos.tx.v1beta1.Tx",
+        "body": {
+            "messages": [
+                {
+                    "@type": "/osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn",
+                    "sender": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu",
+                    "routes": [
+                        {
+                            "pool_id": "1248",
+                            "token_out_denom": "uosmo"
+                        }
+                    ],
+                    "token_in": {
+                        "denom": "ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877",
+                        "amount": "1600000"
+                    },
+                    "token_out_min_amount": "12424822"
+                }
+            ],
+            "memo": "",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+        },
+        "auth_info": {
+            "signer_infos": [
+                {
+                    "public_key": {
+                        "@type": "/cosmos.crypto.secp256k1.PubKey",
+                        "key": "Axi6HoZbJkXbZtbXohe25FcIqLAgEwtB2Vk3DCjEOcR9"
+                    },
+                    "mode_info": {
+                        "single": {
+                            "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                        }
+                    },
+                    "sequence": "21"
+                }
+            ],
+            "fee": {
+                "amount": [
+                    {
+                        "denom": "uosmo",
+                        "amount": "12629"
+                    }
+                ],
+                "gas_limit": "2971521",
+                "payer": "",
+                "granter": ""
+            },
+            "tip": null
+        },
+        "signatures": [
+            "nSccqqIIVTCeOSNxSKBNXkB+DhQEo/R9tmBefXkpzdFL93JoAvT5biWD6Qq5WUuX55JNs1xuvgTQvSFO6Lf/IQ=="
+        ]
+    },
+    "timestamp": "2024-01-01T00:24:07Z",
+    "timestamp__@@date": 1704068647000,
+    "logs": [
+        {
+            "msg_index": 0,
+            "log": "",
+            "events": [
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "action",
+                            "value": "/osmosis.poolmanager.v1beta1.MsgSwapExactAmountIn"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "528ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "osmo1jv65s3grqf6v6jl3dp4t6c9t9rk99cd80yhvld"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "528ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "osmo1jv65s3grqf6v6jl3dp4t6c9t9rk99cd80yhvld"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "528ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "sender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "1072ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "osmo1g7ajkk295vactngp74shkfrprvjrdwn662dg26"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "1072ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "osmo1g7ajkk295vactngp74shkfrprvjrdwn662dg26"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "1072ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "sender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "1595204ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "osmo1emr5hycqzrlrd9cdm9j3jxs66detx2j69mde2xxxsj8xhnl3dvmsgpudk6"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "1595204ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "osmo1emr5hycqzrlrd9cdm9j3jxs66detx2j69mde2xxxsj8xhnl3dvmsgpudk6"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "1595204ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "sender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "3196ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "osmo1uv76jtxlyvdkg5hqdkzlwlvsknzhfw5xazqc549g8g60kmtkxr3sfgd5lx"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "3196ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "osmo1uv76jtxlyvdkg5hqdkzlwlvsknzhfw5xazqc549g8g60kmtkxr3sfgd5lx"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "3196ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "sender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "osmo1emr5hycqzrlrd9cdm9j3jxs66detx2j69mde2xxxsj8xhnl3dvmsgpudk6"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "12536491uosmo"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "12536491uosmo"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1emr5hycqzrlrd9cdm9j3jxs66detx2j69mde2xxxsj8xhnl3dvmsgpudk6"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "12536491uosmo"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "sender",
+                            "value": "osmo1emr5hycqzrlrd9cdm9j3jxs66detx2j69mde2xxxsj8xhnl3dvmsgpudk6"
+                        }
+                    ]
+                },
+                {
+                    "type": "token_swapped",
+                    "attributes": [
+                        {
+                            "key": "module",
+                            "value": "gamm"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        },
+                        {
+                            "key": "pool_id",
+                            "value": "1248"
+                        },
+                        {
+                            "key": "tokens_in",
+                            "value": "1595204ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        },
+                        {
+                            "key": "tokens_out",
+                            "value": "12536491uosmo"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "module",
+                            "value": "poolmanager"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1r0sadvrq6f42uqkvppe0aew34kfn4daghncgmu"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "chain_id": "osmosis-1"
+}

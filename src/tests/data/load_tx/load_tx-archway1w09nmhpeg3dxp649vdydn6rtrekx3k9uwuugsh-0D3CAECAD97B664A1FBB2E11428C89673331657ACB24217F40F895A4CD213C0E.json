@@ -1,0 +1,170 @@
+{
+    "height": "151369",
+    "txhash": "0D3CAECAD97B664A1FBB2E11428C89673331657ACB24217F40F895A4CD213C0E",
+    "codespace": "",
+    "code": 0,
+    "data": "0A3C0A2A2F636F736D6F732E7374616B696E672E763162657461312E4D7367426567696E526564656C6567617465120E0A0C089D9BB0A60610B7E98EE201",
+    "info": "",
+    "gas_wanted": "346358",
+    "gas_used": "279433",
+    "tx": {
+        "@type": "/cosmos.tx.v1beta1.Tx",
+        "body": {
+            "messages": [
+                {
+                    "@type": "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+                    "delegator_address": "archway1w09nmhpeg3dxp649vdydn6rtrekx3k9uwuugsh",
+                    "validator_src_address": "archwayvaloper1846wx4dzcrm5guey0l5gp4kf6dp2zmqrj6rpcn",
+                    "validator_dst_address": "archwayvaloper1jy9kqql29lefyddmha9xla39qwqv8zxdzep27p",
+                    "amount": {
+                        "denom": "aarch",
+                        "amount": "3750000000000000000000"
+                    }
+                }
+            ],
+            "memo": "",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+        },
+        "auth_info": {
+            "signer_infos": [
+                {
+                    "public_key": {
+                        "@type": "/cosmos.crypto.secp256k1.PubKey",
+                        "key": "Am+pEzVUFq9fCSOxyfUsOM72D5oxQjvfOMEweOkW503k"
+                    },
+                    "mode_info": {
+                        "single": {
+                            "mode": "SIGN_MODE_DIRECT"
+                        }
+                    },
+                    "sequence": "10"
+                }
+            ],
+            "fee": {
+                "amount": [
+                    {
+                        "denom": "aarch",
+                        "amount": "311722200000000000"
+                    }
+                ],
+                "gas_limit": "346358",
+                "payer": "",
+                "granter": ""
+            }
+        },
+        "signatures": [
+            "0+nukcy6Tq48PshaZ8KaGQdUbfVrZiWclkDEjzeBXQAs/ilQG1bGiOFQrDHaOWbWmbSE4IkCU+CHFh0ukcHVPw=="
+        ]
+    },
+    "timestamp": "2023-07-13T20:27:09Z",
+    "timestamp__@@date": 1689280029000,
+    "logs": [
+        {
+            "msg_index": 0,
+            "log": "",
+            "events": [
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "archway1w09nmhpeg3dxp649vdydn6rtrekx3k9uwuugsh"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "11221299726869643750aarch"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "archway1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8j5ccrg"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "11221299726869643750aarch"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "action",
+                            "value": "/cosmos.staking.v1beta1.MsgBeginRedelegate"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "archway1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8j5ccrg"
+                        },
+                        {
+                            "key": "module",
+                            "value": "staking"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "archway1w09nmhpeg3dxp649vdydn6rtrekx3k9uwuugsh"
+                        }
+                    ]
+                },
+                {
+                    "type": "redelegate",
+                    "attributes": [
+                        {
+                            "key": "source_validator",
+                            "value": "archwayvaloper1846wx4dzcrm5guey0l5gp4kf6dp2zmqrj6rpcn"
+                        },
+                        {
+                            "key": "destination_validator",
+                            "value": "archwayvaloper1jy9kqql29lefyddmha9xla39qwqv8zxdzep27p"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "3750000000000000000000aarch"
+                        },
+                        {
+                            "key": "completion_time",
+                            "value": "2023-08-03T20:27:09Z"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "archway1w09nmhpeg3dxp649vdydn6rtrekx3k9uwuugsh"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "archway1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8j5ccrg"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "11221299726869643750aarch"
+                        }
+                    ]
+                },
+                {
+                    "type": "withdraw_rewards",
+                    "attributes": [
+                        {
+                            "key": "amount",
+                            "value": "11221299726869643750aarch"
+                        },
+                        {
+                            "key": "validator",
+                            "value": "archwayvaloper1846wx4dzcrm5guey0l5gp4kf6dp2zmqrj6rpcn"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "chain_id": "archway-1"
+}

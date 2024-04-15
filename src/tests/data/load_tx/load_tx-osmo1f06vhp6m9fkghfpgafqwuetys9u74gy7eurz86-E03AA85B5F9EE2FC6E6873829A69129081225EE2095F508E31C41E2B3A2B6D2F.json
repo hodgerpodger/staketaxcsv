@@ -1,0 +1,205 @@
+{
+    "height": "13241731",
+    "txhash": "E03AA85B5F9EE2FC6E6873829A69129081225EE2095F508E31C41E2B3A2B6D2F",
+    "codespace": "",
+    "code": 0,
+    "data": "128D010A402F6F736D6F7369732E636F6E63656E7472617465646C69717569646974792E763162657461312E4D7367437265617465506F736974696F6E526573706F6E7365124908E0D1A9011207393231343631301A07323535343835392A1A363439353236393539373637373839303635333839373035383030BCCDF4FBFFFFFFFFFF0138BCB595FCFFFFFFFFFF01",
+    "info": "",
+    "gas_wanted": "887120",
+    "gas_used": "595549",
+    "tx": {
+        "@type": "/cosmos.tx.v1beta1.Tx",
+        "body": {
+            "messages": [
+                {
+                    "@type": "/osmosis.concentratedliquidity.v1beta1.MsgCreatePosition",
+                    "pool_id": "1265",
+                    "sender": "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86",
+                    "lower_tick": "-8575300",
+                    "upper_tick": "-8037700",
+                    "tokens_provided": [
+                        {
+                            "denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                            "amount": "2600000"
+                        },
+                        {
+                            "denom": "uosmo",
+                            "amount": "9214610"
+                        }
+                    ],
+                    "token_min_amount0": "8753879",
+                    "token_min_amount1": "0"
+                }
+            ],
+            "memo": "",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+        },
+        "auth_info": {
+            "signer_infos": [
+                {
+                    "public_key": {
+                        "@type": "/cosmos.crypto.secp256k1.PubKey",
+                        "key": "AgnVfA4cnYLNrvWvaKlP1T3tL/2oy4SinG99SCYrKhjw"
+                    },
+                    "mode_info": {
+                        "single": {
+                            "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                        }
+                    },
+                    "sequence": "1"
+                }
+            ],
+            "fee": {
+                "amount": [
+                    {
+                        "denom": "uosmo",
+                        "amount": "9413"
+                    }
+                ],
+                "gas_limit": "887120",
+                "payer": "",
+                "granter": ""
+            },
+            "tip": null
+        },
+        "signatures": [
+            "SEepAbRH5m1GHCJ96/nm0EEt5qYFDfyuitmKR9Rj6a8D4N6hagiu+q7hZkXi0mF/4oWJlaAt+sUJSJPP9lbu/w=="
+        ]
+    },
+    "timestamp": "2024-01-13T15:21:36Z",
+    "timestamp__@@date": 1705159296000,
+    "logs": [
+        {
+            "msg_index": 0,
+            "log": "",
+            "events": [
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "action",
+                            "value": "/osmosis.concentratedliquidity.v1beta1.MsgCreatePosition"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "2554859ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2,9214610uosmo"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "osmo1h4ffzselefzgrf63k9n8c098ql849v3jhwjdvf7rzd42xd7m8tmsah4vv0"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "2554859ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2,9214610uosmo"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "osmo1h4ffzselefzgrf63k9n8c098ql849v3jhwjdvf7rzd42xd7m8tmsah4vv0"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "2554859ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2,9214610uosmo"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "sender",
+                            "value": "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86"
+                        }
+                    ]
+                },
+                {
+                    "type": "create_position",
+                    "attributes": [
+                        {
+                            "key": "module",
+                            "value": "concentratedliquidity"
+                        },
+                        {
+                            "key": "position_id",
+                            "value": "2779360"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86"
+                        },
+                        {
+                            "key": "pool_id",
+                            "value": "1265"
+                        },
+                        {
+                            "key": "lower_tick",
+                            "value": "-8575300"
+                        },
+                        {
+                            "key": "upper_tick",
+                            "value": "-8037700"
+                        },
+                        {
+                            "key": "join_time",
+                            "value": "2024-01-13 15:21:36.142254587 +0000 UTC"
+                        },
+                        {
+                            "key": "liquidity",
+                            "value": "64952695.976778906538970580"
+                        },
+                        {
+                            "key": "amount0",
+                            "value": "9214610"
+                        },
+                        {
+                            "key": "amount1",
+                            "value": "2554859"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "module",
+                            "value": "concentratedliquidity"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1f06vhp6m9fkghfpgafqwuetys9u74gy7eurz86"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "chain_id": "osmosis-1"
+}

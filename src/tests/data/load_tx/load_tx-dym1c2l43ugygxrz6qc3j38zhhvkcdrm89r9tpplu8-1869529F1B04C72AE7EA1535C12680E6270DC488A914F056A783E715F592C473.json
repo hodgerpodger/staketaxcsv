@@ -1,0 +1,583 @@
+{
+    "height": "13550",
+    "txhash": "1869529F1B04C72AE7EA1535C12680E6270DC488A914F056A783E715F592C473",
+    "codespace": "",
+    "code": 0,
+    "data": "12730A272F65746865726D696E742E65766D2E76312E4D7367457468657265756D5478526573706F6E736512480A423078316162376437633437386531626234393038393666326330393532666266653837663531613461316461323733666637376366633931643134373630643165632888A401",
+    "raw_log": "[{\"msg_index\":0,\"events\":[{\"type\":\"burn\",\"attributes\":[{\"key\":\"burner\",\"value\":\"dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x\"},{\"key\":\"amount\",\"value\":\"28500000000000000000adym\"}]},{\"type\":\"coin_received\",\"attributes\":[{\"key\":\"receiver\",\"value\":\"dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x\"},{\"key\":\"amount\",\"value\":\"28500000000000000000adym\"},{\"key\":\"receiver\",\"value\":\"dym197agj88rpwhhmqrrajsztnt2dd245xvh2zelze\"},{\"key\":\"amount\",\"value\":\"28500000000000000000adym\"},{\"key\":\"receiver\",\"value\":\"dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x\"},{\"key\":\"amount\",\"value\":\"28500000000000000000adym\"}]},{\"type\":\"coin_spent\",\"attributes\":[{\"key\":\"spender\",\"value\":\"dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x\"},{\"key\":\"amount\",\"value\":\"28500000000000000000adym\"},{\"key\":\"spender\",\"value\":\"dym1c2l43ugygxrz6qc3j38zhhvkcdrm89r9tpplu8\"},{\"key\":\"amount\",\"value\":\"28500000000000000000adym\"},{\"key\":\"spender\",\"value\":\"dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x\"},{\"key\":\"amount\",\"value\":\"28500000000000000000adym\"}]},{\"type\":\"coinbase\",\"attributes\":[{\"key\":\"minter\",\"value\":\"dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x\"},{\"key\":\"amount\",\"value\":\"28500000000000000000adym\"}]},{\"type\":\"ethereum_tx\",\"attributes\":[{\"key\":\"amount\",\"value\":\"28500000000000000000\"},{\"key\":\"ethereumTxHash\",\"value\":\"0x1ab7d7c478e1bb490896f2c0952fbfe87f51a4a1da273ff77cfc91d14760d1ec\"},{\"key\":\"txIndex\",\"value\":\"1\"},{\"key\":\"txGasUsed\",\"value\":\"21000\"},{\"key\":\"txHash\",\"value\":\"1869529F1B04C72AE7EA1535C12680E6270DC488A914F056A783E715F592C473\"},{\"key\":\"recipient\",\"value\":\"0x2fBa891CE30bAf7D8063EcA025CD6A6B555A1997\"}]},{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"/ethermint.evm.v1.MsgEthereumTx\"},{\"key\":\"sender\",\"value\":\"dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x\"},{\"key\":\"sender\",\"value\":\"dym1c2l43ugygxrz6qc3j38zhhvkcdrm89r9tpplu8\"},{\"key\":\"module\",\"value\":\"evm\"},{\"key\":\"sender\",\"value\":\"0xC2bF58f10441862d0311944e2bdd96c347b39465\"},{\"key\":\"txType\",\"value\":\"2\"}]},{\"type\":\"transfer\",\"attributes\":[{\"key\":\"recipient\",\"value\":\"dym197agj88rpwhhmqrrajsztnt2dd245xvh2zelze\"},{\"key\":\"sender\",\"value\":\"dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x\"},{\"key\":\"amount\",\"value\":\"28500000000000000000adym\"},{\"key\":\"recipient\",\"value\":\"dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x\"},{\"key\":\"sender\",\"value\":\"dym1c2l43ugygxrz6qc3j38zhhvkcdrm89r9tpplu8\"},{\"key\":\"amount\",\"value\":\"28500000000000000000adym\"}]},{\"type\":\"tx_log\",\"attributes\":null}]}]",
+    "logs": [
+        {
+            "msg_index": 0,
+            "log": "",
+            "events": [
+                {
+                    "type": "burn",
+                    "attributes": [
+                        {
+                            "key": "burner",
+                            "value": "dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "28500000000000000000adym"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "28500000000000000000adym"
+                        },
+                        {
+                            "key": "receiver",
+                            "value": "dym197agj88rpwhhmqrrajsztnt2dd245xvh2zelze"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "28500000000000000000adym"
+                        },
+                        {
+                            "key": "receiver",
+                            "value": "dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "28500000000000000000adym"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "28500000000000000000adym"
+                        },
+                        {
+                            "key": "spender",
+                            "value": "dym1c2l43ugygxrz6qc3j38zhhvkcdrm89r9tpplu8"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "28500000000000000000adym"
+                        },
+                        {
+                            "key": "spender",
+                            "value": "dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "28500000000000000000adym"
+                        }
+                    ]
+                },
+                {
+                    "type": "coinbase",
+                    "attributes": [
+                        {
+                            "key": "minter",
+                            "value": "dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "28500000000000000000adym"
+                        }
+                    ]
+                },
+                {
+                    "type": "ethereum_tx",
+                    "attributes": [
+                        {
+                            "key": "amount",
+                            "value": "28500000000000000000"
+                        },
+                        {
+                            "key": "ethereumTxHash",
+                            "value": "0x1ab7d7c478e1bb490896f2c0952fbfe87f51a4a1da273ff77cfc91d14760d1ec"
+                        },
+                        {
+                            "key": "txIndex",
+                            "value": "1"
+                        },
+                        {
+                            "key": "txGasUsed",
+                            "value": "21000"
+                        },
+                        {
+                            "key": "txHash",
+                            "value": "1869529F1B04C72AE7EA1535C12680E6270DC488A914F056A783E715F592C473"
+                        },
+                        {
+                            "key": "recipient",
+                            "value": "0x2fBa891CE30bAf7D8063EcA025CD6A6B555A1997"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "action",
+                            "value": "/ethermint.evm.v1.MsgEthereumTx"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "dym1c2l43ugygxrz6qc3j38zhhvkcdrm89r9tpplu8"
+                        },
+                        {
+                            "key": "module",
+                            "value": "evm"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "0xC2bF58f10441862d0311944e2bdd96c347b39465"
+                        },
+                        {
+                            "key": "txType",
+                            "value": "2"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "dym197agj88rpwhhmqrrajsztnt2dd245xvh2zelze"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "28500000000000000000adym"
+                        },
+                        {
+                            "key": "recipient",
+                            "value": "dym1vqu8rska6swzdmnhf90zuv0xmelej4lql0fj3x"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "dym1c2l43ugygxrz6qc3j38zhhvkcdrm89r9tpplu8"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "28500000000000000000adym"
+                        }
+                    ]
+                },
+                {
+                    "type": "tx_log",
+                    "attributes": []
+                }
+            ]
+        }
+    ],
+    "info": "",
+    "gas_wanted": "21000",
+    "gas_used": "21000",
+    "tx": {
+        "@type": "/cosmos.tx.v1beta1.Tx",
+        "body": {
+            "messages": [
+                {
+                    "@type": "/ethermint.evm.v1.MsgEthereumTx",
+                    "data": {
+                        "@type": "/ethermint.evm.v1.DynamicFeeTx",
+                        "chain_id": "1100",
+                        "nonce": "1",
+                        "gas_tip_cap": "94090000000",
+                        "gas_fee_cap": "94090000000",
+                        "gas": "21000",
+                        "to": "0x2fBa891CE30bAf7D8063EcA025CD6A6B555A1997",
+                        "value": "28500000000000000000",
+                        "data": null,
+                        "accesses": [],
+                        "v": "AQ==",
+                        "r": "nY5ny4uyEkidwbDW0mGoA05uSNcArvn0GmUNCmNMIYM=",
+                        "s": "PKt91sQagzKlqKfBDzbTs+qkSYFI3KB4Hq7xMTuWOEY="
+                    },
+                    "size": 0,
+                    "hash": "0x1ab7d7c478e1bb490896f2c0952fbfe87f51a4a1da273ff77cfc91d14760d1ec",
+                    "from": ""
+                }
+            ],
+            "memo": "",
+            "timeout_height": "0",
+            "extension_options": [
+                {
+                    "@type": "/ethermint.evm.v1.ExtensionOptionsEthereumTx"
+                }
+            ],
+            "non_critical_extension_options": []
+        },
+        "auth_info": {
+            "signer_infos": [],
+            "fee": {
+                "amount": [
+                    {
+                        "denom": "adym",
+                        "amount": "1975890000000000"
+                    }
+                ],
+                "gas_limit": "21000",
+                "payer": "",
+                "granter": ""
+            },
+            "tip": null
+        },
+        "signatures": []
+    },
+    "timestamp": "2024-02-07T12:51:12Z",
+    "events": [
+        {
+            "type": "coin_spent",
+            "attributes": [
+                {
+                    "key": "c3BlbmRlcg==",
+                    "value": "ZHltMWMybDQzdWd5Z3hyejZxYzNqMzh6aGh2a2Nkcm04OXI5dHBwbHU4",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "MTk3NTg5MDAwMDAwMDAwMGFkeW0=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coin_received",
+            "attributes": [
+                {
+                    "key": "cmVjZWl2ZXI=",
+                    "value": "ZHltMTd4cGZ2YWttMmFtZzk2MnlsczZmODR6M2tlbGw4YzVsenkweHdu",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "MTk3NTg5MDAwMDAwMDAwMGFkeW0=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "transfer",
+            "attributes": [
+                {
+                    "key": "cmVjaXBpZW50",
+                    "value": "ZHltMTd4cGZ2YWttMmFtZzk2MnlsczZmODR6M2tlbGw4YzVsenkweHdu",
+                    "index": true
+                },
+                {
+                    "key": "c2VuZGVy",
+                    "value": "ZHltMWMybDQzdWd5Z3hyejZxYzNqMzh6aGh2a2Nkcm04OXI5dHBwbHU4",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "MTk3NTg5MDAwMDAwMDAwMGFkeW0=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "message",
+            "attributes": [
+                {
+                    "key": "c2VuZGVy",
+                    "value": "ZHltMWMybDQzdWd5Z3hyejZxYzNqMzh6aGh2a2Nkcm04OXI5dHBwbHU4",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "tx",
+            "attributes": [
+                {
+                    "key": "ZmVl",
+                    "value": "MTk3NTg5MDAwMDAwMDAwMGFkeW0=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "ethereum_tx",
+            "attributes": [
+                {
+                    "key": "ZXRoZXJldW1UeEhhc2g=",
+                    "value": "MHgxYWI3ZDdjNDc4ZTFiYjQ5MDg5NmYyYzA5NTJmYmZlODdmNTFhNGExZGEyNzNmZjc3Y2ZjOTFkMTQ3NjBkMWVj",
+                    "index": true
+                },
+                {
+                    "key": "dHhJbmRleA==",
+                    "value": "MQ==",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "message",
+            "attributes": [
+                {
+                    "key": "YWN0aW9u",
+                    "value": "L2V0aGVybWludC5ldm0udjEuTXNnRXRoZXJldW1UeA==",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coin_received",
+            "attributes": [
+                {
+                    "key": "cmVjZWl2ZXI=",
+                    "value": "ZHltMXZxdThyc2thNnN3emRtbmhmOTB6dXYweG1lbGVqNGxxbDBmajN4",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "Mjg1MDAwMDAwMDAwMDAwMDAwMDBhZHlt",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coinbase",
+            "attributes": [
+                {
+                    "key": "bWludGVy",
+                    "value": "ZHltMXZxdThyc2thNnN3emRtbmhmOTB6dXYweG1lbGVqNGxxbDBmajN4",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "Mjg1MDAwMDAwMDAwMDAwMDAwMDBhZHlt",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coin_spent",
+            "attributes": [
+                {
+                    "key": "c3BlbmRlcg==",
+                    "value": "ZHltMXZxdThyc2thNnN3emRtbmhmOTB6dXYweG1lbGVqNGxxbDBmajN4",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "Mjg1MDAwMDAwMDAwMDAwMDAwMDBhZHlt",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coin_received",
+            "attributes": [
+                {
+                    "key": "cmVjZWl2ZXI=",
+                    "value": "ZHltMTk3YWdqODhycHdoaG1xcnJhanN6dG50MmRkMjQ1eHZoMnplbHpl",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "Mjg1MDAwMDAwMDAwMDAwMDAwMDBhZHlt",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "transfer",
+            "attributes": [
+                {
+                    "key": "cmVjaXBpZW50",
+                    "value": "ZHltMTk3YWdqODhycHdoaG1xcnJhanN6dG50MmRkMjQ1eHZoMnplbHpl",
+                    "index": true
+                },
+                {
+                    "key": "c2VuZGVy",
+                    "value": "ZHltMXZxdThyc2thNnN3emRtbmhmOTB6dXYweG1lbGVqNGxxbDBmajN4",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "Mjg1MDAwMDAwMDAwMDAwMDAwMDBhZHlt",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "message",
+            "attributes": [
+                {
+                    "key": "c2VuZGVy",
+                    "value": "ZHltMXZxdThyc2thNnN3emRtbmhmOTB6dXYweG1lbGVqNGxxbDBmajN4",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coin_spent",
+            "attributes": [
+                {
+                    "key": "c3BlbmRlcg==",
+                    "value": "ZHltMWMybDQzdWd5Z3hyejZxYzNqMzh6aGh2a2Nkcm04OXI5dHBwbHU4",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "Mjg1MDAwMDAwMDAwMDAwMDAwMDBhZHlt",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coin_received",
+            "attributes": [
+                {
+                    "key": "cmVjZWl2ZXI=",
+                    "value": "ZHltMXZxdThyc2thNnN3emRtbmhmOTB6dXYweG1lbGVqNGxxbDBmajN4",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "Mjg1MDAwMDAwMDAwMDAwMDAwMDBhZHlt",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "transfer",
+            "attributes": [
+                {
+                    "key": "cmVjaXBpZW50",
+                    "value": "ZHltMXZxdThyc2thNnN3emRtbmhmOTB6dXYweG1lbGVqNGxxbDBmajN4",
+                    "index": true
+                },
+                {
+                    "key": "c2VuZGVy",
+                    "value": "ZHltMWMybDQzdWd5Z3hyejZxYzNqMzh6aGh2a2Nkcm04OXI5dHBwbHU4",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "Mjg1MDAwMDAwMDAwMDAwMDAwMDBhZHlt",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "message",
+            "attributes": [
+                {
+                    "key": "c2VuZGVy",
+                    "value": "ZHltMWMybDQzdWd5Z3hyejZxYzNqMzh6aGh2a2Nkcm04OXI5dHBwbHU4",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coin_spent",
+            "attributes": [
+                {
+                    "key": "c3BlbmRlcg==",
+                    "value": "ZHltMXZxdThyc2thNnN3emRtbmhmOTB6dXYweG1lbGVqNGxxbDBmajN4",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "Mjg1MDAwMDAwMDAwMDAwMDAwMDBhZHlt",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "burn",
+            "attributes": [
+                {
+                    "key": "YnVybmVy",
+                    "value": "ZHltMXZxdThyc2thNnN3emRtbmhmOTB6dXYweG1lbGVqNGxxbDBmajN4",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "Mjg1MDAwMDAwMDAwMDAwMDAwMDBhZHlt",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "ethereum_tx",
+            "attributes": [
+                {
+                    "key": "YW1vdW50",
+                    "value": "Mjg1MDAwMDAwMDAwMDAwMDAwMDA=",
+                    "index": true
+                },
+                {
+                    "key": "ZXRoZXJldW1UeEhhc2g=",
+                    "value": "MHgxYWI3ZDdjNDc4ZTFiYjQ5MDg5NmYyYzA5NTJmYmZlODdmNTFhNGExZGEyNzNmZjc3Y2ZjOTFkMTQ3NjBkMWVj",
+                    "index": true
+                },
+                {
+                    "key": "dHhJbmRleA==",
+                    "value": "MQ==",
+                    "index": true
+                },
+                {
+                    "key": "dHhHYXNVc2Vk",
+                    "value": "MjEwMDA=",
+                    "index": true
+                },
+                {
+                    "key": "dHhIYXNo",
+                    "value": "MTg2OTUyOUYxQjA0QzcyQUU3RUExNTM1QzEyNjgwRTYyNzBEQzQ4OEE5MTRGMDU2QTc4M0U3MTVGNTkyQzQ3Mw==",
+                    "index": true
+                },
+                {
+                    "key": "cmVjaXBpZW50",
+                    "value": "MHgyZkJhODkxQ0UzMGJBZjdEODA2M0VjQTAyNUNENkE2QjU1NUExOTk3",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "tx_log",
+            "attributes": []
+        },
+        {
+            "type": "message",
+            "attributes": [
+                {
+                    "key": "bW9kdWxl",
+                    "value": "ZXZt",
+                    "index": true
+                },
+                {
+                    "key": "c2VuZGVy",
+                    "value": "MHhDMmJGNThmMTA0NDE4NjJkMDMxMTk0NGUyYmRkOTZjMzQ3YjM5NDY1",
+                    "index": true
+                },
+                {
+                    "key": "dHhUeXBl",
+                    "value": "Mg==",
+                    "index": true
+                }
+            ]
+        }
+    ]
+}

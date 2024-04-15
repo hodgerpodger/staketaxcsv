@@ -7,22 +7,20 @@ validator or contract.  This is to ensure good faith in maintaining privacy.
 
 """
 
-import logging
 import unittest
-from unittest.mock import patch
 
-from tests.mock_lcd import MockLcdAPI_v1, MockLcdAPI_v2
-from tests.mock_mintscan import MockMintscanAPI
 import staketaxcsv.report_atom
+from staketaxcsv.atom.config_atom import localconfig
+from staketaxcsv.common.Exporter import Exporter
+from staketaxcsv.settings_csv import TICKER_ATOM
+from tests.utils_ibc import apply_ibc_patches, load_tx
 
 
-@patch("staketaxcsv.common.ibc.denoms.LcdAPI_v1", new=MockLcdAPI_v1)
-@patch("staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1", new=MockLcdAPI_v1)
-@patch("staketaxcsv.common.ibc.api_lcd_v2.LcdAPI_v2", new=MockLcdAPI_v2)
-@patch("staketaxcsv.common.ibc.tx_data.MintscanAPI", new=MockMintscanAPI)
-@patch("staketaxcsv.settings_csv.DB_CACHE", False)
+@apply_ibc_patches
 def run_test(wallet_address, txid):
-    exporter = staketaxcsv.report_atom.txone(wallet_address, txid)
+    elem = load_tx(wallet_address, txid, staketaxcsv.report_atom._txdata().get_tx)
+    exporter = Exporter(wallet_address, localconfig, TICKER_ATOM)
+    staketaxcsv.atom.processor.process_tx(wallet_address, elem, exporter)
     return exporter.export_for_test()
 
 

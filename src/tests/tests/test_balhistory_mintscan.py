@@ -8,22 +8,14 @@ validator or contract.  This is to ensure good faith in maintaining privacy.
 """
 import logging
 import unittest
-from unittest.mock import patch
 
-from tests.mock_lcd import MockLcdAPI_v1, MockLcdAPI_v2
-from tests.mock_mintscan import MockMintscanAPI
 import staketaxcsv
 import staketaxcsv.settings_csv as co
-from tests.mock_osmo import mock_get_symbol, mock_get_exponent
+from tests.utils_ibc import apply_ibc_patches
+from tests.settings_test import mintscan_api
 
 
-@patch("staketaxcsv.common.ibc.denoms.LcdAPI_v1", new=MockLcdAPI_v1)
-@patch("staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1", new=MockLcdAPI_v1)
-@patch("staketaxcsv.common.ibc.api_lcd_v2.LcdAPI_v2", new=MockLcdAPI_v2)
-@patch("staketaxcsv.common.ibc.api_mintscan_v1.MintscanAPI", new=MockMintscanAPI)
-@patch("staketaxcsv.settings_csv.DB_CACHE", False)
-@patch("staketaxcsv.osmo.denoms._symbol", mock_get_symbol)
-@patch("staketaxcsv.osmo.denoms._exponent", mock_get_exponent)
+@apply_ibc_patches
 def run_test(ticker, wallet_address, start_date, end_date):
     return staketaxcsv.historical_balances(
         ticker,
@@ -34,6 +26,8 @@ def run_test(ticker, wallet_address, start_date, end_date):
     )
 
 
+
+@mintscan_api
 class TestBalHistoryMintscan(unittest.TestCase):
 
     def test_arch_balhistory(self):

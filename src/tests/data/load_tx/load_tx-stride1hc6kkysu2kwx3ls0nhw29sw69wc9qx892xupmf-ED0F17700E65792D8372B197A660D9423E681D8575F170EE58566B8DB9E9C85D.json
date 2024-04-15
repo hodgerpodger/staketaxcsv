@@ -1,0 +1,178 @@
+{
+    "height": "1161881",
+    "txhash": "ED0F17700E65792D8372B197A660D9423E681D8575F170EE58566B8DB9E9C85D",
+    "codespace": "",
+    "code": 0,
+    "data": "0A210A1F2F7374726964652E7374616B656962632E4D73674C69717569645374616B65",
+    "info": "",
+    "gas_wanted": "1000000",
+    "gas_used": "561166",
+    "tx": {
+        "@type": "/cosmos.tx.v1beta1.Tx",
+        "body": {
+            "messages": [
+                {
+                    "@type": "/stride.stakeibc.MsgLiquidStake",
+                    "creator": "stride1hc6kkysu2kwx3ls0nhw29sw69wc9qx892xupmf",
+                    "amount": "10000",
+                    "host_denom": "uatom"
+                }
+            ],
+            "memo": "",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+        },
+        "auth_info": {
+            "signer_infos": [
+                {
+                    "public_key": {
+                        "@type": "/cosmos.crypto.secp256k1.PubKey",
+                        "key": "AlCAALNDZooyBfkuc0zlwhjYZxVI8fcX+RiFHpz6b7kd"
+                    },
+                    "mode_info": {
+                        "single": {
+                            "mode": "SIGN_MODE_DIRECT"
+                        }
+                    },
+                    "sequence": "1"
+                }
+            ],
+            "fee": {
+                "amount": [
+                    {
+                        "denom": "ustrd",
+                        "amount": "0"
+                    }
+                ],
+                "gas_limit": "1000000",
+                "payer": "",
+                "granter": ""
+            }
+        },
+        "signatures": [
+            "cyvTDDR3GosfetX/nYQkatPcNr2G1uj1tBvnh4+Cl/dAZRAuDiwZoxTRg4aatStcGKhrXksVpAsMJc40szlopA=="
+        ]
+    },
+    "timestamp": "2022-11-23T12:53:15Z",
+    "timestamp__@@date": 1669207995000,
+    "id": "stride-1-1161881-ED0F17700E65792D8372B197A660D9423E681D8575F170EE58566B8DB9E9C85D",
+    "chain_id": "stride-1",
+    "logs": [
+        {
+            "msg_index": 0,
+            "log": "",
+            "events": [
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "stride1rttt2xdr2kkxckfukkuevxvct6w6jmkjtcmh3a5a9ej9ukdkkpvqxzwlws"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "10000ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2"
+                        },
+                        {
+                            "key": "receiver",
+                            "value": "stride1mvdq4nlupl39243qjz7sds5ez3rl9mnx253lza"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "9645stuatom"
+                        },
+                        {
+                            "key": "receiver",
+                            "value": "stride1hc6kkysu2kwx3ls0nhw29sw69wc9qx892xupmf"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "9645stuatom"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "stride1hc6kkysu2kwx3ls0nhw29sw69wc9qx892xupmf"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "10000ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2"
+                        },
+                        {
+                            "key": "spender",
+                            "value": "stride1mvdq4nlupl39243qjz7sds5ez3rl9mnx253lza"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "9645stuatom"
+                        }
+                    ]
+                },
+                {
+                    "type": "coinbase",
+                    "attributes": [
+                        {
+                            "key": "minter",
+                            "value": "stride1mvdq4nlupl39243qjz7sds5ez3rl9mnx253lza"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "9645stuatom"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "action",
+                            "value": "/stride.stakeibc.MsgLiquidStake"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "stride1hc6kkysu2kwx3ls0nhw29sw69wc9qx892xupmf"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "stride1mvdq4nlupl39243qjz7sds5ez3rl9mnx253lza"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "stride1rttt2xdr2kkxckfukkuevxvct6w6jmkjtcmh3a5a9ej9ukdkkpvqxzwlws"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "stride1hc6kkysu2kwx3ls0nhw29sw69wc9qx892xupmf"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "10000ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2"
+                        },
+                        {
+                            "key": "recipient",
+                            "value": "stride1hc6kkysu2kwx3ls0nhw29sw69wc9qx892xupmf"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "stride1mvdq4nlupl39243qjz7sds5ez3rl9mnx253lza"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "9645stuatom"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,22 +1,19 @@
-import logging
 import unittest
-from unittest.mock import patch
 
-from staketaxcsv.dym.genesis_airdrop import genesis_airdrop
+import staketaxcsv.report_dym
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.dym.config_dym import localconfig
+from staketaxcsv.dym.genesis_airdrop import genesis_airdrop
 from staketaxcsv.settings_csv import TICKER_DYM
 from tests.settings_test import specialtest
-from tests.mock_lcd import MockLcdAPI_v1, MockLcdAPI_v2
-import staketaxcsv.report_dym
+from tests.utils_ibc import apply_ibc_patches, load_tx
 
 
-@patch("staketaxcsv.common.ibc.denoms.LcdAPI_v1", new=MockLcdAPI_v1)
-@patch("staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1", new=MockLcdAPI_v1)
-@patch("staketaxcsv.common.ibc.api_lcd_v2.LcdAPI_v2", new=MockLcdAPI_v2)
-@patch("staketaxcsv.settings_csv.DB_CACHE", False)
+@apply_ibc_patches
 def run_test(wallet_address, txid):
-    exporter = staketaxcsv.report_dym.txone(wallet_address, txid)
+    elem = load_tx(wallet_address, txid, staketaxcsv.report_dym._txdata().get_tx)
+    exporter = Exporter(wallet_address, localconfig, TICKER_DYM)
+    staketaxcsv.dym.processor.process_tx(wallet_address, elem, exporter)
     return exporter.export_for_test()
 
 

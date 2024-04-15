@@ -1,24 +1,27 @@
-import logging
+"""
+IMPORTANT NOTE TO ADD TO ALL TEST FILES WITH ADDRESSES/TRANSACTIONS
+
+DO NOT use personal addresses/transactions for tests.  Instead, choose relatively random
+addresses/transactions.  For example, choose recent transactions from mintscan explorer for a
+validator or contract.  This is to ensure good faith in maintaining privacy.
+
+"""
 import unittest
-from unittest.mock import patch
 
 from staketaxcsv.tia.genesis_airdrop import genesis_airdrop
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.tia.config_tia import localconfig
 from staketaxcsv.settings_csv import TICKER_TIA
 from tests.settings_test import specialtest
-from tests.mock_lcd import MockLcdAPI_v1, MockLcdAPI_v2
-from tests.mock_mintscan import MockMintscanAPI
 import staketaxcsv.report_tia
+from tests.utils_ibc import load_tx, apply_ibc_patches
 
 
-@patch("staketaxcsv.common.ibc.denoms.LcdAPI_v1", new=MockLcdAPI_v1)
-@patch("staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1", new=MockLcdAPI_v1)
-@patch("staketaxcsv.common.ibc.api_lcd_v2.LcdAPI_v2", new=MockLcdAPI_v2)
-@patch("staketaxcsv.common.ibc.tx_data.MintscanAPI", new=MockMintscanAPI)
-@patch("staketaxcsv.settings_csv.DB_CACHE", False)
+@apply_ibc_patches
 def run_test(wallet_address, txid):
-    exporter = staketaxcsv.report_tia.txone(wallet_address, txid)
+    elem = load_tx(wallet_address, txid, staketaxcsv.report_tia._txdata().get_tx)
+    exporter = Exporter(wallet_address, localconfig, TICKER_TIA)
+    staketaxcsv.tia.processor.process_tx(wallet_address, elem, exporter)
     return exporter.export_for_test()
 
 

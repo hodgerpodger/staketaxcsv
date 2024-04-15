@@ -1,0 +1,150 @@
+{
+    "height": "54067389",
+    "txhash": "1A8245481AC4E67FDA01485918B10A201367DB988144FC2B7DECA839B1360A9F",
+    "codespace": "",
+    "code": 0,
+    "data": "12260A242F636F736D6F732E62616E6B2E763162657461312E4D736753656E64526573706F6E7365",
+    "info": "",
+    "gas_wanted": "103445",
+    "gas_used": "85734",
+    "tx": {
+        "@type": "/cosmos.tx.v1beta1.Tx",
+        "body": {
+            "messages": [
+                {
+                    "@type": "/cosmos.bank.v1beta1.MsgSend",
+                    "from_address": "inj137aqf3usphm78scte2pnt5z02hvcqpyafkhzsj",
+                    "to_address": "inj137aqf3usphm78scte2pnt5z02hvcqpyafkhzsj",
+                    "amount": [
+                        {
+                            "denom": "inj",
+                            "amount": "333000000000000000000"
+                        }
+                    ]
+                }
+            ],
+            "memo": "101616414",
+            "timeout_height": "9007199254740991",
+            "extension_options": [
+                {
+                    "@type": "/injective.types.v1beta1.ExtensionOptionsWeb3Tx",
+                    "typedDataChainID": "1",
+                    "feePayer": "",
+                    "feePayerSig": null
+                }
+            ],
+            "non_critical_extension_options": []
+        },
+        "auth_info": {
+            "signer_infos": [
+                {
+                    "public_key": {
+                        "@type": "/injective.crypto.v1beta1.ethsecp256k1.PubKey",
+                        "key": "AwZ6YQNf2mgQ6l6DeFu5YFA/ZVD+DSwxatkY9Rpom2n0"
+                    },
+                    "mode_info": {
+                        "single": {
+                            "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                        }
+                    },
+                    "sequence": "3"
+                }
+            ],
+            "fee": {
+                "amount": [
+                    {
+                        "denom": "inj",
+                        "amount": "103445000000000"
+                    }
+                ],
+                "gas_limit": "103445",
+                "payer": "",
+                "granter": ""
+            },
+            "tip": null
+        },
+        "signatures": [
+            "OyJU7q0AHyhZPaXOGmg97rMORd2O+zAE0313jdPAtihUnq82Gk4Hbn85n4OXbOHUeGzYkRp+cCSA5oh8saGpehs="
+        ]
+    },
+    "timestamp": "2023-12-11T19:13:59Z",
+    "timestamp__@@date": 1702322039000,
+    "logs": [
+        {
+            "msg_index": 0,
+            "log": "",
+            "events": [
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "action",
+                            "value": "/cosmos.bank.v1beta1.MsgSend"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "inj137aqf3usphm78scte2pnt5z02hvcqpyafkhzsj"
+                        },
+                        {
+                            "key": "module",
+                            "value": "bank"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "inj137aqf3usphm78scte2pnt5z02hvcqpyafkhzsj"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "333000000000000000000inj"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "inj137aqf3usphm78scte2pnt5z02hvcqpyafkhzsj"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "333000000000000000000inj"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "inj137aqf3usphm78scte2pnt5z02hvcqpyafkhzsj"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "inj137aqf3usphm78scte2pnt5z02hvcqpyafkhzsj"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "333000000000000000000inj"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "sender",
+                            "value": "inj137aqf3usphm78scte2pnt5z02hvcqpyafkhzsj"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "chain_id": "injective-1"
+}

@@ -1,0 +1,401 @@
+{
+    "height": "520928",
+    "txhash": "A6C2A166182956786247ED4059FE8927FE3F908DCA588CD0DA580DD00B5DEE77",
+    "codespace": "",
+    "code": 0,
+    "data": "12440A322F636F736D6F732E7374616B696E672E763162657461312E4D7367426567696E526564656C6567617465526573706F6E7365120E0A0C0887E7E6AD0610AD8D8A8601",
+    "raw_log": "[{\"msg_index\":0,\"events\":[{\"type\":\"coin_received\",\"attributes\":[{\"key\":\"receiver\",\"value\":\"celestia1nsen97qhzqavwkn64vhyc09pst3sc4wk8dqnsm\"},{\"key\":\"amount\",\"value\":\"3393utia\"}]},{\"type\":\"coin_spent\",\"attributes\":[{\"key\":\"spender\",\"value\":\"celestia1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8k44vnj\"},{\"key\":\"amount\",\"value\":\"3393utia\"}]},{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"/cosmos.staking.v1beta1.MsgBeginRedelegate\"},{\"key\":\"sender\",\"value\":\"celestia1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8k44vnj\"},{\"key\":\"module\",\"value\":\"staking\"},{\"key\":\"sender\",\"value\":\"celestia1nsen97qhzqavwkn64vhyc09pst3sc4wk8dqnsm\"}]},{\"type\":\"redelegate\",\"attributes\":[{\"key\":\"source_validator\",\"value\":\"celestiavaloper1kd94m7dsh87fdqs2mcdpqz0as64mp6f0mq3nge\"},{\"key\":\"destination_validator\",\"value\":\"celestiavaloper1qe8uuf5x69c526h4nzxwv4ltftr73v7q5qhs58\"},{\"key\":\"amount\",\"value\":\"2700000utia\"},{\"key\":\"completion_time\",\"value\":\"2024-01-31T02:42:15Z\"}]},{\"type\":\"transfer\",\"attributes\":[{\"key\":\"recipient\",\"value\":\"celestia1nsen97qhzqavwkn64vhyc09pst3sc4wk8dqnsm\"},{\"key\":\"sender\",\"value\":\"celestia1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8k44vnj\"},{\"key\":\"amount\",\"value\":\"3393utia\"}]},{\"type\":\"withdraw_rewards\",\"attributes\":[{\"key\":\"amount\",\"value\":\"3393utia\"},{\"key\":\"validator\",\"value\":\"celestiavaloper1kd94m7dsh87fdqs2mcdpqz0as64mp6f0mq3nge\"},{\"key\":\"delegator\",\"value\":\"celestia1nsen97qhzqavwkn64vhyc09pst3sc4wk8dqnsm\"}]}]}]",
+    "logs": [
+        {
+            "msg_index": 0,
+            "log": "",
+            "events": [
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "celestia1nsen97qhzqavwkn64vhyc09pst3sc4wk8dqnsm"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "3393utia"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "celestia1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8k44vnj"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "3393utia"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "action",
+                            "value": "/cosmos.staking.v1beta1.MsgBeginRedelegate"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "celestia1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8k44vnj"
+                        },
+                        {
+                            "key": "module",
+                            "value": "staking"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "celestia1nsen97qhzqavwkn64vhyc09pst3sc4wk8dqnsm"
+                        }
+                    ]
+                },
+                {
+                    "type": "redelegate",
+                    "attributes": [
+                        {
+                            "key": "source_validator",
+                            "value": "celestiavaloper1kd94m7dsh87fdqs2mcdpqz0as64mp6f0mq3nge"
+                        },
+                        {
+                            "key": "destination_validator",
+                            "value": "celestiavaloper1qe8uuf5x69c526h4nzxwv4ltftr73v7q5qhs58"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "2700000utia"
+                        },
+                        {
+                            "key": "completion_time",
+                            "value": "2024-01-31T02:42:15Z"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "celestia1nsen97qhzqavwkn64vhyc09pst3sc4wk8dqnsm"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "celestia1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8k44vnj"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "3393utia"
+                        }
+                    ]
+                },
+                {
+                    "type": "withdraw_rewards",
+                    "attributes": [
+                        {
+                            "key": "amount",
+                            "value": "3393utia"
+                        },
+                        {
+                            "key": "validator",
+                            "value": "celestiavaloper1kd94m7dsh87fdqs2mcdpqz0as64mp6f0mq3nge"
+                        },
+                        {
+                            "key": "delegator",
+                            "value": "celestia1nsen97qhzqavwkn64vhyc09pst3sc4wk8dqnsm"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "info": "",
+    "gas_wanted": "295885",
+    "gas_used": "227279",
+    "tx": {
+        "@type": "/cosmos.tx.v1beta1.Tx",
+        "body": {
+            "messages": [
+                {
+                    "@type": "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+                    "delegator_address": "celestia1nsen97qhzqavwkn64vhyc09pst3sc4wk8dqnsm",
+                    "validator_src_address": "celestiavaloper1kd94m7dsh87fdqs2mcdpqz0as64mp6f0mq3nge",
+                    "validator_dst_address": "celestiavaloper1qe8uuf5x69c526h4nzxwv4ltftr73v7q5qhs58",
+                    "amount": {
+                        "denom": "utia",
+                        "amount": "2700000"
+                    }
+                }
+            ],
+            "memo": "",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+        },
+        "auth_info": {
+            "signer_infos": [
+                {
+                    "public_key": {
+                        "@type": "/cosmos.crypto.secp256k1.PubKey",
+                        "key": "A9CjifYxdHFk15b+RFCpRQkCC+DaRAJAAKGWjDOHPHd3"
+                    },
+                    "mode_info": {
+                        "single": {
+                            "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                        }
+                    },
+                    "sequence": "1"
+                }
+            ],
+            "fee": {
+                "amount": [
+                    {
+                        "denom": "utia",
+                        "amount": "5918"
+                    }
+                ],
+                "gas_limit": "295885",
+                "payer": "",
+                "granter": ""
+            },
+            "tip": null
+        },
+        "signatures": [
+            "FogdCzSYLMkdgIc5PCb5HcaGt7/ZzWza00+EU/ahIxsjsUxs8iFufUSxwzi5Y1teEPLtCycROzSZ39rSwbZo9Q=="
+        ]
+    },
+    "timestamp": "2024-01-10T02:42:15Z",
+    "events": [
+        {
+            "type": "coin_spent",
+            "attributes": [
+                {
+                    "key": "c3BlbmRlcg==",
+                    "value": "Y2VsZXN0aWExbnNlbjk3cWh6cWF2d2tuNjR2aHljMDlwc3Qzc2M0d2s4ZHFuc20=",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "NTkxOHV0aWE=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coin_received",
+            "attributes": [
+                {
+                    "key": "cmVjZWl2ZXI=",
+                    "value": "Y2VsZXN0aWExN3hwZnZha20yYW1nOTYyeWxzNmY4NHoza2VsbDhjNWxwbmpzM3M=",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "NTkxOHV0aWE=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "transfer",
+            "attributes": [
+                {
+                    "key": "cmVjaXBpZW50",
+                    "value": "Y2VsZXN0aWExN3hwZnZha20yYW1nOTYyeWxzNmY4NHoza2VsbDhjNWxwbmpzM3M=",
+                    "index": true
+                },
+                {
+                    "key": "c2VuZGVy",
+                    "value": "Y2VsZXN0aWExbnNlbjk3cWh6cWF2d2tuNjR2aHljMDlwc3Qzc2M0d2s4ZHFuc20=",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "NTkxOHV0aWE=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "message",
+            "attributes": [
+                {
+                    "key": "c2VuZGVy",
+                    "value": "Y2VsZXN0aWExbnNlbjk3cWh6cWF2d2tuNjR2aHljMDlwc3Qzc2M0d2s4ZHFuc20=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "tx",
+            "attributes": [
+                {
+                    "key": "ZmVl",
+                    "value": "NTkxOHV0aWE=",
+                    "index": true
+                },
+                {
+                    "key": "ZmVlX3BheWVy",
+                    "value": "Y2VsZXN0aWExbnNlbjk3cWh6cWF2d2tuNjR2aHljMDlwc3Qzc2M0d2s4ZHFuc20=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "tx",
+            "attributes": [
+                {
+                    "key": "YWNjX3NlcQ==",
+                    "value": "Y2VsZXN0aWExbnNlbjk3cWh6cWF2d2tuNjR2aHljMDlwc3Qzc2M0d2s4ZHFuc20vMQ==",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "tx",
+            "attributes": [
+                {
+                    "key": "c2lnbmF0dXJl",
+                    "value": "Rm9nZEN6U1lMTWtkZ0ljNVBDYjVIY2FHdDcvWnpXemEwMCtFVS9haEl4c2pzVXhzOGlGdWZVU3h3emk1WTF0ZUVQTHRDeWNST3pTWjM5clN3YlpvOVE9PQ==",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "message",
+            "attributes": [
+                {
+                    "key": "YWN0aW9u",
+                    "value": "L2Nvc21vcy5zdGFraW5nLnYxYmV0YTEuTXNnQmVnaW5SZWRlbGVnYXRl",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coin_spent",
+            "attributes": [
+                {
+                    "key": "c3BlbmRlcg==",
+                    "value": "Y2VsZXN0aWExanY2NXMzZ3JxZjZ2NmpsM2RwNHQ2Yzl0OXJrOTljZDhrNDR2bmo=",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "MzM5M3V0aWE=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coin_received",
+            "attributes": [
+                {
+                    "key": "cmVjZWl2ZXI=",
+                    "value": "Y2VsZXN0aWExbnNlbjk3cWh6cWF2d2tuNjR2aHljMDlwc3Qzc2M0d2s4ZHFuc20=",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "MzM5M3V0aWE=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "transfer",
+            "attributes": [
+                {
+                    "key": "cmVjaXBpZW50",
+                    "value": "Y2VsZXN0aWExbnNlbjk3cWh6cWF2d2tuNjR2aHljMDlwc3Qzc2M0d2s4ZHFuc20=",
+                    "index": true
+                },
+                {
+                    "key": "c2VuZGVy",
+                    "value": "Y2VsZXN0aWExanY2NXMzZ3JxZjZ2NmpsM2RwNHQ2Yzl0OXJrOTljZDhrNDR2bmo=",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "MzM5M3V0aWE=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "message",
+            "attributes": [
+                {
+                    "key": "c2VuZGVy",
+                    "value": "Y2VsZXN0aWExanY2NXMzZ3JxZjZ2NmpsM2RwNHQ2Yzl0OXJrOTljZDhrNDR2bmo=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "withdraw_rewards",
+            "attributes": [
+                {
+                    "key": "YW1vdW50",
+                    "value": "MzM5M3V0aWE=",
+                    "index": true
+                },
+                {
+                    "key": "dmFsaWRhdG9y",
+                    "value": "Y2VsZXN0aWF2YWxvcGVyMWtkOTRtN2RzaDg3ZmRxczJtY2RwcXowYXM2NG1wNmYwbXEzbmdl",
+                    "index": true
+                },
+                {
+                    "key": "ZGVsZWdhdG9y",
+                    "value": "Y2VsZXN0aWExbnNlbjk3cWh6cWF2d2tuNjR2aHljMDlwc3Qzc2M0d2s4ZHFuc20=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "redelegate",
+            "attributes": [
+                {
+                    "key": "c291cmNlX3ZhbGlkYXRvcg==",
+                    "value": "Y2VsZXN0aWF2YWxvcGVyMWtkOTRtN2RzaDg3ZmRxczJtY2RwcXowYXM2NG1wNmYwbXEzbmdl",
+                    "index": true
+                },
+                {
+                    "key": "ZGVzdGluYXRpb25fdmFsaWRhdG9y",
+                    "value": "Y2VsZXN0aWF2YWxvcGVyMXFlOHV1ZjV4NjljNTI2aDRuenh3djRsdGZ0cjczdjdxNXFoczU4",
+                    "index": true
+                },
+                {
+                    "key": "YW1vdW50",
+                    "value": "MjcwMDAwMHV0aWE=",
+                    "index": true
+                },
+                {
+                    "key": "Y29tcGxldGlvbl90aW1l",
+                    "value": "MjAyNC0wMS0zMVQwMjo0MjoxNVo=",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "message",
+            "attributes": [
+                {
+                    "key": "bW9kdWxl",
+                    "value": "c3Rha2luZw==",
+                    "index": true
+                },
+                {
+                    "key": "c2VuZGVy",
+                    "value": "Y2VsZXN0aWExbnNlbjk3cWh6cWF2d2tuNjR2aHljMDlwc3Qzc2M0d2s4ZHFuc20=",
+                    "index": true
+                }
+            ]
+        }
+    ]
+}

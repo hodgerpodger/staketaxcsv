@@ -1,0 +1,91 @@
+{
+    "height": "5499110",
+    "txhash": "E13E8719CF49E5D190F632BFF383010CF76B093558CD8F6BF4886C7211922D35",
+    "codespace": "",
+    "code": 0,
+    "data": "0A250A232F696E6A6563746976652E70656767792E76312E4D73674465706F736974436C61696D",
+    "info": "",
+    "gas_wanted": "124918",
+    "gas_used": "93616",
+    "tx": {
+        "@type": "/cosmos.tx.v1beta1.Tx",
+        "body": {
+            "messages": [
+                {
+                    "@type": "/injective.peggy.v1.MsgDepositClaim",
+                    "event_nonce": "3851",
+                    "block_height": "13784739",
+                    "token_contract": "0xe28b3B32B6c345A34Ff64674606124Dd5Aceca30",
+                    "amount": "100104790000000000000000",
+                    "ethereum_sender": "0xDCf232F89CAce1a6c14969730F58f32CAF121a11",
+                    "cosmos_receiver": "inj1mner97yu4ns6ds2fd9es7k8n9jh3yxs3jkzh86",
+                    "orchestrator": "inj1cscr8pz7sfwvfk0qxem8x3pgur3etp6mv042v3"
+                }
+            ],
+            "memo": "",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+        },
+        "auth_info": {
+            "signer_infos": [
+                {
+                    "public_key": {
+                        "@type": "/injective.crypto.v1beta1.ethsecp256k1.PubKey",
+                        "key": "A3cx6R2kMaCdnbh+cwUkBOcyR+dpdllsyEL8tomJ8fk4"
+                    },
+                    "mode_info": {
+                        "single": {
+                            "mode": "SIGN_MODE_DIRECT"
+                        }
+                    },
+                    "sequence": "4883"
+                }
+            ],
+            "fee": {
+                "amount": [
+                    {
+                        "denom": "inj",
+                        "amount": "62459000000000"
+                    }
+                ],
+                "gas_limit": "124918",
+                "payer": "",
+                "granter": ""
+            }
+        },
+        "signatures": [
+            "xomzvYE9JzvBemPiTsuZW2a2zOOgUbiFIF0zqnlYAd03mvDTlx5fGezIz17wCcvflo8eiCJNlsEBVdEHMeE2vwE="
+        ]
+    },
+    "timestamp": "2021-12-11T15:49:15Z",
+    "timestamp__@@date": 1639237755000,
+    "id": "injective-1-5499110-E13E8719CF49E5D190F632BFF383010CF76B093558CD8F6BF4886C7211922D35",
+    "chain_id": "injective-1",
+    "logs": [
+        {
+            "msg_index": 0,
+            "log": "",
+            "events": [
+                {
+                    "type": "injective.peggy.v1.EventDepositClaim",
+                    "attributes": [
+                        {
+                            "key": "attestation_id",
+                            "value": "\"BQAAAAAAAA8LCybJqrC4tK9pYZFVr8flEF/Ev8u5PG2o+3m/tgK+sLY=\""
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "action",
+                            "value": "/injective.peggy.v1.MsgDepositClaim"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

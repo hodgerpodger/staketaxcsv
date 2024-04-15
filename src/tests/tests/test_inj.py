@@ -7,44 +7,13 @@ validator or contract.  This is to ensure good faith in maintaining privacy.
 
 """
 
-import logging
 import unittest
-from unittest.mock import patch
 
-from tests.mock_lcd import MockLcdAPI_v1, MockLcdAPI_v2
-from tests.mock_mintscan import MockMintscanAPI
-import staketaxcsv.report_inj
-from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.inj.config_inj import localconfig
-from staketaxcsv.inj import constants as co
-from staketaxcsv.report_inj import _txdata
-from staketaxcsv.settings_csv import TICKER_INJ
 from staketaxcsv.inj.handle_deposit_claim import Deposits
+from tests.utils_inj import run_test_txids, run_test
 
 
-def run_test(wallet_addres, txid):
-    return run_test_txids(wallet_addres, [txid])
-
-
-@patch("staketaxcsv.common.ibc.denoms.LcdAPI_v1", new=MockLcdAPI_v1)
-@patch("staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1", new=MockLcdAPI_v1)
-@patch("staketaxcsv.common.ibc.api_lcd_v2.LcdAPI_v2", new=MockLcdAPI_v2)
-@patch("staketaxcsv.common.ibc.tx_data.MintscanAPI", new=MockMintscanAPI)
-@patch("staketaxcsv.settings_csv.DB_CACHE", False)
-def run_test_txids(wallet_address, txids):
-    exporter = Exporter(wallet_address, localconfig, TICKER_INJ)
-    txdata = _txdata()
-
-    elems = []
-    for txid in txids:
-        elem = txdata.get_tx(txid)
-        elems.append(elem)
-
-    staketaxcsv.inj.processor.process_txs(wallet_address, elems, exporter)
-    return exporter.export_for_test()
-
-
-class TestStrd(unittest.TestCase):
+class TestInj(unittest.TestCase):
 
     def setUp(self):
         Deposits.txs = {}

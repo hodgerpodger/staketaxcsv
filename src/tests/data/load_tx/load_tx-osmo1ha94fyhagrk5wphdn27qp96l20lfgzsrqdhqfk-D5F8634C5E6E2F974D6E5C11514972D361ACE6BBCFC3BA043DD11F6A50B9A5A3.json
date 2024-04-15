@@ -1,0 +1,169 @@
+{
+    "height": "14633599",
+    "txhash": "D5F8634C5E6E2F974D6E5C11514972D361ACE6BBCFC3BA043DD11F6A50B9A5A3",
+    "codespace": "",
+    "code": 0,
+    "data": "122E0A2C2F636F736D7761736D2E7761736D2E76312E4D736745786563757465436F6E7472616374526573706F6E7365",
+    "info": "",
+    "gas_wanted": "1030992",
+    "gas_used": "691520",
+    "tx": {
+        "@type": "/cosmos.tx.v1beta1.Tx",
+        "body": {
+            "messages": [
+                {
+                    "@type": "/cosmwasm.wasm.v1.MsgExecuteContract",
+                    "sender": "osmo1ha94fyhagrk5wphdn27qp96l20lfgzsrqdhqfk",
+                    "contract": "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm",
+                    "funds": [],
+                    "msg__@stringify": "{\"claim_rewards\":{}}"
+                }
+            ],
+            "memo": "",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+        },
+        "auth_info": {
+            "signer_infos": [
+                {
+                    "public_key": {
+                        "@type": "/cosmos.crypto.secp256k1.PubKey",
+                        "key": "AqvHmpGyQ4cKAko23Bb7t8H1T1D/t7mB7xeujkZZum7Q"
+                    },
+                    "mode_info": {
+                        "single": {
+                            "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                        }
+                    },
+                    "sequence": "103"
+                }
+            ],
+            "fee": {
+                "amount": [
+                    {
+                        "denom": "uosmo",
+                        "amount": "3609"
+                    }
+                ],
+                "gas_limit": "1030992",
+                "payer": "",
+                "granter": ""
+            },
+            "tip": null
+        },
+        "signatures": [
+            "iJUSE4OhDZNu3qVITEXItFqC/WRMAs70Kzg4noXrfTZTxpBmKeTpGREFB4CmfRkdEE5Fyc07SiiRWAspi3oTDg=="
+        ]
+    },
+    "timestamp": "2024-04-01T21:50:47Z",
+    "timestamp__@@date": 1712008247000,
+    "logs": [
+        {
+            "msg_index": 0,
+            "log": "",
+            "events": [
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "action",
+                            "value": "/cosmwasm.wasm.v1.MsgExecuteContract"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1ha94fyhagrk5wphdn27qp96l20lfgzsrqdhqfk"
+                        },
+                        {
+                            "key": "module",
+                            "value": "wasm"
+                        }
+                    ]
+                },
+                {
+                    "type": "execute",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm"
+                        }
+                    ]
+                },
+                {
+                    "type": "wasm-mars/incentives/claim_rewards",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm"
+                        },
+                        {
+                            "key": "action",
+                            "value": "claim_rewards"
+                        },
+                        {
+                            "key": "user",
+                            "value": "osmo1ha94fyhagrk5wphdn27qp96l20lfgzsrqdhqfk"
+                        }
+                    ]
+                },
+                {
+                    "type": "wasm-mars/incentives/claim_rewards/claimed_rewards",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm"
+                        },
+                        {
+                            "key": "coins",
+                            "value": "2ibc/573FCD90FACEE750F55A8864EF7D38265F07E5A9273FA0E8DAFD39951332B580"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "2ibc/573FCD90FACEE750F55A8864EF7D38265F07E5A9273FA0E8DAFD39951332B580"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "osmo1ha94fyhagrk5wphdn27qp96l20lfgzsrqdhqfk"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "2ibc/573FCD90FACEE750F55A8864EF7D38265F07E5A9273FA0E8DAFD39951332B580"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "osmo1ha94fyhagrk5wphdn27qp96l20lfgzsrqdhqfk"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "2ibc/573FCD90FACEE750F55A8864EF7D38265F07E5A9273FA0E8DAFD39951332B580"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "chain_id": "osmosis-1"
+}

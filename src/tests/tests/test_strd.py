@@ -9,20 +9,19 @@ validator or contract.  This is to ensure good faith in maintaining privacy.
 
 import logging
 import unittest
-from unittest.mock import patch
 
-from tests.mock_lcd import MockLcdAPI_v1, MockLcdAPI_v2
-from tests.mock_mintscan import MockMintscanAPI
 import staketaxcsv.report_strd
+from tests.utils_ibc import load_tx, apply_ibc_patches
+from staketaxcsv.common.Exporter import Exporter
+from staketaxcsv.strd.config_strd import localconfig
+from staketaxcsv.settings_csv import TICKER_STRD
 
 
-@patch("staketaxcsv.common.ibc.denoms.LcdAPI_v1", new=MockLcdAPI_v1)
-@patch("staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1", new=MockLcdAPI_v1)
-@patch("staketaxcsv.common.ibc.api_lcd_v2.LcdAPI_v2", new=MockLcdAPI_v2)
-@patch("staketaxcsv.common.ibc.tx_data.MintscanAPI", new=MockMintscanAPI)
-@patch("staketaxcsv.settings_csv.DB_CACHE", False)
+@apply_ibc_patches
 def run_test(wallet_address, txid):
-    exporter = staketaxcsv.report_strd.txone(wallet_address, txid)
+    elem = load_tx(wallet_address, txid, staketaxcsv.report_strd._txdata().get_tx)
+    exporter = Exporter(wallet_address, localconfig, TICKER_STRD)
+    staketaxcsv.strd.processor.process_tx(wallet_address, elem, exporter)
     return exporter.export_for_test()
 
 
@@ -43,6 +42,8 @@ timestamp            tx_type   received_amount  received_currency  sent_amount  
         self.assertEqual(result, correct_result.strip(), result)
 
     def test_liquid_stake(self):
+        logging.basicConfig(level=logging.INFO)
+
         result = run_test(
             "stride1hc6kkysu2kwx3ls0nhw29sw69wc9qx892xupmf",
             "ED0F17700E65792D8372B197A660D9423E681D8575F170EE58566B8DB9E9C85D"
