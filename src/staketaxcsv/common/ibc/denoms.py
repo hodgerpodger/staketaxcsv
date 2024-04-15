@@ -86,7 +86,6 @@ class PulsarData:
 
         return denom in cls.denoms
 
-
     @classmethod
     def denom_to_symbol(cls, denom):
         cls._load()
@@ -97,7 +96,6 @@ class PulsarData:
             return symbol, decimals
         else:
             return None, None
-
 
 
 def amount_currency_from_raw(amount_raw, currency_raw, lcd_node):

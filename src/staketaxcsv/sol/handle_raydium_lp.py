@@ -44,8 +44,8 @@ def _handle_raydium_lp(exporter, txinfo):
          and len(transfers_out) == 1):
         _handle_raydium_swap(exporter, txinfo, transfers_in, transfers_out)
     elif ("SOL" in ([t[1] for t in transfers_in] + [t[1] for t in transfers_out])
-        and len(transfers_in) == 1
-        and len(transfers_out) == 1):
+         and len(transfers_in) == 1
+         and len(transfers_out) == 1):
         _handle_raydium_swap(exporter, txinfo, transfers_in, transfers_out)
     else:
         handle_unknown(exporter, txinfo)

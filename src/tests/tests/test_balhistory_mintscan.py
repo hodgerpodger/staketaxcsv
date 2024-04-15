@@ -26,7 +26,6 @@ def run_test(ticker, wallet_address, start_date, end_date):
     )
 
 
-
 @mintscan_api
 class TestBalHistoryMintscan(unittest.TestCase):
 

@@ -62,4 +62,3 @@ def _get_contract_data(address):
 
     localconfig.contracts[address] = data
     return data
-

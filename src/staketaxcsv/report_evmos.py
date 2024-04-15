@@ -45,7 +45,6 @@ def _txdata():
     return TxDataMintscan(TICKER_EVMOS, max_txs) if MINTSCAN_ON else TxDataLcd(EVMOS_NODE, max_txs)
 
 
-
 def wallet_exists(wallet_address):
     return api_lcd.make_lcd_api(EVMOS_NODE).account_exists(wallet_address)
 

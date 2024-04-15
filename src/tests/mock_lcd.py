@@ -41,7 +41,6 @@ class MockLcdAPI_v2(MockLcdAPI_v1):
             LcdAPI_v2._get_txs, self, wallet_address, events_type, page, limit, sleep_seconds, LCDV2 + "/_get_txs")
 
 
-
 class MockCosmWasmLcdAPI(CosmWasmLcdAPI):
 
     def contract_history(self, contract, sleep_seconds):
@@ -50,4 +49,3 @@ class MockCosmWasmLcdAPI(CosmWasmLcdAPI):
 
     def contract(self, contract):
         return mock_query_two_args(CosmWasmLcdAPI.contract, self, contract, COSMWASM + "/contract")
-
