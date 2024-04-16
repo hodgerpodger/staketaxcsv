@@ -18,10 +18,7 @@
   ```
   cd src
   
-  # run tests
-  python -m unittest
-  
-  # run tests with verbose output
+  # run tests (verbose mode)
   python -m unittest -v
   
   # run tests matching ...
