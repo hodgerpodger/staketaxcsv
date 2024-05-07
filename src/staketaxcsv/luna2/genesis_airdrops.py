@@ -10,30 +10,36 @@ from staketaxcsv.luna2.config_luna2 import localconfig
 
 def genesis_airdrops(wallet_address, exporter):
     # genesis airdrop
-    _genesis_airdrop(wallet_address, exporter)
+    #_genesis_airdrop(wallet_address, exporter)
 
     # vesting airdrops
     _vesting_airdrops(wallet_address, exporter)
 
+# Genesis luna amount lookup code no longer works as of around 5/2024 due to change it lcd data/api.
+# Therefore genesis amount is omitted now.
 
-def _genesis_airdrop(wallet_address, exporter):
-    amount_luna = _genesis_airdrop_luna_amount(wallet_address)
-    if amount_luna:
-        row = make_genesis_airdrop1_tx(amount_luna, wallet_address)
-        exporter.ingest_row(row)
-
-
-def _genesis_airdrop_luna_amount(wallet_address):
-    data = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(LUNA2_NODE).balances(wallet_address, height=1)
-    balances_elem = data["balances"]
-
-    if len(balances_elem) == 0:
-        return 0
-
-    denom = balances_elem[0]["denom"]
-    amount_string = balances_elem[0]["amount"]
-    assert (denom == "uluna")
-    return float(amount_string) / co.MILLION
+#
+# def _genesis_airdrop(wallet_address, exporter):
+#     amount_luna = _genesis_airdrop_luna_amount(wallet_address)
+#     if amount_luna:
+#         row = make_genesis_airdrop1_tx(amount_luna, wallet_address)
+#         exporter.ingest_row(row)
+#
+# #
+# def _genesis_airdrop_luna_amount(wallet_address):
+#     data = staketaxcsv.common.ibc.api_lcd_v1.LcdAPI_v1(LUNA2_NODE).balances(wallet_address, height=1)
+#     balances_elem = data["balances"]
+#
+#     if len(balances_elem) == 0:
+#         return 0
+#
+#     for elem in balances_elem:
+#
+#         denom = elem["denom"]
+#         amount_string = elem["amount"]
+#
+#         if denom == "uluna":
+#             return float(amount_string) / co.MILLION
 
 
 # https://docs.terra.money/develop/vesting
