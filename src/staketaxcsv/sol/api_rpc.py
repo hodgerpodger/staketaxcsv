@@ -95,6 +95,9 @@ class RpcAPI(object):
         logging.info("rpc get_inflation_reward for staking_address=%s, epoch=%s:", staking_address, epoch)
         logging.info(data)
 
+        # Throttled at 1 req/sec, I think at rpc api level, but a tad unsure.
+        time.sleep(1)
+
         if not data or "result" not in data:
             return None, None
 
