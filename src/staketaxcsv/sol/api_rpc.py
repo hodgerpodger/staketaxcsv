@@ -92,6 +92,9 @@ class RpcAPI(object):
     def get_inflation_reward(cls, staking_address, epoch):
         data = cls._get_inflation_reward(staking_address, epoch)
 
+        logging.info("rpc get_inflation_reward for staking_address=%s, epoch=%s:", staking_address, epoch)
+        logging.info(data)
+
         if not data or "result" not in data:
             return None, None
 
