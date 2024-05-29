@@ -4,7 +4,10 @@ from staketaxcsv.common.config import config
 
 class localconfig(config):
 
+    limit = 40000  # max txs
+
     minor_rewards = False
+
     # Treat LP deposits/withdrawals as "transfers"/"omit"/"trades" (ignored for koinly)
     lp_treatment = et.LP_TREATMENT_DEFAULT
 
