@@ -243,9 +243,8 @@ def _extract_amounts(amount_string):
             # ibc token (i.e. "165ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B" for osmo)
             uamount, ibc_address = amount.split("ibc")
             ibc_address = "ibc" + ibc_address
-
-            _, currency = denoms.amount_currency_from_raw(0, ibc_address, LUNA1_NODE)
-            out[currency] = _float_amount(uamount, currency)
+            amount, currency = denoms.amount_currency_from_raw(uamount, ibc_address, LUNA1_NODE)
+            out[currency] = amount
         else:
             # regular (i.e. 99700703uusd)
             uamount, currency = amount.split("u", 1)
