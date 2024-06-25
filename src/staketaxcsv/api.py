@@ -25,6 +25,7 @@ import staketaxcsv.report_kyve
 import staketaxcsv.report_luna1
 import staketaxcsv.report_luna2
 import staketaxcsv.report_mntl
+import staketaxcsv.report_nls
 import staketaxcsv.report_ntrn
 import staketaxcsv.report_osmo
 import staketaxcsv.report_regen
@@ -59,6 +60,7 @@ REPORT_MODULES = {
     co.TICKER_LUNA1: staketaxcsv.report_luna1,
     co.TICKER_LUNA2: staketaxcsv.report_luna2,
     co.TICKER_MNTL: staketaxcsv.report_mntl,
+    co.TICKER_NLS: staketaxcsv.report_nls,
     co.TICKER_NTRN: staketaxcsv.report_ntrn,
     co.TICKER_OSMO: staketaxcsv.report_osmo,
     co.TICKER_REGEN: staketaxcsv.report_regen,
