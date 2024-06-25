@@ -29,7 +29,7 @@ def read_options(options):
 
 def _txdata():
     max_txs = localconfig.limit
-    return TxDataLcd(NLS_NODE, max_txs)
+    return TxDataLcd(NLS_NODE, max_txs, limit_per_query=20)
 
 
 def wallet_exists(wallet_address):
