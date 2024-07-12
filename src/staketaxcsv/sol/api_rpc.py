@@ -34,15 +34,16 @@ class RpcAPI(object):
         return result
 
     @classmethod
-    def _fetch_with_retries(cls, method, params_list):
-        NUM_RETRIES = 10
-        for i in range(NUM_RETRIES):
+    def _fetch_with_retries(cls, method, params_list, retries=10, backoff_factor=0.2):
+        for i in range(retries):
             data = cls._fetch(method, params_list)
 
             if "result" in data:
                 break
-            logging.info("no result in method=%s.  retrying i=%s....", method, i)
-            time.sleep(0.2 * i)
+            logging.info("no result in method=%s, params_list=%s.  retrying i=%s....",
+                         method, params_list, i)
+            logging.info(data)
+            time.sleep(backoff_factor * (2 ** i))
 
         return data
 
@@ -72,7 +73,7 @@ class RpcAPI(object):
             }
         ]
 
-        data = cls._fetch_with_retries("getBlock", params_list)
+        data = cls._fetch_with_retries("getBlock", params_list, retries=20, backoff_factor=1)
 
         try:
             rewards = data["result"]["rewards"]
