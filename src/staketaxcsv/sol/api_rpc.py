@@ -41,7 +41,15 @@ class RpcAPI(object):
     @classmethod
     def get_block_time(cls, block):
         params_list = [int(block)]
-        data = cls._fetch("getBlockTime", params_list)
+
+        NUM_RETRIES = 10
+        for i in range(NUM_RETRIES):
+            data = cls._fetch("getBlockTime", params_list)
+
+            if "result" in data:
+                break
+            logging.info("no result in getBlockTime(%s).  retrying i=%s....", block, i)
+            time.sleep(0.2*i)
 
         ts = data["result"]
         date_string = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
