@@ -34,6 +34,19 @@ class RpcAPI(object):
         return result
 
     @classmethod
+    def _fetch_with_retries(cls, method, params_list):
+        NUM_RETRIES = 10
+        for i in range(NUM_RETRIES):
+            data = cls._fetch(method, params_list)
+
+            if "result" in data:
+                break
+            logging.info("no result in method=%s.  retrying i=%s....", method, i)
+            time.sleep(0.2 * i)
+
+        return data
+
+    @classmethod
     def fetch_account(cls, address):
         params_list = [address, {"encoding": "jsonParsed"}]
         return cls._fetch("getAccountInfo", params_list)
@@ -42,14 +55,7 @@ class RpcAPI(object):
     def get_block_time(cls, block):
         params_list = [int(block)]
 
-        NUM_RETRIES = 10
-        for i in range(NUM_RETRIES):
-            data = cls._fetch("getBlockTime", params_list)
-
-            if "result" in data:
-                break
-            logging.info("no result in getBlockTime(%s).  retrying i=%s....", block, i)
-            time.sleep(0.2*i)
+        data = cls._fetch_with_retries("getBlockTime", params_list)
 
         ts = data["result"]
         date_string = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
@@ -65,7 +71,8 @@ class RpcAPI(object):
                 "maxSupportedTransactionVersion": 64,  # just choosing accepted high number
             }
         ]
-        data = cls._fetch("getBlock", params_list)
+
+        data = cls._fetch_with_retries("getBlock", params_list)
 
         try:
             rewards = data["result"]["rewards"]
