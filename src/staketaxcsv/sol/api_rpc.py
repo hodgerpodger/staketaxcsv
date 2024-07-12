@@ -43,7 +43,7 @@ class RpcAPI(object):
             logging.info("no result in method=%s, params_list=%s.  retrying i=%s....",
                          method, params_list, i)
             logging.info(data)
-            time.sleep(backoff_factor * (2 ** i))
+            time.sleep(backoff_factor * i)
 
         return data
 
