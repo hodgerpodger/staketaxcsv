@@ -15,12 +15,13 @@ import staketaxcsv.stars.processor
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
-from staketaxcsv.settings_csv import STARS_NODE, TICKER_STARS
+from staketaxcsv.settings_csv import STARS_NODE, TICKER_STARS, STARS_NODE_RPC
 from staketaxcsv.stars.config_stars import localconfig
 from staketaxcsv.stars.progress_stars import SECONDS_PER_PAGE, ProgressStars
 from staketaxcsv.common.ibc import api_lcd
-from staketaxcsv.common.ibc.tx_data import TxDataLcd
+from staketaxcsv.common.ibc.tx_data import TxDataLcd, TxDataRpc
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
+STARS_NODES_RPC = [STARS_NODE_RPC]
 
 
 def main():
@@ -35,7 +36,7 @@ def read_options(options):
 
 def _txdata():
     max_txs = localconfig.limit
-    return TxDataLcd(STARS_NODE, max_txs)
+    return TxDataRpc(STARS_NODES_RPC, max_txs)
 
 
 def wallet_exists(wallet_address):
@@ -62,8 +63,7 @@ def txhistory(wallet_address):
     txdata = _txdata()
 
     # Fetch count of transactions to estimate progress beforehand
-    count_pages = txdata.get_txs_pages_count(wallet_address)
-    progress.set_estimate(count_pages)
+    txdata.get_txs_pages_count(wallet_address, progress_rpc=progress)
 
     # Fetch transactions
     elems = txdata.get_txs_all(wallet_address, progress)

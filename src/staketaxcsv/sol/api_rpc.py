@@ -42,7 +42,7 @@ class RpcAPI(object):
                 break
             logging.info("no result in method=%s, params_list=%s.  retrying i=%s....",
                          method, params_list, i)
-            logging.info(data)
+            logging.info("data: %s", data)
             time.sleep(backoff_factor * i)
 
         return data
@@ -73,7 +73,7 @@ class RpcAPI(object):
             }
         ]
 
-        data = cls._fetch_with_retries("getBlock", params_list, retries=20, backoff_factor=1)
+        data = cls._fetch_with_retries("getBlock", params_list, retries=40, backoff_factor=1)
 
         try:
             rewards = data["result"]["rewards"]
