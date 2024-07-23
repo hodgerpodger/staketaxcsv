@@ -81,3 +81,16 @@ timestamp            tx_type   received_amount  received_currency  sent_amount  
 -------------------  --------  ---------------  -----------------  -----------  -------------  ------  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+    def test_authz_grant(self):
+        result = run_test(
+            "osmo1u3xlchr8rvmaxfuh6n2nsnj5phpc3k5dpdww6m",
+            "5AD1012BC3454AD4CFD432F839E5DBA5E6367F313108CE3142C1516C5A31839B"
+        )
+        correct_result = """
+-------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
+timestamp            tx_type  received_amount  received_currency  sent_amount  sent_currency  fee  fee_currency  txid
+2024-07-20 01:00:22  SPEND                                        0.000468000  OSMO           0                  5AD1012BC3454AD4CFD432F839E5DBA5E6367F313108CE3142C1516C5A31839B-0
+-------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)

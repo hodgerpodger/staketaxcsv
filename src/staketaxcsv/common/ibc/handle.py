@@ -206,6 +206,15 @@ def handle_exec(exporter, txinfo, msginfo):
         _handle_exec_lcd_data(exporter, txinfo, msginfo)
 
 
+def handle_authz_grant(exporter, txinfo, msginfo):
+    # handles message for grant message for authz
+
+    if msginfo.msg_index == 0:
+        row = make_tx.make_spend_tx_fee(txinfo, msginfo)
+        exporter.ingest_row(row)
+        row.comment = "spend fee for authz grant tx"
+
+
 def _is_exec_rpc_data(msginfo):
     message = msginfo.message
 
