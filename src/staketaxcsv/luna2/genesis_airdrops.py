@@ -10,7 +10,7 @@ from staketaxcsv.luna2.config_luna2 import localconfig
 
 def genesis_airdrops(wallet_address, exporter):
     # genesis airdrop
-    #_genesis_airdrop(wallet_address, exporter)
+    # _genesis_airdrop(wallet_address, exporter)
 
     # vesting airdrops
     _vesting_airdrops(wallet_address, exporter)

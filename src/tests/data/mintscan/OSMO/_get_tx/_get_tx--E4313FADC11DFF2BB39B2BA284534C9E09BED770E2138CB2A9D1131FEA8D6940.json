@@ -1,0 +1,284 @@
+[
+    {
+        "height": "17440439",
+        "txhash": "E4313FADC11DFF2BB39B2BA284534C9E09BED770E2138CB2A9D1131FEA8D6940",
+        "codespace": "",
+        "code": 0,
+        "data": "12290A272F636F736D6F732E617574687A2E763162657461312E4D73675265766F6B65526573706F6E736512290A272F636F736D6F732E617574687A2E763162657461312E4D73675265766F6B65526573706F6E7365",
+        "info": "",
+        "gas_wanted": "107283",
+        "gas_used": "80756",
+        "tx": {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            "/cosmos-tx-v1beta1-Tx": {
+                "body": {
+                    "messages": [
+                        {
+                            "@type": "/cosmos.authz.v1beta1.MsgRevoke",
+                            "/cosmos-authz-v1beta1-MsgRevoke": {
+                                "granter": "osmo1u3xlchr8rvmaxfuh6n2nsnj5phpc3k5dpdww6m",
+                                "grantee": "osmo1gsvxuzts55h70c4338cmypzphv7l0exwpqnjh7",
+                                "msg_type_url": "/cosmos.staking.v1beta1.MsgDelegate"
+                            }
+                        },
+                        {
+                            "@type": "/cosmos.authz.v1beta1.MsgRevoke",
+                            "/cosmos-authz-v1beta1-MsgRevoke": {
+                                "granter": "osmo1u3xlchr8rvmaxfuh6n2nsnj5phpc3k5dpdww6m",
+                                "grantee": "osmo1gsvxuzts55h70c4338cmypzphv7l0exwpqnjh7",
+                                "msg_type_url": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"
+                            }
+                        }
+                    ],
+                    "memo": "Revoke Authz Evia",
+                    "timeout_height": "0",
+                    "extension_options": [],
+                    "non_critical_extension_options": []
+                },
+                "auth_info": {
+                    "signer_infos": [
+                        {
+                            "public_key": {
+                                "@type": "/cosmos.crypto.secp256k1.PubKey",
+                                "/cosmos-crypto-secp256k1-PubKey": {
+                                    "key": "Apyfqfvv+uGc0vxItCymBP1zxyiZ94wVQZQFTvWJMgh3"
+                                }
+                            },
+                            "mode_info": {
+                                "single": {
+                                    "mode": "SIGN_MODE_DIRECT"
+                                }
+                            },
+                            "sequence": "161"
+                        }
+                    ],
+                    "fee": {
+                        "amount": [
+                            {
+                                "denom": "uosmo",
+                                "amount": "322"
+                            }
+                        ],
+                        "gas_limit": "107283",
+                        "payer": "",
+                        "granter": ""
+                    },
+                    "tip": null
+                },
+                "signatures": [
+                    "WJ9b0jntmLF5S2QT9CR9UZ8BacTVnuffmLCFw8d+gC0Gl7n0jyBHV/QhsnB39fxAqEdadiLNPHZsklmLTPAJKA=="
+                ]
+            }
+        },
+        "timestamp": "2024-07-02T14:29:04Z",
+        "timestamp__@@date": 1719930544000,
+        "logs": [
+            {
+                "msg_index": 0,
+                "events": [
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "action",
+                                "value": "/cosmos.authz.v1beta1.MsgRevoke",
+                                "index": true
+                            },
+                            {
+                                "key": "sender",
+                                "value": "osmo1u3xlchr8rvmaxfuh6n2nsnj5phpc3k5dpdww6m",
+                                "index": true
+                            },
+                            {
+                                "key": "module",
+                                "value": "authz",
+                                "index": true
+                            },
+                            {
+                                "key": "msg_index",
+                                "value": "0",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "cosmos.authz.v1beta1.EventRevoke",
+                        "attributes": [
+                            {
+                                "key": "grantee",
+                                "value": "\"osmo1gsvxuzts55h70c4338cmypzphv7l0exwpqnjh7\"",
+                                "index": true
+                            },
+                            {
+                                "key": "granter",
+                                "value": "\"osmo1u3xlchr8rvmaxfuh6n2nsnj5phpc3k5dpdww6m\"",
+                                "index": true
+                            },
+                            {
+                                "key": "msg_type_url",
+                                "value": "\"/cosmos.staking.v1beta1.MsgDelegate\"",
+                                "index": true
+                            },
+                            {
+                                "key": "msg_index",
+                                "value": "0",
+                                "index": true
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "msg_index": 1,
+                "events": [
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "action",
+                                "value": "/cosmos.authz.v1beta1.MsgRevoke",
+                                "index": true
+                            },
+                            {
+                                "key": "sender",
+                                "value": "osmo1u3xlchr8rvmaxfuh6n2nsnj5phpc3k5dpdww6m",
+                                "index": true
+                            },
+                            {
+                                "key": "module",
+                                "value": "authz",
+                                "index": true
+                            },
+                            {
+                                "key": "msg_index",
+                                "value": "1",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "cosmos.authz.v1beta1.EventRevoke",
+                        "attributes": [
+                            {
+                                "key": "grantee",
+                                "value": "\"osmo1gsvxuzts55h70c4338cmypzphv7l0exwpqnjh7\"",
+                                "index": true
+                            },
+                            {
+                                "key": "granter",
+                                "value": "\"osmo1u3xlchr8rvmaxfuh6n2nsnj5phpc3k5dpdww6m\"",
+                                "index": true
+                            },
+                            {
+                                "key": "msg_type_url",
+                                "value": "\"/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward\"",
+                                "index": true
+                            },
+                            {
+                                "key": "msg_index",
+                                "value": "1",
+                                "index": true
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "msg_index": null,
+                "events": [
+                    {
+                        "type": "coin_spent",
+                        "attributes": [
+                            {
+                                "key": "spender",
+                                "value": "osmo1u3xlchr8rvmaxfuh6n2nsnj5phpc3k5dpdww6m",
+                                "index": true
+                            },
+                            {
+                                "key": "amount",
+                                "value": "322uosmo",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "coin_received",
+                        "attributes": [
+                            {
+                                "key": "receiver",
+                                "value": "osmo17xpfvakm2amg962yls6f84z3kell8c5lczssa0",
+                                "index": true
+                            },
+                            {
+                                "key": "amount",
+                                "value": "322uosmo",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "transfer",
+                        "attributes": [
+                            {
+                                "key": "recipient",
+                                "value": "osmo17xpfvakm2amg962yls6f84z3kell8c5lczssa0",
+                                "index": true
+                            },
+                            {
+                                "key": "sender",
+                                "value": "osmo1u3xlchr8rvmaxfuh6n2nsnj5phpc3k5dpdww6m",
+                                "index": true
+                            },
+                            {
+                                "key": "amount",
+                                "value": "322uosmo",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "sender",
+                                "value": "osmo1u3xlchr8rvmaxfuh6n2nsnj5phpc3k5dpdww6m",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "tx",
+                        "attributes": [
+                            {
+                                "key": "fee",
+                                "value": "322uosmo",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "tx",
+                        "attributes": [
+                            {
+                                "key": "acc_seq",
+                                "value": "osmo1u3xlchr8rvmaxfuh6n2nsnj5phpc3k5dpdww6m/161",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "tx",
+                        "attributes": [
+                            {
+                                "key": "signature",
+                                "value": "WJ9b0jntmLF5S2QT9CR9UZ8BacTVnuffmLCFw8d+gC0Gl7n0jyBHV/QhsnB39fxAqEdadiLNPHZsklmLTPAJKA==",
+                                "index": true
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "chain_id": "osmosis-1"
+    }
+]

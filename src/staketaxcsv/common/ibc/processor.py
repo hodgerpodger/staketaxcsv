@@ -98,9 +98,13 @@ def handle_message(exporter, txinfo, msginfo, debug=False):
             handle.handle_exec(exporter, txinfo, msginfo)
             return True
 
-        # authz grant
+        # authz
         elif msg_type == co.MSG_TYPE_GRANT:
+            # grant message
             handle.handle_authz_grant(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_REVOKE:
+            # revoke message
+            handle.handle_authz_revoke(exporter, txinfo, msginfo)
 
         elif msg_type in [co.MSG_TYPE_VOTE, co.MSG_TYPE_SET_WITHDRAW_ADDRESS]:
             # simple transactions with no transfers
