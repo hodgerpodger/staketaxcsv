@@ -8,7 +8,7 @@
 * pep8 code style
 * Can check for linter errors before submitting a pull request:
   ```sh
-  # (some configuration in setup.cfg)
+  # run at base directory (some configuration in setup.cfg)
   pycodestyle
   ```
 
