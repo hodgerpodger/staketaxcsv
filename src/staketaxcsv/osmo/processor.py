@@ -88,6 +88,9 @@ def _handle_message(exporter, txinfo, msginfo):
             staketaxcsv.osmo.handle_concentrated_lp.handle_collect_spread_rewards(exporter, txinfo, msginfo)
         elif msg_type == co.MSG_TYPE_WITHDRAW_POSITION:
             staketaxcsv.osmo.handle_concentrated_lp.handle_withdraw_position(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_UNLOCK_AND_MIGRATE_SHARES_TO_FULL_RANGE_CONCENTRATED_POSITION:
+            staketaxcsv.osmo.handle_concentrated_lp.handle_migrate_to_concentrated(exporter, txinfo, msginfo)
+
 
         # execute contract
         elif msg_type == co.MSG_TYPE_EXECUTE_CONTRACT:

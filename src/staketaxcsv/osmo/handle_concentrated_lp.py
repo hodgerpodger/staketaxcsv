@@ -1,9 +1,10 @@
+import logging
 from collections import defaultdict
 from staketaxcsv.osmo import util_osmo
+from staketaxcsv.osmo.handle_lp import LockedTokens
+from staketaxcsv.osmo.handle_unknown import handle_unknown_detect_transfers
 from staketaxcsv.osmo.make_tx import (
-    make_osmo_lp_deposit_tx, make_osmo_lp_withdraw_tx, make_osmo_reward_tx)
-from staketaxcsv.settings_csv import OSMO_NODE
-from staketaxcsv.common.ibc import denoms
+    make_osmo_lp_deposit_tx, make_osmo_lp_withdraw_tx, make_osmo_reward_tx, make_osmo_simple_tx)
 
 
 class PositionLiquidity:
@@ -170,6 +171,25 @@ def handle_withdraw_position(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers_net
     events_by_type = msginfo.events_by_type
 
+    if len(transfers_in) == 1 and len(transfers_out) == 0:
+        position_id = events_by_type["withdraw_position"]["position_id"]
+        liquidity = abs(float(events_by_type["withdraw_position"]["liquidity"]))
+        pool_id = events_by_type["withdraw_position"]["pool_id"]
+
+        lp_amount = liquidity
+        lp_currency = _lp_currency(pool_id)
+
+        receive_amount, receive_currency = transfers_in[0]
+
+        PositionLiquidity.withdraw_position(position_id, liquidity)
+
+        comment = f"concentrated_lp.withdraw_position [pool_id={pool_id}][position_id={position_id}] "
+        rows = [
+            make_osmo_lp_withdraw_tx(txinfo, msginfo, lp_amount, lp_currency, receive_amount, receive_currency)
+        ]
+        util_osmo._ingest_rows(exporter, rows, comment)
+        return
+
     if len(transfers_in) == 2 and len(transfers_out) == 0:
         position_id = events_by_type["withdraw_position"]["position_id"]
         liquidity = abs(float(events_by_type["withdraw_position"]["liquidity"]))
@@ -215,3 +235,43 @@ def handle_withdraw_position(exporter, txinfo, msginfo):
         return
 
     raise Exception("Unable to handle tx in handle_withdraw_position()")
+
+
+def handle_migrate_to_concentrated(exporter, txinfo, msginfo):
+    wallet_address = txinfo.wallet_address
+    transfers_in, transfers_out = msginfo.transfers
+    events_by_type = msginfo.events_by_type
+
+    # Find lp token/amount
+    lp_amount, lp_currency = _find_lp_token_amount(transfers_in)
+    if lp_currency is None:
+        logging.error("Unable to find lp token/amount")
+        handle_unknown_detect_transfers(exporter, txinfo, msginfo)
+        return
+
+    # Save leaving old pool info
+    lock_id = msginfo.message["lock_id"]
+    LockedTokens.remove_stake(wallet_address, lock_id)
+
+    # Save entering new pool info
+    create_position = events_by_type["create_position"]
+    pool_id = create_position["pool_id"]
+    position_id = create_position["position_id"]
+    liquidity = float(create_position["liquidity"])
+
+    PositionLiquidity.create_position(position_id, liquidity)
+
+    row = make_osmo_simple_tx(txinfo, msginfo)
+    row.comment += "concentrated_lp.migrate"
+    row.comment += f"[exit lock_id={lock_id}]"
+    row.comment += f"[enter pool_id={pool_id} position_id={position_id}]"
+    exporter.ingest_row(row)
+    return
+
+
+def _find_lp_token_amount(transfers):
+    for amount, currency in transfers:
+        if currency.startswith("GAMM-"):
+            return amount, currency
+
+    return None, None
