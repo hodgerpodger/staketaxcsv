@@ -258,5 +258,13 @@ def _handle_exec_lcd_data(exporter, txinfo, msginfo):
             pass
         else:
             handle_staking(exporter, txinfo, msginfo)
+    elif msg_types.issubset([co.MSG_TYPE_LOCK_TOKENS]):
+        owner = msginfo.message["msgs"][0]["owner"]
+        if owner != exporter.wallet_address:
+            # ignore lock token messages not related this wallet address
+            pass
+        else:
+            # TODO: handle authz MsgLockTokens message
+            handle_unknown(exporter, txinfo, msginfo)
     else:
         handle_unknown(exporter, txinfo, msginfo)
