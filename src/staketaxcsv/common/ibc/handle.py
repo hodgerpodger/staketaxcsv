@@ -264,7 +264,15 @@ def _handle_exec_lcd_data(exporter, txinfo, msginfo):
             # ignore lock token messages not related this wallet address
             pass
         else:
-            # TODO: handle authz MsgLockTokens message
+            # TODO: handle authz exec MsgLockTokens message
+            handle_unknown(exporter, txinfo, msginfo)
+    elif msg_types.issubset([co.MSG_TYPE_JOIN_SWAP_EXTERN_AMOUNT_IN]):
+        sender = msginfo.message["msgs"][0]["sender"]
+        if sender != exporter.wallet_address:
+            # ignore lock token messages not related this wallet address
+            pass
+        else:
+            # TODO: handle authz exec  MsgJoinSwapExternAmountIn message
             handle_unknown(exporter, txinfo, msginfo)
     else:
         handle_unknown(exporter, txinfo, msginfo)
