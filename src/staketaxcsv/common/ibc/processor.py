@@ -9,6 +9,7 @@ Special note on IBC receive: mintscan sometimes shows multiple transactions for 
 import logging
 from datetime import datetime
 
+import staketaxcsv.common.ibc.handle_authz
 from staketaxcsv.common.ibc import constants as co
 from staketaxcsv.common.ibc import handle, denoms
 from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
@@ -95,16 +96,16 @@ def handle_message(exporter, txinfo, msginfo, debug=False):
 
         # Handle exec messages (wrapped messages; currently only for authz's restake)
         if msg_type == co.MSG_TYPE_EXEC:
-            handle.handle_exec(exporter, txinfo, msginfo)
+            staketaxcsv.common.ibc.handle_authz.handle_exec(exporter, txinfo, msginfo)
             return True
 
         # authz
         elif msg_type == co.MSG_TYPE_GRANT:
             # grant message
-            handle.handle_authz_grant(exporter, txinfo, msginfo)
+            staketaxcsv.common.ibc.handle_authz.handle_authz_grant(exporter, txinfo, msginfo)
         elif msg_type == co.MSG_TYPE_REVOKE:
             # revoke message
-            handle.handle_authz_revoke(exporter, txinfo, msginfo)
+            staketaxcsv.common.ibc.handle_authz.handle_authz_revoke(exporter, txinfo, msginfo)
 
         elif msg_type in [co.MSG_TYPE_VOTE, co.MSG_TYPE_SET_WITHDRAW_ADDRESS]:
             # simple transactions with no transfers
