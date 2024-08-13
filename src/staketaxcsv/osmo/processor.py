@@ -19,6 +19,7 @@ import staketaxcsv.osmo.contracts.mars
 import staketaxcsv.osmo.contracts.quasar
 CONTRACT_LIQUID_STAKE = "osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0"
 CONTRACT_MARS_INCENTIVES = "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm"
+CONTRACT_MARS_CREATE_CREDIT_ACCOUNT = "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
 CONTRACT_QUASAR_VAULT = "osmo15uk8m3wchpee8gjl02lwelxlsl4uuy3pdy7u6kz7cu7krlph2xpscf53cy"
 
 
@@ -114,8 +115,13 @@ def _handle_execute_contract(exporter, txinfo, msginfo):
 
     if contract == CONTRACT_LIQUID_STAKE:
         staketaxcsv.osmo.contracts.liquid.handle_liquid_stake(exporter, txinfo, msginfo)
+
+    # mars
     elif contract == CONTRACT_MARS_INCENTIVES:
         staketaxcsv.osmo.contracts.mars.handle_claim_rewards(exporter, txinfo, msginfo)
+    elif contract == CONTRACT_MARS_CREATE_CREDIT_ACCOUNT:
+        staketaxcsv.osmo.contracts.mars.handle_create_credit_account(exporter, txinfo, msginfo)
+
     else:
         label = contract_label(contract, localconfig, OSMO_NODE)
 
