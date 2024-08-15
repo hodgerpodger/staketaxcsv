@@ -1,4 +1,3 @@
-from staketaxcsv.osmo.contracts.mars import extract_message
 
 
 def handle_red_bank(exporter, txinfo, msginfo):

@@ -1,12 +1,8 @@
 import json
 import pprint
 
-#from staketaxcsv.common.ibc import denoms
 from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
-#from staketaxcsv.osmo import denoms as denoms_osmo
-#from staketaxcsv.osmo.api_osmosis import get_symbol, get_exponent
 from staketaxcsv.osmo.constants import MSG_TYPE_EXECUTE_CONTRACT
-#from staketaxcsv.osmo.config_osmo import localconfig
 from staketaxcsv.osmo import denoms as denoms_osmo
 
 

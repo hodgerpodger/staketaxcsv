@@ -1,6 +1,5 @@
 from staketaxcsv.osmo.make_tx import make_osmo_reward_tx
 from staketaxcsv.common.make_tx import make_spend_fee_tx
-from staketaxcsv.osmo.contracts.mars import extract_message
 
 
 def handle_claim_rewards(exporter, txinfo, msginfo):
