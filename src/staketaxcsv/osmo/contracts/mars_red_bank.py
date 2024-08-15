@@ -36,7 +36,7 @@ def _handle_repay(exporter, txinfo, msginfo):
         sent_amt, sent_cur = transfers_out[0]
 
         row = make_repay_tx(txinfo, sent_amt, sent_cur)
-        row.comment += " [mars_red_bank repay]"
+        row.comment += f" [mars_red_bank repay {sent_amt} {sent_cur}]"
         exporter.ingest_row(row)
         return
 
@@ -50,7 +50,7 @@ def _handle_borrow(exporter, txinfo, msginfo):
         rec_amt, rec_cur = transfers_in[0]
 
         row = make_borrow_tx(txinfo, rec_amt, rec_cur)
-        row.comment += " [mars_red_bank borrow]"
+        row.comment += f" [mars_red_bank borrow {rec_amt} {rec_cur}]"
         exporter.ingest_row(row)
         return
 
