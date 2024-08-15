@@ -14,10 +14,13 @@ from staketaxcsv.osmo.config_osmo import localconfig
 from staketaxcsv.osmo.MsgInfoOsmo import MsgInfoOsmo
 from staketaxcsv.settings_csv import OSMO_NODE
 from staketaxcsv.common.ibc.api_lcd_cosmwasm import contract_label
+import staketaxcsv.osmo.contracts.icns
 import staketaxcsv.osmo.contracts.liquid
 import staketaxcsv.osmo.contracts.mars_credit_manager
 import staketaxcsv.osmo.contracts.mars_red_bank
 import staketaxcsv.osmo.contracts.quasar
+CONTRACT_ICNS_REGISTRAR = "osmo1llh07xn7pcst3jqm0xpsucf90lzugfskkkhk8a3u2yznqmse4l5smydwpw"
+CONTRACT_ICNS_RESOLVER = "osmo1xk0s8xgktn9x5vwcgtjdxqzadg88fgn33p8u9cnpdxwemvxscvast52cdd"
 CONTRACT_LIQUID_STAKE = "osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0"
 CONTRACT_MARS_CREDIT_MANAGER = "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
 CONTRACT_MARS_INCENTIVES = "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm"
@@ -125,6 +128,10 @@ def _handle_execute_contract(exporter, txinfo, msginfo):
         staketaxcsv.osmo.contracts.mars_credit_manager.handle_credit_manager(exporter, txinfo, msginfo)
     elif contract == CONTRACT_MARS_RED_BANK:
         staketaxcsv.osmo.contracts.mars_red_bank.handle_red_bank(exporter, txinfo, msginfo)
+
+    # icns
+    elif contract in [CONTRACT_ICNS_REGISTRAR, CONTRACT_ICNS_RESOLVER]:
+        staketaxcsv.osmo.contracts.icns.handle(exporter, txinfo, msginfo)
 
     else:
         label = contract_label(contract, localconfig, OSMO_NODE)

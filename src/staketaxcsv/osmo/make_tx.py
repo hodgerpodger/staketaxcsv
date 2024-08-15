@@ -21,8 +21,8 @@ def _edit_row(row, txinfo, msginfo):
 
 
 def make_osmo_tx(txinfo, msginfo, sent_amount, sent_currency, received_amount, received_currency,
-                 txid=None, empty_fee=False):
-    tx_type = util_osmo._make_tx_type(msginfo)
+                 txid=None, empty_fee=False, tx_type=None):
+    tx_type = tx_type if tx_type else util_osmo._make_tx_type(msginfo)
     row = _make_tx_exchange(
         txinfo, sent_amount, sent_currency, received_amount, received_currency, tx_type,
         txid=txid, empty_fee=empty_fee)
