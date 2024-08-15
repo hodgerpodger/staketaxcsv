@@ -15,11 +15,13 @@ from staketaxcsv.osmo.MsgInfoOsmo import MsgInfoOsmo
 from staketaxcsv.settings_csv import OSMO_NODE
 from staketaxcsv.common.ibc.api_lcd_cosmwasm import contract_label
 import staketaxcsv.osmo.contracts.liquid
-import staketaxcsv.osmo.contracts.mars
+import staketaxcsv.osmo.contracts.mars_credit_manager
+import staketaxcsv.osmo.contracts.mars_red_bank
 import staketaxcsv.osmo.contracts.quasar
 CONTRACT_LIQUID_STAKE = "osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0"
+CONTRACT_MARS_CREDIT_MANAGER = "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
 CONTRACT_MARS_INCENTIVES = "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm"
-CONTRACT_MARS_CREATE_CREDIT_ACCOUNT = "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
+CONTRACT_MARS_RED_BANK = "osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg"
 CONTRACT_QUASAR_VAULT = "osmo15uk8m3wchpee8gjl02lwelxlsl4uuy3pdy7u6kz7cu7krlph2xpscf53cy"
 
 
@@ -118,9 +120,11 @@ def _handle_execute_contract(exporter, txinfo, msginfo):
 
     # mars
     elif contract == CONTRACT_MARS_INCENTIVES:
-        staketaxcsv.osmo.contracts.mars.handle_claim_rewards(exporter, txinfo, msginfo)
-    elif contract == CONTRACT_MARS_CREATE_CREDIT_ACCOUNT:
-        staketaxcsv.osmo.contracts.mars.handle_create_credit_account(exporter, txinfo, msginfo)
+        staketaxcsv.osmo.contracts.mars_credit_manager.handle_claim_rewards(exporter, txinfo, msginfo)
+    elif contract == CONTRACT_MARS_CREDIT_MANAGER:
+        staketaxcsv.osmo.contracts.mars_credit_manager.handle_credit_manager(exporter, txinfo, msginfo)
+    elif contract == CONTRACT_MARS_RED_BANK:
+        staketaxcsv.osmo.contracts.mars_red_bank.handle_red_bank(exporter, txinfo, msginfo)
 
     else:
         label = contract_label(contract, localconfig, OSMO_NODE)

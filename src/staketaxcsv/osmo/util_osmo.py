@@ -36,3 +36,5 @@ def _period_lock_id(msginfo):
                     return v
 
     logging.error("Unable to find period_lock_id for msg_index=%s", msg_index)
+
+
