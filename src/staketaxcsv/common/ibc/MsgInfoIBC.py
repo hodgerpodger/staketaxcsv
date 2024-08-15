@@ -47,7 +47,7 @@ class MsgInfoIBC:
         pprint.pprint(self.message)
         print("\n\twasm:")
         pprint.pprint(self.wasm)
-        print("\tevents_by_type:")
+        print("\n\tevents_by_type:")
         pprint.pprint(self.events_by_type)
 
     def _msg_type(self, message):
