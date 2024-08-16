@@ -46,7 +46,7 @@ def _handle_withdraw(exporter, txinfo, msginfo):
 
 
 def _handle_repay(exporter, txinfo, msginfo):
-    transfers_in, transfers_out = msginfo.transfers
+    transfers_in, transfers_out = msginfo.transfers_net
 
     if len(transfers_out) == 1 and len(transfers_in) == 0:
         sent_amt, sent_cur = transfers_out[0]
