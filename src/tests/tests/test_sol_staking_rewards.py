@@ -42,7 +42,6 @@ class TestSolStakingRewards(unittest.TestCase):
         result = staking_rewards._rewards(STAKING_ADDRESS)
         self.assertEqual(result[:5], self.rewards_gold[:5])
 
-
     def test_lookup_reward_via_rpc(self):
         # test pre-epoch 651
 

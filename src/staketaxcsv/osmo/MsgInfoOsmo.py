@@ -30,19 +30,3 @@ class MsgInfoOsmo(MsgInfoIBC):
         super().print()
         print("\n\texecute_contract_message:")
         pprint.pprint(self.execute_contract_message)
-
-
-    # def amount_currency_single(self, amount_raw, currency_raw):
-    #     amount, currency = denoms.amount_currency_from_raw(
-    #         amount_raw, currency_raw, self.lcd_node)
-    #
-    #     if currency.startswith("unknown_"):
-    #         # try osmosis api
-    #         currency = denoms_osmo.symbol(currency_raw)
-    #         if currency:
-    #             exponent = denoms_osmo.exponent(currency)
-    #             if exponent:
-    #                 amount = float(amount_raw) / float(10 ** exponent)
-    #                 return amount, currency
-    #
-    #     return amount, currency

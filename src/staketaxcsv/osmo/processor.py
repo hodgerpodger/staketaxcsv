@@ -97,7 +97,6 @@ def _handle_message(exporter, txinfo, msginfo):
         elif msg_type == co.MSG_TYPE_UNLOCK_AND_MIGRATE_SHARES_TO_FULL_RANGE_CONCENTRATED_POSITION:
             staketaxcsv.osmo.handle_concentrated_lp.handle_migrate_to_concentrated(exporter, txinfo, msginfo)
 
-
         # execute contract
         elif msg_type == co.MSG_TYPE_EXECUTE_CONTRACT:
             _handle_execute_contract(exporter, txinfo, msginfo)
