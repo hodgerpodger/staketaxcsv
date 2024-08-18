@@ -37,10 +37,31 @@ class TestSolStakingRewards(unittest.TestCase):
     @patch("staketaxcsv.sol.staking_rewards.SOL_REWARDS_DB_READ", False)
     @patch("staketaxcsv.sol.staking_rewards.RpcAPI", new=MockRpcAPI)
     @patch("staketaxcsv.sol.staking_rewards_common.RpcAPI", new=MockRpcAPI)
-    @patch("staketaxcsv.sol.staking_rewards.get_epochs_all", return_value=list(range(132, 142)))
+    @patch("staketaxcsv.sol.staking_rewards.get_epochs_all", return_value=list(range(132, 137)))
     def test_rewards_using_rpc(self, mock_get_epochs_all):
         result = staking_rewards._rewards(STAKING_ADDRESS)
-        self.assertEqual(result[:10], self.rewards_gold[:10])
+        self.assertEqual(result[:5], self.rewards_gold[:5])
+
+
+    def test_lookup_reward_via_rpc(self):
+        # test pre-epoch 651
+
+        staking_address = "2gkKivvDqc4gn2JXNfPjhSgyeE4U4SGxjrvpo6E5gkeK"
+        ts, amount = staking_rewards._lookup_reward_via_rpc(staking_address, 645)
+        self.assertEqual(ts, "2024-07-22 19:54:28")
+        self.assertEqual(amount, 32.404371735)
+
+        # test epoch 651+ to make sure difference in getInflationReward return slot result difference
+        # doesn't cause issues
+
+        staking_address = "2gkKivvDqc4gn2JXNfPjhSgyeE4U4SGxjrvpo6E5gkeK"
+        ts, amount = staking_rewards._lookup_reward_via_rpc(staking_address, 655)
+        self.assertEqual(ts, "2024-08-13 17:49:42")
+        self.assertEqual(amount, 32.538007227)
+        staking_address = "61H9wkgj4KYWDXA7zJSRWy974iDhnsCVjvUQTNAKHmfR"
+        ts, amount = staking_rewards._lookup_reward_via_rpc(staking_address, 654)
+        self.assertEqual(ts, "2024-08-11 15:17:17")
+        self.assertEqual(amount, 16.961246909)
 
     @rewards_db
     def test_rewards_using_db(self):

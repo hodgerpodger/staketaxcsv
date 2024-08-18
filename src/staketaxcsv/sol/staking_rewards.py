@@ -4,7 +4,7 @@ from datetime import datetime
 from staketaxcsv.sol.api_rpc import RpcAPI
 from staketaxcsv.sol.make_tx import make_sol_reward_tx
 from staketaxcsv.settings_csv import SOL_REWARDS_DB_READ
-from staketaxcsv.sol.staking_rewards_common import slot_to_timestamp, get_epochs_all
+from staketaxcsv.sol.staking_rewards_common import get_epochs_all, epoch_slot_and_time
 from staketaxcsv.sol.staking_rewards_db import StakingRewardsDB
 from staketaxcsv.sol.api_marinade import MarinadeAPI
 from staketaxcsv.sol.constants import BILLION
@@ -90,12 +90,16 @@ def _date_to_dt(ymd):
 
 def _lookup_reward_via_rpc(staking_address, epoch):
     logging.info("Querying RPC for rewards epoch=%s staking_address=%s ...", epoch, staking_address)
-    amount, slot = RpcAPI.get_inflation_reward(staking_address, epoch)
-    if amount and slot:
-        ts = slot_to_timestamp(slot)
-        return ts, amount
-    else:
+
+    amount = RpcAPI.get_inflation_reward(staking_address, epoch)
+    if not amount:
         return None, None
+
+    _, ts = epoch_slot_and_time(epoch)
+    if not ts:
+        return None, None
+
+    return ts, amount
 
 
 def _rewards_txs_marinade_native(wallet_info, exporter, start_date, end_date):

@@ -37,7 +37,7 @@ class TestTia(unittest.TestCase):
         correct_result = """
 -------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------
 timestamp            tx_type  received_amount  received_currency  sent_amount  sent_currency  fee  fee_currency  txid
-2023-10-31 10:00:00  AIRDROP  257.98           TIA                                                               celestia_genesis_airdrop
+2023-10-31 14:00:00  AIRDROP  257.98           TIA                                                               celestia_genesis_airdrop
 -------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)

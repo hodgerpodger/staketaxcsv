@@ -56,7 +56,7 @@ class RpcAPI(object):
     def get_block_time(cls, block):
         params_list = [int(block)]
 
-        data = cls._fetch_with_retries("getBlockTime", params_list)
+        data = cls._fetch("getBlockTime", params_list)
 
         ts = data["result"]
         date_string = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
@@ -115,17 +115,16 @@ class RpcAPI(object):
         time.sleep(1)
 
         if not data or "result" not in data:
-            return None, None
+            return None
 
         try:
             val = data["result"][0]
             if val:
                 amount = val["amount"] / BILLION
-                slot = val["effectiveSlot"]
-                return amount, slot
+                return amount
         except KeyError:
             pass
-        return None, None
+        return None
 
     @classmethod
     def get_latest_epoch(cls):

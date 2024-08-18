@@ -10,10 +10,9 @@ import logging
 import random
 import time
 from concurrent.futures import as_completed, ThreadPoolExecutor
-from datetime import datetime
 from botocore.exceptions import ClientError
 
-from staketaxcsv.sol.staking_rewards_common import START_EPOCH, slot_to_timestamp
+from staketaxcsv.sol.staking_rewards_common import START_EPOCH, epoch_slot_and_time
 from staketaxcsv.sol.api_rpc import RpcAPI
 
 TABLE_STAKING_REWARDS = "staking_rewards"
@@ -44,19 +43,15 @@ def rewards_all_users_write_db():
 
         list_block_rewards = []
         for epoch in cur_epochs:
-            # get slot of epoch (need slot to call rewards api and just using any address with a reward)
-            amount, slot = RpcAPI.get_inflation_reward(REFERENCE_ADDRESS_WITH_ALL_EPOCH_REWARDS, epoch)
-
-            if not slot:
-                raise Exception("Slot not found.  Likely need to use different reference address.")
+            reward_slot, ts = epoch_slot_and_time(epoch)
 
             # Retrieve rewards for all users in this epoch
-            logging.info("Retrieving block rewards for epoch=%s, slot=%s ...", epoch, slot)
-            block_rewards = RpcAPI.get_block_rewards(slot)
+            logging.info("Retrieving block rewards for epoch=%s, reward_slot=%s ...", epoch, reward_slot)
+            block_rewards = RpcAPI.get_block_rewards(reward_slot)
             logging.info("Found len(block_rewards)=%s", len(block_rewards))
             time.sleep(30)  # throttled at times if too frequent
 
-            list_block_rewards.append((epoch, slot, block_rewards))
+            list_block_rewards.append((epoch, reward_slot, ts, block_rewards))
 
         db.set_multi_block_rewards(list_block_rewards)
 
@@ -120,13 +115,13 @@ class StakingRewardsDB:
 
         # Get existing reward data from db for addresses in block_rewards
         addrs = set()
-        for epoch, slot, block_rewards in list_block_rewards:
+        for epoch, slot, ts, block_rewards in list_block_rewards:
             for addr, amount in block_rewards:
                 addrs.add(addr)
         rewards_db = self._db_read_rewards(list(addrs))
 
         # Update rewards_db with new block rewards
-        for epoch, slot, block_rewards in list_block_rewards:
+        for epoch, slot, ts, block_rewards in list_block_rewards:
             for addr, amount in block_rewards:
                 rewards_db[addr][str(epoch)] = str(amount)
 
@@ -134,27 +129,8 @@ class StakingRewardsDB:
         self._db_write_rewards(rewards_db)
 
         # Update slot_timestamps (which also marks completed data epochs in rewards db)
-        for epoch, slot, block_rewards in list_block_rewards:
-            ts = slot_to_timestamp(slot)
+        for epoch, slot, ts, block_rewards in list_block_rewards:
             self.set_epoch_timestamp(epoch, ts)
-
-    def set_block_rewards(self, epoch, slot, block_rewards):
-        logging.info("set_block_rewards() for epoch %s...", epoch)
-
-        # Get existing reward data from db for addresses in block_rewards
-        addrs = [addr for addr, _ in block_rewards]
-        rewards_db = self._db_read_rewards(addrs)
-
-        # Update rewards_db with new block rewards
-        for addr, amount in block_rewards:
-            rewards_db[addr][str(epoch)] = str(amount)
-
-        # Send updates to db
-        self._db_write_rewards(rewards_db)
-
-        # Update slot_timestamps (which also marks completed data epochs in rewards db)
-        ts = slot_to_timestamp(slot)
-        self.set_epoch_timestamp(epoch, ts)
 
     def _db_read_rewards(self, addrs):
         """ Gets existing reward data from db for list of addresses """
