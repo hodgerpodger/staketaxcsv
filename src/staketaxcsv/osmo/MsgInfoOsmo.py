@@ -22,7 +22,14 @@ class MsgInfoOsmo(MsgInfoIBC):
             if "msg" in m:
                 return m["msg"]
             elif "msg__@stringify" in m:
-                return json.loads(m["msg__@stringify"])
+                msg_str = m["msg__@stringify"]
+                if isinstance(msg_str, str):
+                    return json.loads(msg_str)
+                elif isinstance(msg_str, list):
+                    msg_str = "".join(msg_str)
+                    return json.loads(msg_str)
+                else:
+                    raise Exception("unable to handle msg__@stringify in _execute_contract_message()")
 
         return {}
 
