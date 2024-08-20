@@ -31,7 +31,6 @@ class LimitOrder:
         return sent_amount, sent_currency, receive_amount, receive_currency, comment_text
 
 
-
 def handle_execute_swap_operations(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
 
