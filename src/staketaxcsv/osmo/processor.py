@@ -15,6 +15,7 @@ from staketaxcsv.osmo.MsgInfoOsmo import MsgInfoOsmo
 from staketaxcsv.settings_csv import OSMO_NODE
 from staketaxcsv.common.ibc.api_lcd_cosmwasm import contract_label
 import staketaxcsv.osmo.contracts.icns
+import staketaxcsv.osmo.contracts.levana
 import staketaxcsv.osmo.contracts.liquid
 import staketaxcsv.osmo.contracts.mars_credit_manager
 import staketaxcsv.osmo.contracts.mars_red_bank
@@ -26,6 +27,7 @@ CONTRACT_LIQUID_STAKE = "osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6
 CONTRACT_MARS_CREDIT_MANAGER = "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
 CONTRACT_MARS_INCENTIVES = "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm"
 CONTRACT_MARS_RED_BANK = "osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg"
+CONTRACT_PYTH = "osmo13ge29x4e2s63a8ytz2px8gurtyznmue4a69n5275692v3qn3ks8q7cwck7"
 CONTRACT_QUASAR_VAULT = "osmo15uk8m3wchpee8gjl02lwelxlsl4uuy3pdy7u6kz7cu7krlph2xpscf53cy"
 CONTRACT_TFM_LIMIT_ORDER = "osmo1rqamy6jc3f0rwrg5xz8hy8q7n932t2488f2gqg3d0cadvd3uqaxq4wazn8"
 CONTRACT_TFM_ROUTER = "osmo1aj2aqz04yftsseht37mhguxxtqqacs0t3vt332u6gtr9z4r2lxyq5h69zg"
@@ -123,6 +125,14 @@ def _handle_execute_contract(exporter, txinfo, msginfo):
     if contract == CONTRACT_LIQUID_STAKE:
         staketaxcsv.osmo.contracts.liquid.handle_liquid_stake(exporter, txinfo, msginfo)
 
+    # icns
+    elif contract in [CONTRACT_ICNS_REGISTRAR, CONTRACT_ICNS_RESOLVER]:
+        staketaxcsv.osmo.contracts.icns.handle(exporter, txinfo, msginfo)
+
+    # levana
+    elif contract == CONTRACT_PYTH:
+        staketaxcsv.osmo.contracts.levana.handle_update_price_feeds(exporter, txinfo, msginfo)
+
     # mars
     elif contract == CONTRACT_MARS_INCENTIVES:
         staketaxcsv.osmo.contracts.mars_credit_manager.handle_claim_rewards(exporter, txinfo, msginfo)
@@ -130,10 +140,6 @@ def _handle_execute_contract(exporter, txinfo, msginfo):
         staketaxcsv.osmo.contracts.mars_credit_manager.handle_credit_manager(exporter, txinfo, msginfo)
     elif contract == CONTRACT_MARS_RED_BANK:
         staketaxcsv.osmo.contracts.mars_red_bank.handle_red_bank(exporter, txinfo, msginfo)
-
-    # icns
-    elif contract in [CONTRACT_ICNS_REGISTRAR, CONTRACT_ICNS_RESOLVER]:
-        staketaxcsv.osmo.contracts.icns.handle(exporter, txinfo, msginfo)
 
     # tfm
     elif contract == CONTRACT_TFM_ROUTER:
@@ -146,5 +152,10 @@ def _handle_execute_contract(exporter, txinfo, msginfo):
 
         if label.startswith("quasar-cl-vault-"):
             staketaxcsv.osmo.contracts.quasar.handle(exporter, txinfo, msginfo)
+
+        # levana
+        elif label.startswith("Levana Perps Market"):
+            staketaxcsv.osmo.contracts.levana.handle_levana_perps_market(exporter, txinfo, msginfo, label)
+
         else:
             staketaxcsv.osmo.handle_unknown.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
