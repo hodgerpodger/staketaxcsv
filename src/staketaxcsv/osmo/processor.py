@@ -19,6 +19,7 @@ import staketaxcsv.osmo.contracts.liquid
 import staketaxcsv.osmo.contracts.mars_credit_manager
 import staketaxcsv.osmo.contracts.mars_red_bank
 import staketaxcsv.osmo.contracts.quasar
+import staketaxcsv.osmo.contracts.tfm
 CONTRACT_ICNS_REGISTRAR = "osmo1llh07xn7pcst3jqm0xpsucf90lzugfskkkhk8a3u2yznqmse4l5smydwpw"
 CONTRACT_ICNS_RESOLVER = "osmo1xk0s8xgktn9x5vwcgtjdxqzadg88fgn33p8u9cnpdxwemvxscvast52cdd"
 CONTRACT_LIQUID_STAKE = "osmo1f5vfcph2dvfeqcqkhetwv75fda69z7e5c2dldm3kvgj23crkv6wqcn47a0"
@@ -26,6 +27,7 @@ CONTRACT_MARS_CREDIT_MANAGER = "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9
 CONTRACT_MARS_INCENTIVES = "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm"
 CONTRACT_MARS_RED_BANK = "osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg"
 CONTRACT_QUASAR_VAULT = "osmo15uk8m3wchpee8gjl02lwelxlsl4uuy3pdy7u6kz7cu7krlph2xpscf53cy"
+CONTRACT_TFM_ROUTER = "osmo1aj2aqz04yftsseht37mhguxxtqqacs0t3vt332u6gtr9z4r2lxyq5h69zg"
 
 
 def process_txs(wallet_address, elems, exporter):
@@ -131,6 +133,10 @@ def _handle_execute_contract(exporter, txinfo, msginfo):
     # icns
     elif contract in [CONTRACT_ICNS_REGISTRAR, CONTRACT_ICNS_RESOLVER]:
         staketaxcsv.osmo.contracts.icns.handle(exporter, txinfo, msginfo)
+
+    # tfm
+    elif contract == CONTRACT_TFM_ROUTER:
+        staketaxcsv.osmo.contracts.tfm.handle_execute_swap_operations(exporter, txinfo, msginfo)
 
     else:
         label = contract_label(contract, localconfig, OSMO_NODE)
