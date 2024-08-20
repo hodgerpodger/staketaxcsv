@@ -27,6 +27,7 @@ CONTRACT_MARS_CREDIT_MANAGER = "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9
 CONTRACT_MARS_INCENTIVES = "osmo1nkahswfr8shg8rlxqwup0vgahp0dk4x8w6tkv3rra8rratnut36sk22vrm"
 CONTRACT_MARS_RED_BANK = "osmo1c3ljch9dfw5kf52nfwpxd2zmj2ese7agnx0p9tenkrryasrle5sqf3ftpg"
 CONTRACT_QUASAR_VAULT = "osmo15uk8m3wchpee8gjl02lwelxlsl4uuy3pdy7u6kz7cu7krlph2xpscf53cy"
+CONTRACT_TFM_LIMIT_ORDER = "osmo1rqamy6jc3f0rwrg5xz8hy8q7n932t2488f2gqg3d0cadvd3uqaxq4wazn8"
 CONTRACT_TFM_ROUTER = "osmo1aj2aqz04yftsseht37mhguxxtqqacs0t3vt332u6gtr9z4r2lxyq5h69zg"
 
 
@@ -137,6 +138,8 @@ def _handle_execute_contract(exporter, txinfo, msginfo):
     # tfm
     elif contract == CONTRACT_TFM_ROUTER:
         staketaxcsv.osmo.contracts.tfm.handle_execute_swap_operations(exporter, txinfo, msginfo)
+    elif contract == CONTRACT_TFM_LIMIT_ORDER:
+        staketaxcsv.osmo.contracts.tfm.handle_limit_order(exporter, txinfo, msginfo)
 
     else:
         label = contract_label(contract, localconfig, OSMO_NODE)

@@ -185,6 +185,9 @@ TX_TYPE_OSMO_ICNS = "_ICNS"
 # INJECTIVE
 TX_TYPE_DUPLICATE_DEPOSIT_CLAIM = "_DUPLICATE_DEPOSIT_CLAIM"
 
+# TFM
+TX_TYPE_TFM_LIMIT_ORDER_SUBMIT = "_TFM_LIMIT_ORDER_SUBMIT"
+
 ################################################################################################
 
 # Types included for all CSVs (i.e. koinly, cointracking, etc).
