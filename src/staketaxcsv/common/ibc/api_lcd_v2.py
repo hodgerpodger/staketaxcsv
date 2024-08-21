@@ -24,12 +24,14 @@ class LcdAPI_v2(LcdAPI_v1):
             "order_by": 2,
         }
 
+        PARAM_NAME = "query" if wallet_address.startswith("kyve") else "events"
+
         if events_type == EVENTS_TYPE_SENDER:
-            query_params["events"] = f"message.sender='{wallet_address}'"
+            query_params[PARAM_NAME] = f"message.sender='{wallet_address}'"
         elif events_type == EVENTS_TYPE_RECIPIENT:
-            query_params["events"] = f"transfer.recipient='{wallet_address}'"
+            query_params[PARAM_NAME] = f"transfer.recipient='{wallet_address}'"
         elif events_type == EVENTS_TYPE_SIGNER:
-            query_params["events"] = f"message.signer='{wallet_address}'"
+            query_params[PARAM_NAME] = f"message.signer='{wallet_address}'"
         else:
             raise Exception("Add case for events_type: {}".format(events_type))
 
