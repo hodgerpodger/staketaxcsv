@@ -37,7 +37,7 @@ def make_simple_tx(txinfo, msginfo, tx_type=None):
 
 def make_spend_tx_fee(txinfo, msginfo):
     row = _make_tx(txinfo, msginfo, txinfo.fee, txinfo.fee_currency, "", "", TX_TYPE_SPEND)
-    row.fee = 0
+    row.fee = ""
     row.fee_currency = ""
     row.comment = msginfo.msg_type
 
