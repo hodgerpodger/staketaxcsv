@@ -30,6 +30,7 @@ import staketaxcsv.report_ntrn
 import staketaxcsv.report_osmo
 import staketaxcsv.report_regen
 import staketaxcsv.report_rowan
+import staketaxcsv.report_saga
 import staketaxcsv.report_scrt
 import staketaxcsv.report_sol
 import staketaxcsv.report_stars
@@ -65,6 +66,7 @@ REPORT_MODULES = {
     co.TICKER_OSMO: staketaxcsv.report_osmo,
     co.TICKER_REGEN: staketaxcsv.report_regen,
     co.TICKER_ROWAN: staketaxcsv.report_rowan,
+    co.TICKER_SAGA: staketaxcsv.report_saga,
     co.TICKER_SCRT: staketaxcsv.report_scrt,
     co.TICKER_SOL: staketaxcsv.report_sol,
     co.TICKER_STARS: staketaxcsv.report_stars,
