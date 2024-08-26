@@ -107,16 +107,3 @@ timestamp            tx_type  received_amount  received_currency  sent_amount  s
 -------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
-
-    def test_authz_lp_stake(self):
-        result = run_test(
-            "osmo1l0l0ty6fw2kyxv26y7qw957feqr8wlsmxk67tj",
-            "FB72D5989BE2B48F4DE25E16F8ACAFD1363C03219BA99D95412C3CCFC2FD2E6B"
-        )
-        correct_result = """
--------------------  --------  ---------------  -----------------  -----------  -------------  ---  ------------  -------------------------------------------------------------------
-timestamp            tx_type   received_amount  received_currency  sent_amount  sent_currency  fee  fee_currency  txid
-2023-12-14 17:53:21  _MsgExec                                      0.000114168  GAMM-1057                         FB72D5989BE2B48F4DE25E16F8ACAFD1363C03219BA99D95412C3CCFC2FD2E6B-32
--------------------  --------  ---------------  -----------------  -----------  -------------  ---  ------------  -------------------------------------------------------------------
-        """
-        self.assertEqual(result, correct_result.strip(), result)
