@@ -1,5 +1,6 @@
 from staketaxcsv.common.ibc import make_tx, constants as co
 from staketaxcsv.common.ibc.handle import handle_staking, handle_unknown
+from staketaxcsv.osmo.handle_lp import handle_lp_stake
 
 
 def handle_exec(exporter, txinfo, msginfo):
@@ -72,8 +73,7 @@ def _handle_exec_lcd_data(exporter, txinfo, msginfo):
             # ignore lock token messages not related this wallet address
             pass
         else:
-            # TODO: handle authz exec MsgLockTokens message
-            handle_unknown(exporter, txinfo, msginfo)
+            handle_lp_stake(exporter, txinfo, msginfo)
     elif msg_types.issubset([co.MSG_TYPE_JOIN_SWAP_EXTERN_AMOUNT_IN]):
         sender = msginfo.message["msgs"][0]["sender"]
         if sender != exporter.wallet_address:
