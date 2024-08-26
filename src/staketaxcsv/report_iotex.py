@@ -116,7 +116,7 @@ def _get_txs(wallet_address, progress):
 
         for act in actions:
             id = act["action_hash"]
-            
+
             if id not in ids_set and act["action_type"].lower() == co.ACTION_TYPE_DEPOSIT_STAKE:
                 ids.append(id)
                 ids_set.add(id)

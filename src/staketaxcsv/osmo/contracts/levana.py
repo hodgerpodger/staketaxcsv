@@ -55,8 +55,6 @@ def handle_levana_perps_market(exporter, txinfo, msginfo, label):
         # lp unstake (days later will be the lp withdraw)
 
         if len(transfers_in) == 0 and len(transfers_out) == 0:
-
-
             row = make_osmo_tx(txinfo, msginfo, "", "", "", "", tx_type=TX_TYPE_LEVANA_LP_UNSTAKE)
             lp_amount = execute_contract_message["unstake_xlp"]["amount"]
             row.comment += f"[levana perps lp unstake, lp_currency={lp_currency}, amount={lp_amount} contract={contract}]"
