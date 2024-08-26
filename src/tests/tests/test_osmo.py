@@ -90,7 +90,7 @@ timestamp            tx_type   received_amount  received_currency  sent_amount  
         correct_result = """
 -------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
 timestamp            tx_type  received_amount  received_currency  sent_amount  sent_currency  fee  fee_currency  txid
-2024-07-20 01:00:22  SPEND                                        0.000468000  OSMO           0                  5AD1012BC3454AD4CFD432F839E5DBA5E6367F313108CE3142C1516C5A31839B-0
+2024-07-20 01:00:22  SPEND                                        0.000468000  OSMO                              5AD1012BC3454AD4CFD432F839E5DBA5E6367F313108CE3142C1516C5A31839B-0
 -------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
@@ -103,7 +103,7 @@ timestamp            tx_type  received_amount  received_currency  sent_amount  s
         correct_result = """
 -------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
 timestamp            tx_type  received_amount  received_currency  sent_amount  sent_currency  fee  fee_currency  txid
-2024-07-02 14:29:04  SPEND                                        0.000322000  OSMO           0                  E4313FADC11DFF2BB39B2BA284534C9E09BED770E2138CB2A9D1131FEA8D6940-0
+2024-07-02 14:29:04  SPEND                                        0.000322000  OSMO                              E4313FADC11DFF2BB39B2BA284534C9E09BED770E2138CB2A9D1131FEA8D6940-0
 -------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
