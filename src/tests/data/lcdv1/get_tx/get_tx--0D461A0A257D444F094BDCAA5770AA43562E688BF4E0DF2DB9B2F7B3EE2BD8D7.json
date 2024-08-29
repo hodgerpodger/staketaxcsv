@@ -1,0 +1,350 @@
+{
+    "height": "2091684",
+    "txhash": "0D461A0A257D444F094BDCAA5770AA43562E688BF4E0DF2DB9B2F7B3EE2BD8D7",
+    "codespace": "",
+    "code": 0,
+    "data": "12540A3F2F636F736D6F732E646973747269627574696F6E2E763162657461312E4D7367576974686472617744656C656761746F72526577617264526573706F6E736512110A0F0A0575736167611206373032393232",
+    "raw_log": "[{\"msg_index\":0,\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward\"},{\"key\":\"sender\",\"value\":\"saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv\"},{\"key\":\"module\",\"value\":\"distribution\"}]},{\"type\":\"coin_spent\",\"attributes\":[{\"key\":\"spender\",\"value\":\"saga1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8evawwe\"},{\"key\":\"amount\",\"value\":\"702922usaga\"}]},{\"type\":\"coin_received\",\"attributes\":[{\"key\":\"receiver\",\"value\":\"saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv\"},{\"key\":\"amount\",\"value\":\"702922usaga\"}]},{\"type\":\"transfer\",\"attributes\":[{\"key\":\"recipient\",\"value\":\"saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv\"},{\"key\":\"sender\",\"value\":\"saga1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8evawwe\"},{\"key\":\"amount\",\"value\":\"702922usaga\"}]},{\"type\":\"message\",\"attributes\":[{\"key\":\"sender\",\"value\":\"saga1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8evawwe\"}]},{\"type\":\"withdraw_rewards\",\"attributes\":[{\"key\":\"amount\",\"value\":\"702922usaga\"},{\"key\":\"validator\",\"value\":\"sagavaloper1qe8uuf5x69c526h4nzxwv4ltftr73v7qsdtg4m\"},{\"key\":\"delegator\",\"value\":\"saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv\"}]}]}]",
+    "logs": [
+        {
+            "msg_index": 0,
+            "log": "",
+            "events": [
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "action",
+                            "value": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv"
+                        },
+                        {
+                            "key": "module",
+                            "value": "distribution"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "saga1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8evawwe"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "702922usaga"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "702922usaga"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "saga1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8evawwe"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "702922usaga"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "sender",
+                            "value": "saga1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8evawwe"
+                        }
+                    ]
+                },
+                {
+                    "type": "withdraw_rewards",
+                    "attributes": [
+                        {
+                            "key": "amount",
+                            "value": "702922usaga"
+                        },
+                        {
+                            "key": "validator",
+                            "value": "sagavaloper1qe8uuf5x69c526h4nzxwv4ltftr73v7qsdtg4m"
+                        },
+                        {
+                            "key": "delegator",
+                            "value": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "info": "",
+    "gas_wanted": "133648",
+    "gas_used": "106828",
+    "tx": {
+        "@type": "/cosmos.tx.v1beta1.Tx",
+        "body": {
+            "messages": [
+                {
+                    "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+                    "delegator_address": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv",
+                    "validator_address": "sagavaloper1qe8uuf5x69c526h4nzxwv4ltftr73v7qsdtg4m"
+                }
+            ],
+            "memo": "",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+        },
+        "auth_info": {
+            "signer_infos": [
+                {
+                    "public_key": {
+                        "@type": "/cosmos.crypto.secp256k1.PubKey",
+                        "key": "AzJU6y+/tfXETuuByHS3ctoSKuyYxSzpxO973daa0sl1"
+                    },
+                    "mode_info": {
+                        "single": {
+                            "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                        }
+                    },
+                    "sequence": "119"
+                }
+            ],
+            "fee": {
+                "amount": [
+                    {
+                        "denom": "usaga",
+                        "amount": "3342"
+                    }
+                ],
+                "gas_limit": "133648",
+                "payer": "",
+                "granter": ""
+            },
+            "tip": null
+        },
+        "signatures": [
+            "gA+kQkMZ8Pgjtyf5joQOXIEz13xULVanqeP9k02KLSlMAz33IlBX6YrYuvaWJtRdGDJaW9s6YCVUlO0TqlL6Yg=="
+        ]
+    },
+    "timestamp": "2024-08-25T13:36:04Z",
+    "events": [
+        {
+            "type": "coin_spent",
+            "attributes": [
+                {
+                    "key": "spender",
+                    "value": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv",
+                    "index": true
+                },
+                {
+                    "key": "amount",
+                    "value": "3342usaga",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coin_received",
+            "attributes": [
+                {
+                    "key": "receiver",
+                    "value": "saga17xpfvakm2amg962yls6f84z3kell8c5lw26jvm",
+                    "index": true
+                },
+                {
+                    "key": "amount",
+                    "value": "3342usaga",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "transfer",
+            "attributes": [
+                {
+                    "key": "recipient",
+                    "value": "saga17xpfvakm2amg962yls6f84z3kell8c5lw26jvm",
+                    "index": true
+                },
+                {
+                    "key": "sender",
+                    "value": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv",
+                    "index": true
+                },
+                {
+                    "key": "amount",
+                    "value": "3342usaga",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "message",
+            "attributes": [
+                {
+                    "key": "sender",
+                    "value": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "tx",
+            "attributes": [
+                {
+                    "key": "fee",
+                    "value": "3342usaga",
+                    "index": true
+                },
+                {
+                    "key": "fee_payer",
+                    "value": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "tx",
+            "attributes": [
+                {
+                    "key": "acc_seq",
+                    "value": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv/119",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "tx",
+            "attributes": [
+                {
+                    "key": "signature",
+                    "value": "gA+kQkMZ8Pgjtyf5joQOXIEz13xULVanqeP9k02KLSlMAz33IlBX6YrYuvaWJtRdGDJaW9s6YCVUlO0TqlL6Yg==",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "message",
+            "attributes": [
+                {
+                    "key": "action",
+                    "value": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+                    "index": true
+                },
+                {
+                    "key": "sender",
+                    "value": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv",
+                    "index": true
+                },
+                {
+                    "key": "module",
+                    "value": "distribution",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coin_spent",
+            "attributes": [
+                {
+                    "key": "spender",
+                    "value": "saga1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8evawwe",
+                    "index": true
+                },
+                {
+                    "key": "amount",
+                    "value": "702922usaga",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "coin_received",
+            "attributes": [
+                {
+                    "key": "receiver",
+                    "value": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv",
+                    "index": true
+                },
+                {
+                    "key": "amount",
+                    "value": "702922usaga",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "transfer",
+            "attributes": [
+                {
+                    "key": "recipient",
+                    "value": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv",
+                    "index": true
+                },
+                {
+                    "key": "sender",
+                    "value": "saga1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8evawwe",
+                    "index": true
+                },
+                {
+                    "key": "amount",
+                    "value": "702922usaga",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "message",
+            "attributes": [
+                {
+                    "key": "sender",
+                    "value": "saga1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8evawwe",
+                    "index": true
+                }
+            ]
+        },
+        {
+            "type": "withdraw_rewards",
+            "attributes": [
+                {
+                    "key": "amount",
+                    "value": "702922usaga",
+                    "index": true
+                },
+                {
+                    "key": "validator",
+                    "value": "sagavaloper1qe8uuf5x69c526h4nzxwv4ltftr73v7qsdtg4m",
+                    "index": true
+                },
+                {
+                    "key": "delegator",
+                    "value": "saga1cc97gwjpx5mlyeznptnn9x0hvwgzcy6jvkl8zv",
+                    "index": true
+                }
+            ]
+        }
+    ]
+}

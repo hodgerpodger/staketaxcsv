@@ -104,6 +104,7 @@ MINTSCAN_LABELS = {
     "QCK": "quicksilver",
     "REGEN": "regen",
     "ROWAN": "sifchain",
+    "SAGA": "saga",
     "SCRT": "secret",
     "SEI": "sei",
     "SOMM": "sommelier",
