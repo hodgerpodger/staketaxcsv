@@ -1,6 +1,6 @@
 import os
 
-# Required for AKT/ARCH/ATOM/DYDX/EVMOS/INJ/JUNO/OSMO/SAGA/STRD/TIA reports (See https://api.mintscan.io for details on key)
+# Required for AKT/ARCH/ATOM/DYDX/EVMOS/INJ/JUNO/OSMO/STRD/TIA reports (See https://api.mintscan.io for details on key)
 MINTSCAN_KEY = os.environ.get("STAKETAX_MINTSCAN_KEY", "")
 MINTSCAN_MAX_TXS = os.environ.get("STAKETAX_MINTSCAN_MAX_TXS", 5000)
 MINTSCAN_ON = (MINTSCAN_KEY != "")
