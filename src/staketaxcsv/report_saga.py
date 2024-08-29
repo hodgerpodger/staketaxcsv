@@ -8,7 +8,7 @@ import logging
 
 
 import staketaxcsv.saga.processor
-from staketaxcsv.saga.config import localconfig
+from staketaxcsv.saga.config_saga import localconfig
 from staketaxcsv.saga.progress import SECONDS_PER_PAGE, ProgressSaga
 from staketaxcsv.saga.genesis import genesis_airdrop
 from staketaxcsv.common import report_util

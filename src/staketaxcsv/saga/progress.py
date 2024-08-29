@@ -1,4 +1,4 @@
-from staketaxcsv.saga.config import localconfig
+from staketaxcsv.saga.config_saga import localconfig
 from staketaxcsv.common.progress import Progress
 
 SECONDS_PER_PAGE = 4

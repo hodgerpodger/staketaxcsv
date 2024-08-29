@@ -3,7 +3,7 @@ import logging
 import staketaxcsv.saga.constants as co
 import staketaxcsv.common.ibc.handle
 import staketaxcsv.common.ibc.processor
-from staketaxcsv.saga.config import localconfig
+from staketaxcsv.saga.config_saga import localconfig
 from staketaxcsv.settings_csv import SAGA_NODE
 
 

@@ -11,7 +11,7 @@ import unittest
 
 import staketaxcsv.report_saga
 from staketaxcsv.saga.genesis import genesis_airdrop
-from staketaxcsv.saga.config import localconfig
+from staketaxcsv.saga.config_saga import localconfig
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import TICKER_SAGA
 from tests.utils_ibc import apply_ibc_patches, load_tx
