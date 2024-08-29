@@ -6,8 +6,9 @@ __pycache__/
 # application ignores
 env/*
 src/staketaxcsv/_reports/*
-src/staketaxcsv/tia/genesis.json
 src/staketaxcsv/dym/genesis.json
+src/staketaxcsv/tia/genesis.json
+src/staketaxcsv/saga/genesis.json
 sample.env
 src/tests/data/lcdv1/_node_info/*
 
