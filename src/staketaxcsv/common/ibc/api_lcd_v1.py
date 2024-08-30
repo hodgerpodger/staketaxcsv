@@ -21,6 +21,7 @@ class LcdAPI_v1:
 
     def __init__(self, node):
         self.node = node
+        self.version = None
 
     def _query(self, uri_path, query_params, sleep_seconds=0):
         url = f"{self.node}{uri_path}"
@@ -38,6 +39,9 @@ class LcdAPI_v1:
 
     def cosmos_sdk_version(self):
         """ i.e. "0.45.13" """
+        if self.version:
+            return self.version
+
         data = self._node_info()
         version = data["application_version"]["cosmos_sdk_version"]
 
@@ -49,6 +53,7 @@ class LcdAPI_v1:
         if hyphen_index != -1:
             version = version[:hyphen_index]
 
+        self.version = version
         return version
 
     def get_tx(self, txid):

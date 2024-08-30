@@ -2,7 +2,7 @@ import simplejson.errors
 import logging
 
 from staketaxcsv.common.ibc import api_lcd_v1, api_lcd_v2
-
+from staketaxcsv.common.query import version_ge
 
 LCD_V2_MIN_VERSION = "0.46.0"
 
@@ -14,14 +14,14 @@ class NodeVersions:
 
 
 def get_txs_pages_count(node, address, max_txs, **kwargs):
-    if _version_ge(_node_version(node), LCD_V2_MIN_VERSION):
+    if version_ge(_node_version(node), LCD_V2_MIN_VERSION):
         return api_lcd_v2.get_txs_pages_count(node, address, max_txs, **kwargs)
     else:
         return api_lcd_v1.get_txs_pages_count(node, address, max_txs, **kwargs)
 
 
 def get_txs_all(node, address, max_txs, progress=None, **kwargs):
-    if _version_ge(_node_version(node), LCD_V2_MIN_VERSION):
+    if version_ge(_node_version(node), LCD_V2_MIN_VERSION):
         return api_lcd_v2.get_txs_all(node, address, max_txs, progress=progress, **kwargs)
     else:
         return api_lcd_v1.get_txs_all(node, address, max_txs, progress=progress, **kwargs)
@@ -29,7 +29,7 @@ def get_txs_all(node, address, max_txs, progress=None, **kwargs):
 
 def make_lcd_api(node):
     """ Returns a LcdAPI object (i.e. LcdAPI_v2(..) or LcdAPI_v1(..)) """
-    if _version_ge(_node_version(node), LCD_V2_MIN_VERSION):
+    if version_ge(_node_version(node), LCD_V2_MIN_VERSION):
         return api_lcd_v2.LcdAPI_v2(node)
     else:
         return api_lcd_v1.LcdAPI_v1(node)
@@ -49,11 +49,3 @@ def _node_version(node):
         version = "0.1.1"
     NodeVersions.versions[node] = version
     return version
-
-
-# Output: "0.45.13" >= 2.1.1: False"
-def _version_ge(version1, version2):
-    version1_parts = [int(part) for part in version1.split('.')]
-    version2_parts = [int(part) for part in version2.split('.')]
-
-    return version1_parts >= version2_parts

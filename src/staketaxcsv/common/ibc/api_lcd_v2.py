@@ -1,5 +1,6 @@
 import logging
 import math
+import time
 
 from staketaxcsv.common.ibc.api_lcd_v1 import LcdAPI_v1
 from staketaxcsv.settings_csv import REPORTS_DIR
@@ -7,9 +8,10 @@ from staketaxcsv.common.debug_util import debug_cache
 from staketaxcsv.common.ibc.constants import (
     EVENTS_TYPE_SENDER, EVENTS_TYPE_RECIPIENT, EVENTS_TYPE_SIGNER, EVENTS_TYPE_LIST_DEFAULT)
 from staketaxcsv.common.ibc.util_ibc import remove_duplicates
-import time
+from staketaxcsv.common.query import version_ge
 
 TXS_LIMIT_PER_QUERY = 100
+LCD_V2_MIN_VERSION_QUERY_PARAM = "0.50.1"
 
 
 class LcdAPI_v2(LcdAPI_v1):
@@ -24,7 +26,10 @@ class LcdAPI_v2(LcdAPI_v1):
             "order_by": 2,
         }
 
-        PARAM_NAME = "query" if wallet_address.startswith("kyve") else "events"
+        if version_ge(self.cosmos_sdk_version(), LCD_V2_MIN_VERSION_QUERY_PARAM):
+            PARAM_NAME = "query"
+        else:
+            PARAM_NAME = "events"
 
         if events_type == EVENTS_TYPE_SENDER:
             query_params[PARAM_NAME] = f"message.sender='{wallet_address}'"

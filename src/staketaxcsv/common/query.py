@@ -35,3 +35,11 @@ def _make_request_with_retries(request_type, session, url, data, headers, retrie
                 raise
 
     raise Exception("Failed to fetch data after maximum retries.")
+
+
+# Output: "0.45.13" >= 2.1.1: False"
+def version_ge(version1, version2):
+    version1_parts = [int(part) for part in version1.split('.')]
+    version2_parts = [int(part) for part in version2.split('.')]
+
+    return version1_parts >= version2_parts
