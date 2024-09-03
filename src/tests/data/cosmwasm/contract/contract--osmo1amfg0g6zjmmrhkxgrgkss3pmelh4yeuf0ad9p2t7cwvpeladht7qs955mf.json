@@ -1,0 +1,15 @@
+{
+    "address": "osmo1amfg0g6zjmmrhkxgrgkss3pmelh4yeuf0ad9p2t7cwvpeladht7qs955mf",
+    "contract_info": {
+        "code_id": "885",
+        "creator": "osmo1rxjakgd8yhks2j7hc7pt6a22z3zd64grexpyf7",
+        "admin": "osmo1rxjakgd8yhks2j7hc7pt6a22z3zd64grexpyf7",
+        "label": "cosmwasmpool",
+        "created": {
+            "block_height": "18327703",
+            "tx_index": "207494"
+        },
+        "ibc_port_id": "",
+        "extension": null
+    }
+}

@@ -14,6 +14,7 @@ from staketaxcsv.osmo.config_osmo import localconfig
 from staketaxcsv.osmo.MsgInfoOsmo import MsgInfoOsmo
 from staketaxcsv.settings_csv import OSMO_NODE
 from staketaxcsv.common.ibc.api_lcd_cosmwasm import contract_label
+import staketaxcsv.osmo.contracts.cosmwasmpool
 import staketaxcsv.osmo.contracts.icns
 import staketaxcsv.osmo.contracts.levana
 import staketaxcsv.osmo.contracts.liquid
@@ -156,6 +157,9 @@ def _handle_execute_contract(exporter, txinfo, msginfo):
         # levana
         elif label.startswith("Levana Perps Market"):
             staketaxcsv.osmo.contracts.levana.handle_levana_perps_market(exporter, txinfo, msginfo, label)
+
+        elif label == "cosmwasmpool":
+            staketaxcsv.osmo.contracts.cosmwasmpool.handle(exporter, txinfo, msginfo)
 
         else:
             staketaxcsv.osmo.handle_unknown.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
