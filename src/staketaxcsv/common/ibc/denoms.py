@@ -136,6 +136,8 @@ def _amount_currency_convert(amount_raw, currency_raw):
         "basecro": (co.CUR_CRO, 8),
         "uusd": (co.CUR_USTC, 6),
         "factory/osmo1pfyxruwvtwk00y8z06dh2lqjdj82ldvy74wzm3/WOSMO": (co.CUR_WOSMO, 6),
+        "factory/osmo1z6r6qdknhgsc0zeracktgpcxf43j6sekq07nw8sxduc9lg0qjjlqfu25e3/alloyed/allBTC": (co.CUR_ALLBTC, 8),
+        "factory/osmo1k6c8jln7ejuqwtqmay3yvzrg3kueaczl96pk067ldg8u835w0yhsw27twm/alloyed/allETH": (co.CUR_ALLETH, 18),
         "peggy0xdAC17F958D2ee523a2206206994597C13D831ec7": (co.CUR_USDT, 6),
         "cw20:terra1lxx40s29qvkrcj8fsa3yzyehy7w50umdvvnls2r830rys6lu2zns63eelv": (co.CUR_ROAR, 6),
         "cw20:terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26": (co.CUR_ASTRO, 6),
