@@ -128,9 +128,7 @@ def _handle_claim(exporter, txinfo, msginfo):
     contract = msginfo.contract
     wallet_address = exporter.wallet_address
 
-    if len(transfers_in) == 1 and len(transfers_out) == 0:
-        receive_amount_msg, received_currency_msg = transfers_in[0]
-
+    if len(transfers_in) > 0 and len(transfers_out) == 0:
         # Find trade info in this list of limit orders executed
         wasm_limit_claimed = events_by_type["wasm-limitClaimed"]
         swaps = LimitOrders().claim(wasm_limit_claimed, wallet_address)
@@ -140,11 +138,11 @@ def _handle_claim(exporter, txinfo, msginfo):
         for order_id, sent_amt, sent_cur, rec_amt, rec_cur in swaps:
             row = make_osmo_swap_tx(txinfo, msginfo, sent_amt, sent_cur, rec_amt, rec_cur)
             row.comment += f"[cosmwasmpool claim]" \
-                           f"[received {receive_amount_msg} {received_currency_msg} (for this message)]" \
+                           f"[received {str(transfers_in).strip('[]')} (for this message)]" \
                            f"[order_id={order_id}, contract={contract}]"
             rows.append(row)
 
         util_osmo._ingest_rows(exporter, rows)
         return
 
-    raise Exception("Unable to handle to in cosmwasmpool._handle_claim()")
+    raise Exception("Unable to handle tx in cosmwasmpool._handle_claim()")

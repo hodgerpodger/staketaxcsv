@@ -107,3 +107,18 @@ timestamp            tx_type  received_amount  received_currency  sent_amount  s
 -------------------  -------  ---------------  -----------------  -----------  -------------  ----  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+    def test_batch_claim_multiple_currencies(self):
+        result = run_test(
+            "osmo1q8709l2656zjtg567xnrxjr6j35a2pvwhxxms2",
+            "648D118DC6739922FF6E63811C6E655572AC6CDF542AF6C0270CCF9585FA8A86"
+        )
+        correct_result = """
+-------------------  -------  ---------------  -----------------  -----------  -------------  ----  ------------  ------------------------------------------------------------------
+timestamp            tx_type  received_amount  received_currency  sent_amount  sent_currency  fee   fee_currency  txid
+2024-08-13 17:35:34  TRADE    0.588172         USDC               0.000009970  WBTC           0.01  OSMO          648D118DC6739922FF6E63811C6E655572AC6CDF542AF6C0270CCF9585FA8A86-0
+2024-08-13 17:35:34  TRADE    0.000082540      WBTC               4.99367      USDC                               648D118DC6739922FF6E63811C6E655572AC6CDF542AF6C0270CCF9585FA8A86-0
+2024-08-13 17:35:34  TRADE    5.693731         USDC               0.000099900  WBTC                               648D118DC6739922FF6E63811C6E655572AC6CDF542AF6C0270CCF9585FA8A86-0
+-------------------  -------  ---------------  -----------------  -----------  -------------  ----  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
