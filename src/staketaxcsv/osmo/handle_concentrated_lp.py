@@ -88,7 +88,7 @@ def handle_create_position(exporter, txinfo, msginfo):
 
 
 def handle_add_to_position(exporter, txinfo, msginfo):
-    transfers_in, transfers_out = msginfo.transfers_net
+    transfers_in, transfers_out = msginfo.transfers_net_exact
     events_by_type = msginfo.events_by_type
 
     if len(transfers_in) <= 1 and len(transfers_out) == 2:

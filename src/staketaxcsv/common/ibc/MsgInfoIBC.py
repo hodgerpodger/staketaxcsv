@@ -30,6 +30,8 @@ class MsgInfoIBC:
         self.log = log
         self.transfers = self._transfers()
         self.transfers_net = util_ibc.aggregate_transfers_net(self.transfers[0], self.transfers[1])
+        self.transfers_net_exact = util_ibc.aggregate_transfers_net(
+            self.transfers[0], self.transfers[1], tiny_amount_filter=False)
         self.transfers_event = self._transfers_transfer_event(show_addrs=True)
         self.wasm = MsgInfoIBC.wasm(log)
         self.contract = self._contract(message)
@@ -43,6 +45,8 @@ class MsgInfoIBC:
         print("\ttransfers_out: {}".format(self.transfers[1]))
         print("\ttransfers_net_in: {}".format(self.transfers_net[0]))
         print("\ttransfers_net_out: {}".format(self.transfers_net[1]))
+        print("\ttransfers_net_exact_in: {}".format(self.transfers_net_exact[0]))
+        print("\ttransfers_net_exact_out: {}".format(self.transfers_net_exact[1]))
         print("\n\tmessage:")
         pprint.pprint(self.message)
         print("\n\twasm:")

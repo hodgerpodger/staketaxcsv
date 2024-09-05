@@ -47,7 +47,8 @@ def aggregate_transfers(transfers_list):
     return out
 
 
-def aggregate_transfers_net(transfers_in, transfers_out):
+def aggregate_transfers_net(transfers_in, transfers_out, tiny_amount_filter=True):
+    tiny_amount = TINY_AMOUNT if tiny_amount_filter else 0
     sums_by_currency = defaultdict(float)
 
     for tup in transfers_in:
@@ -62,9 +63,9 @@ def aggregate_transfers_net(transfers_in, transfers_out):
     net_transfers_out = []
 
     for currency, amount in sums_by_currency.items():
-        if amount > TINY_AMOUNT:
+        if amount > tiny_amount:
             net_transfers_in.append((amount, currency))
-        elif amount < -TINY_AMOUNT:
+        elif amount < -tiny_amount:
             net_transfers_out.append((-amount, currency))
 
     return net_transfers_in, net_transfers_out
