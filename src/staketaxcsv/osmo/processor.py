@@ -108,7 +108,7 @@ def _handle_message(exporter, txinfo, msginfo):
             _handle_execute_contract(exporter, txinfo, msginfo)
 
         # miscellaneous
-        elif msg_type == co.MSG_TYPE_ADD_AUTHENTICATOR:
+        elif msg_type in [co.MSG_TYPE_ADD_AUTHENTICATOR, co.MSG_TYPE_REMOVE_AUTHENTICATOR]:
             staketaxcsv.osmo.handle_general.handle_simple(exporter, txinfo, msginfo)
 
         else:

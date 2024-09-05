@@ -1,0 +1,328 @@
+[
+    {
+        "height": "18269260",
+        "txhash": "B2D8876EFC09968BBF45AB6C31D95DF886E0B4633E0799689D47934F363E2E86",
+        "codespace": "",
+        "code": 0,
+        "data": "12420A3C2F6F736D6F7369732E736D6172746163636F756E742E763162657461312E4D736752656D6F766541757468656E74696361746F72526573706F6E736512020801123F0A392F6F736D6F7369732E736D6172746163636F756E742E763162657461312E4D736741646441757468656E74696361746F72526573706F6E736512020801",
+        "info": "",
+        "gas_wanted": "360597",
+        "gas_used": "249603",
+        "tx": {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            "/cosmos-tx-v1beta1-Tx": {
+                "body": {
+                    "messages": [
+                        {
+                            "@type": "/osmosis.smartaccount.v1beta1.MsgRemoveAuthenticator",
+                            "/osmosis-smartaccount-v1beta1-MsgRemoveAuthenticator": {
+                                "sender": "osmo1q8709l2656zjtg567xnrxjr6j35a2pvwhxxms2",
+                                "id": "1004"
+                            }
+                        },
+                        {
+                            "@type": "/osmosis.smartaccount.v1beta1.MsgAddAuthenticator",
+                            "/osmosis-smartaccount-v1beta1-MsgAddAuthenticator": {
+                                "sender": "osmo1q8709l2656zjtg567xnrxjr6j35a2pvwhxxms2",
+                                "type": "AllOf",
+                                "data": "W3sidHlwZSI6IlNpZ25hdHVyZVZlcmlmaWNhdGlvbiIsImNvbmZpZyI6IkE3VTF2QUovU0pPc0RsU0JGTWhQeFozMGZMRklFMy8vbmduZXJwSDl4NHVpIn0seyJ0eXBlIjoiQ29zbXdhc21BdXRoZW50aWNhdG9yVjEiLCJjb25maWciOiJleUpqYjI1MGNtRmpkQ0k2SUNKdmMyMXZNVEI0Y1hZNGNteHdhMlpzZVhkdE9USnJOWGRrYlhCc2VuazNhMmgwWVhOc09XTXlZekE0Y0hOdGRteDFOVFF6YXpjeU5ITjVPVFJyTnpRaUxDQWljR0Z5WVcxeklqb2dJbVY1U25OaFZ6RndaRU5KTmtscVZYZE5SRUYzVFVSQmQwMUVRV2xNUTBwNVdsaE9iR1JHT1hkYVdFcHdZakpSYVU5cFNtdFpXR3RwVEVOS01HRlhNV3hZTW5od1lsZHNNRWxxY0RkSmJWWjFXa05KTmtscVJUTk5ha1V5VFhwUmVFNXFXWGROUkVGM1RVUkJkMDFFUVdsbVdEQTlJbjA9In0seyJ0eXBlIjoiQW55T2YiLCJjb25maWciOiJXM3NpZEhsd1pTSTZJazFsYzNOaFoyVkdhV3gwWlhJaUxDSmpiMjVtYVdjaU9pSmxlVXBCWkVoc2QxcFRTVFpKYVRsMll6SXhkbU15YkhwTWJrSjJZako0ZEZsWE5XaGFNbFo1VEc1WmVGbHRWakJaVkVWMVZGaE9ibFV6WkdoalJWWTBXVmRPTUZGWE1YWmtWelV3VTFjMGFXWlJQVDBpZlN4N0luUjVjR1VpT2lKTlpYTnpZV2RsUm1sc2RHVnlJaXdpWTI5dVptbG5Jam9pWlhsS1FXUkliSGRhVTBrMlNXazVkbU15TVhaak1teDZURzVDZG1JeWVIUlpWelZvV2pKV2VVeHVXWGhaYlZZd1dWUkZkVlJZVG01Vk0wSnpZVmhTVTJJelZqQmFWazR6V1ZoQ1JtVkhSbXBrUlVaMFlqTldkV1JGYkhWSmJqQTlJbjFkIn1d"
+                            }
+                        }
+                    ],
+                    "memo": "FE",
+                    "timeout_height": "0",
+                    "extension_options": [],
+                    "non_critical_extension_options": []
+                },
+                "auth_info": {
+                    "signer_infos": [
+                        {
+                            "public_key": {
+                                "@type": "/cosmos.crypto.secp256k1.PubKey",
+                                "/cosmos-crypto-secp256k1-PubKey": {
+                                    "key": "A55+LLJASGp7ZAvQwj1iVos8zT5wp/O3EhO2XMm32iyA"
+                                }
+                            },
+                            "mode_info": {
+                                "single": {
+                                    "mode": "SIGN_MODE_DIRECT"
+                                }
+                            },
+                            "sequence": "471"
+                        }
+                    ],
+                    "fee": {
+                        "amount": [
+                            {
+                                "denom": "uosmo",
+                                "amount": "1082"
+                            }
+                        ],
+                        "gas_limit": "360597",
+                        "payer": "",
+                        "granter": ""
+                    },
+                    "tip": null
+                },
+                "signatures": [
+                    "IvoBNT4Esitpw4XsvORzTGM8hIkJYWwT/ceRTumYsmdQglo8odwx9PFVAkeKZLh96RWTcwusv6m+J6lBV7olvA=="
+                ]
+            }
+        },
+        "timestamp": "2024-07-22T06:42:48Z",
+        "timestamp__@@date": 1721630568000,
+        "logs": [
+            {
+                "msg_index": 0,
+                "events": [
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "action",
+                                "value": "/osmosis.smartaccount.v1beta1.MsgRemoveAuthenticator",
+                                "index": true
+                            },
+                            {
+                                "key": "sender",
+                                "value": "osmo1q8709l2656zjtg567xnrxjr6j35a2pvwhxxms2",
+                                "index": true
+                            },
+                            {
+                                "key": "module",
+                                "value": "smartaccount",
+                                "index": true
+                            },
+                            {
+                                "key": "msg_index",
+                                "value": "0",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "sudo",
+                        "attributes": [
+                            {
+                                "key": "_contract_address",
+                                "value": "osmo10xqv8rlpkflywm92k5wdmplzy7khtasl9c2c08psmvlu543k724sy94k74",
+                                "index": true
+                            },
+                            {
+                                "key": "msg_index",
+                                "value": "0",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "wasm",
+                        "attributes": [
+                            {
+                                "key": "_contract_address",
+                                "value": "osmo10xqv8rlpkflywm92k5wdmplzy7khtasl9c2c08psmvlu543k724sy94k74",
+                                "index": true
+                            },
+                            {
+                                "key": "action",
+                                "value": "on_authenticator_removed",
+                                "index": true
+                            },
+                            {
+                                "key": "msg_index",
+                                "value": "0",
+                                "index": true
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "msg_index": 1,
+                "events": [
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "action",
+                                "value": "/osmosis.smartaccount.v1beta1.MsgAddAuthenticator",
+                                "index": true
+                            },
+                            {
+                                "key": "sender",
+                                "value": "osmo1q8709l2656zjtg567xnrxjr6j35a2pvwhxxms2",
+                                "index": true
+                            },
+                            {
+                                "key": "msg_index",
+                                "value": "1",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "sudo",
+                        "attributes": [
+                            {
+                                "key": "_contract_address",
+                                "value": "osmo10xqv8rlpkflywm92k5wdmplzy7khtasl9c2c08psmvlu543k724sy94k74",
+                                "index": true
+                            },
+                            {
+                                "key": "msg_index",
+                                "value": "1",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "wasm",
+                        "attributes": [
+                            {
+                                "key": "_contract_address",
+                                "value": "osmo10xqv8rlpkflywm92k5wdmplzy7khtasl9c2c08psmvlu543k724sy94k74",
+                                "index": true
+                            },
+                            {
+                                "key": "action",
+                                "value": "on_authenticator_added",
+                                "index": true
+                            },
+                            {
+                                "key": "msg_index",
+                                "value": "1",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "module",
+                                "value": "smartaccount",
+                                "index": true
+                            },
+                            {
+                                "key": "sender",
+                                "value": "osmo1q8709l2656zjtg567xnrxjr6j35a2pvwhxxms2",
+                                "index": true
+                            },
+                            {
+                                "key": "authenticator_type",
+                                "value": "AllOf",
+                                "index": true
+                            },
+                            {
+                                "key": "authenticator_id",
+                                "value": "1446",
+                                "index": true
+                            },
+                            {
+                                "key": "msg_index",
+                                "value": "1",
+                                "index": true
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "msg_index": null,
+                "events": [
+                    {
+                        "type": "coin_spent",
+                        "attributes": [
+                            {
+                                "key": "spender",
+                                "value": "osmo1q8709l2656zjtg567xnrxjr6j35a2pvwhxxms2",
+                                "index": true
+                            },
+                            {
+                                "key": "amount",
+                                "value": "1082uosmo",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "coin_received",
+                        "attributes": [
+                            {
+                                "key": "receiver",
+                                "value": "osmo17xpfvakm2amg962yls6f84z3kell8c5lczssa0",
+                                "index": true
+                            },
+                            {
+                                "key": "amount",
+                                "value": "1082uosmo",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "transfer",
+                        "attributes": [
+                            {
+                                "key": "recipient",
+                                "value": "osmo17xpfvakm2amg962yls6f84z3kell8c5lczssa0",
+                                "index": true
+                            },
+                            {
+                                "key": "sender",
+                                "value": "osmo1q8709l2656zjtg567xnrxjr6j35a2pvwhxxms2",
+                                "index": true
+                            },
+                            {
+                                "key": "amount",
+                                "value": "1082uosmo",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "sender",
+                                "value": "osmo1q8709l2656zjtg567xnrxjr6j35a2pvwhxxms2",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "tx",
+                        "attributes": [
+                            {
+                                "key": "fee",
+                                "value": "1082uosmo",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "tx",
+                        "attributes": [
+                            {
+                                "key": "acc_seq",
+                                "value": "osmo1q8709l2656zjtg567xnrxjr6j35a2pvwhxxms2/471",
+                                "index": true
+                            }
+                        ]
+                    },
+                    {
+                        "type": "tx",
+                        "attributes": [
+                            {
+                                "key": "signature",
+                                "value": "IvoBNT4Esitpw4XsvORzTGM8hIkJYWwT/ceRTumYsmdQglo8odwx9PFVAkeKZLh96RWTcwusv6m+J6lBV7olvA==",
+                                "index": true
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "chain_id": "osmosis-1"
+    }
+]

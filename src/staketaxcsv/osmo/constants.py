@@ -21,10 +21,9 @@ MSG_TYPE_JOIN_POOL = "MsgJoinPool"
 MSG_TYPE_JOIN_SWAP_EXTERN_AMOUNT_IN = "MsgJoinSwapExternAmountIn"
 MSG_TYPE_LOCK_AND_SUPERFLUID_DELEGATE = "MsgLockAndSuperfluidDelegate"
 MSG_TYPE_LOCK_TOKENS = "MsgLockTokens"
-
-
 MSG_TYPE_MSGRECVPACKET = "MsgRecvPacket"
 MSG_TYPE_REDELEGATE = "MsgBeginRedelegate"
+MSG_TYPE_REMOVE_AUTHENTICATOR = "MsgRemoveAuthenticator"
 MSG_TYPE_SEND = "MsgSend"
 MSG_TYPE_SET_WITHDRAW_ADDRESS = "MsgSetWithdrawAddress"
 MSG_TYPE_SUBMIT_PROPOSAL = "MsgSubmitProposal"
