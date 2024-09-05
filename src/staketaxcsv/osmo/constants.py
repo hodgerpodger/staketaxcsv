@@ -6,6 +6,7 @@ CUR_OSMO = "OSMO"
 CUR_CRO = "CRO"
 
 MSG_TYPE_ACKNOWLEDGMENT = "MsgAcknowledgement"
+MSG_TYPE_ADD_AUTHENTICATOR = "MsgAddAuthenticator"
 MSG_TYPE_ADD_TO_POSITION = "MsgAddToPosition"
 MSG_TYPE_BEGIN_UNLOCKING = "MsgBeginUnlocking"
 MSG_TYPE_COLLECT_INCENTIVES = "MsgCollectIncentives"

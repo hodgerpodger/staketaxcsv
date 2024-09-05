@@ -107,6 +107,10 @@ def _handle_message(exporter, txinfo, msginfo):
         elif msg_type == co.MSG_TYPE_EXECUTE_CONTRACT:
             _handle_execute_contract(exporter, txinfo, msginfo)
 
+        # miscellaneous
+        elif msg_type == co.MSG_TYPE_ADD_AUTHENTICATOR:
+            staketaxcsv.osmo.handle_general.handle_simple(exporter, txinfo, msginfo)
+
         else:
             staketaxcsv.osmo.handle_unknown.handle_unknown_detect_transfers(exporter, txinfo, msginfo)
     except Exception as e:

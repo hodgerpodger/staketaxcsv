@@ -107,3 +107,16 @@ timestamp            tx_type  received_amount  received_currency  sent_amount  s
 -------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+    def test_add_authenticator(self):
+        result = run_test(
+            "osmo1q8709l2656zjtg567xnrxjr6j35a2pvwhxxms2",
+            "B5CE645ABF7ACE82F59C831C358A472C6C1E2EC41720B20BFAAC75CD639E810A"
+        )
+        correct_result = """
+-------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ----------------------------------------------------------------
+timestamp            tx_type  received_amount  received_currency  sent_amount  sent_currency  fee  fee_currency  txid
+2024-06-29 03:28:45  SPEND                                        0.000754000  OSMO                              B5CE645ABF7ACE82F59C831C358A472C6C1E2EC41720B20BFAAC75CD639E810A
+-------------------  -------  ---------------  -----------------  -----------  -------------  ---  ------------  ----------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
