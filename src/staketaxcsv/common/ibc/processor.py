@@ -122,8 +122,10 @@ def handle_message(exporter, txinfo, msginfo, debug=False):
             pass
 
         # staking rewards
-        elif msg_type in [co.MSG_TYPE_DELEGATE, co.MSG_TYPE_REDELEGATE, co.MSG_TYPE_WITHDRAW_REWARD,
-                          co.MSG_TYPE_WITHDRAW_COMMISSION, co.MSG_TYPE_UNDELEGATE]:
+        elif msg_type in [co.MSG_TYPE_DELEGATE, co.MSG_TYPE_DELEGATE_TO_VALIDATOR_SET,
+                          co.MSG_TYPE_REDELEGATE, co.MSG_TYPE_WITHDRAW_DELEGATION_REWARDS,
+                          co.MSG_TYPE_WITHDRAW_REWARD, co.MSG_TYPE_WITHDRAW_COMMISSION,
+                          co.MSG_TYPE_UNDELEGATE]:
             handle.handle_staking(exporter, txinfo, msginfo)
 
         # transfers
