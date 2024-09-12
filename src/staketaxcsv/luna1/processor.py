@@ -3,6 +3,7 @@ from datetime import datetime
 
 import staketaxcsv.luna1.col4.handle
 import staketaxcsv.luna1.col5.handle
+import staketaxcsv.luna1.col5.handle_authz
 import staketaxcsv.luna1.execute_type as ex
 from staketaxcsv.common.ErrorCounter import ErrorCounter
 from staketaxcsv.common.ExporterTypes import TX_TYPE_GOV, TX_TYPE_LOTA_UNKNOWN, TX_TYPE_VOTE
@@ -67,6 +68,8 @@ def process_tx(wallet_address, elem, exporter):
                 staketaxcsv.luna1.col4.handle.handle(exporter, elem, txinfo)
         elif msgtype == "wasm/MsgMigrateContract":
             staketaxcsv.luna1.col5.handle.handle(exporter, elem, txinfo)
+        elif msgtype == "authz/MsgExec":
+            staketaxcsv.luna1.col5.handle_authz.handle(exporter, elem, txinfo)
         else:
             logging.error("Unknown msgtype for txid=%s", txid)
             ErrorCounter.increment("unknown_msgtype", txid)

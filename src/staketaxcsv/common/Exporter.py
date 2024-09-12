@@ -13,6 +13,7 @@ from staketaxcsv.common import ExporterTypes as et
 from staketaxcsv.common.exporter_koinly import NullMap
 from staketaxcsv.settings_csv import TICKER_ALGO, TICKER_LUNA1, TICKER_LUNA2, TICKER_OSMO
 from tabulate import tabulate
+from staketaxcsv.luna1.constants import EXCHANGE_TERRA_CLASSIC_BLOCKCHAIN
 
 
 class Row:
@@ -22,9 +23,9 @@ class Row:
         self.timestamp = timestamp
         self.tx_type = tx_type
         self.received_amount = self._format_amount(received_amount)
-        self.received_currency = self._format_currency(received_currency)
+        self.received_currency = self._format_currency(received_currency, exchange, timestamp)
         self.sent_amount = self._format_amount(sent_amount)
-        self.sent_currency = self._format_currency(sent_currency)
+        self.sent_currency = self._format_currency(sent_currency, exchange, timestamp)
         self.fee = self._format_amount(fee)
         self.fee_currency = fee_currency
         self.exchange = exchange
@@ -34,10 +35,46 @@ class Row:
         self.z_index = z_index  # Determines ordering for rows with same txid
         self.comment = comment
 
-    def _format_currency(self, currency):
+    def _format_currency(self, currency, exchange, timestamp):
         if currency == "BLUNA":
             return "bLUNA"
+        if exchange == EXCHANGE_TERRA_CLASSIC_BLOCKCHAIN:
+            return self._format_currency_luna1(currency, timestamp)
         return currency
+
+    def _format_currency_luna1(self, currency, timestamp):
+        remap = {
+            "AUD": "AUT",
+            "CAD": "CAT",
+            "CHF": "CHT",
+            "CNY": "CNT",
+            "DKK": "DKT",
+            "EUR": "EUT",
+            "GBP": "GBT",
+            "HKD": "HKT",
+            "IDR": "IDT",
+            "INR": "INT",
+            "JPY": "JPT",
+            "KRT": "KRT",
+            "LUNA": "LUNC",
+            "MNT": "MNT",
+            "MYR": "MYT",
+            "NOT": "NOT",
+            "PHP": "PHT",
+            "SDR": "SDT",
+            "SEK": "SET",
+            "THB": "THT",
+            "UST": "USTC",
+        }
+
+        # Use new currency names for Terra classic after new Terra blockchain launched 5/28/22.
+        timestamp_dt = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
+        cutoff_date = datetime(2022, 5, 28)
+
+        if timestamp_dt > cutoff_date and currency in remap:
+            return remap[currency]
+        else:
+            return currency
 
     def _format_amount(self, amount):
         """ Avoid scientific notation """

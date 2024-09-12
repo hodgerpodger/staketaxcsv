@@ -1,7 +1,7 @@
 import pprint
 
 from staketaxcsv.common.TxInfo import TxInfo
-from staketaxcsv.luna1.constants import EXCHANGE_TERRA_BLOCKCHAIN
+from staketaxcsv.luna1.constants import EXCHANGE_TERRA_CLASSIC_BLOCKCHAIN
 
 
 class TxInfoTerra(TxInfo):
@@ -9,7 +9,7 @@ class TxInfoTerra(TxInfo):
 
     def __init__(self, txid, timestamp, fee, fee_currency, wallet_address, msgs):
         url = "https://finder.terra.money/classic/tx/{}".format(txid)
-        super().__init__(txid, timestamp, fee, fee_currency, wallet_address, EXCHANGE_TERRA_BLOCKCHAIN, url)
+        super().__init__(txid, timestamp, fee, fee_currency, wallet_address, EXCHANGE_TERRA_CLASSIC_BLOCKCHAIN, url)
 
         self.msgs = msgs
 

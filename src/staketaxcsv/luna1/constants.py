@@ -50,7 +50,7 @@ CONTRACTS_RANDOMEARTH = [
 ]
 
 CHAIN_ID = "columbus-5"
-EXCHANGE_TERRA_BLOCKCHAIN = "terra_blockchain"
+EXCHANGE_TERRA_CLASSIC_BLOCKCHAIN = "terra_blockchain"
 EXCHANGE_ANCHOR_EARN = "anchor_earn"
 
 CUR_ANC = "ANC"
