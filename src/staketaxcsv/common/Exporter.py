@@ -66,6 +66,7 @@ class Row:
             "THB": "THT",
             "USDT": "UUSDT",
             "UST": "USTC",
+            "WHALE": "UWHALE",
         }
 
         # Use new currency names for Terra classic after new Terra blockchain launched 5/28/22.
