@@ -64,6 +64,7 @@ class Row:
             "SDR": "SDT",
             "SEK": "SET",
             "THB": "THT",
+            "USDT": "UUSDT",
             "UST": "USTC",
         }
 
