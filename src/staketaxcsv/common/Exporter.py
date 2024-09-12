@@ -27,7 +27,7 @@ class Row:
         self.sent_amount = self._format_amount(sent_amount)
         self.sent_currency = self._format_currency(sent_currency, exchange, timestamp)
         self.fee = self._format_amount(fee)
-        self.fee_currency = fee_currency
+        self.fee_currency = self._format_currency(fee_currency, exchange, timestamp)
         self.exchange = exchange
         self.wallet_address = wallet_address
         self.txid = txid
