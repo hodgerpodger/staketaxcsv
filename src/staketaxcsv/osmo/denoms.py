@@ -4,18 +4,23 @@ from staketaxcsv.common.ibc import denoms as denoms_common
 
 
 def amount_currency_from_raw(amount_raw, currency_raw, lcd_node):
-    amount, currency = denoms_common.amount_currency_from_raw(amount_raw, currency_raw, lcd_node)
+    amt, cur = _symbol_exponent(amount_raw, currency_raw)
+    if amt is not None and cur:
+        return amt, cur
 
-    if currency.startswith("unknown_"):
-        # try osmosis api
-        currency2 = _symbol(currency_raw)
-        if currency2:
-            ex = _exponent(currency2)
-            if ex:
-                amount2 = float(amount_raw) / float(10 ** ex)
-                return amount2, currency2
+    amt2, cur2 = denoms_common.amount_currency_from_raw(amount_raw, currency_raw, lcd_node)
+    return amt2, cur2
 
-    return amount, currency
+
+def _symbol_exponent(amount_raw, currency_raw):
+    currency = _symbol(currency_raw)
+    if currency:
+        ex = _exponent(currency)
+        if ex:
+            amount = float(amount_raw) / float(10 ** ex)
+            return amount, currency
+
+    return None, None
 
 
 def _symbol(denom):

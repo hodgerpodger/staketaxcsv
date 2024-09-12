@@ -143,7 +143,7 @@ timestamp            tx_type               received_amount  received_currency  s
         correct_result = """
 -------------------  -------  ---------------  -----------------  -----------  -------------  -----  ------------  ------------------------------------------------------------------
 timestamp            tx_type  received_amount  received_currency  sent_amount  sent_currency  fee    fee_currency  txid
-2024-07-06 17:44:09  TRADE    1.849969         allUSDT            0.000032140  WBTC           0.007  OSMO          22F6F7CF4A1E89422A7405CDF8F235069FB6523990EC1CD094F39A68821611D3-0
+2024-07-06 17:44:09  TRADE    1.849969         allUSDT            0.000032140  WBTC.axl       0.007  OSMO          22F6F7CF4A1E89422A7405CDF8F235069FB6523990EC1CD094F39A68821611D3-0
 -------------------  -------  ---------------  -----------------  -----------  -------------  -----  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)

@@ -145,4 +145,4 @@ def _handle_claim(exporter, txinfo, msginfo):
         util_osmo._ingest_rows(exporter, rows)
         return
 
-    raise Exception("Unable to handle tx in cosmwasmpool._handle_claim()")
+    # raise Exception("Unable to handle tx in cosmwasmpool._handle_claim()")
