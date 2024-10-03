@@ -68,7 +68,7 @@ def process_tx(wallet_address, elem, exporter):
                 staketaxcsv.luna1.col4.handle.handle(exporter, elem, txinfo)
         elif msgtype == "wasm/MsgMigrateContract":
             staketaxcsv.luna1.col5.handle.handle(exporter, elem, txinfo)
-        elif msgtype == "authz/MsgExec":
+        elif msgtype in ["authz/MsgExec", "msgauth/MsgExecAuthorized"]:
             staketaxcsv.luna1.col5.handle_authz.handle(exporter, elem, txinfo)
         else:
             logging.error("Unknown msgtype for txid=%s", txid)
