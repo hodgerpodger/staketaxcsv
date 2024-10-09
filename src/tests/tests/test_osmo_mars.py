@@ -72,3 +72,61 @@ timestamp            tx_type  received_amount  received_currency  sent_amount  s
 -------------------  -------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+    def test_lend_deposit_amount_exact(self):
+        result = run_test(
+            "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd",
+            "7B6BB8354765417E7442A98A6E494D98FAC87EAEBAB2F2A7C599906590245497"
+        )
+        correct_result = """
+-------------------  ----------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
+timestamp            tx_type     received_amount  received_currency  sent_amount  sent_currency  fee       fee_currency  txid
+2024-10-03 16:46:52  SPEND                                           0.000016000  OSMO           0.019735  OSMO          7B6BB8354765417E7442A98A6E494D98FAC87EAEBAB2F2A7C599906590245497-0
+2024-10-03 16:46:52  TRANSFER                                        12.824204    USDC                                   7B6BB8354765417E7442A98A6E494D98FAC87EAEBAB2F2A7C599906590245497-1
+2024-10-03 16:46:52  _MARS_LEND                                                                                          7B6BB8354765417E7442A98A6E494D98FAC87EAEBAB2F2A7C599906590245497-1
+-------------------  ----------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
+
+    def test_lend_deposit_amount_account_balance(self):
+        result = run_test(
+            "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd",
+            "38A12E02E164D8534B8EBCAC8B15D2651E5EE553320EFD3025730DCD090B98DE"
+        )
+        correct_result = """
+-------------------  ----------  ---------------  -----------------  -----------  -------------  ------  ------------  ------------------------------------------------------------------
+timestamp            tx_type     received_amount  received_currency  sent_amount  sent_currency  fee     fee_currency  txid
+2024-07-10 20:12:33  SPEND                                           0.000016000  OSMO           0.0215  OSMO          38A12E02E164D8534B8EBCAC8B15D2651E5EE553320EFD3025730DCD090B98DE-0
+2024-07-10 20:12:33  _MARS_LEND                                                                                        38A12E02E164D8534B8EBCAC8B15D2651E5EE553320EFD3025730DCD090B98DE-1
+-------------------  ----------  ---------------  -----------------  -----------  -------------  ------  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
+
+    def test_lend_deposit_no_first_message(self):
+        result = run_test(
+            "osmo1kwmk8mfrna308nm0jftrgravuuwuuk3fvmwma8",
+            "73B6822DDA4BCA3DE397B429F9F4F8E809DBB6C115DA4967A74C721CA2141983"
+        )
+        correct_result = """
+-------------------  ----------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
+timestamp            tx_type     received_amount  received_currency  sent_amount  sent_currency  fee       fee_currency  txid
+2024-09-24 17:08:28  TRANSFER                                        241.688373   USDC           0.005136  OSMO          73B6822DDA4BCA3DE397B429F9F4F8E809DBB6C115DA4967A74C721CA2141983-0
+2024-09-24 17:08:28  _MARS_LEND                                                                                          73B6822DDA4BCA3DE397B429F9F4F8E809DBB6C115DA4967A74C721CA2141983-0
+-------------------  ----------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
+
+    def test_reclaim_withdraw(self):
+        result = run_test(
+            "osmo1kwmk8mfrna308nm0jftrgravuuwuuk3fvmwma8",
+            "C7637097E8E4D977E383F697619881311BD91BA313D04C6E895D6C946E49122D"
+        )
+        correct_result = """
+-------------------  -------------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
+timestamp            tx_type        received_amount  received_currency  sent_amount  sent_currency  fee       fee_currency  txid
+2024-09-25 01:49:49  _MARS_RECLAIM                                                                  0.014024  OSMO          C7637097E8E4D977E383F697619881311BD91BA313D04C6E895D6C946E49122D-0
+2024-09-25 01:49:49  TRANSFER       100.0            USDC                                                                   C7637097E8E4D977E383F697619881311BD91BA313D04C6E895D6C946E49122D-0
+-------------------  -------------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
+

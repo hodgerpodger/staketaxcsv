@@ -5,14 +5,14 @@ from staketaxcsv.osmo.make_tx import make_osmo_transfer_out_tx, make_osmo_transf
 def handle_red_bank(exporter, txinfo, msginfo):
     msg = msginfo.execute_contract_message
 
-    if "deposit" in msg:
-        return _handle_deposit(exporter, txinfo, msginfo)
-    if "withdraw" in msg:
-        return _handle_withdraw(exporter, txinfo, msginfo)
     if "borrow" in msg:
         return _handle_borrow(exporter, txinfo, msginfo)
+    if "deposit" in msg:
+        return _handle_deposit(exporter, txinfo, msginfo)
     if "repay" in msg:
         return _handle_repay(exporter, txinfo, msginfo)
+    if "withdraw" in msg:
+        return _handle_withdraw(exporter, txinfo, msginfo)
 
     raise Exception("Unable to handle tx in mars_red_bank.handle_red_bank()")
 

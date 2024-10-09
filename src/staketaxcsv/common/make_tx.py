@@ -138,8 +138,9 @@ def make_repay_tx(txinfo, sent_amount, sent_currency, z_index=0):
     return row
 
 
-def make_simple_tx(txinfo, tx_type, z_index=0):
-    fee_currency = txinfo.fee_currency if txinfo.fee else ""
+def make_simple_tx(txinfo, tx_type, z_index=0, empty_fee=False):
+    fee = "" if empty_fee else txinfo.fee
+    fee_currency = txinfo.fee_currency if fee else ""
 
     row = Row(
         timestamp=txinfo.timestamp,
@@ -148,7 +149,7 @@ def make_simple_tx(txinfo, tx_type, z_index=0):
         received_currency="",
         sent_amount="",
         sent_currency="",
-        fee=txinfo.fee,
+        fee=fee,
         fee_currency=fee_currency,
         exchange=txinfo.exchange,
         wallet_address=txinfo.wallet_address,
@@ -160,8 +161,8 @@ def make_simple_tx(txinfo, tx_type, z_index=0):
     return row
 
 
-def make_unknown_tx(txinfo, z_index=0):
-    return make_simple_tx(txinfo, TX_TYPE_UNKNOWN, z_index)
+def make_unknown_tx(txinfo, z_index=0, empty_fee=False):
+    return make_simple_tx(txinfo, TX_TYPE_UNKNOWN, z_index, empty_fee)
 
 
 def make_unknown_tx_with_transfer(txinfo, sent_amount, sent_currency, received_amount,

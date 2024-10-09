@@ -194,6 +194,10 @@ TX_TYPE_TFM_LIMIT_ORDER_SUBMIT = "_TFM_LIMIT_ORDER_SUBMIT"
 # LEVANA
 TX_TYPE_LEVANA_LP_UNSTAKE = "_LEVANA_LP_UNSTAKE"
 
+# MARS LENDING
+TX_TYPE_MARS_LEND = "_MARS_LEND"
+TX_TYPE_MARS_RECLAIM = "_MARS_RECLAIM"
+
 
 ################################################################################################
 

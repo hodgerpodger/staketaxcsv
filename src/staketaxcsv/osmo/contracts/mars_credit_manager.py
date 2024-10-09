@@ -6,7 +6,7 @@ from staketaxcsv.settings_csv import OSMO_NODE
 from staketaxcsv.osmo import denoms
 from staketaxcsv.osmo.make_tx import (
     make_osmo_transfer_out_tx, make_osmo_transfer_in_tx, make_osmo_borrow_tx,
-    make_osmo_repay_tx,
+    make_osmo_repay_tx, make_mars_lend_tx, make_mars_reclaim_tx
 )
 
 
@@ -50,11 +50,12 @@ def _handle_create_credit_account(exporter, txinfo, msginfo):
 
 def _handle_repay_from_wallet(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
+    account_id = msginfo.execute_contract_message["repay_from_wallet"]["account_id"]
 
     if len(transfers_out) == 1 and len(transfers_in) == 0:
         sent_amt, sent_cur = transfers_out[0]
         row = make_osmo_repay_tx(txinfo, msginfo, sent_amt, sent_cur)
-        row.comment += f" [mars_credit_manager repay_from_wallet {sent_amt} {sent_cur}]"
+        row.comment += f" [mars_credit_manager repay_from_wallet {sent_amt} {sent_cur}][account_id={account_id}]"
         exporter.ingest_row(row)
         return
 
@@ -67,21 +68,26 @@ def _handle_update_credit_account(exporter, txinfo, msginfo):
     logging.info(actions)
 
     has_error = False
-    for action in actions:
+    for index, action in enumerate(actions):
         if len(action) > 1:
             raise Exception("Unexpected format for action: %s", action)
 
         action_name = list(action.keys())[0]
         action_info = action[action_name]
+        empty_fee = (index > 0) or (msginfo.msg_index > 0)
 
-        if action_name == "deposit":
-            _handle_deposit(exporter, txinfo, msginfo, action_info)
-        elif action_name == "borrow":
-            _handle_borrow(exporter, txinfo, msginfo, action_info)
+        if action_name == "borrow":
+            _handle_borrow(exporter, txinfo, msginfo, action_info, empty_fee)
+        elif action_name == "deposit":
+            _handle_deposit(exporter, txinfo, msginfo, action_info, empty_fee)
+        elif action_name == "lend":
+            _handle_lend(exporter, txinfo, msginfo, action_info, empty_fee)
+        elif action_name == "reclaim":
+            _handle_reclaim(exporter, txinfo, msginfo, action_info, empty_fee)
         elif action_name == "withdraw":
-            _handle_withdraw(exporter, txinfo, msginfo, action_info)
+            _handle_withdraw(exporter, txinfo, msginfo, action_info, empty_fee)
         else:
-            row = make_unknown_tx(txinfo)
+            row = make_unknown_tx(txinfo, empty_fee=empty_fee)
             row.comment += f"[mars_credit_manager unknown action {action_name}]"
             exporter.ingest_row(row)
             has_error = True
@@ -90,27 +96,27 @@ def _handle_update_credit_account(exporter, txinfo, msginfo):
         raise Exception("Unable to fully handle transactions in mars_credit_manager._handle_update_credit_account")
 
 
-def _handle_deposit(exporter, txinfo, msginfo, action_info):
+def _handle_deposit(exporter, txinfo, msginfo, action_info, empty_fee):
     amount_raw = action_info["amount"]
     denom = action_info["denom"]
     deposit_amt, deposit_cur = denoms.amount_currency_from_raw(amount_raw, denom, OSMO_NODE)
 
-    row = make_osmo_transfer_out_tx(txinfo, msginfo, deposit_amt, deposit_cur)
+    row = make_osmo_transfer_out_tx(txinfo, msginfo, deposit_amt, deposit_cur, empty_fee=empty_fee)
     row.comment += f"[mars_credit_manager deposit {deposit_amt} {deposit_cur}]"
     exporter.ingest_row(row)
 
 
-def _handle_borrow(exporter, txinfo, msginfo, action_info):
+def _handle_borrow(exporter, txinfo, msginfo, action_info, empty_fee):
     amount_raw = action_info["amount"]
     denom = action_info["denom"]
 
     borrow_amt, borrow_cur = denoms.amount_currency_from_raw(amount_raw, denom, OSMO_NODE)
-    row = make_osmo_borrow_tx(txinfo, msginfo, borrow_amt, borrow_cur)
+    row = make_osmo_borrow_tx(txinfo, msginfo, borrow_amt, borrow_cur, empty_fee=empty_fee)
     row.comment += f" [mars_credit_manager borrow {borrow_amt} {borrow_cur}]"
     exporter.ingest_row(row)
 
 
-def _handle_withdraw(exporter, txinfo, msginfo, action_info):
+def _handle_withdraw(exporter, txinfo, msginfo, action_info, empty_fee):
     events_by_type = msginfo.events_by_type
 
     if action_info["amount"] == "account_balance":
@@ -122,6 +128,38 @@ def _handle_withdraw(exporter, txinfo, msginfo, action_info):
         denom = action_info["denom"]
         withdraw_amt, withdraw_cur = denoms.amount_currency_from_raw(amount_raw, denom, OSMO_NODE)
 
-    row = make_osmo_transfer_in_tx(txinfo, msginfo, withdraw_amt, withdraw_cur)
+    row = make_osmo_transfer_in_tx(txinfo, msginfo, withdraw_amt, withdraw_cur, empty_fee=empty_fee)
     row.comment += f"[mars_credit_manager withdraw {withdraw_amt} {withdraw_cur}]"
+    exporter.ingest_row(row)
+
+
+def _handle_lend(exporter, txinfo, msginfo, action_info, empty_fee):
+    events_by_type = msginfo.events_by_type
+    account_id = msginfo.execute_contract_message["update_credit_account"]["account_id"]
+
+    denom = action_info["denom"]
+    if action_info["amount"] == "account_balance":
+        amount_raw = events_by_type["wasm"]["amount"]
+    else:
+        amount_raw = action_info["amount"]["exact"]
+
+    lend_amt, lend_cur = denoms.amount_currency_from_raw(amount_raw, denom, OSMO_NODE)
+    row = make_mars_lend_tx(txinfo, msginfo, lend_amt, lend_cur, empty_fee=empty_fee)
+    row.comment += f" [mars_credit_manager lend {lend_amt} {lend_cur}][account_id={account_id}]"
+    exporter.ingest_row(row)
+
+
+def _handle_reclaim(exporter, txinfo, msginfo, action_info, empty_fee):
+    events_by_type = msginfo.events_by_type
+    account_id = msginfo.execute_contract_message["update_credit_account"]["account_id"]
+
+    denom = action_info["denom"]
+    if action_info["amount"] == "account_balance":
+        amount_raw = events_by_type["wasm"]["amount"]
+    else:
+        amount_raw = action_info["amount"]["exact"]
+
+    reclaim_amt, reclaim_cur = denoms.amount_currency_from_raw(amount_raw, denom, OSMO_NODE)
+    row = make_mars_reclaim_tx(txinfo, msginfo, reclaim_amt, reclaim_cur, empty_fee=empty_fee)
+    row.comment += f" [mars_credit_manager reclaim {reclaim_amt} {reclaim_cur}][account_id={account_id}]"
     exporter.ingest_row(row)
