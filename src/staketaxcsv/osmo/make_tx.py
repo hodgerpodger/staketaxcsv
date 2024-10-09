@@ -9,6 +9,8 @@ from staketaxcsv.common.make_tx import (
     make_unknown_tx,
     make_unknown_tx_with_transfer,
     make_spend_tx,
+    make_borrow_tx,
+    make_repay_tx,
 )
 from staketaxcsv.osmo import util_osmo
 from staketaxcsv.osmo.constants import EXCHANGE_OSMOSIS
@@ -125,5 +127,17 @@ def make_osmo_lp_unstake_tx(txinfo, msginfo, lp_amount, lp_currency, period_lock
 
 def make_osmo_spend_tx(txinfo, msginfo, sent_amount, sent_currency):
     row = make_spend_tx(txinfo, sent_amount, sent_currency)
+    _edit_row(row, txinfo, msginfo)
+    return row
+
+
+def make_osmo_borrow_tx(txinfo, msginfo, borrow_amt, borrow_cur):
+    row = make_borrow_tx(txinfo, borrow_amt, borrow_cur)
+    _edit_row(row, txinfo, msginfo)
+    return row
+
+
+def make_osmo_repay_tx(txinfo, msginfo, repay_amt, repay_cur):
+    row = make_repay_tx(txinfo, repay_amt, repay_cur)
     _edit_row(row, txinfo, msginfo)
     return row

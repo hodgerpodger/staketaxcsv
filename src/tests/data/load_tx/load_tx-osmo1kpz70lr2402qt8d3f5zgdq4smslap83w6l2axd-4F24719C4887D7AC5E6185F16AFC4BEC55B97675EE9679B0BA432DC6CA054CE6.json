@@ -1,0 +1,372 @@
+{
+    "height": "14743668",
+    "txhash": "4F24719C4887D7AC5E6185F16AFC4BEC55B97675EE9679B0BA432DC6CA054CE6",
+    "codespace": "",
+    "code": 0,
+    "data": "122E0A2C2F636F736D7761736D2E7761736D2E76312E4D736745786563757465436F6E7472616374526573706F6E7365122E0A2C2F636F736D7761736D2E7761736D2E76312E4D736745786563757465436F6E7472616374526573706F6E7365",
+    "info": "",
+    "gas_wanted": "4637673",
+    "gas_used": "3095990",
+    "tx": {
+        "@type": "/cosmos.tx.v1beta1.Tx",
+        "body": {
+            "messages": [
+                {
+                    "@type": "/cosmwasm.wasm.v1.MsgExecuteContract",
+                    "sender": "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd",
+                    "contract": "osmo13ge29x4e2s63a8ytz2px8gurtyznmue4a69n5275692v3qn3ks8q7cwck7",
+                    "funds": [
+                        {
+                            "denom": "uosmo",
+                            "amount": "12"
+                        }
+                    ],
+                    "msg__@stringify": "{\"update_price_feeds\":{\"data\":[\"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\"]}}"
+                },
+                {
+                    "@type": "/cosmwasm.wasm.v1.MsgExecuteContract",
+                    "sender": "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd",
+                    "contract": "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf",
+                    "funds": [],
+                    "msg__@stringify": "{\"update_credit_account\":{\"account_id\":\"18045\",\"actions\":[{\"withdraw\":{\"denom\":\"ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877\",\"amount\":\"account_balance\"}}]}}"
+                }
+            ],
+            "memo": "",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+        },
+        "auth_info": {
+            "signer_infos": [
+                {
+                    "public_key": {
+                        "@type": "/cosmos.crypto.secp256k1.PubKey",
+                        "key": "A2HMS2/0jPe10Vs8n9KfiPSyCr1mx+kNkRadySTb/kkA"
+                    },
+                    "mode_info": {
+                        "single": {
+                            "mode": "SIGN_MODE_DIRECT"
+                        }
+                    },
+                    "sequence": "536"
+                }
+            ],
+            "fee": {
+                "amount": [
+                    {
+                        "denom": "uosmo",
+                        "amount": "16232"
+                    }
+                ],
+                "gas_limit": "4637673",
+                "payer": "",
+                "granter": ""
+            },
+            "tip": null
+        },
+        "signatures": [
+            "bekZF381tuCLOksFBuS65SemlpEhQ4140ESgNo81C3R5z6rux1ooSYMcAhJ2iLTaEhe/RNILM1dfXWnsN5QaQA=="
+        ]
+    },
+    "timestamp": "2024-04-07T09:06:53Z",
+    "timestamp__@@date": 1712480813000,
+    "logs": [
+        {
+            "msg_index": 0,
+            "log": "",
+            "events": [
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "action",
+                            "value": "/cosmwasm.wasm.v1.MsgExecuteContract"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd"
+                        },
+                        {
+                            "key": "module",
+                            "value": "wasm"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "12uosmo"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "osmo13ge29x4e2s63a8ytz2px8gurtyznmue4a69n5275692v3qn3ks8q7cwck7"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "12uosmo"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "osmo13ge29x4e2s63a8ytz2px8gurtyznmue4a69n5275692v3qn3ks8q7cwck7"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "12uosmo"
+                        }
+                    ]
+                },
+                {
+                    "type": "execute",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo13ge29x4e2s63a8ytz2px8gurtyznmue4a69n5275692v3qn3ks8q7cwck7"
+                        }
+                    ]
+                },
+                {
+                    "type": "wasm",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo13ge29x4e2s63a8ytz2px8gurtyznmue4a69n5275692v3qn3ks8q7cwck7"
+                        },
+                        {
+                            "key": "action",
+                            "value": "update_price_feeds"
+                        },
+                        {
+                            "key": "num_attestations",
+                            "value": "12"
+                        },
+                        {
+                            "key": "num_updated",
+                            "value": "11"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "msg_index": 1,
+            "log": "",
+            "events": [
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "action",
+                            "value": "/cosmwasm.wasm.v1.MsgExecuteContract"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd"
+                        },
+                        {
+                            "key": "module",
+                            "value": "wasm"
+                        }
+                    ]
+                },
+                {
+                    "type": "execute",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
+                        }
+                    ]
+                },
+                {
+                    "type": "wasm",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
+                        },
+                        {
+                            "key": "action",
+                            "value": "rover/execute/update_credit_account"
+                        },
+                        {
+                            "key": "account_id",
+                            "value": "18045"
+                        }
+                    ]
+                },
+                {
+                    "type": "execute",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
+                        }
+                    ]
+                },
+                {
+                    "type": "wasm",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
+                        },
+                        {
+                            "key": "account_id",
+                            "value": "18045"
+                        },
+                        {
+                            "key": "action",
+                            "value": "callback/withdraw"
+                        },
+                        {
+                            "key": "coin_withdrawn",
+                            "value": "383886ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "amount",
+                            "value": "383886ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        },
+                        {
+                            "key": "spender",
+                            "value": "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "amount",
+                            "value": "383886ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        },
+                        {
+                            "key": "receiver",
+                            "value": "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "amount",
+                            "value": "383886ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877"
+                        },
+                        {
+                            "key": "recipient",
+                            "value": "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
+                        }
+                    ]
+                },
+                {
+                    "type": "execute",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
+                        }
+                    ]
+                },
+                {
+                    "type": "wasm",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
+                        },
+                        {
+                            "key": "account_id",
+                            "value": "18045"
+                        },
+                        {
+                            "key": "action",
+                            "value": "callback/assert_health"
+                        },
+                        {
+                            "key": "new_health_state",
+                            "value": "healthy"
+                        },
+                        {
+                            "key": "prev_health_state",
+                            "value": "healthy"
+                        }
+                    ]
+                },
+                {
+                    "type": "execute",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
+                        }
+                    ]
+                },
+                {
+                    "type": "wasm",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
+                        },
+                        {
+                            "key": "action",
+                            "value": "callback/assert_deposit_caps"
+                        }
+                    ]
+                },
+                {
+                    "type": "execute",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
+                        }
+                    ]
+                },
+                {
+                    "type": "wasm",
+                    "attributes": [
+                        {
+                            "key": "_contract_address",
+                            "value": "osmo1f2m24wktq0sw3c0lexlg7fv4kngwyttvzws3a3r3al9ld2s2pvds87jqvf"
+                        },
+                        {
+                            "key": "action",
+                            "value": "remove_reentrancy_guard"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "chain_id": "osmosis-1"
+}
