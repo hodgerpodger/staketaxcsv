@@ -40,7 +40,7 @@ def process_txs(wallet_address, elems, exporter, progress=None):
     for i, elem in enumerate(elems):
         process_tx(wallet_address, elem, exporter)
 
-        if progress and i % 10 == 0:
+        if progress and i % 100 == 0:
             progress.report(i, f"Processed {i} of {total_count} transactions", "process_transactions")
 
     if progress:
