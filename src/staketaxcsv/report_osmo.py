@@ -86,7 +86,7 @@ def txhistory(wallet_address):
     progress.set_estimate(count_pages)
     reward_tokens = staketaxcsv.osmo.api_data.get_lp_tokens(wallet_address)
     progress.set_estimate_lp_rewards_stage(len(reward_tokens))
-    progress.set_estimate_process_transactions_stage(count_pages*TXS_LIMIT_PER_QUERY)
+    progress.set_estimate_process_transactions_stage(count_pages * TXS_LIMIT_PER_QUERY)
     logging.info("pages: %s, reward_tokens: %s", count_pages, reward_tokens)
 
     # Fetch transactions
