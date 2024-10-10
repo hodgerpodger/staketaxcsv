@@ -30,12 +30,10 @@ class PositionLiquidity:
 
     @classmethod
     def withdraw_position(cls, position_id, liquidity):
-        assert (position_id in cls.liquidities)
-
-        cls.liquidities[position_id] -= liquidity
-
-        if cls.liquidities[position_id] == 0:
-            del cls.liquidities[position_id]
+        if position_id in cls.liquidities:
+            cls.liquidities[position_id] -= liquidity
+            if cls.liquidities[position_id] <= 0:
+                del cls.liquidities[position_id]
 
 
 def _lp_currency(pool_id):
