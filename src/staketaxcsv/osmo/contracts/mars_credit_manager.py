@@ -89,6 +89,8 @@ def _handle_update_credit_account(exporter, txinfo, msginfo):
             _handle_lend(exporter, txinfo, msginfo, action_info, empty_fee)
         elif action_name == "reclaim":
             _handle_reclaim(exporter, txinfo, msginfo, action_info, empty_fee)
+        elif action_name == "repay":
+            _handle_repay(exporter, txinfo, msginfo, action_info, empty_fee)
         elif action_name == "withdraw":
             _handle_withdraw(exporter, txinfo, msginfo, action_info, empty_fee)
         else:
@@ -118,6 +120,16 @@ def _handle_borrow(exporter, txinfo, msginfo, action_info, empty_fee):
     borrow_amt, borrow_cur = denoms.amount_currency_from_raw(amount_raw, denom, OSMO_NODE)
     row = make_osmo_borrow_tx(txinfo, msginfo, borrow_amt, borrow_cur, empty_fee=empty_fee)
     row.comment += f" [mars_credit_manager borrow {borrow_amt} {borrow_cur}]"
+    exporter.ingest_row(row)
+
+
+def _handle_repay(exporter, txinfo, msginfo, action_info, empty_fee):
+    amount_raw = action_info["coin"]["amount"]["exact"]
+    denom = action_info["coin"]["denom"]
+
+    repay_amt, repay_cur = denoms.amount_currency_from_raw(amount_raw, denom, OSMO_NODE)
+    row = make_osmo_repay_tx(txinfo, msginfo, repay_amt, repay_cur, empty_fee=empty_fee)
+    row.comment += f" [mars_credit_manager repay {repay_amt} {repay_cur}]"
     exporter.ingest_row(row)
 
 
