@@ -6,8 +6,9 @@ from staketaxcsv.settings_csv import OSMO_NODE
 from staketaxcsv.osmo import denoms
 from staketaxcsv.osmo.make_tx import (
     make_osmo_transfer_out_tx, make_osmo_transfer_in_tx, make_osmo_borrow_tx,
-    make_osmo_repay_tx, make_mars_lend_tx, make_mars_reclaim_tx
+    make_osmo_repay_tx, make_mars_lend_tx, make_mars_reclaim_tx, make_osmo_tx,
 )
+from staketaxcsv.common.ExporterTypes import TX_TYPE_MARS_CREATE_CREDIT_ACCOUNT
 
 
 def handle_claim_rewards(exporter, txinfo, msginfo):
@@ -39,8 +40,12 @@ def handle_credit_manager(exporter, txinfo, msginfo):
 def _handle_create_credit_account(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers
 
-    if len(transfers_in) == 0 and len(transfers_out) == 0 and msginfo.msg_index == 0:
-        row = make_spend_fee_tx(txinfo, txinfo.fee, txinfo.fee_currency)
+    if len(transfers_in) == 0 and len(transfers_out) == 0:
+        if msginfo.msg_index == 0:
+            row = make_spend_fee_tx(txinfo, txinfo.fee, txinfo.fee_currency)
+        else:
+            row = make_osmo_tx(
+                txinfo, msginfo, "", "", "", "", empty_fee=True, tx_type=TX_TYPE_MARS_CREATE_CREDIT_ACCOUNT)
         row.comment = "[mars create credit account]"
         exporter.ingest_row(row)
         return

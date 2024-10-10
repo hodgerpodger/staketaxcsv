@@ -130,3 +130,16 @@ timestamp            tx_type        received_amount  received_currency  sent_amo
         """
         self.assertEqual(result, correct_result.strip(), result)
 
+    def test_create_credit_account_no_spend_fee(self):
+        result = run_test(
+            "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd",
+            "664945C59DEF14E81A3249FBF21170AB8A9DEB386CD9CAADA395A10DEB3FB453"
+        )
+        correct_result = """
+-------------------  ---------------------------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
+timestamp            tx_type                      received_amount  received_currency  sent_amount  sent_currency  fee       fee_currency  txid
+2024-02-18 14:54:00  SPEND                                                            0.000012000  OSMO           0.002519  OSMO          664945C59DEF14E81A3249FBF21170AB8A9DEB386CD9CAADA395A10DEB3FB453-0
+2024-02-18 14:54:00  _MARS_CREATE_CREDIT_ACCOUNT                                                                                          664945C59DEF14E81A3249FBF21170AB8A9DEB386CD9CAADA395A10DEB3FB453-1
+-------------------  ---------------------------  ---------------  -----------------  -----------  -------------  --------  ------------  ------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
