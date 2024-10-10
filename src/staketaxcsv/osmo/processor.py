@@ -34,9 +34,17 @@ CONTRACT_TFM_LIMIT_ORDER = "osmo1rqamy6jc3f0rwrg5xz8hy8q7n932t2488f2gqg3d0cadvd3
 CONTRACT_TFM_ROUTER = "osmo1aj2aqz04yftsseht37mhguxxtqqacs0t3vt332u6gtr9z4r2lxyq5h69zg"
 
 
-def process_txs(wallet_address, elems, exporter):
+def process_txs(wallet_address, elems, exporter, progress=None):
+    total_count = len(elems)
+
     for i, elem in enumerate(elems):
         process_tx(wallet_address, elem, exporter)
+
+        if progress and i % 10 == 0:
+            progress.report(i, f"Processed {i} of {total_count} transactions", "process_transactions")
+
+    if progress:
+        progress.report(total_count, f"Processed all {total_count} transactions", "process_transactions")
 
 
 def process_tx(wallet_address, elem, exporter):

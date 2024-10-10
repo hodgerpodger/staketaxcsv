@@ -26,6 +26,7 @@ from staketaxcsv.common.ibc import historical_balances
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
 from staketaxcsv import settings_csv
 from staketaxcsv.settings_csv import OSMO_NODE
+from staketaxcsv.common.ibc.api_mintscan_v1 import TXS_LIMIT_PER_QUERY
 
 
 def main():
@@ -80,19 +81,23 @@ def txhistory(wallet_address):
     exporter = Exporter(wallet_address, localconfig, TICKER_OSMO)
     txdata = _txdata()
 
-    # Set time estimate to estimate progress later
+    # Set time estimates for progress indicator
     count_pages = txdata.get_txs_pages_count(wallet_address, start_date, end_date)
     progress.set_estimate(count_pages)
     reward_tokens = staketaxcsv.osmo.api_data.get_lp_tokens(wallet_address)
     progress.set_estimate_lp_rewards_stage(len(reward_tokens))
+    progress.set_estimate_process_transactions_stage(count_pages*TXS_LIMIT_PER_QUERY)
     logging.info("pages: %s, reward_tokens: %s", count_pages, reward_tokens)
 
     # Fetch transactions
     elems = txdata.get_txs_all(wallet_address, progress, start_date, end_date)
 
+    # Update time estimate after getting exact number of transactions
+    progress.set_estimate_process_transactions_stage(len(elems))
+
     # Process transactions
     progress.report_message(f"Processing {len(elems)} transactions... ")
-    staketaxcsv.osmo.processor.process_txs(wallet_address, elems, exporter)
+    staketaxcsv.osmo.processor.process_txs(wallet_address, elems, exporter, progress=progress)
 
     # Fetch & process LP rewards data
     lp_rewards(wallet_address, reward_tokens, exporter, progress)
