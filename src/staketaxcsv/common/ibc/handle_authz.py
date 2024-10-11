@@ -1,6 +1,8 @@
 from staketaxcsv.common.ibc import make_tx, constants as co
 from staketaxcsv.common.ibc.handle import handle_staking, handle_unknown
 from staketaxcsv.osmo.handle_lp import handle_lp_stake
+from staketaxcsv.settings_csv import TICKER_OSMO
+from staketaxcsv.osmo.handle_swap import handle_swap
 
 
 def handle_exec(exporter, txinfo, msginfo):
@@ -67,7 +69,16 @@ def _handle_exec_lcd_data(exporter, txinfo, msginfo):
             pass
         else:
             handle_staking(exporter, txinfo, msginfo)
-    elif msg_types.issubset([co.MSG_TYPE_LOCK_TOKENS]):
+    elif exporter.ticker == TICKER_OSMO:
+        _handle_osmo_tx(exporter, txinfo, msginfo)
+    else:
+        handle_unknown(exporter, txinfo, msginfo)
+
+
+def _handle_osmo_tx(exporter, txinfo, msginfo):
+    msg_types = set(map(lambda x: x["@type"].split(".")[-1], msginfo.message["msgs"]))
+
+    if msg_types.issubset([co.MSG_TYPE_LOCK_TOKENS]):
         owner = msginfo.message["msgs"][0]["owner"]
         if owner != exporter.wallet_address:
             # ignore lock token messages not related this wallet address
@@ -80,7 +91,8 @@ def _handle_exec_lcd_data(exporter, txinfo, msginfo):
             # ignore lock token messages not related this wallet address
             pass
         else:
-            # TODO: handle authz exec MsgJoinSwapExternAmountIn message
-            handle_unknown(exporter, txinfo, msginfo)
-    else:
-        handle_unknown(exporter, txinfo, msginfo)
+            transfers_in, transfers_out = msginfo.transfers
+            if len(transfers_in) == 1 and len(transfers_out) == 1:
+                handle_swap(exporter, txinfo, msginfo)
+            else:
+                handle_unknown(exporter, txinfo, msginfo)
