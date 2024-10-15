@@ -71,6 +71,7 @@ def _handle_repay_from_wallet(exporter, txinfo, msginfo):
 
 
 def _handle_update_credit_account(exporter, txinfo, msginfo):
+    account_id = msginfo.execute_contract_message["update_credit_account"].get("account_id", "")
     actions = msginfo.execute_contract_message["update_credit_account"]["actions"]
     logging.info("actions:")
     logging.info(actions)
@@ -85,23 +86,23 @@ def _handle_update_credit_account(exporter, txinfo, msginfo):
         empty_fee = (action_index > 0) or (msginfo.msg_index > 0)
 
         if action_name == "borrow":
-            _handle_borrow(exporter, txinfo, msginfo, action_info, empty_fee, action_index)
+            _handle_borrow(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
         elif action_name == "deposit":
-            _handle_deposit(exporter, txinfo, msginfo, action_info, empty_fee, action_index)
+            _handle_deposit(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
         elif action_name == "lend":
-            _handle_lend(exporter, txinfo, msginfo, action_info, empty_fee, action_index)
+            _handle_lend(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
         elif action_name == "reclaim":
-            _handle_reclaim(exporter, txinfo, msginfo, action_info, empty_fee, action_index)
+            _handle_reclaim(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
         elif action_name == "repay":
-            _handle_repay(exporter, txinfo, msginfo, action_info, empty_fee, action_index)
+            _handle_repay(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
         elif action_name == "withdraw":
-            _handle_withdraw(exporter, txinfo, msginfo, action_info, empty_fee, action_index)
+            _handle_withdraw(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
         elif action_name == "swap_exact_in":
-            _handle_swap_exact_in(exporter, txinfo, msginfo, action_info, empty_fee, action_index)
+            _handle_swap_exact_in(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
         else:
             row = make_mars_custom_tx(txinfo, msginfo, tx_type=TX_TYPE_UNKNOWN, empty_fee=empty_fee)
-            row.comment += f"[mars_credit_manager unknown action {action_name}]"
-            _export_action_row(exporter, row, action_index)
+            row.comment += f"[mars_credit_manager unknown action {action_name}][account_id={account_id}]"
+            _export_action_row(exporter, row, action_index, account_id)
 
             has_error = True
 
@@ -109,63 +110,62 @@ def _handle_update_credit_account(exporter, txinfo, msginfo):
         raise Exception("Unable to fully handle transactions in mars_credit_manager._handle_update_credit_account")
 
 
-def _export_action_row(exporter, row, action_index):
+def _export_action_row(exporter, row, action_index, account_id):
     row.z_index = action_index
     row.txid += f"-{action_index}"
+    row.comment += f"[account_id={account_id}]"
     exporter.ingest_row(row)
 
 
-def _handle_deposit(exporter, txinfo, msginfo, action_info, empty_fee, action_index):
+def _handle_deposit(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
     deposit_amt, deposit_cur = _get_amount_for_action("deposit", action_info, msginfo)
 
     row = make_mars_custom_tx(txinfo, msginfo, tx_type=TX_TYPE_MARS_DEPOSIT, empty_fee=empty_fee)
     row.comment += f"[mars_credit_manager deposit {deposit_amt} {deposit_cur}]"
-    _export_action_row(exporter, row, action_index)
+    _export_action_row(exporter, row, action_index, account_id)
 
 
-def _handle_borrow(exporter, txinfo, msginfo, action_info, empty_fee, action_index):
+def _handle_borrow(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
     borrow_amt, borrow_cur = _get_amount_for_action("borrow", action_info, msginfo)
 
     row = make_osmo_borrow_tx(txinfo, msginfo, borrow_amt, borrow_cur, empty_fee=empty_fee)
     row.comment += f" [mars_credit_manager borrow {borrow_amt} {borrow_cur}]"
-    _export_action_row(exporter, row, action_index)
+    _export_action_row(exporter, row, action_index, account_id)
 
 
-def _handle_repay(exporter, txinfo, msginfo, action_info, empty_fee, action_index):
+def _handle_repay(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
     repay_amt, repay_cur = _get_amount_for_action("repay", action_info, msginfo)
 
     row = make_osmo_repay_tx(txinfo, msginfo, repay_amt, repay_cur, empty_fee=empty_fee)
     row.comment += f" [mars_credit_manager repay {repay_amt} {repay_cur}]"
-    _export_action_row(exporter, row, action_index)
+    _export_action_row(exporter, row, action_index, account_id)
 
 
-def _handle_withdraw(exporter, txinfo, msginfo, action_info, empty_fee, action_index):
+def _handle_withdraw(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
     withdraw_amt, withdraw_cur = _get_amount_for_action("withdraw", action_info, msginfo)
 
     row = make_mars_custom_tx(txinfo, msginfo, tx_type=TX_TYPE_MARS_WITHDRAW, empty_fee=empty_fee)
     row.comment += f"[mars_credit_manager withdraw {withdraw_amt} {withdraw_cur}]"
-    _export_action_row(exporter, row, action_index)
+    _export_action_row(exporter, row, action_index, account_id)
 
 
-def _handle_lend(exporter, txinfo, msginfo, action_info, empty_fee, action_index):
-    account_id = msginfo.execute_contract_message["update_credit_account"]["account_id"]
+def _handle_lend(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
     _, lend_cur = _get_amount_for_action("lend", action_info, msginfo)
 
     row = make_mars_custom_tx(txinfo, msginfo, tx_type=TX_TYPE_MARS_LEND, empty_fee=empty_fee)
     row.comment += f" [mars_credit_manager lend {lend_cur}][account_id={account_id}]"
-    _export_action_row(exporter, row, action_index)
+    _export_action_row(exporter, row, action_index, account_id)
 
 
-def _handle_reclaim(exporter, txinfo, msginfo, action_info, empty_fee, action_index):
-    account_id = msginfo.execute_contract_message["update_credit_account"]["account_id"]
+def _handle_reclaim(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
     reclaim_amt, reclaim_cur = _get_amount_for_action("reclaim", action_info, msginfo)
 
     row = make_mars_custom_tx(txinfo, msginfo, tx_type=TX_TYPE_MARS_RECLAIM, empty_fee=empty_fee)
     row.comment += f" [mars_credit_manager reclaim {reclaim_amt} {reclaim_cur}][account_id={account_id}]"
-    _export_action_row(exporter, row, action_index)
+    _export_action_row(exporter, row, action_index, account_id)
 
 
-def _handle_swap_exact_in(exporter, txinfo, msginfo, action_info, empty_fee, action_index):
+def _handle_swap_exact_in(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
     account_id = msginfo.execute_contract_message["update_credit_account"]["account_id"]
 
     rec_amt, rec_cur = _get_amount_for_action("swap_exact_in", action_info["coin_in"], msginfo)
@@ -174,9 +174,8 @@ def _handle_swap_exact_in(exporter, txinfo, msginfo, action_info, empty_fee, act
     sent_amt, sent_cur = denoms.amount_currency_from_raw(sent_amt_raw, sent_denom, OSMO_NODE)
 
     row = make_osmo_swap_tx(txinfo, msginfo, sent_amt, sent_cur, rec_amt, rec_cur, empty_fee=empty_fee)
-    row.comment += f" [mars_credit_manger swap {sent_amt} {sent_cur} for {rec_amt} {rec_cur}]" \
-                   f"[account_id]{account_id}]"
-    _export_action_row(exporter, row, action_index)
+    row.comment += f" [mars_credit_manger swap {sent_amt} {sent_cur} for {rec_amt} {rec_cur}]"
+    _export_action_row(exporter, row, action_index, account_id)
 
 
 def _get_amount_for_action(action_name, action_info, msginfo):
