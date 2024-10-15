@@ -39,8 +39,8 @@ def make_osmo_simple_tx(txinfo, msginfo):
     return row
 
 
-def make_osmo_swap_tx(txinfo, msginfo, sent_amount, sent_currency, received_amount, received_currency):
-    row = make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
+def make_osmo_swap_tx(txinfo, msginfo, sent_amount, sent_currency, received_amount, received_currency, empty_fee=False):
+    row = make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency, empty_fee=empty_fee)
     _edit_row(row, txinfo, msginfo)
     return row
 
@@ -144,13 +144,7 @@ def make_osmo_repay_tx(txinfo, msginfo, repay_amt, repay_cur, empty_fee=False):
     return row
 
 
-def make_mars_lend_tx(txinfo, msginfo, lend_amt, lend_cur, empty_fee=False):
-    row = make_osmo_tx(txinfo, msginfo, "", "", "", "", tx_type=TX_TYPE_MARS_LEND)
-    _edit_row(row, txinfo, msginfo, empty_fee)
-    return row
-
-
-def make_mars_reclaim_tx(txinfo, msginfo, reclaim_amt, reclaim_cur, empty_fee=False):
-    row = make_osmo_tx(txinfo, msginfo, "", "", "", "", tx_type=TX_TYPE_MARS_RECLAIM)
+def make_mars_custom_tx(txinfo, msginfo, tx_type, empty_fee=False):
+    row = make_osmo_tx(txinfo, msginfo, "", "", "", "", tx_type=tx_type)
     _edit_row(row, txinfo, msginfo, empty_fee)
     return row
