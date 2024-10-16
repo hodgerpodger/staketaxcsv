@@ -166,12 +166,10 @@ def _handle_reclaim(exporter, txinfo, msginfo, action_info, empty_fee, action_in
 
 
 def _handle_swap_exact_in(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
-    account_id = msginfo.execute_contract_message["update_credit_account"]["account_id"]
-
-    rec_amt, rec_cur = _get_amount_for_action("swap_exact_in", action_info["coin_in"], msginfo)
-    sent_amt_raw = _get_amount_raw_from_wasm("swap_exact_in", msginfo)
-    sent_denom = action_info["denom_out"]
-    sent_amt, sent_cur = denoms.amount_currency_from_raw(sent_amt_raw, sent_denom, OSMO_NODE)
+    sent_amt, sent_cur = _get_amount_for_action("swap_exact_in", action_info["coin_in"], msginfo)
+    rec_amt_raw = _get_amount_raw_from_wasm("swap_exact_in", msginfo)
+    rec_denom = action_info["denom_out"]
+    rec_amt, rec_cur = denoms.amount_currency_from_raw(rec_amt_raw, rec_denom, OSMO_NODE)
 
     row = make_osmo_swap_tx(txinfo, msginfo, sent_amt, sent_cur, rec_amt, rec_cur, empty_fee=empty_fee)
     row.comment += f" [mars_credit_manger swap {sent_amt} {sent_cur} for {rec_amt} {rec_cur}]"
