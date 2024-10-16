@@ -153,7 +153,7 @@ def _handle_lend(exporter, txinfo, msginfo, action_info, empty_fee, action_index
     _, lend_cur = _get_amount_for_action("lend", action_info, msginfo)
 
     row = make_mars_custom_tx(txinfo, msginfo, tx_type=TX_TYPE_MARS_LEND, empty_fee=empty_fee)
-    row.comment += f" [mars_credit_manager lend {lend_cur}][account_id={account_id}]"
+    row.comment += f" [mars_credit_manager lend {lend_cur}]"
     _export_action_row(exporter, row, action_index, account_id)
 
 
@@ -161,7 +161,7 @@ def _handle_reclaim(exporter, txinfo, msginfo, action_info, empty_fee, action_in
     reclaim_amt, reclaim_cur = _get_amount_for_action("reclaim", action_info, msginfo)
 
     row = make_mars_custom_tx(txinfo, msginfo, tx_type=TX_TYPE_MARS_RECLAIM, empty_fee=empty_fee)
-    row.comment += f" [mars_credit_manager reclaim {reclaim_amt} {reclaim_cur}][account_id={account_id}]"
+    row.comment += f" [mars_credit_manager reclaim {reclaim_amt} {reclaim_cur}]"
     _export_action_row(exporter, row, action_index, account_id)
 
 
