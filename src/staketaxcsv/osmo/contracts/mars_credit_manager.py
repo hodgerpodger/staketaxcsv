@@ -1,13 +1,9 @@
 import logging
 
 from staketaxcsv.osmo.make_tx import make_osmo_reward_tx
-from staketaxcsv.common.make_tx import make_spend_fee_tx, make_unknown_tx
-from staketaxcsv.settings_csv import OSMO_NODE
-from staketaxcsv.osmo import denoms
+from staketaxcsv.common.make_tx import make_spend_fee_tx
 from staketaxcsv.osmo.make_tx import (
-    make_osmo_transfer_out_tx, make_osmo_transfer_in_tx, make_osmo_borrow_tx,
-    make_osmo_repay_tx, make_osmo_tx,
-    make_osmo_swap_tx, make_mars_custom_tx,
+    make_osmo_borrow_tx, make_osmo_repay_tx, make_osmo_swap_tx, make_mars_custom_tx,
 )
 from staketaxcsv.common.ExporterTypes import (
     TX_TYPE_MARS_CREATE_CREDIT_ACCOUNT, TX_TYPE_MARS_RECLAIM, TX_TYPE_MARS_LEND, TX_TYPE_UNKNOWN,
@@ -82,23 +78,22 @@ def _handle_update_credit_account(exporter, txinfo, msginfo):
             raise Exception("Unexpected format for action: %s", action)
 
         action_name = list(action.keys())[0]
-        action_info = action[action_name]
         empty_fee = (action_index > 0) or (msginfo.msg_index > 0)
 
         if action_name == "borrow":
-            _handle_borrow(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
+            _handle_borrow(exporter, txinfo, msginfo, empty_fee, action_index, account_id)
         elif action_name == "deposit":
-            _handle_deposit(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
+            _handle_deposit(exporter, txinfo, msginfo, empty_fee, action_index, account_id)
         elif action_name == "lend":
-            _handle_lend(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
+            _handle_lend(exporter, txinfo, msginfo, empty_fee, action_index, account_id)
         elif action_name == "reclaim":
-            _handle_reclaim(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
+            _handle_reclaim(exporter, txinfo, msginfo, empty_fee, action_index, account_id)
         elif action_name == "repay":
-            _handle_repay(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
+            _handle_repay(exporter, txinfo, msginfo, empty_fee, action_index, account_id)
         elif action_name == "withdraw":
-            _handle_withdraw(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
+            _handle_withdraw(exporter, txinfo, msginfo, empty_fee, action_index, account_id)
         elif action_name == "swap_exact_in":
-            _handle_swap_exact_in(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id)
+            _handle_swap_exact_in(exporter, txinfo, msginfo, empty_fee, action_index, account_id)
         else:
             row = make_mars_custom_tx(txinfo, msginfo, tx_type=TX_TYPE_UNKNOWN, empty_fee=empty_fee)
             row.comment += f"[mars_credit_manager unknown action {action_name}][account_id={account_id}]"
@@ -117,120 +112,179 @@ def _export_action_row(exporter, row, action_index, account_id):
     exporter.ingest_row(row)
 
 
-def _handle_deposit(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
-    deposit_amt, deposit_cur = _get_amount_for_action("deposit", action_info, msginfo)
+def _handle_deposit(exporter, txinfo, msginfo, empty_fee, action_index, account_id):
+    deposit_amt, deposit_cur = _get_deposit_amount(msginfo)
 
     row = make_mars_custom_tx(txinfo, msginfo, tx_type=TX_TYPE_MARS_DEPOSIT, empty_fee=empty_fee)
     row.comment += f"[mars_credit_manager deposit {deposit_amt} {deposit_cur}]"
     _export_action_row(exporter, row, action_index, account_id)
 
 
-def _handle_borrow(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
-    borrow_amt, borrow_cur = _get_amount_for_action("borrow", action_info, msginfo)
+def _get_deposit_amount(msginfo):
+    events_as_dict = msginfo.events_as_dict
+
+    for i, event in enumerate(events_as_dict):
+        if event["event_type"] == "wasm" and event.get("action") == "rover/execute/update_credit_account":
+            coin_deposited = event["coin_deposited"]
+            deposit_amt, deposit_cur = msginfo.amount_currency(coin_deposited)[0]
+            return deposit_amt, deposit_cur
+
+    raise Exception("Unable to get deposit amount")
+
+
+def _handle_borrow(exporter, txinfo, msginfo, empty_fee, action_index, account_id):
+    borrow_amt, borrow_cur = _get_borrow_amount(msginfo)
 
     row = make_osmo_borrow_tx(txinfo, msginfo, borrow_amt, borrow_cur, empty_fee=empty_fee)
     row.comment += f" [mars_credit_manager borrow {borrow_amt} {borrow_cur}]"
     _export_action_row(exporter, row, action_index, account_id)
 
 
-def _handle_repay(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
-    repay_amt, repay_cur = _get_amount_for_action("repay", action_info, msginfo)
+def _get_borrow_amount(msginfo):
+    events_as_dict = msginfo.events_as_dict
+
+    for i, event in enumerate(events_as_dict):
+        if event["event_type"] == "wasm" and "coin_borrowed" in event:
+            coin_borrowed = event["coin_borrowed"]
+            borrow_amt, borrow_cur = msginfo.amount_currency(coin_borrowed)[0]
+            return borrow_amt, borrow_cur
+
+    raise Exception("Unable to get borrow amount")
+
+
+def _handle_repay(exporter, txinfo, msginfo, empty_fee, action_index, account_id):
+    repay_amt, repay_cur = _get_repay_amount(msginfo)
 
     row = make_osmo_repay_tx(txinfo, msginfo, repay_amt, repay_cur, empty_fee=empty_fee)
     row.comment += f" [mars_credit_manager repay {repay_amt} {repay_cur}]"
     _export_action_row(exporter, row, action_index, account_id)
 
 
-def _handle_withdraw(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
-    withdraw_amt, withdraw_cur = _get_amount_for_action("withdraw", action_info, msginfo)
+def _get_repay_amount(msginfo):
+    events_as_dict = msginfo.events_as_dict
+
+    for i, event in enumerate(events_as_dict):
+        if event["event_type"] == "wasm" and event.get("action", None) == "repay":
+            coin_repaid = event["coin_repaid"]
+            repay_amt, repay_cur = msginfo.amount_currency(coin_repaid)[0]
+            return repay_amt, repay_cur
+
+        if "coin_repaid" in event:
+            coin_repaid = event["coin_repaid"]
+            repay_amt, repay_cur = msginfo.amount_currency(coin_repaid)[0]
+            return repay_amt, repay_cur
+
+    raise Exception("Unable to get repay amount")
+
+
+def _handle_withdraw(exporter, txinfo, msginfo, empty_fee, action_index, account_id):
+    withdraw_amt, withdraw_cur = _get_withdraw_amount(msginfo)
 
     row = make_mars_custom_tx(txinfo, msginfo, tx_type=TX_TYPE_MARS_WITHDRAW, empty_fee=empty_fee)
     row.comment += f"[mars_credit_manager withdraw {withdraw_amt} {withdraw_cur}]"
     _export_action_row(exporter, row, action_index, account_id)
 
 
-def _handle_lend(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
-    _, lend_cur = _get_amount_for_action("lend", action_info, msginfo)
+def _get_withdraw_amount(msginfo):
+    events_as_dict = msginfo.events_as_dict
+
+    for i, event in enumerate(events_as_dict):
+        if event["event_type"] == "wasm" and event.get("action") == "withdraw":
+            amount_raw = event["amount"]
+            denom = event["denom"]
+            withdraw_amt, withdraw_cur = msginfo.amount_currency(amount_raw + denom)[0]
+            return withdraw_amt, withdraw_cur
+        if event["event_type"] == "wasm" and event.get("action") == "callback/withdraw":
+            coin_withdrawn = event["coin_withdrawn"]
+            withdraw_amt, withdraw_cur = msginfo.amount_currency(coin_withdrawn)[0]
+            return withdraw_amt, withdraw_cur
+
+    raise Exception("Unable to get withdraw amount")
+
+
+def _handle_lend(exporter, txinfo, msginfo, empty_fee, action_index, account_id):
+    lend_amt, lend_cur = _get_lend_amount(msginfo)
 
     row = make_mars_custom_tx(txinfo, msginfo, tx_type=TX_TYPE_MARS_LEND, empty_fee=empty_fee)
-    row.comment += f" [mars_credit_manager lend {lend_cur}]"
+    row.comment += f" [mars_credit_manager lend {lend_amt} {lend_cur}]"
     _export_action_row(exporter, row, action_index, account_id)
 
 
-def _handle_reclaim(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
-    reclaim_amt, reclaim_cur = _get_amount_for_action("reclaim", action_info, msginfo)
+def _get_lend_amount(msginfo):
+    events_as_dict = msginfo.events_as_dict
+
+    for i, event in enumerate(events_as_dict):
+        if event["event_type"] == "wasm" and event.get("action", None) == "lend":
+
+            event_after = events_as_dict[i+1]
+            if event_after["event_type"] == "coin_spent":
+                lent_amount_raw = event_after["amount"]
+                lend_amt, lend_cur = msginfo.amount_currency(lent_amount_raw)[0]
+                return lend_amt, lend_cur
+            elif event_after["event_type"] == "wasm" and event_after["action"] == "deposit":
+                lent_amount_raw = event_after["amount"] + event_after["denom"]
+                lend_amt, lend_cur = msginfo.amount_currency(lent_amount_raw)[0]
+                return lend_amt, lend_cur
+
+    raise Exception("Unable to get lend amount")
+
+
+def _handle_reclaim(exporter, txinfo, msginfo, empty_fee, action_index, account_id):
+    reclaim_amt, reclaim_cur = _get_reclaim_amount(msginfo)
 
     row = make_mars_custom_tx(txinfo, msginfo, tx_type=TX_TYPE_MARS_RECLAIM, empty_fee=empty_fee)
     row.comment += f" [mars_credit_manager reclaim {reclaim_amt} {reclaim_cur}]"
     _export_action_row(exporter, row, action_index, account_id)
 
 
-def _handle_swap_exact_in(exporter, txinfo, msginfo, action_info, empty_fee, action_index, account_id):
-    sent_amt, sent_cur = _get_amount_for_action("swap_exact_in", action_info["coin_in"], msginfo)
-    rec_amt_raw = _get_amount_raw_from_wasm("swap_exact_in", msginfo)
-    rec_denom = action_info["denom_out"]
-    rec_amt, rec_cur = denoms.amount_currency_from_raw(rec_amt_raw, rec_denom, OSMO_NODE)
+def _get_reclaim_amount(msginfo):
+    events_as_dict = msginfo.events_as_dict
+
+    for i, event in enumerate(events_as_dict):
+        if event["event_type"] == "wasm" and event.get("action", None) == "reclaim":
+            coin_reclaimed = event["coin_reclaimed"]
+            amt, cur = msginfo.amount_currency(coin_reclaimed)[0]
+            return amt, cur
+
+    raise Exception("Unable to get reclaim amount")
+
+
+def _handle_swap_exact_in(exporter, txinfo, msginfo, empty_fee, action_index, account_id):
+    sent_amt, sent_cur, rec_amt, rec_cur = _get_swap_amount(msginfo)
 
     row = make_osmo_swap_tx(txinfo, msginfo, sent_amt, sent_cur, rec_amt, rec_cur, empty_fee=empty_fee)
     row.comment += f" [mars_credit_manger swap {sent_amt} {sent_cur} for {rec_amt} {rec_cur}]"
     _export_action_row(exporter, row, action_index, account_id)
 
 
-def _get_amount_for_action(action_name, action_info, msginfo):
-    """
-    Retrieves the amount and currency for a given action (borrow, deposit, etc.)
-    from either the action_info or the wasm event data.
-    """
-    if "coin" in action_info:
-        action_info = action_info["coin"]
+def _get_swap_amount(msginfo):
+    events_as_dict = msginfo.events_as_dict
+    sent_amt, sent_cur, rec_amt, rec_cur = None, None, None, None
+    rec_denom = None
 
-    # Find denom
-    denom = action_info["denom"]
+    # Get sent amt, cur
+    for i, event in enumerate(events_as_dict):
+        if event["event_type"] == "wasm" and event["action"] == "swapper":
+            coin_in = event["coin_in"]
+            denom_out = event["denom_out"]
 
-    # Find amount
-    if action_info["amount"] == "account_balance":
-        # special cases
-        if action_name == "withdraw":
-            # i.e. 383886ibc/D79E7D83AB399BFFF93433E54FAA480C191248FC556924A2A8351AE2638B3877
-            coin_withdrawn = msginfo.events_by_type["wasm"]["coin_withdrawn"]
-            withdraw_amt, withdraw_cur = msginfo.amount_currency(coin_withdrawn)[0]
-            return withdraw_amt, withdraw_cur
+            sent_amt, sent_cur = msginfo.amount_currency(coin_in)[0]
+            rec_denom = denom_out
+            break
 
-        if action_name == "repay":
-            coin_repaid = msginfo.events_by_type["wasm"]["coin_repaid"]
-            repay_amt, repay_cur = msginfo.amount_currency(coin_repaid)[0]
-            return repay_amt, repay_cur
+    if not rec_denom:
+        raise Exception("Unable to find rec_denom")
 
-        amount_raw = _get_amount_raw_from_wasm(action_name, msginfo)
-    else:
-        if isinstance(action_info["amount"], dict) and "exact" in action_info["amount"]:
-            amount_raw = action_info["amount"]["exact"]
-        else:
-            amount_raw = action_info["amount"]
+    # Get rec amt, cur
+    for i, event in enumerate(events_as_dict):
+        if event["event_type"] == "token_swapped":
+            tokens_out = event["tokens_out"]
+            if rec_denom in tokens_out:
+                rec_amt, rec_cur = msginfo.amount_currency(tokens_out)[0]
+                break
 
-    # Convert the raw amount and denom to the formatted amount and currency
-    amount, currency = denoms.amount_currency_from_raw(amount_raw, denom, OSMO_NODE)
+    logging.info("sent_amt:%s, sent_cur:%s, rec_amt:%s, rec_cur:%s", sent_amt, sent_cur, rec_amt, rec_cur)
+    if sent_amt is not None and sent_cur is not None and rec_amt is not None and rec_cur is not None:
+        return sent_amt, sent_cur, rec_amt, rec_cur
 
-    return amount, currency
-
-
-def _get_amount_raw_from_wasm(target_action_name, msginfo):
-    events_by_type = msginfo.events_by_type
-    actions = msginfo.execute_contract_message["update_credit_account"]["actions"]
-
-    # comma-delimited element
-    amounts = events_by_type["wasm"]["amount"].split(",")
-
-    # choose amount from list based on where action_name exists in actions element
-    cur_index = 0
-    for action in actions:
-        action_name = list(action.keys())[0]
-        action_info = action[action_name]
-
-        if action_name == target_action_name:
-            return amounts[cur_index]
-
-        if "amount" in action_info or "amount" in action_info.get("coin_in", {}):
-            cur_index += 1
-
-    raise Exception("Bad condition: unable to retrieve index in _get_amount_from_wasm()")
+    raise Exception("Unable to get swap amount")

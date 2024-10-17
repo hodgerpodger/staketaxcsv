@@ -33,7 +33,7 @@ class MsgInfoIBC:
         self.transfers_net_exact = util_ibc.aggregate_transfers_net(
             self.transfers[0], self.transfers[1], tiny_amount_filter=False)
         self.transfers_event = self._transfers_transfer_event(show_addrs=True)
-        self.wasm = MsgInfoIBC.wasm(log)
+        self.wasm = MsgInfoIBC._wasm(log)
         self.contract = self._contract(message)
         self.events_by_type = self._events_by_type()
 
@@ -258,9 +258,8 @@ class MsgInfoIBC:
         return amount, currency
 
     @classmethod
-    def wasm(cls, log):
+    def _wasm(cls, log):
         """ Parses wasm in log to return list of action dictionaries. """
-
         events = log["events"]
         for event in events:
             attributes, event_type = event["attributes"], event["type"]
@@ -287,6 +286,7 @@ class MsgInfoIBC:
 
                 if len(action):
                     actions.append(action)
+
                 return actions
 
         return []

@@ -27,7 +27,7 @@ def _handle_bridge_transfer_v1(exporter, txinfo):
 
     msginfo = txinfo.msgs[0]
     transfers_in, transfers_out = msginfo.transfers
-    wasm = msginfo.wasm
+    wasm = msginfo._wasm
 
     # Prepare comment for bridge transaction
     comment = "bridge"

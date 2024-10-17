@@ -9,7 +9,7 @@ def is_astroport_pair_contract(contract_data):
 
 def handle_astroport_swap(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers_net
-    wasm = msginfo.wasm
+    wasm = msginfo._wasm
 
     if len(transfers_in) == 1 and len(transfers_out) == 1 and wasm[0]["action"] == "swap":
         sent_amount, sent_currency = transfers_out[0]
