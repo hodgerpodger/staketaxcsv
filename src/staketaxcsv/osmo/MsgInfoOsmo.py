@@ -60,7 +60,6 @@ class MsgInfoOsmo(MsgInfoIBC):
             out.append(item)
         return out
 
-
     def print(self):
         super().print()
         print("\n\texecute_contract_message:")

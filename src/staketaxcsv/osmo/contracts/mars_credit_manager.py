@@ -216,7 +216,7 @@ def _get_lend_amount(msginfo):
     for i, event in enumerate(events_as_dict):
         if event["event_type"] == "wasm" and event.get("action", None) == "lend":
 
-            event_after = events_as_dict[i+1]
+            event_after = events_as_dict[i + 1]
             if event_after["event_type"] == "coin_spent":
                 lent_amount_raw = event_after["amount"]
                 lend_amt, lend_cur = msginfo.amount_currency(lent_amount_raw)[0]
