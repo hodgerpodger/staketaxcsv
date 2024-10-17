@@ -181,4 +181,4 @@ def _msgs(elem, wallet_address):
 
 
 def _actions(log):
-    return MsgInfoIBC.wasm(log)
+    return MsgInfoIBC._wasm(log)
