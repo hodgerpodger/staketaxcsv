@@ -9,7 +9,7 @@ validator or contract.  This is to ensure good faith in maintaining privacy.
 
 import logging
 import unittest
-from tests.utils_osmo import run_test
+from tests.utils_osmo import run_test, run_test_verbose
 
 
 class TestOsmoMars(unittest.TestCase):
@@ -45,6 +45,12 @@ timestamp            tx_type         received_amount  received_currency  sent_am
         """
         self.assertEqual(result, correct_result.strip(), result)
 
+        result = run_test_verbose(
+            "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd",
+            "9E9145D8F4057F8A35578001398AD47F20E767C50EE91C45BCD6BAA141E141FE",
+        )
+        self.assertTrue("withdraw 1.258961 AKT" in result)
+
     def test_withdraw_account_balance(self):
         result = run_test(
             "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd",
@@ -58,6 +64,12 @@ timestamp            tx_type         received_amount  received_currency  sent_am
 -------------------  --------------  ---------------  -----------------  -----------  -------------  --------  ------------  --------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+        result = run_test_verbose(
+            "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd",
+            "4F24719C4887D7AC5E6185F16AFC4BEC55B97675EE9679B0BA432DC6CA054CE6",
+        )
+        self.assertTrue("withdraw 0.383886 TIA" in result)
 
     def test_repay_from_wallet(self):
         result = run_test(
@@ -88,6 +100,13 @@ timestamp            tx_type        received_amount  received_currency  sent_amo
         """
         self.assertEqual(result, correct_result.strip(), result)
 
+        result = run_test_verbose(
+            "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd",
+            "7B6BB8354765417E7442A98A6E494D98FAC87EAEBAB2F2A7C599906590245497",
+        )
+        self.assertTrue("deposit 12.824204 USDC" in result)
+        self.assertTrue("lend 12.824204 USDC" in result)
+
     def test_lend_deposit_amount_account_balance(self):
         result = run_test(
             "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd",
@@ -101,6 +120,12 @@ timestamp            tx_type     received_amount  received_currency  sent_amount
 -------------------  ----------  ---------------  -----------------  -----------  -------------  ------  ------------  --------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+        result = run_test_verbose(
+            "osmo1kpz70lr2402qt8d3f5zgdq4smslap83w6l2axd",
+            "38A12E02E164D8534B8EBCAC8B15D2651E5EE553320EFD3025730DCD090B98DE",
+        )
+        self.assertTrue("lend 28.532982 USDT" in result)
 
     def test_lend_deposit_no_first_message(self):
         result = run_test(
@@ -116,6 +141,13 @@ timestamp            tx_type        received_amount  received_currency  sent_amo
         """
         self.assertEqual(result, correct_result.strip(), result)
 
+        result = run_test_verbose(
+            "osmo1kwmk8mfrna308nm0jftrgravuuwuuk3fvmwma8",
+            "73B6822DDA4BCA3DE397B429F9F4F8E809DBB6C115DA4967A74C721CA2141983",
+        )
+        self.assertTrue("deposit 241.688373 USDC" in result)
+        self.assertTrue("lend 241.688373 USDC" in result)
+
     def test_reclaim_withdraw(self):
         result = run_test(
             "osmo1kwmk8mfrna308nm0jftrgravuuwuuk3fvmwma8",
@@ -129,6 +161,13 @@ timestamp            tx_type         received_amount  received_currency  sent_am
 -------------------  --------------  ---------------  -----------------  -----------  -------------  --------  ------------  --------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+        result = run_test_verbose(
+            "osmo1kwmk8mfrna308nm0jftrgravuuwuuk3fvmwma8",
+            "C7637097E8E4D977E383F697619881311BD91BA313D04C6E895D6C946E49122D",
+        )
+        self.assertTrue("reclaim 100.0 USDC" in result)
+        self.assertTrue("withdraw 100.0 USDC" in result)
 
     def test_create_credit_account_no_spend_fee(self):
         result = run_test(
@@ -158,3 +197,23 @@ timestamp            tx_type  received_amount  received_currency  sent_amount  s
 -------------------  -------  ---------------  -----------------  -----------  -------------  --------  ------------  --------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+    def test_deposit(self):
+        result = run_test(
+            "osmo1vqzn2kzjnhvn02x0xc5n3z2wwaw766asywjlps",
+            "E86D666664D6280990601CC98FBA45C1528DB8AA8BD6AB986623280A37772B1A"
+        )
+        correct_result = """
+-------------------  -------------  ---------------  -----------------  -----------  -------------  --------  ------------  --------------------------------------------------------------------
+timestamp            tx_type        received_amount  received_currency  sent_amount  sent_currency  fee       fee_currency  txid
+2024-10-17 21:59:39  SPEND                                              0.000018000  OSMO           0.004555  OSMO          E86D666664D6280990601CC98FBA45C1528DB8AA8BD6AB986623280A37772B1A-0
+2024-10-17 21:59:39  _MARS_DEPOSIT                                                                                          E86D666664D6280990601CC98FBA45C1528DB8AA8BD6AB986623280A37772B1A-1-0
+-------------------  -------------  ---------------  -----------------  -----------  -------------  --------  ------------  --------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
+
+        result = run_test_verbose(
+            "osmo1vqzn2kzjnhvn02x0xc5n3z2wwaw766asywjlps",
+            "E86D666664D6280990601CC98FBA45C1528DB8AA8BD6AB986623280A37772B1A",
+        )
+        self.assertTrue("deposit 0.00067076 WBTC.axl" in result)
