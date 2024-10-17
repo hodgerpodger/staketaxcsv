@@ -12,7 +12,7 @@ def handle_fin(elem, txinfo):
     rows = []
 
     for msginfo in txinfo.msgs:
-        actions = msginfo._wasm
+        actions = msginfo.wasm
 
         if _is_swap(actions):
             result = _handle_swap(txinfo, msginfo)

@@ -30,7 +30,7 @@ class TxInfoFet(TxInfo):
             print("\tmessage:")
             pprint.pprint(msg.message)
             print("\n\twasm:")
-            pprint.pprint(msg._wasm)
+            pprint.pprint(msg.wasm)
         print("\n")
 
     def first_msg_type(self):
@@ -56,7 +56,7 @@ class MsgInfo:
         self.transfers = transfers
         self.transfers_net = transfers
         self.log = log
-        self.wasm = MsgInfoIBC._wasm(log)
+        self.wasm = MsgInfoIBC.wasm(log)
         self.contract = self._contract(message)
 
     def _contract(self, message):

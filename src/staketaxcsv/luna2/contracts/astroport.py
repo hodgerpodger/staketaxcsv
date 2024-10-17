@@ -14,7 +14,7 @@ def handle_astroport(elem, txinfo):
     rows = []
 
     for msginfo in txinfo.msgs:
-        actions = msginfo._wasm
+        actions = msginfo.wasm
 
         if _is_swap(actions):
             result = _handle_swap(txinfo, msginfo)
@@ -51,7 +51,7 @@ def _is_provide_liquidity(actions):
 
 
 def _handle_provide_liquidity(txinfo, msginfo):
-    actions = msginfo._wasm
+    actions = msginfo.wasm
 
     pl_action = [action for action in actions if action["action"] == "provide_liquidity"][0]
     mint_action = [action for action in actions if action["action"] == "mint"][0]
@@ -88,7 +88,7 @@ def _is_withdraw_liquidity(actions):
 
 
 def _handle_withdraw_liquidity(txinfo, msginfo):
-    actions = msginfo._wasm
+    actions = msginfo.wasm
 
     wl_action = [action for action in actions if action["action"] == "withdraw_liquidity"][0]
 
@@ -128,7 +128,7 @@ def _handle_swap(txinfo, msginfo):
 
     raise Exception("Unable to handle swap")
 
-    actions = msginfo._wasm
+    actions = msginfo.wasm
     swap_actions = [action for action in actions if action["action"] == "swap"]
 
     sent_amount_raw, sent_asset = swap_actions[0]["offer_amount"], swap_actions[0]["offer_asset"]
@@ -151,7 +151,7 @@ def _is_xastro_staking(actions):
 
 
 def _handle_xastro_staking(txinfo, msginfo):
-    actions = msginfo._wasm
+    actions = msginfo.wasm
 
     sent_amount_raw, sent_asset = actions[0]["amount"], actions[0]["_contract_address"]
     received_amount_raw, received_asset = actions[1]["amount"], actions[1]["_contract_address"]
@@ -173,7 +173,7 @@ def _is_airdrop(actions):
 
 
 def _handle_airdrop(txinfo, msginfo):
-    actions = msginfo._wasm
+    actions = msginfo.wasm
 
     reward_amount_raw, reward_asset = actions[1]["amount"], actions[1]["_contract_address"]
     reward_amount, reward_currency = staketaxcsv.luna2.util_luna2.asset_to_currency(reward_amount_raw, reward_asset)
@@ -193,7 +193,7 @@ def _is_airdrop_vesting_account(actions):
 
 
 def _handle_aidrop_vesting_account(txinfo, msginfo):
-    actions = msginfo._wasm
+    actions = msginfo.wasm
 
     reward_amount_raw, reward_asset = actions[2]["amount"], actions[2]["_contract_address"]
     reward_amount, reward_currency = staketaxcsv.luna2.util_luna2.asset_to_currency(reward_amount_raw, reward_asset)

@@ -10,7 +10,7 @@ def handle_airdrop(elem, txinfo):
     rows = []
 
     for msginfo in txinfo.msgs:
-        actions = msginfo._wasm
+        actions = msginfo.wasm
 
         if len(actions) == 2 and actions[0]["action"] == "claim" and actions[1]["action"] == "transfer":
             reward_amount_raw = actions[1]["amount"]
