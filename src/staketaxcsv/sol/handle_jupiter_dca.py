@@ -146,6 +146,12 @@ def _handle_swap_route(exporter, txinfo):
     account_to_mint = txinfo.account_to_mint
     mints = txinfo.mints
 
+    # Add to account_to_mint for special case when initializeAccount3 in instruction
+    if "initializeAccount3" in inner_parsed:
+        account = inner_parsed["initializeAccount3"][0]["account"]
+        mint = inner_parsed["initializeAccount3"][0]["mint"]
+        account_to_mint[account] = mint
+
     if "transfer" in inner_parsed:
         transfers_list = inner_parsed["transfer"]
 
