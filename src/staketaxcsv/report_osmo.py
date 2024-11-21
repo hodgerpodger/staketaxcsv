@@ -84,10 +84,10 @@ def txhistory(wallet_address):
     # Set time estimates for progress indicator
     count_pages = txdata.get_txs_pages_count(wallet_address, start_date, end_date)
     progress.set_estimate(count_pages)
-    reward_tokens = staketaxcsv.osmo.api_data.get_lp_tokens(wallet_address)
-    progress.set_estimate_lp_rewards_stage(len(reward_tokens))
+    # reward_tokens = staketaxcsv.osmo.api_data.get_lp_tokens(wallet_address)
+    # progress.set_estimate_lp_rewards_stage(len(reward_tokens))
     progress.set_estimate_process_transactions_stage(count_pages * TXS_LIMIT_PER_QUERY)
-    logging.info("pages: %s, reward_tokens: %s", count_pages, reward_tokens)
+    # logging.info("pages: %s, reward_tokens: %s", count_pages, reward_tokens)
 
     # Fetch transactions
     elems = txdata.get_txs_all(wallet_address, progress, start_date, end_date)
@@ -100,7 +100,7 @@ def txhistory(wallet_address):
     staketaxcsv.osmo.processor.process_txs(wallet_address, elems, exporter, progress=progress)
 
     # Fetch & process LP rewards data
-    lp_rewards(wallet_address, reward_tokens, exporter, progress)
+    # lp_rewards(wallet_address, reward_tokens, exporter, progress)
 
     exporter.sort_rows(reverse=True)
 

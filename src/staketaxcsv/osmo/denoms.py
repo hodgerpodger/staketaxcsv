@@ -4,9 +4,9 @@ from staketaxcsv.common.ibc import denoms as denoms_common
 
 
 def amount_currency_from_raw(amount_raw, currency_raw, lcd_node):
-    amt, cur = _symbol_exponent(amount_raw, currency_raw)
-    if amt is not None and cur:
-        return amt, cur
+    #amt, cur = _symbol_exponent(amount_raw, currency_raw)
+    #if amt is not None and cur:
+    #    return amt, cur
 
     amt2, cur2 = denoms_common.amount_currency_from_raw(amount_raw, currency_raw, lcd_node)
     return amt2, cur2
