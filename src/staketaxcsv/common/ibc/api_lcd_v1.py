@@ -108,7 +108,7 @@ class LcdAPI_v1:
         if wallet_address.startswith("evmos"):
             total_count_txs = int(data["total"])
         else:
-            total_count_txs = int(data["pagination"]["total"])
+            total_count_txs = int(data["pagination"]["total"] if data["pagination"] else data['total'])
         return elems, next_offset, total_count_txs
 
     def _ibc_address_to_denom(self, ibc_address):
