@@ -74,11 +74,12 @@ class LcdAPI_v1:
     @use_debug_files(None, REPORTS_DIR)
     def _get_txs(self, wallet_address, events_type, offset, limit, sleep_seconds):
         uri_path = "/cosmos/tx/v1beta1/txs"
+        ORDER_BY_DESC = 2
         query_params = {
             "pagination.limit": limit,
             "pagination.offset": offset,
             "pagination.count_total": True,
-            "order_by": "ORDER_BY_DESC",
+            "order_by": ORDER_BY_DESC,
         }
 
         if events_type == EVENTS_TYPE_SENDER:
