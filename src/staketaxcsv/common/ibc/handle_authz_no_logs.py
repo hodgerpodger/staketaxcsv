@@ -7,10 +7,6 @@ def is_authz_no_logs_tx(elem):
     Checks if logs are missing and the first message is MsgExec.
     """
     if not elem.get("logs"):
-        print("roger tx is ")
-        import pprint
-        pprint.pprint(elem.get("tx"))
-
         messages = elem.get("tx", {}).get("body", {}).get("messages", [])
         if len(messages) == 0:
             return False
