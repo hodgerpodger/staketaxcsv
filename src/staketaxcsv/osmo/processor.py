@@ -70,7 +70,8 @@ def _handle_message(exporter, txinfo, msginfo):
         msg_type = util_osmo._msg_type(msginfo)
 
         # swaps
-        if msg_type in [co.MSG_TYPE_SWAP_IN, co.MSG_TYPE_SPLIT_ROUTE_SWAP, co.MSG_TYPE_SWAP_OUT]:
+        if msg_type in [co.MSG_TYPE_SWAP_IN, co.MSG_TYPE_SPLIT_ROUTE_SWAP,
+                        co.MSG_TYPE_SWAP_OUT, co.MSG_TYPE_SPLIT_ROUTE_SWAP_OUT]:
             staketaxcsv.osmo.handle_swap.handle_swap(exporter, txinfo, msginfo)
 
         # lp transactions
