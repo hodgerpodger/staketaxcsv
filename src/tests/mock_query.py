@@ -73,6 +73,6 @@ def _create_filename(func, args, dirname):
 
 def _clean(arg):
     if type(arg) in (str, int, float):
-        return str(arg).replace("/", "+").replace(" ", "+")
+        return str(arg).replace("/", "+").replace(" ", "+").replace(":", "+")
     else:
         return ""
