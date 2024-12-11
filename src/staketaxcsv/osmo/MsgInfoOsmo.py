@@ -12,7 +12,7 @@ class MsgInfoOsmo(MsgInfoIBC):
         super().__init__(wallet_address, msg_index, message, log, lcd_node)
         self.events_by_type = self._events_by_type()
         self.execute_contract_message = self._execute_contract_message()
-        self.events_as_dict = self._events_as_dict(self.log)
+        self.events_as_dict = self._events_as_dict(self.events)
 
     def amount_currency_single(self, amount_raw, currency_raw):
         return denoms_osmo.amount_currency_from_raw(amount_raw, currency_raw, self.lcd_node)
@@ -34,11 +34,10 @@ class MsgInfoOsmo(MsgInfoIBC):
 
         return {}
 
-    def _events_as_dict(self, log):
+    def _events_as_dict(self, events):
         """ Returns event log element, converting attributes lists into dicts """
         out = []
 
-        events = log["events"]
         for event in events:
             attributes, event_type = event["attributes"], event["type"]
             item = {

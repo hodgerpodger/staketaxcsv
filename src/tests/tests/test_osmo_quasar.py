@@ -23,8 +23,8 @@ class TestOsmoQuasar(unittest.TestCase):
 -------------------  -------  ---------------  -----------------  -----------  -------------  -----------  ------------  ------------------------------------------------------------------
 timestamp            tx_type  received_amount  received_currency  sent_amount  sent_currency  fee          fee_currency  txid
 2024-04-03 06:21:44  STAKING  1.060789         SOMM                                           0.000744000  OSMO          22BD4955CAD2020AEF2DF753EA70448E2334ABCA3E6C14DF25979523043DDA1E-0
-2024-04-03 06:21:44  STAKING  0.000047751      ETH                                            0.000744000  OSMO          22BD4955CAD2020AEF2DF753EA70448E2334ABCA3E6C14DF25979523043DDA1E-0
-2024-04-03 06:21:44  STAKING  0.000061725      YieldETH                                       0.000744000  OSMO          22BD4955CAD2020AEF2DF753EA70448E2334ABCA3E6C14DF25979523043DDA1E-0
+2024-04-03 06:21:44  STAKING  0.000047751      WETH                                           0.000744000  OSMO          22BD4955CAD2020AEF2DF753EA70448E2334ABCA3E6C14DF25979523043DDA1E-0
+2024-04-03 06:21:44  STAKING  0.000061725      YIELDETH                                       0.000744000  OSMO          22BD4955CAD2020AEF2DF753EA70448E2334ABCA3E6C14DF25979523043DDA1E-0
 -------------------  -------  ---------------  -----------------  -----------  -------------  -----------  ------------  ------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)

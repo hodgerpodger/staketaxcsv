@@ -12,14 +12,17 @@ RECEIVER = "receiver"
 SPENDER = "spender"
 AMOUNT = "amount"
 
-
 class MsgInfoIBC:
     """ Single message info for index <i> """
 
     lcd_node = None
     wallet_address = None
 
-    def __init__(self, wallet_address, msg_index, message, log, lcd_node):
+    def __init__(self, wallet_address, msg_index, message, log=None, lcd_node=None, events=None):
+        """
+        Parses a single message info for index <msg_index>.
+        Either `log` or `events` must be provided.
+        """
         if lcd_node is not None:
             MsgInfoIBC.lcd_node = lcd_node
 
@@ -28,12 +31,17 @@ class MsgInfoIBC:
         self.message = message
         self.msg_type = self._msg_type(message)
         self.log = log
+
+        # Unified events extraction
+        self.events = log["events"] if log else events or []
+
         self.transfers = self._transfers()
         self.transfers_net = util_ibc.aggregate_transfers_net(self.transfers[0], self.transfers[1])
         self.transfers_net_exact = util_ibc.aggregate_transfers_net(
-            self.transfers[0], self.transfers[1], tiny_amount_filter=False)
-        self.transfers_event = self._transfers_transfer_event(show_addrs=True)
-        self.wasm = MsgInfoIBC._wasm(log)
+            self.transfers[0], self.transfers[1], tiny_amount_filter=False
+        )
+        self.transfers_event = self._transfers_from_transfer_event(show_addrs=True)
+        self.wasm = MsgInfoIBC._wasm(log) if log else []
         self.contract = self._contract(message)
         self.events_by_type = self._events_by_type()
 
@@ -78,13 +86,12 @@ class MsgInfoIBC:
 
         if not self._has_coin_spent_received():
             # Only add "transfer" event if "coin_received"/"coin_spent" events do not exist
-            transfers_in, transfers_out = self._transfers_transfer_event()
+            transfers_in, transfers_out = self._transfers_from_transfer_event()
 
         return transfers_in, transfers_out
 
     def _has_event_type(self, target_event_type):
-        events = self.log["events"]
-        for event in events:
+        for event in self.events:
             event_type, attributes = event["type"], event["attributes"]
             if event_type == target_event_type:
                 return True
@@ -96,8 +103,7 @@ class MsgInfoIBC:
     def _transfers_coin_received(self):
         transfers_in = []
 
-        events = self.log["events"]
-        for event in events:
+        for event in self.events:
             event_type, attributes = event["type"], event["attributes"]
 
             # In rare cases, base64 decode required.
@@ -149,8 +155,7 @@ class MsgInfoIBC:
     def _transfers_coin_spent(self):
         transfers_out = []
 
-        events = self.log["events"]
-        for event in events:
+        for event in self.events:
             event_type, attributes = event["type"], event["attributes"]
 
             # In rare cases, base64 decode required.
@@ -179,13 +184,12 @@ class MsgInfoIBC:
 
         return transfers_out
 
-    def _transfers_transfer_event(self, show_addrs=False):
+    def _transfers_from_transfer_event(self, show_addrs=False):
         """ Returns (list of inbound transfers, list of outbound transfers), relative to wallet_address
             using transfer event element only. """
         transfers_in, transfers_out = [], []
 
-        events = self.log["events"]
-        for event in events:
+        for event in self.events:
             event_type, attributes = event["type"], event["attributes"]
 
             # In rare cases, base64 decode required.
@@ -298,10 +302,8 @@ class MsgInfoIBC:
             return None
 
     def _events_by_type(self):
-        log = self.log
-
         out = {}
-        for event in log["events"]:
+        for event in self.events:
             attributes = event["attributes"]
             event_type = event["type"]
 

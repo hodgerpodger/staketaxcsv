@@ -16,6 +16,7 @@ from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 from staketaxcsv.common.ibc.TxInfoIBC import TxInfoIBC
 from staketaxcsv.common.make_tx import make_spend_fee_tx, make_simple_tx
 from staketaxcsv.common.ExporterTypes import TX_TYPE_FAILED_NO_FEE
+from staketaxcsv.common.ibc.handle_authz_no_logs import handle_authz_no_logs_tx, is_authz_no_logs_tx
 
 MILLION = 1000000.0
 
@@ -29,27 +30,31 @@ def txinfo(wallet_address, elem, mintscan_label, lcd_node, customMsgInfo=None):
     memo = _get_memo(elem)
     is_failed = ("code" in elem and elem["code"] > 0)
 
-    # Construct msgs: list of MsgInfoIBC objects
-    msgs = []
-    for i in range(len(elem["logs"])):
-        log = elem["logs"][i]
+    if is_authz_no_logs_tx(elem):
+        # special case for msgexec with logs element empty
+        msgs = handle_authz_no_logs_tx(wallet_address, elem, lcd_node)
+    else:
+        # Construct msgs: list of MsgInfoIBC objects
+        msgs = []
+        if "logs" in elem and elem["logs"]:
+            # Standard case using logs
+            for i, log in enumerate(elem["logs"]):
+                # Prevent crash in rare cases where msg_index field exists, with null value
+                if "body" in elem["tx"] and "msg_index" in log and log["msg_index"] is None:
+                    continue
 
-        # Prevent crash in rare cases where msg_index field exists, with null value
-        if "body" in elem["tx"] and "msg_index" in log and log["msg_index"] is None:
-            continue
+                if "body" in elem["tx"]:
+                    message = elem["tx"]["body"]["messages"][i]
+                elif "value" in elem["tx"]:
+                    message = elem["tx"]["value"]["msg"][i]
+                else:
+                    raise Exception("Unable to deduce message")
 
-        if "body" in elem["tx"]:
-            message = elem["tx"]["body"]["messages"][i]
-        elif "value" in elem["tx"]:
-            message = elem["tx"]["value"]["msg"][i]
-        else:
-            raise Exception("Unable to deduce message")
-
-        if customMsgInfo:
-            msginfo = customMsgInfo(wallet_address, i, message, log, lcd_node)
-        else:
-            msginfo = MsgInfoIBC(wallet_address, i, message, log, lcd_node)
-        msgs.append(msginfo)
+                if customMsgInfo:
+                    msginfo = customMsgInfo(wallet_address, i, message, log, lcd_node)
+                else:
+                    msginfo = MsgInfoIBC(wallet_address, i, message, log, lcd_node)
+                msgs.append(msginfo)
 
     txinfo = TxInfoIBC(txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, memo, is_failed)
     return txinfo

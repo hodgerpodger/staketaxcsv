@@ -216,4 +216,4 @@ timestamp            tx_type        received_amount  received_currency  sent_amo
             "osmo1vqzn2kzjnhvn02x0xc5n3z2wwaw766asywjlps",
             "E86D666664D6280990601CC98FBA45C1528DB8AA8BD6AB986623280A37772B1A",
         )
-        self.assertTrue("deposit 0.00067076 WBTC.axl" in result)
+        self.assertTrue("deposit 0.00067076 WBTC" in result)

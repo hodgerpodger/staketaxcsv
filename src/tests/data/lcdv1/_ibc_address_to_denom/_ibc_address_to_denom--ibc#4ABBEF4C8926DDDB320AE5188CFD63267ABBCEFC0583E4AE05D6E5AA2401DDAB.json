@@ -1,0 +1,6 @@
+{
+    "denom_trace": {
+        "path": "transfer/channel-143",
+        "base_denom": "erc20/tether/usdt"
+    }
+}
