@@ -216,7 +216,14 @@ def _handle_swap_shared_accounts_route(exporter, txinfo):
         # get sent amount, currency
         transfers_list = inner_parsed["transfer"]
         destination = transfers_list[0]["destination"]
-        mint = txinfo.account_to_mints[destination]
+
+        # update acccount_to_mint with "initializeAccount3" info for special case
+        if "initializeAccount3" in inner_parsed:
+            account = inner_parsed["initializeAccount3"][0]["account"]
+            mint = inner_parsed["initializeAccount3"][0]["mint"]
+            txinfo.account_to_mint[account] = mint
+
+        mint = txinfo.account_to_mint[destination]
         amount_raw = transfers_list[0]["amount"]
         sent_amount, sent_currency = util_sol.amount_currency(txinfo, amount_raw, mint)
 
