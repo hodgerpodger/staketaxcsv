@@ -210,16 +210,14 @@ def _handle_swap_shared_accounts_route(exporter, txinfo):
         exporter.ingest_row(row)
         return True
 
-    elif "transfer" in inner_parsed and "initializeAccount3" in inner_parsed:
+    elif "transfer" in inner_parsed:
         # more unusual case where transferChecked filed doesn't exist
 
         # get sent amount, currency
         transfers_list = inner_parsed["transfer"]
-        mint = inner_parsed["initializeAccount3"][0]["mint"]
-        account = inner_parsed["initializeAccount3"][0]["account"]
         destination = transfers_list[0]["destination"]
+        mint = txinfo.account_to_mints[destination]
         amount_raw = transfers_list[0]["amount"]
-        assert account == destination
         sent_amount, sent_currency = util_sol.amount_currency(txinfo, amount_raw, mint)
 
         # get rec amount, currency
