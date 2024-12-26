@@ -4,6 +4,7 @@ from staketaxcsv.common.make_tx import make_swap_tx, make_simple_tx, make_spend_
 from staketaxcsv.common.ExporterTypes import TX_TYPE_SOL_JUPITER_DCA_OPEN, TX_TYPE_SOL_JUPITER_DCA_CLOSE
 from staketaxcsv.sol.handle_simple import handle_unknown_detect_transfers
 from staketaxcsv.sol.constants import CURRENCY_SOL
+from staketaxcsv.sol import util_sol
 
 SHARED_ACCOUNTS_ROUTE = "SharedAccountsRoute"
 OPEN_DCA = "OpenDca"
@@ -206,6 +207,25 @@ def _handle_swap_shared_accounts_route(exporter, txinfo):
             txinfo.fee_currency = ""
 
         row = make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
+        exporter.ingest_row(row)
+        return True
+
+    elif "transfer" in inner_parsed and "initializeAccount3" in inner_parsed:
+        # more unusual case where transferChecked filed doesn't exist
+
+        # get sent amount, currency
+        transfers_list = inner_parsed["transfer"]
+        mint = inner_parsed["initializeAccount3"][0]["mint"]
+        account = inner_parsed["initializeAccount3"][0]["account"]
+        destination = transfers_list[0]["destination"]
+        amount_raw = transfers_list[0]["amount"]
+        assert account == destination
+        sent_amount, sent_currency = util_sol.amount_currency(txinfo, amount_raw, mint)
+
+        # get rec amount, currency
+        rec_amount, rec_currency, _, _ = transfers_in[0]
+
+        row = make_swap_tx(txinfo, sent_amount, sent_currency, rec_amount, rec_currency)
         exporter.ingest_row(row)
         return True
 
