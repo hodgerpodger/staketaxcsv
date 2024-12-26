@@ -180,37 +180,7 @@ def _handle_swap_shared_accounts_route(exporter, txinfo):
     transfers_in, transfers_out, _ = txinfo.transfers_net
     inner_parsed = txinfo.inner_parsed
 
-    if "transferChecked" in inner_parsed:
-        # Get sent amt/currency, receive currency from instruction
-        transfers_list = inner_parsed["transferChecked"]
-
-        # 1st transfer is sent currency
-        sent_amount, sent_currency = _amt_currency(txinfo, transfers_list[0])
-
-        # may be some middle intermediate transfers
-
-        # last transfer is received currency (may include extra fee that contract actually takes)
-        received_amount_with_fee, received_currency = _amt_currency(txinfo, transfers_list[-1])
-
-        # For receive amount, look at "transfers_in" first if exists (because it has fee deduction)
-        received_amount = None
-        if len(transfers_in) > 0:
-            for amt, cur, _, _ in transfers_in:
-                if cur == received_currency:
-                    received_amount = amt
-        if received_amount is None:
-            received_amount = received_amount_with_fee
-
-        # If swap involves SOL sent out, make sure SOL fee is zeroed to avoid error in special case of SOL.
-        if sent_currency == CURRENCY_SOL:
-            txinfo.fee = ""
-            txinfo.fee_currency = ""
-
-        row = make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency)
-        exporter.ingest_row(row)
-        return True
-
-    elif "transfer" in inner_parsed:
+    if "transfer" in inner_parsed or "transferChecked" in inner_parsed:
         # more unusual case where transferChecked filed doesn't exist
 
         # get sent amount, currency
@@ -228,7 +198,16 @@ def _handle_swap_shared_accounts_route(exporter, txinfo):
         sent_amount, sent_currency = util_sol.amount_currency(txinfo, amount_raw, mint)
 
         # get rec amount, currency
-        rec_amount, rec_currency, _, _ = transfers_in[0]
+        rec_amount, rec_currency = None, None
+        if len(transfers_in) == 1:
+            rec_amount, rec_currency, _, _ = transfers_in[0]
+        elif len(transfers_in) == 2:
+            for amt, cur, _, _ in transfers_in:
+                if cur == CURRENCY_SOL and amt < 0.1:
+                    continue
+                rec_amount = amt
+                rec_currency = cur
+
 
         row = make_swap_tx(txinfo, sent_amount, sent_currency, rec_amount, rec_currency)
         exporter.ingest_row(row)
