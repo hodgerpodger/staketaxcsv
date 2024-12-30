@@ -74,7 +74,7 @@ def handle_claim_staking_tip(exporter, txinfo):
         rec_amount, rec_currency, _, _ = transfers_in[0]
         if rec_currency == CURRENCY_SOL:
             row = make_reward_tx(txinfo, rec_amount, rec_currency)
-            row.comment = "claim tx"
+            row.comment = "claim tx for {}".format(wallet_address)
             exporter.ingest_row(row)
             return
 
