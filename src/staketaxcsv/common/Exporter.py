@@ -576,7 +576,7 @@ class Exporter:
         """ Write CSV, suitable for import into Cointracker """
         tags = {
             et.TX_TYPE_AIRDROP: "airdrop",
-            et.TX_TYPE_STAKING: "staked",
+            et.TX_TYPE_STAKING: "staking",
             et.TX_TYPE_TRADE: "",
             et.TX_TYPE_TRANSFER: "",
             et.TX_TYPE_INCOME: "payment",
