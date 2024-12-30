@@ -197,9 +197,16 @@ def _handle_swap_shared_accounts_route(exporter, txinfo):
         amount_raw = transfers_list[0]["amount"]
         sent_amount, sent_currency = util_sol.amount_currency(txinfo, amount_raw, mint)
 
+        # If swap involves SOL sent out, make sure SOL fee is zeroed to avoid error in special case of SOL.
+        if sent_currency == CURRENCY_SOL:
+            txinfo.fee = ""
+            txinfo.fee_currency = ""
+
         # get rec amount, currency
         rec_amount, rec_currency = None, None
-        if len(transfers_in) == 1:
+        if len(transfers_in) == 0:
+            rec_amount, rec_currency = _amt_currency(txinfo, inner_parsed["transferChecked"][-1])
+        elif len(transfers_in) == 1:
             rec_amount, rec_currency, _, _ = transfers_in[0]
         elif len(transfers_in) == 2:
             for amt, cur, _, _ in transfers_in:
@@ -207,7 +214,6 @@ def _handle_swap_shared_accounts_route(exporter, txinfo):
                     continue
                 rec_amount = amt
                 rec_currency = cur
-
 
         row = make_swap_tx(txinfo, sent_amount, sent_currency, rec_amount, rec_currency)
         exporter.ingest_row(row)
