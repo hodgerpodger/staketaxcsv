@@ -1,9 +1,13 @@
 import logging
+from json import JSONDecodeError
 
-from staketaxcsv.sol.constants import CURRENCY_SOL, MILLION
+from staketaxcsv.sol.api_rpc import RpcAPI
+from staketaxcsv.sol.constants import CURRENCY_SOL, MILLION, PROGRAMID_STAKE
 
 FEE_THRESHOLD = 0.03
 
+# Cache for storing results of previous is_staking_account() calls
+_is_staking_account_cache = {}
 
 def amount_currency(txinfo, amount_string, currency_address):
     if currency_address in txinfo.mints:
@@ -51,3 +55,31 @@ def calculate_fee(txinfo):
         return fee_total
     else:
         return txinfo.fee_blockchain
+
+
+def account_exists(wallet_address):
+    data = RpcAPI.fetch_account(wallet_address)
+
+    if "result" not in data:
+        return False, False
+    if "error" in data:
+        return False, False
+
+    try:
+        owner = data["result"]["value"]["owner"]
+        if owner == PROGRAMID_STAKE:
+            return False, True
+        else:
+            return True, False
+    except (JSONDecodeError, TypeError):
+        return False, False
+
+
+def is_staking_account(wallet_address):
+    """Returns True if the address is a staking account, False otherwise, with caching."""
+    if wallet_address in _is_staking_account_cache:
+        return _is_staking_account_cache[wallet_address]
+
+    _, is_staking = account_exists(wallet_address)
+    _is_staking_account_cache[wallet_address] = is_staking
+    return is_staking

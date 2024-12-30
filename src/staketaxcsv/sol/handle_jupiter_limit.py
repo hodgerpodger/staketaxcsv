@@ -115,7 +115,6 @@ def handle_jupiter_limit(exporter, txinfo):
     elif "CancelOrder" in log_instructions:
         _handle_cancel(exporter, txinfo)
     else:
-        return
         raise Exception("Unable to handle tx in handle_jupiter_limit()")
 
 

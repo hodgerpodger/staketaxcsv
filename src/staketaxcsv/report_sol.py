@@ -5,7 +5,6 @@ Prints transactions and writes CSV(s) to _reports/SOL*.csv
 """
 
 import logging
-from json.decoder import JSONDecodeError
 import pprint
 
 
@@ -17,11 +16,10 @@ from staketaxcsv.settings_csv import MESSAGE_ADDRESS_NOT_FOUND, MESSAGE_STAKING_
 from staketaxcsv.sol import staking_rewards
 from staketaxcsv.sol.api_rpc import RpcAPI
 from staketaxcsv.sol.config_sol import localconfig
-from staketaxcsv.sol.constants import PROGRAMID_STAKE
 from staketaxcsv.sol.progress_sol import SECONDS_PER_STAKING_ADDRESS, SECONDS_PER_TX, ProgressSol
 from staketaxcsv.sol.TxInfoSol import WalletInfo
 from staketaxcsv.sol.txids import get_txids, get_txids_for_accounts
-
+from staketaxcsv.sol.util_sol import account_exists
 
 RPC_TIMEOUT = 600  # seconds
 
@@ -41,7 +39,7 @@ def read_options(options):
 
 
 def wallet_exists(wallet_address):
-    is_wallet_address, is_staking_address = _account_exists(wallet_address)
+    is_wallet_address, is_staking_address = account_exists(wallet_address)
     if is_wallet_address:
         return True, None
     if is_staking_address:
@@ -55,24 +53,6 @@ def wallet_exists(wallet_address):
 def _has_transaction(wallet_address):
     txids, _ = RpcAPI.get_txids(wallet_address, limit=2)
     return len(txids) > 0
-
-
-def _account_exists(wallet_address):
-    data = RpcAPI.fetch_account(wallet_address)
-
-    if "result" not in data:
-        return False, False
-    if "error" in data:
-        return False, False
-
-    try:
-        owner = data["result"]["value"]["owner"]
-        if owner == PROGRAMID_STAKE:
-            return False, True
-        else:
-            return True, False
-    except (JSONDecodeError, TypeError):
-        return False, False
 
 
 def txone(wallet_address, txid):

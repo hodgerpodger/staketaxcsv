@@ -6,8 +6,12 @@ from staketaxcsv.sol.constants import (
     INSTRUCTION_TYPE_INITIALIZE_ACCOUNT,
     PROGRAM_SPL_ASSOCIATED_TOKEN_ACCOUNT,
     PROGRAM_SPL_TOKEN,
+    CURRENCY_SOL,
 )
 from staketaxcsv.sol.handle_simple import _handle_generic
+from staketaxcsv.sol.util_sol import is_staking_account
+from staketaxcsv.common.make_tx import make_reward_tx
+
 
 INSTRUCTION_TYPES_INIT = set([
     INSTRUCTION_TYPE_CREATE_ACCOUNT,
@@ -55,3 +59,21 @@ def is_close_account_tx(txinfo):
 
 def handle_close_account_tx(exporter, txinfo):
     _handle_generic(exporter, txinfo, TX_TYPE_SOL_CLOSE_ACCOUNT)
+
+
+def handle_claim_staking_tip(exporter, txinfo):
+    transfers_in, transfers_out, _ = txinfo.transfers_net
+    log_instructions = txinfo.log_instructions
+
+    if (
+        len(transfers_in) == 1
+        and "Claim" in log_instructions
+        and is_staking_account(exporter.wallet_address)
+    ):
+        rec_amount, rec_currency, _, _ = transfers_in[0]
+        if rec_currency == CURRENCY_SOL:
+            row = make_reward_tx(txinfo, rec_amount, rec_currency)
+            exporter.ingest_row(row)
+            return
+
+    raise Exception("Unable to handle tx in handle_claim_staking_tip()")

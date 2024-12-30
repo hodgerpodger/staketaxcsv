@@ -8,6 +8,7 @@ from staketaxcsv.sol.handle_account_misc import (
     handle_init_account_tx,
     is_close_account_tx,
     is_init_account_tx,
+    handle_claim_staking_tip,
 )
 from staketaxcsv.sol.handle_jupiter import (
     handle_jupiter_aggregator_v1,
@@ -132,6 +133,10 @@ def process_tx(wallet_info, exporter, txid, data):
         elif is_nft_mint(txinfo):
             handle_nft_mint(exporter, txinfo)
 
+        # staking account claim transaction
+        elif co.PROGRAMID_CLAIM_STAKING_TIP in program_ids:
+            handle_claim_staking_tip(exporter, txinfo)
+
         # Other
         elif co.PROGRAMID_VOTE in program_ids:
             handle_vote(exporter, txinfo)
@@ -151,7 +156,7 @@ def process_tx(wallet_info, exporter, txid, data):
     except Exception as e:
         logging.error("Exception when handling txid=%s, exception=%s", txid, str(e))
         ErrorCounter.increment("exception", txid)
-        handle_unknown(exporter, txinfo)
+        handle_unknown_detect_transfers(exporter, txinfo)
 
         if localconfig.debug:
             raise e
