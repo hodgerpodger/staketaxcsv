@@ -118,6 +118,16 @@ def txhistory(wallet_address):
     # Staking rewards data
     staking_rewards.reward_txs(wallet_info, exporter, progress, start_date, end_date)
 
+    # Add staking account transactions to report
+    for staking_addr in wallet_info.get_staking_addresses():
+        logging.info("Get txids for staking_addr=%s", staking_addr)
+        staking_wallet_info = WalletInfo(staking_addr)
+        staking_addr_txids = get_txids(staking_addr, progress, start_date, end_date)
+
+        logging.info("Fetch and process for staking_addr=%s, num_txs=%s",
+                     staking_addr, len(staking_addr_txids))
+        _fetch_and_process_txs(staking_addr_txids, staking_wallet_info, exporter, progress=None)
+
     ErrorCounter.log(TICKER_SOL, wallet_address)
     return exporter
 
