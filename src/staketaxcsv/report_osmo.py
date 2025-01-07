@@ -113,12 +113,12 @@ def txhistory(wallet_address):
 
 
 def _cache_load(cache):
-    localconfig.exponents = cache.get_osmo_exponents()
+    # localconfig.exponents = cache.get_osmo_exponents()
     logging.info("_cache_load(): downloaded data from cache ...")
 
 
 def _cache_push(cache):
-    cache.set_osmo_exponents(localconfig.exponents)
+    #cache.set_osmo_exponents(localconfig.exponents)
     logging.info("_cache_push(): push data to cache")
 
 

@@ -9,6 +9,6 @@ class localconfig(config):
 
     start_date = None
     end_date = None
-    symbols = {}
-    exponents = {}
+
+    token_metadata = {}
     contracts = {}

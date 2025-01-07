@@ -1,8 +1,9 @@
 from tests.mock_query import mock_query_one_arg
 from staketaxcsv.settings_csv import TICKER_OSMO
 from staketaxcsv.osmo.api_data import get_tx as my_get_tx
-from staketaxcsv.osmo.api_osmosis import get_symbol as my_get_symbol
-from staketaxcsv.osmo.api_osmosis import get_exponent as my_get_exponent
+from staketaxcsv.osmo.api_imperator import get_symbol as my_get_symbol
+from staketaxcsv.osmo.api_imperator import get_exponent as my_get_exponent
+from staketaxcsv.osmo.api_osmosis import get_token_metadata as my_token_metadata
 DIRNAME = TICKER_OSMO
 
 
@@ -16,3 +17,7 @@ def mock_get_symbol(ibc_address):
 
 def mock_get_exponent(currency):
     return mock_query_one_arg(my_get_exponent, currency, DIRNAME)
+
+
+def mock_get_token_metadata(ibc_address):
+    return mock_query_one_arg(my_token_metadata, ibc_address, DIRNAME)

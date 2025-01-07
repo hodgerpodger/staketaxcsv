@@ -5,7 +5,7 @@ from functools import wraps
 
 from tests.settings_test import DATADIR
 from tests.mock_lcd import MockLcdAPI_v1, MockLcdAPI_v2, MockCosmWasmLcdAPI
-from tests.mock_osmo import mock_get_symbol, mock_get_exponent
+from tests.mock_osmo import mock_get_token_metadata
 from tests.mock_mintscan import MockMintscanAPI
 TESTDATADIR = DATADIR + "/load_tx"
 
@@ -34,8 +34,7 @@ def apply_ibc_patches(func):
              patch("staketaxcsv.common.ibc.api_mintscan_v1.MintscanAPI", new=MockMintscanAPI), \
              patch("staketaxcsv.common.ibc.tx_data.MintscanAPI", new=MockMintscanAPI), \
              patch("staketaxcsv.common.ibc.api_lcd_cosmwasm.CosmWasmLcdAPI", new=MockCosmWasmLcdAPI), \
-             patch("staketaxcsv.osmo.denoms._symbol", mock_get_symbol), \
-             patch("staketaxcsv.osmo.denoms._exponent", mock_get_exponent):
+             patch("staketaxcsv.osmo.api_osmosis.get_token_metadata", mock_get_token_metadata):
             return func(*args, **kwargs)
 
     return wrapper

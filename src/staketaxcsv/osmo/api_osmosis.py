@@ -3,28 +3,25 @@ from urllib.parse import quote
 
 from staketaxcsv.osmo.api_util import APIUtil
 
-OSMO_HISTORICAL_API_NETLOC = "api-osmosis.imperator.co"
+OSMO_API_NETLOC = "sqsprod.osmosis.zone"
 
 
 def _query(uri_path, query_params):
-    result = APIUtil.query_get(OSMO_HISTORICAL_API_NETLOC, uri_path, query_params)
+    result = APIUtil.query_get(OSMO_API_NETLOC, uri_path, query_params)
     time.sleep(1)
     return result
 
 
-def get_symbol(ibc_address) -> str or None:
-    uri_path = "/search/v1/symbol"
-    query_params = {"denom": quote(ibc_address)}
+def get_token_metadata(ibc_address) -> str or None:
+    uri_path = "/tokens/metadata"
+    query_params = {"denoms": quote(ibc_address)}
 
     data = _query(uri_path, query_params)
 
-    return data["symbol"] if "symbol" in data else None
+    symbol = data.get(ibc_address, {}).get("symbol", None)
+    decimals = data.get(ibc_address, {}).get("decimals", None)
 
-
-def get_exponent(currency):
-    uri_path = "/search/v1/exponent"
-    query_params = {"symbol": currency}
-
-    data = _query(uri_path, query_params)
-
-    return int(data["exponent"]) if "exponent" in data else None
+    if symbol and decimals:
+        return symbol, decimals
+    else:
+        return None, None
