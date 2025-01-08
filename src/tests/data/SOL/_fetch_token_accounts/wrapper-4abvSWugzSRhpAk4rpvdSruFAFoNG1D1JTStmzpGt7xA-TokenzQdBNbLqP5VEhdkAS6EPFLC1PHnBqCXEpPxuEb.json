@@ -1,0 +1,86 @@
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "context": {
+            "apiVersion": "2.0.19",
+            "slot": 312576651
+        },
+        "value": [
+            {
+                "account": {
+                    "data": {
+                        "parsed": {
+                            "info": {
+                                "extensions": [
+                                    {
+                                        "extension": "immutableOwner"
+                                    },
+                                    {
+                                        "extension": "transferFeeAmount",
+                                        "state": {
+                                            "withheldAmount": 1600000
+                                        }
+                                    }
+                                ],
+                                "isNative": false,
+                                "mint": "7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1",
+                                "owner": "4abvSWugzSRhpAk4rpvdSruFAFoNG1D1JTStmzpGt7xA",
+                                "state": "initialized",
+                                "tokenAmount": {
+                                    "amount": "38400000",
+                                    "decimals": 2,
+                                    "uiAmount": 384000.0,
+                                    "uiAmountString": "384000"
+                                }
+                            },
+                            "type": "account"
+                        },
+                        "program": "spl-token-2022",
+                        "space": 182
+                    },
+                    "executable": false,
+                    "lamports": 2157600,
+                    "owner": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+                    "rentEpoch": 18446744073709551615,
+                    "space": 182
+                },
+                "pubkey": "91wPvUi8tvCruzMiEaavetve1H8EYRa3UqerJe811cQp"
+            },
+            {
+                "account": {
+                    "data": {
+                        "parsed": {
+                            "info": {
+                                "extensions": [
+                                    {
+                                        "extension": "immutableOwner"
+                                    }
+                                ],
+                                "isNative": false,
+                                "mint": "HeLp6NuQkmYB4pYWo2zYs22mESHXPQYzXbB8n4V98jwC",
+                                "owner": "4abvSWugzSRhpAk4rpvdSruFAFoNG1D1JTStmzpGt7xA",
+                                "state": "initialized",
+                                "tokenAmount": {
+                                    "amount": "5237433774994",
+                                    "decimals": 9,
+                                    "uiAmount": 5237.433774994,
+                                    "uiAmountString": "5237.433774994"
+                                }
+                            },
+                            "type": "account"
+                        },
+                        "program": "spl-token-2022",
+                        "space": 170
+                    },
+                    "executable": false,
+                    "lamports": 2074080,
+                    "owner": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+                    "rentEpoch": 18446744073709551615,
+                    "space": 170
+                },
+                "pubkey": "GND3Z51kKUx3m1qoEkKbriLLPbhzQM5nrqPoyWsWr1Xz"
+            }
+        ]
+    },
+    "id": "be5adf2ee9f450f540cd7325740cdaea754ef660"
+}

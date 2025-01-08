@@ -47,3 +47,38 @@ timestamp            tx_type              received_amount  received_currency    
 -------------------  -------------------  ---------------  --------------------------------------------  -----------  -------------  ---------  ------------  ----------------------------------------------------------------------------------------
         """
         self.assertEqual(result, correct_result.strip(), result)
+
+    def test_jupiter_limit_v2_series(self):
+        result = run_test_txids(
+            "4abvSWugzSRhpAk4rpvdSruFAFoNG1D1JTStmzpGt7xA",
+            [
+                "4aBP4353YQuQnSgX5PxH2upWr3HsS3163RV4NgCb1yTcoHz5pcvgnWxuaicwKkopXKrz9EKff7aAy3jWpbixt5Zn",
+                "k2eGRDNqy6mYEXTGp6XT3XvUjh8YEJrn2ozs2bzAXZXJYzpDc9EuVuo2fkQMaHRxyi2DTsKTBTnrYRU9cRh72Mo",
+            ]
+        )
+        correct_result = """
+-------------------  -------------------  ---------------  --------------------------------------------  -----------  -------------  ---  ------------  ----------------------------------------------------------------------------------------
+timestamp            tx_type              received_amount  received_currency                             sent_amount  sent_currency  fee  fee_currency  txid
+2025-01-02 09:35:12  _JUPITER_LIMIT_OPEN                                                                                                                4aBP4353YQuQnSgX5PxH2upWr3HsS3163RV4NgCb1yTcoHz5pcvgnWxuaicwKkopXKrz9EKff7aAy3jWpbixt5Zn
+2025-01-02 09:36:41  TRADE                999.0            HeLp6NuQkmYB4pYWo2zYs22mESHXPQYzXbB8n4V98jwC  2390.0       USDC                              k2eGRDNqy6mYEXTGp6XT3XvUjh8YEJrn2ozs2bzAXZXJYzpDc9EuVuo2fkQMaHRxyi2DTsKTBTnrYRU9cRh72Mo
+-------------------  -------------------  ---------------  --------------------------------------------  -----------  -------------  ---  ------------  ----------------------------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
+
+    def test_jupiter_limit_v2_open_cancel(self):
+        result = run_test_txids(
+            "4abvSWugzSRhpAk4rpvdSruFAFoNG1D1JTStmzpGt7xA",
+            [
+                "L6rJy9mocHeddUuiu4ozgXZVjAAFYt5B9t2xHycuJxm3JjvwZSUjaW7JQLsZNLFw6MEHPA2pBKVzW4Sb3Q9jYfT",
+                "4iZxoW1D2uP3pwfG3vbpUqxYredB1K6kavLdRnUxq5djfDeLpKDcu2VE2CTuAuHTj5eaR7qVcbRs65tZgzgdKhAj",
+            ]
+        )
+        correct_result = """
+-------------------  -------------------  ---------------  -----------------  -----------  -------------  ---  ------------  ----------------------------------------------------------------------------------------
+timestamp            tx_type              received_amount  received_currency  sent_amount  sent_currency  fee  fee_currency  txid
+2025-01-07 01:30:55  _JUPITER_LIMIT_OPEN                                                                                     L6rJy9mocHeddUuiu4ozgXZVjAAFYt5B9t2xHycuJxm3JjvwZSUjaW7JQLsZNLFw6MEHPA2pBKVzW4Sb3Q9jYfT
+2025-01-07 06:03:26  SPEND                                                    0.000390714  SOL                               4iZxoW1D2uP3pwfG3vbpUqxYredB1K6kavLdRnUxq5djfDeLpKDcu2VE2CTuAuHTj5eaR7qVcbRs65tZgzgdKhAj
+-------------------  -------------------  ---------------  -----------------  -----------  -------------  ---  ------------  ----------------------------------------------------------------------------------------
+        """
+        self.assertEqual(result, correct_result.strip(), result)
+

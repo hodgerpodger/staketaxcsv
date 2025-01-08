@@ -20,6 +20,7 @@ from staketaxcsv.sol.handle_jupiter import (
 from staketaxcsv.sol.handle_jupiter_airdrop import handle_wen_airdrop
 from staketaxcsv.sol.handle_jupiter_dca import handle_jupiter_dca
 from staketaxcsv.sol.handle_jupiter_limit import handle_jupiter_limit
+from staketaxcsv.sol.handle_jupiter_limit_v2 import handle_jupiter_limit_v2
 from staketaxcsv.sol.handle_marinade import (
     handle_marinade, is_marinade_native_staking_create_tx, handle_marinade_native_staking_create_tx)
 from staketaxcsv.sol.handle_metaplex import handle_metaplex, handle_nft_mint, is_nft_mint
@@ -103,11 +104,16 @@ def process_tx(wallet_info, exporter, txid, data):
         elif co.PROGRAMID_SABER_FARM_SSF in program_ids:
             handle_saber_farm_ssf(exporter, txinfo)
 
-        # Jupiter programs
-        elif co.PROGRAMID_JUPITER_LIMIT in program_ids:  # important that this is before jupiter aggregator programs
+        ### Jupiter programs
+
+        # important that these are before jupiter aggregator programs
+        elif co.PROGRAMID_JUPITER_LIMIT in program_ids:
             handle_jupiter_limit(exporter, txinfo)
-        elif co.PROGRAMID_JUPITER_DCA_V6 in program_ids:  # important that this is before jupiter aggregator programs
+        elif co.PROGRAMID_JUPITER_LIMIT_V2 in program_ids:
+            handle_jupiter_limit_v2(exporter, txinfo)
+        elif co.PROGRAMID_JUPITER_DCA_V6 in program_ids:
             handle_jupiter_dca(exporter, txinfo)
+
         elif co.PROGRAMID_JUPITER_AGGREGATOR_V1 in program_ids:
             handle_jupiter_aggregator_v1(exporter, txinfo)
         elif co.PROGRAMID_JUPITER_AGGREGATOR_V2 in program_ids:
@@ -120,6 +126,8 @@ def process_tx(wallet_info, exporter, txid, data):
             handle_jupiter_aggregator_v6(exporter, txinfo)
         elif co.PROGRAMID_JUPITER_WEN_AIRDROP in program_ids:
             handle_wen_airdrop(exporter, txinfo)
+
+        ###
 
         # Metaplex NFT Candy Machinine program
         elif co.PROGRAMID_METAPLEX_CANDY in program_ids:
