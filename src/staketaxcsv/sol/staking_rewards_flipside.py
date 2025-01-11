@@ -21,8 +21,8 @@ def fetch_rewards_flipside(staking_address):
     WHERE
         STAKE_PUBKEY = '{staking_address}'
     ORDER BY
-        BLOCK_TIMESTAMP DESC
-    LIMIT 1000;
+        BLOCK_TIMESTAMP ASC
+    LIMIT 5000;
     """
 
     logging.info("Querying Flipside Crypto for staking rewards...")
