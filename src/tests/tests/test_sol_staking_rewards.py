@@ -14,7 +14,7 @@ from unittest.mock import patch
 
 from tests.settings_test import specialtest, rewards_db, DATADIR
 from tests.mock_sol import MockRpcAPI
-from staketaxcsv.settings_csv import SOL_REWARDS_DB_READ, TICKER_SOL
+from staketaxcsv.settings_csv import SOL_REWARDS_USE_DB, TICKER_SOL
 from staketaxcsv.sol import staking_rewards
 STAKING_ADDRESS = "F6dEJnUbV999jwHdA6GPb1YhwfcyPfDXq9LcwMkUFbLr"
 

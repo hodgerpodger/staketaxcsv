@@ -5,9 +5,6 @@ MINTSCAN_KEY = os.environ.get("STAKETAX_MINTSCAN_KEY", "")
 MINTSCAN_MAX_TXS = os.environ.get("STAKETAX_MINTSCAN_MAX_TXS", 5000)
 MINTSCAN_ON = (MINTSCAN_KEY != "")
 
-# Required for solana staking rewards history
-FLIPSIDE_API_KEY = os.environ.get("STAKETAX_FLIPSIDE_API_KEY", "")
-
 # Environment variables (required for each respective report)
 
 AKT_NODE = os.environ.get("STAKETAX_AKT_NODE", "https://akash-api.polkachu.com")
@@ -49,10 +46,19 @@ STRD_NODE = os.environ.get("STAKETAX_STRD_NODE", "https://lcd-stride.whispernode
 TIA_NODE = os.environ.get("STAKETAX_TIA_NODE", "https://celestia.api.kjnodes.com")
 TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
 
-
 # ########## Optional environment variables ########################################################
 DB_CACHE = os.environ.get("STAKETAX_DB_CACHE", False)
-SOL_REWARDS_DB_READ = os.environ.get("STAKETAX_SOL_REWARDS_DB_READ", False)
+
+# ### One of below required for faster solana staking rewards history
+
+# note: solscan api missing rewards data for some accounts in some parts of 2023 for some reason
+SOL_REWARDS_USE_HYBRID = os.environ.get("STAKETAX_SOL_REWARDS_USE_HYBRID", False)
+SOL_REWARDS_SOLSCAN_API_TOKEN = os.environ.get("STAKETAX_SOL_REWARDS_SOLSCAN_API_TOKEN", "")
+SOL_REWARDS_FLIPSIDE_API_KEY = os.environ.get("STAKETAX_SOL_REWARDS_FLIPSIDE_API_KEY", "")
+SOL_REWARDS_USE_DB = os.environ.get("STAKETAX_SOL_REWARDS_USE_DB", False)
+
+
+# ###
 
 # #############################################################################
 

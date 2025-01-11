@@ -3,13 +3,14 @@ from datetime import datetime
 
 from staketaxcsv.sol.api_rpc import RpcAPI
 from staketaxcsv.sol.make_tx import make_sol_reward_tx
-from staketaxcsv.settings_csv import SOL_REWARDS_DB_READ
+from staketaxcsv.settings_csv import (
+    SOL_REWARDS_USE_DB, SOL_REWARDS_FLIPSIDE_API_KEY, SOL_REWARDS_SOLSCAN_API_TOKEN, SOL_REWARDS_USE_HYBRID)
 from staketaxcsv.sol.staking_rewards_common import get_epochs_all, epoch_slot_and_time
 from staketaxcsv.sol.staking_rewards_db import StakingRewardsDB
 from staketaxcsv.sol.api_marinade import MarinadeAPI
 from staketaxcsv.sol.constants import BILLION
 from staketaxcsv.sol.staking_rewards_flipside import fetch_rewards_flipside
-from staketaxcsv.sol.staking_rewards_flipside import FLIPSIDE_API_KEY
+from staketaxcsv.sol.staking_rewards_solscan import fetch_rewards_solscan
 
 
 def reward_txs(wallet_info, exporter, progress, start_date=None, end_date=None):
@@ -36,22 +37,44 @@ def _rewards(staking_address, start_date=None, end_date=None):
 
 
 def _rewards_all_time(staking_address):
-    """ Get reward transactions for this staking_address within epochs list """
-    if FLIPSIDE_API_KEY:
+    """ Get reward transactions for this staking_address for all time"""
+    if SOL_REWARDS_USE_HYBRID:
+        return _rewards_hybrid(staking_address)
+    if SOL_REWARDS_SOLSCAN_API_TOKEN:
+        return fetch_rewards_solscan(staking_address)
+    if SOL_REWARDS_FLIPSIDE_API_KEY:
         return fetch_rewards_flipside(staking_address)
-
-    epochs_all = get_epochs_all()
-
-    if SOL_REWARDS_DB_READ is False:
+    if SOL_REWARDS_USE_DB:
+        return _rewards_via_db(staking_address)
+    else:
         # No DB available.  Query RPC for all rewards info.
         logging.info("No db available.  Using Solana RPC only to get rewards.  This will take a while ...")
+        return _rewards_via_rpc(staking_address)
 
-        out = []
-        for epoch in epochs_all:
-            ts, amount = _lookup_reward_via_rpc(staking_address, epoch)
-            if ts and amount:
-                out.append((epoch, ts, amount))
-        return out
+
+def _rewards_hybrid(staking_address):
+    """ Use DB for rewards up to 12/31/2023, and Solscan API thereafter """
+    logging.info("Fetching rewards with hybrid method for staking_address=%s...", staking_address)
+
+    cutoff_date = datetime(2023, 12, 31)
+
+    # Fetch rewards from DB up to 12/31/2023
+    rewards_db = _rewards_via_db_up_to_date(staking_address, cutoff_date)
+
+    # Fetch rewards from Solscan for 2024 and beyond
+    rewards_solscan = fetch_rewards_solscan(staking_address)
+    rewards_solscan_filtered = [r for r in rewards_solscan if _date_to_dt(r[1].split()[0]) > cutoff_date]
+
+    # Combine results
+    return rewards_db + rewards_solscan_filtered
+
+
+def _date_to_dt(ymd):
+    return datetime.strptime(ymd, "%Y-%m-%d")
+
+
+def _rewards_via_db(staking_address):
+    epochs_all = get_epochs_all()
 
     rewards_db = StakingRewardsDB().get_rewards_for_address(staking_address, epochs_all)
     logging.info("Found rewards_db: %s", rewards_db)
@@ -72,6 +95,39 @@ def _rewards_all_time(staking_address):
                 out.append((epoch, ts, amount))
 
     return out
+
+
+def _rewards_via_db_up_to_date(staking_address, cutoff_date):
+    """Fetch rewards from DB for epochs up to a specific date."""
+    epochs_all = get_epochs_all()
+
+    rewards_db = StakingRewardsDB().get_rewards_for_address(staking_address, epochs_all)
+    logging.info("Found rewards_db: len=%s", len(rewards_db))
+
+    out = []
+    for epoch in epochs_all:
+        # Get reward for this epoch
+        if epoch in rewards_db:
+            ts, amount = rewards_db[epoch]
+            if float(amount) > 0 and _date_to_dt(ts.split()[0]) <= cutoff_date:
+                out.append((epoch, ts, amount))
+
+    return out
+
+
+def _rewards_via_rpc(staking_address):
+    epochs_all = get_epochs_all()
+
+    if SOL_REWARDS_USE_DB is False:
+        # No DB available.  Query RPC for all rewards info.
+        logging.info("No db available.  Using Solana RPC only to get rewards.  This will take a while ...")
+
+        out = []
+        for epoch in epochs_all:
+            ts, amount = _lookup_reward_via_rpc(staking_address, epoch)
+            if ts and amount:
+                out.append((epoch, ts, amount))
+        return out
 
 
 def _filter_date(rewards, start_date=None, end_date=None):

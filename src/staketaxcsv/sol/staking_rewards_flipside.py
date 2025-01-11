@@ -1,8 +1,8 @@
 from flipside import Flipside
 import logging
-from staketaxcsv.settings_csv import FLIPSIDE_API_KEY
+from staketaxcsv.settings_csv import SOL_REWARDS_FLIPSIDE_API_KEY
 from datetime import datetime
-flipside = Flipside(FLIPSIDE_API_KEY, "https://api-v2.flipsidecrypto.xyz") if FLIPSIDE_API_KEY else None
+flipside = Flipside(SOL_REWARDS_FLIPSIDE_API_KEY, "https://api-v2.flipsidecrypto.xyz") if SOL_REWARDS_FLIPSIDE_API_KEY else None
 
 
 def fetch_rewards_flipside(staking_address):

@@ -22,7 +22,7 @@ def rewards_db(func):
 
       * Decorator to only run if SOL_REWARDS_DB_READ is True
     """
-    if not staketaxcsv.settings_csv.SOL_REWARDS_DB_READ:
+    if not staketaxcsv.settings_csv.SOL_REWARDS_USE_DB:
         return unittest.skip("Skipping test when SOL_REWARDS_DB_READ=False")(func)
     return func
 
