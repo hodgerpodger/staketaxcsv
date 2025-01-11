@@ -8,6 +8,8 @@ from staketaxcsv.sol.staking_rewards_common import get_epochs_all, epoch_slot_an
 from staketaxcsv.sol.staking_rewards_db import StakingRewardsDB
 from staketaxcsv.sol.api_marinade import MarinadeAPI
 from staketaxcsv.sol.constants import BILLION
+from staketaxcsv.sol.staking_rewards_flipside import fetch_rewards_flipside
+from staketaxcsv.sol.staking_rewards_flipside import FLIPSIDE_API_KEY
 
 
 def reward_txs(wallet_info, exporter, progress, start_date=None, end_date=None):
@@ -35,6 +37,9 @@ def _rewards(staking_address, start_date=None, end_date=None):
 
 def _rewards_all_time(staking_address):
     """ Get reward transactions for this staking_address within epochs list """
+    if FLIPSIDE_API_KEY:
+        return fetch_rewards_flipside(staking_address)
+
     epochs_all = get_epochs_all()
 
     if SOL_REWARDS_DB_READ is False:
