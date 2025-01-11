@@ -12,6 +12,7 @@ RECEIVER = "receiver"
 SPENDER = "spender"
 AMOUNT = "amount"
 
+
 class MsgInfoIBC:
     """ Single message info for index <i> """
 

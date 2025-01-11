@@ -9,6 +9,7 @@ FEE_THRESHOLD = 0.03
 # Cache for storing results of previous is_staking_account() calls
 _is_staking_account_cache = {}
 
+
 def amount_currency(txinfo, amount_string, currency_address):
     if currency_address in txinfo.mints:
         currency = txinfo.mints[currency_address]["currency"]

@@ -118,7 +118,7 @@ def _cache_load(cache):
 
 
 def _cache_push(cache):
-    #cache.set_osmo_exponents(localconfig.exponents)
+    # cache.set_osmo_exponents(localconfig.exponents)
     logging.info("_cache_push(): push data to cache")
 
 

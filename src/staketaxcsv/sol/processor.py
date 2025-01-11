@@ -104,7 +104,7 @@ def process_tx(wallet_info, exporter, txid, data):
         elif co.PROGRAMID_SABER_FARM_SSF in program_ids:
             handle_saber_farm_ssf(exporter, txinfo)
 
-        ### Jupiter programs
+        # ### Jupiter programs
 
         # important that these are before jupiter aggregator programs
         elif co.PROGRAMID_JUPITER_LIMIT in program_ids:
