@@ -5,6 +5,7 @@ botocore>=1.23.21
 certifi>=2021.10.8
 charset-normalizer>=2.0.9
 et-xmlfile>=1.1.0
+flipside>=2.0.8
 idna>=3.3
 isort>=5.10.1
 jmespath>=0.10.0
