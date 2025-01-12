@@ -5,6 +5,7 @@ Data parsing functions applicable to all transactions
 import logging
 import re
 from datetime import datetime, timezone
+from collections import defaultdict
 
 import staketaxcsv.sol.util_sol
 from staketaxcsv.sol import util_sol
@@ -74,6 +75,8 @@ def parse_tx(txid, data, wallet_info):
 
     # Update wallet_info with staking addresses
     _update_wallet_info(wallet_info, wallet_address, txinfo.instructions)
+
+    txinfo.wallet_balances = _wallet_balances(data, txinfo.wallet_accounts, txinfo.mints)
 
     return txinfo
 
@@ -523,3 +526,36 @@ def _log_messages(txid, data):
 
     log_string = "\n".join(log)
     return log_instructions, log, log_string
+
+
+def _wallet_balances(data, wallet_accounts, mints):
+    """
+    Return a dict of <currency> -> <balance> representing the total
+    post-transaction balance (SOL + tokens) for all known wallet accounts.
+    """
+
+    # We'll store the final balances in a dictionary keyed by currency
+    balances = defaultdict(float)
+
+    account_keys = [row["pubkey"] for row in data["result"]["transaction"]["message"]["accountKeys"]]
+
+    # ---------- POST SOL BALANCES ----------
+    post_balances_sol = data["result"]["meta"]["postBalances"]
+    for i, account_address in enumerate(account_keys):
+        if account_address in wallet_accounts:
+            amount_sol = float(post_balances_sol[i]) / BILLION
+            balances[CURRENCY_SOL] += amount_sol
+
+    # ---------- POST TOKEN BALANCES ----------
+    post_token_balances = data["result"]["meta"]["postTokenBalances"]
+    for row in post_token_balances:
+        account_index = row["accountIndex"]
+        account_address = account_keys[account_index]
+
+        if account_address in wallet_accounts:
+            mint = row["mint"]
+            currency = mints[mint]["currency"] if mint in mints else mint
+            amount_token = row["uiTokenAmount"]["uiAmount"] or 0.0
+            balances[currency] += amount_token
+
+    return dict(balances)

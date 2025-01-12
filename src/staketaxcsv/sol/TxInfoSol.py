@@ -38,6 +38,8 @@ class TxInfoSol(TxInfo):
         self.lp_transfers_net = []
         self.lp_fee = ""
 
+        self.wallet_balances = {}
+
     def print(self):
         print("txid: {}".format(self.txid))
         print("timestamp: {}".format(self.timestamp))
@@ -76,6 +78,8 @@ class TxInfoSol(TxInfo):
         pprint.pprint(self.balance_changes_all)
         print("\nbalance_changes_wallet:")
         pprint.pprint(self.balance_changes_wallet)
+        print("\nwallet_balances (after transaction):")
+        pprint.pprint(self.wallet_balances)
 
         print("\ntransfers_in:")
         pprint.pprint(self.transfers[0])

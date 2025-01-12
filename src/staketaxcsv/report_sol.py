@@ -20,6 +20,7 @@ from staketaxcsv.sol.progress_sol import SECONDS_PER_STAKING_ADDRESS, SECONDS_PE
 from staketaxcsv.sol.TxInfoSol import WalletInfo
 from staketaxcsv.sol.txids import get_txids, get_txids_for_accounts
 from staketaxcsv.sol.util_sol import account_exists
+from staketaxcsv.sol.balances_history import balances_history
 
 RPC_TIMEOUT = 600  # seconds
 
@@ -147,6 +148,13 @@ def _fetch_and_process_txs(txids, wallet_info, exporter, progress=None):
     if progress:
         message = f"Finished fetching {total_count} transactions"
         progress.report(total_count, message, "txs")
+
+
+def balhistory(wallet_address):
+    """ Writes historical balances CSV rows to BalExporter object """
+    start_date = localconfig.start_date
+    end_date = localconfig.end_date
+    return balances_history(wallet_address, start_date, end_date)
 
 
 if __name__ == "__main__":
