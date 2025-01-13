@@ -30,8 +30,21 @@ def fetch_rewards_solscan(staking_address):
     logging.info(f"Querying Solscan Pro API at {API_URL} with params: {params}")
 
     # Make the API request
-    response = requests.get(API_URL, headers=headers, params=params)
-    response.raise_for_status()
+    try:
+        response = requests.get(API_URL, headers=headers, params=params)
+        # If a 400 error is returned (e.g., malformed/non-existent address),
+        # we want to return an empty list instead of raising an exception.
+        if response.status_code == 400:
+            logging.warning(
+                f"Received 400 error from Solscan for address '{staking_address}'. "
+                "Likely malformed or non-existent. Returning empty list."
+            )
+            return []
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        # If some other HTTP error occurs, you can either re-raise or handle differently
+        logging.error(f"HTTP error encountered: {e}")
+        raise
     csv_data = response.text
 
     # Parse CSV output using csv module
