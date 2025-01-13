@@ -50,13 +50,11 @@ TORI_NODE = os.environ.get("STAKETAX_TORI_NODE", "")
 DB_CACHE = os.environ.get("STAKETAX_DB_CACHE", False)
 
 # ### One of below required for faster solana staking rewards history
+# (flipside free tier is sufficient; solscan api costs money; db method has issues after 12/2024)
 
-# note: solscan api missing rewards data for some accounts in some parts of 2023 for some reason
-SOL_REWARDS_USE_HYBRID = os.environ.get("STAKETAX_SOL_REWARDS_USE_HYBRID", False)
 SOL_REWARDS_SOLSCAN_API_TOKEN = os.environ.get("STAKETAX_SOL_REWARDS_SOLSCAN_API_TOKEN", "")
 SOL_REWARDS_FLIPSIDE_API_KEY = os.environ.get("STAKETAX_SOL_REWARDS_FLIPSIDE_API_KEY", "")
 SOL_REWARDS_USE_DB = os.environ.get("STAKETAX_SOL_REWARDS_USE_DB", False)
-
 
 # ###
 
