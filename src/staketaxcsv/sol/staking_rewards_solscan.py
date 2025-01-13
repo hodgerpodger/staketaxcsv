@@ -66,12 +66,12 @@ def fetch_rewards_solscan(staking_address):
     # Sort rewards by effective_time_unix (chronological order)
     rewards.sort(key=lambda x: datetime.strptime(x[1], "%Y-%m-%d %H:%M:%S"))
 
-    return rewards
+    # Remove exact duplicates. If you only want to key by epoch alone, adapt accordingly.
+    unique_rewards = []
+    seen = set()
+    for r in rewards:
+        if r not in seen:
+            unique_rewards.append(r)
+            seen.add(r)
 
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    rewards = fetch_rewards_solscan("76JtTXnbJ6JPcUn2SpBQAc6ZBrKwYrZpuEVhKZkf5agE")
-    print("Result is:")
-    import pprint
-    pprint.pprint(rewards)
+    return unique_rewards
