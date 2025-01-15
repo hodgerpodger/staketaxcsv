@@ -51,7 +51,7 @@ def make_osmo_reward_tx(txinfo, msginfo, reward_amount, reward_currency):
     return row
 
 
-def make_lp_reward_tx(wallet_address, day, reward_amount, reward_currency):
+def make_lp_reward_tx(wallet_address, day, reward_amount, reward_currency, row_comment=""):
     timestamp = "{} 17:15:00".format(day)
     txid = "{}.{}.{}".format(wallet_address, day, reward_currency)
     row = Row(
@@ -68,7 +68,8 @@ def make_lp_reward_tx(wallet_address, day, reward_amount, reward_currency):
         txid=txid,
         url=""
     )
-    row.comment = "lp_reward"
+    if row_comment:
+        row.comment += row_comment
     return row
 
 

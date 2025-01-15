@@ -5,6 +5,10 @@ MINTSCAN_KEY = os.environ.get("STAKETAX_MINTSCAN_KEY", "")
 MINTSCAN_MAX_TXS = os.environ.get("STAKETAX_MINTSCAN_MAX_TXS", 5000)
 MINTSCAN_ON = (MINTSCAN_KEY != "")
 
+# Required for OSMO LP rewards
+NUMIA_API_DOMAIN = os.environ.get("STAKETAX_NUMIA_API_DOMAIN", "")
+NUMIA_API_TOKEN = os.environ.get("STAKETAX_NUMIA_API_TOKEN", "")
+
 # Environment variables (required for each respective report)
 
 AKT_NODE = os.environ.get("STAKETAX_AKT_NODE", "https://akash-api.polkachu.com")
