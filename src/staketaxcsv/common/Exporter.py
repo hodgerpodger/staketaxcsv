@@ -1878,3 +1878,16 @@ class Exporter:
             mywriter = csv.writer(f)
             mywriter.writerows(table)
             logging.info("Wrote to %s", csvpath)
+
+    def convert_alloyed_symbols(self):
+        """
+        Changes allBTC -> BTC, allETH -> ETH, allUSDT -> USDT, etc.
+        for all rows and adds comment to row noting conversion
+        """
+        for row in self.rows:
+            for attr in ["received_currency", "sent_currency", "fee_currency"]:
+                old_cur = getattr(row, attr)
+                if old_cur and old_cur.startswith("all") and len(old_cur) > 3:
+                    new_cur = old_cur[3:]  # Strip off "all"
+                    row.comment += f" [{old_cur} converted to {new_cur}]"  # e.g. " [allBTC]"
+                    setattr(row, attr, new_cur)

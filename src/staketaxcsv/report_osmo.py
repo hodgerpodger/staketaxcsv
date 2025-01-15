@@ -58,6 +58,8 @@ def txone(wallet_address, txid):
     exporter = Exporter(wallet_address, localconfig, TICKER_OSMO)
     txinfo = staketaxcsv.osmo.processor.process_tx(wallet_address, elem, exporter)
 
+    exporter.convert_alloyed_symbols()
+
     if localconfig.debug:
         print("txinfo:")
         txinfo.print()
@@ -103,6 +105,7 @@ def txhistory(wallet_address):
     # lp_rewards(wallet_address, reward_tokens, exporter, progress)
 
     exporter.sort_rows(reverse=True)
+    exporter.convert_alloyed_symbols()
 
     # Log error stats if exists
     ErrorCounter.log(TICKER_OSMO, wallet_address)
