@@ -6,7 +6,7 @@ from staketaxcsv.common.debug_util import debug_cache
 from staketaxcsv.luna1.config_luna1 import localconfig
 from staketaxcsv.settings_csv import REPORTS_DIR
 
-FCD_URL = "https://phoenix-fcd.terra.dev"
+FCD_URL = "https://fcd.phoenix-foundation.dev"
 LIMIT_FCD = 100
 
 

@@ -5,8 +5,8 @@ Prints transactions and writes CSV(s) to _reports/LUNA2*.csv
 
 Notes:
     * Terra 2.0 (aka "LUNA 2.0")
-    * https://fcd.terra.dev/swagger
-    * https://phoenix-lcd.terra.dev/swagger/
+    * https://fcd.phoenix-foundation.dev/apidoc
+    * https://terra-lcd.publicnode.com/swagger/
 
 """
 
