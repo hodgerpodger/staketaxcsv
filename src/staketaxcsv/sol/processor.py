@@ -67,7 +67,7 @@ def process_tx(wallet_info, exporter, txid, data):
             handle_serumv3(exporter, txinfo)
 
         # Marinade Finance
-        elif co.PROGRAMID_MARINADE in program_ids:
+        elif co.PROGRAMID_MARINADE in program_ids or co.PROGRAMID_MARINADE_V2 in program_ids:
             handle_marinade(exporter, txinfo)
         elif is_marinade_native_staking_create_tx(txinfo):
             handle_marinade_native_staking_create_tx(wallet_info, exporter, txinfo)
