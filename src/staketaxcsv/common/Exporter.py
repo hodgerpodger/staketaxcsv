@@ -1009,6 +1009,7 @@ class Exporter:
             "STARS": "ID:36899",
             "ROAR": "ID:16962317",
             "CNTO": "ID:19886237",
+            "CORE": "ID:68700",
         }
 
         if self._is_koinly_lp(currency):
