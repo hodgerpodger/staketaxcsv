@@ -41,7 +41,7 @@ def _handle_increase_pos(exporter, txinfo):
 
 def _handle_decrease_pos(exporter, txinfo):
     transfers_in, transfers_out, _ = txinfo.transfers_net
-    if len(transfers_in) == 1 and not transfers_out:
+    if len(transfers_in) <= 2 and len(transfers_out) == 0:
         rec_amount, rec_cur, _, _ = transfers_in[0]
 
         # jup perp decrease pos: treat as 2 txs
@@ -52,6 +52,14 @@ def _handle_decrease_pos(exporter, txinfo):
         row = make_transfer_in_tx(txinfo, rec_amount, rec_cur)
         row.comment += f"[withdraw {rec_amount} {rec_cur}]"
         exporter.ingest_row(row)
+
+        # transfer in tx 2
+        if len(transfers_in) == 2:
+            rec_amount_2, rec_cur_2, _, _ = transfers_in[1]
+            row = make_transfer_in_tx(txinfo, rec_amount_2, rec_cur_2)
+            row.comment += f"[withdraw {rec_amount_2} {rec_cur_2}]"
+            exporter.ingest_row(row)
+
 
         # realize pnl row
         has_profit, pnl_delta = _parse_realized_pnl(txinfo.log)
