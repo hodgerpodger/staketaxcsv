@@ -51,6 +51,7 @@ PACT_TRANSACTION_FARM_ESCROW_CREATE = "OIgacQ=="    # "create" ABI selector
 PACT_TRANSACTION_FARM_UPDATE_STATE = "wxQK5w=="     # "update_state" ABI selector
 PACT_TRANSACTION_FARM_UNSTAKE = "eIIs8A=="          # "unstake" ABI selector
 PACT_TRANSACTION_FARM_CLAIM_REWARDS = "Sq6j8g=="    # "claim_rewards" ABI selector
+PACT_TRANSACTION_INCREASE_QUOTA = "/95jeA=="        # "increase_opcode_quota" ABI selector
 
 PACT_TRANSACTION_SWAP = "U1dBUA=="           # "SWAP"
 PACT_TRANSACTION_LP_ADD = "QURETElR"         # "ADDLIQ"
@@ -100,8 +101,19 @@ PACT_FARM_CONTRACTS = [
     1038501616,  # ALGO/GOETH
     1038503241,  # ALGO/GOMINT
     1078153044,  # USDC/GOUSD
+    1150765030,  # USDC/GOUSD
     1078154025,  # GOETH/WETH
+    1150764423,  # GOETH/WETH
     1078153466,  # GOBTC/WBTC
+    1150764376,  # GOBTC/WBTC
+    1248669934,  # FUSDC/FEURS
+    1248669985,  # FUSDC/FEURS
+    1124037645,  # FALGO/FwBTC
+    1124038236,  # FALGO/FwETH
+    1170254199,  # FALGO/FAVAX
+    1177033931,  # FALGO/FSOL
+    1150765092,  # GOLD$/XUSD
+    1150765145,  # SILVER$/XUSD
 ]
 
 
@@ -129,7 +141,8 @@ class Pact(Dapp):
                     or self._is_pact_farm_escrow_create(group)
                     or self._is_pact_farm_stake(group)
                     or self._is_pact_farm_unstake(group)
-                    or self._is_pact_farm_claim_rewards(group))
+                    or self._is_pact_farm_claim_rewards(group)
+                    or self._is_pact_farm_unstake_and_claim_rewards(group))
 
     def handle_dapp_transaction(self, group: list, txinfo: TxInfo):
         reward = Algo(group[0]["sender-rewards"])
@@ -165,6 +178,9 @@ class Pact(Dapp):
 
         elif self._is_pact_farm_claim_rewards(group):
             self._handle_pact_farm_claim_rewards(group, txinfo)
+
+        elif self._is_pact_farm_unstake_and_claim_rewards(group):
+            self._handle_pact_farm_unstake(group, txinfo)
 
         else:
             export_unknown(self.exporter, txinfo)
@@ -263,16 +279,17 @@ class Pact(Dapp):
         return is_transaction_sender(self.user_address, group[-3])
 
     def _is_pact_farm_stake(self, group):
-        if len(group) != 2:
+        length = len(group)
+        if length < 2 or length > 3:
             return False
 
         if not is_app_call(group[-1], PACT_FARM_CONTRACTS, PACT_TRANSACTION_FARM_UPDATE_STATE):
             return False
 
-        if not is_transfer(group[-2]):
+        if not is_transfer(group[0]):
             return False
 
-        return is_transaction_sender(self.user_address, group[-2])
+        return is_transaction_sender(self.user_address, group[0])
 
     def _is_pact_farm_unstake(self, group):
         length = len(group)
@@ -292,6 +309,21 @@ class Pact(Dapp):
             return False
 
         return is_app_call(group[-2], PACT_FARM_CONTRACTS, PACT_TRANSACTION_FARM_UPDATE_STATE)
+
+    def _is_pact_farm_unstake_and_claim_rewards(self, group):
+        if len(group) != 4:
+            return False
+
+        if not is_app_call(group[0], app_args=PACT_TRANSACTION_INCREASE_QUOTA):
+            return False
+
+        if not is_app_call(group[1], app_args=PACT_TRANSACTION_FARM_UNSTAKE):
+            return False
+
+        if not is_app_call(group[2], PACT_FARM_CONTRACTS, PACT_TRANSACTION_FARM_UPDATE_STATE):
+            return False
+
+        return is_app_call(group[3], PACT_FARM_CONTRACTS, PACT_TRANSACTION_FARM_CLAIM_REWARDS)
 
     def _handle_pact_routed_swap(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)
@@ -360,12 +392,17 @@ class Pact(Dapp):
 
         lp_asset = get_inner_transfer_asset(group[0],
                                             filter=partial(is_transfer_receiver, self.user_address))
+        if lp_asset is None:
+            lp_asset = get_inner_transfer_asset(group[1],
+                                                filter=partial(is_transfer_receiver, self.user_address))
 
         export_lp_unstake_tx(self.exporter, txinfo, lp_asset, 0, self.name, 0)
 
-        reward_asset = get_inner_transfer_asset(group[-1])
-        if reward_asset:
-            export_reward_tx(self.exporter, txinfo, reward_asset, fee_amount, self.name)
+        reward_assets = list(generate_inner_transfer_assets(group[-1],
+                                                            filter=partial(is_transfer_receiver, self.user_address)))
+        reward_fee = fee_amount / len(reward_assets)
+        for asset in reward_assets:
+            export_reward_tx(self.exporter, txinfo, asset, reward_fee, self.name)
 
     def _handle_pact_farm_claim_rewards(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)

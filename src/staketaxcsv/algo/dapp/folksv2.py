@@ -45,6 +45,7 @@ APPLICATION_ID_FOLKSV2_OP_UP = 971335937  # Oracle Price Update?
 APPLICATION_ID_FOLKSV2_POOLS = [
     971368268,   # ALGO
     971370097,   # gALGO
+    2611131944,  # xALGO
     971372237,   # USDC
     971372700,   # USDt
     971373361,   # goBTC
@@ -67,6 +68,10 @@ APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR = [
     1136393919,  # Distributor G8
     1200551652,  # Distributor G9
     1282254855,  # Distributor G10
+    1702641473,  # Distributor G11
+    2057814942,  # Distributor G12
+    2330032485,  # Distributor G13
+    2629511242,  # Distributor G14
 ]
 
 NOTE_FOLKSV2_DEPOSIT_APP = "da"
@@ -99,6 +104,7 @@ FOLKSV2_TRANSACTION_GOVERNANCE_UNMINT_PREMINT = "n1wNEA=="  # "unmint_premint" A
 FOLKSV2_TRANSACTION_GOVERNANCE_CLAIM_PREMINT = "kZDyNg=="   # "claim_premint" ABI selector
 FOLKSV2_TRANSACTION_GOVERNANCE_UNMINT = "3c0QwA=="          # "mint" ABI selector
 FOLKSV2_TRANSACTION_GOVERNANCE_REWARDS_CLAIM = "2wMoWg=="   # "claim_rewards" ABI selector
+FOLKSV2_TRANSACTION_ORACLE_REFRESH_PRICES = "lSTx/w=="      # "refresh_prices" ABI selector
 
 APPLICATION_ID_DEFLEX_ORDER_ROUTER = 989365103
 DEFLEX_TRANSACTION_SWAP_FINALIZE = "tTD7Hw=="  # "User_swap_finalize" ABI selector
@@ -127,6 +133,7 @@ class FolksV2(Dapp):
                     or self._is_folksv2_stake_claim_rewards(group)
                     or self._is_folksv2_create_loan(group)
                     or self._is_folksv2_move_to_collateral(group)
+                    or self._is_folksv2_escrow_withdraw(group)
                     or self._is_folksv2_borrow(group)
                     or self._is_folksv2_repay_with_txn(group)
                     or self._is_folksv2_swap_repay(group)
@@ -164,6 +171,9 @@ class FolksV2(Dapp):
             pass
 
         elif self._is_folksv2_move_to_collateral(group):
+            pass
+
+        elif self._is_folksv2_escrow_withdraw(group):
             pass
 
         elif self._is_folksv2_borrow(group):
@@ -239,6 +249,19 @@ class FolksV2(Dapp):
             return False
 
         return is_app_call(group[-1], APPLICATION_ID_FOLKSV2_DEPOSIT, FOLKSV2_TRANSACTION_DEPOSIT_WITHDRAW)
+
+    def _is_folksv2_escrow_withdraw(self, group):
+        length = len(group)
+        if length != 4:
+            return False
+
+        if not is_app_call(group[1], APPLICATION_ID_FOLKSV2_DEPOSIT, FOLKSV2_TRANSACTION_DEPOSIT_WITHDRAW):
+            return False
+
+        if not is_app_call(group[2], APPLICATION_ID_FOLKSV2_ORACLE_ADAPTER, FOLKSV2_TRANSACTION_ORACLE_REFRESH_PRICES):
+            return False
+
+        return is_app_call(group[3], APPLICATION_ID_FOLKSV2_LOANS, FOLKSV2_TRANSACTION_LOAN_SYNC_COLLATERAL)
 
     def _is_folksv2_stake_deposit(self, group):
         length = len(group)
@@ -412,7 +435,7 @@ class FolksV2(Dapp):
 
     def _is_folksv2_governance_commit(self, group):
         length = len(group)
-        if length < 4 or length > 5:
+        if length < 3 or length > 5:
             return False
 
         if not is_app_call(group[-1], APPLICATION_ID_FOLKS_GOVERNANCE_DISTRIBUTOR, FOLKSV2_TRANSACTION_GOVERNANCE):
