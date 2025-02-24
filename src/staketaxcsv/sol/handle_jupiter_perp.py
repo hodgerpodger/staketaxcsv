@@ -1,10 +1,9 @@
 import logging
 from staketaxcsv.sol.handle_simple import handle_unknown_detect_transfers
-from staketaxcsv.common.make_tx import make_simple_tx, make_perp_pnl_tx
-from staketaxcsv.common.ExporterTypes import (
-    TX_TYPE_SOL_JUPITER_PERP_INCREASE_POS, TX_TYPE_SOL_JUPITER_PERP_DECREASE_POS)
+from staketaxcsv.common.make_tx import make_perp_pnl_tx, make_transfer_out_tx, make_transfer_in_tx
 
 CREATE_INCREASE_POSITION_MARKET_REQUEST = "CreateIncreasePositionMarketRequest"
+CREATE_DECREASE_POSITION_MARKET_REQUEST = "CreateDecreasePositionMarketRequest"
 DECREASE_POSITION_4 = "DecreasePosition4"
 CUR_USD = "USD"
 
@@ -17,7 +16,7 @@ def handle_jupiter_perp(exporter, txinfo):
     if CREATE_INCREASE_POSITION_MARKET_REQUEST in log_instructions:
         txinfo.comment += ".increase_pos"
         _handle_increase_pos(exporter, txinfo)
-    elif DECREASE_POSITION_4 in log_instructions:
+    elif CREATE_DECREASE_POSITION_MARKET_REQUEST in log_instructions or DECREASE_POSITION_4 in log_instructions:
         txinfo.comment += ".decrease_pos"
         _handle_decrease_pos(exporter, txinfo)
     else:
@@ -30,9 +29,11 @@ def _handle_increase_pos(exporter, txinfo):
     if len(transfers_out) == 1 and len(transfers_in) == 0:
         sent_amount, sent_cur, _, _ = transfers_out[0]
 
-        row = make_simple_tx(txinfo, TX_TYPE_SOL_JUPITER_PERP_INCREASE_POS)
+        # jup perp increase pos: treat as transfer out tx
+        row = make_transfer_out_tx(txinfo, sent_amount, sent_cur)
         row.comment += f"[deposit {sent_amount} {sent_cur}]"
         exporter.ingest_row(row)
+
         return
 
     raise Exception("Unable to handle jupiter perp increase pos in _handle_increase_pos()")
@@ -42,10 +43,17 @@ def _handle_decrease_pos(exporter, txinfo):
     transfers_in, transfers_out, _ = txinfo.transfers_net
     if len(transfers_in) == 1 and not transfers_out:
         rec_amount, rec_cur, _, _ = transfers_in[0]
-        row = make_simple_tx(txinfo, TX_TYPE_SOL_JUPITER_PERP_DECREASE_POS)
+
+        # jup perp decrease pos: treat as 2 txs
+        # - transfer in tx
+        # - realize pnl row
+
+        # transfer in tx
+        row = make_transfer_in_tx(txinfo, rec_amount, rec_cur)
         row.comment += f"[withdraw {rec_amount} {rec_cur}]"
         exporter.ingest_row(row)
 
+        # realize pnl row
         has_profit, pnl_delta = _parse_realized_pnl(txinfo.log)
         if has_profit is not None:
             row = make_perp_pnl_tx(txinfo, pnl_delta)
@@ -82,5 +90,3 @@ def _parse_realized_pnl(log):
                 logging.error("Error parsing realized pnl: %s", e)
                 return None, None
     return None, None
-
-

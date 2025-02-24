@@ -78,7 +78,7 @@ TX_TYPE_REPAY = "REPAY"
 TX_TYPE_LP_DEPOSIT = "LP_DEPOSIT"  # note: only koinly has export; others treat as transfer
 TX_TYPE_LP_WITHDRAW = "LP_WITHDRAW"  # note: only koinly has export; others treat as transfer
 TX_TYPE_MARGIN_TRADE_FEE = "MARGIN_TRADE_FEE"
-TX_TYPE_PERP_PNL = "PERP_PNL"  # realized profit and loss from perps trade
+TX_TYPE_REALIZED_PNL = "REALIZED_PNL"  # realized profit and loss (from perps trade)
 
 # Common non-exportable transactions
 TX_TYPE_UNKNOWN = "_UNKNOWN"
@@ -170,8 +170,6 @@ TX_TYPE_SOL_WORMHOLE_NOOP = "_WORMHOLE_NOOP"
 TX_TYPE_SOL_JUPITER_DCA_OPEN = "_JUPITER_DCA_OPEN"
 TX_TYPE_SOL_JUPITER_DCA_CLOSE = "_JUPITER_DCA_CLOSE"
 TX_TYPE_SOL_JUPITER_LIMIT_OPEN = "_JUPITER_LIMIT_OPEN"
-TX_TYPE_SOL_JUPITER_PERP_INCREASE_POS = "_JUPITER_PERP_INCREASE_POS"
-TX_TYPE_SOL_JUPITER_PERP_DECREASE_POS = "_JUPITER_PERP_DECREASE_POS"
 
 # ### OSMO ##########################################################################################
 
