@@ -238,8 +238,11 @@ class Asset:
     def __repr__(self):
         return "{{:.{}f}} {}".format(self._decimals, self._ticker).format(self.amount)
 
+    def is_algo(self):
+        return self._id == ASSET_ID_ALGO
+
     def zero(self):
-        return self._uint_amount == 0
+        return self._uint_amount == 0 if not self.is_algo() else self._uint_amount <= 100
 
     def is_lp_token(self):
         return self._ticker in ASSET_LP_TOKENS
