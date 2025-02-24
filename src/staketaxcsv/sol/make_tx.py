@@ -61,3 +61,4 @@ def make_serum_dex_transfer_out(txinfo, sent_amount, sent_currency, empty_fee=Fa
 
 def make_serum_dex_no_transfer(txinfo):
     return make_simple_tx(txinfo, TX_TYPE_SOL_SERUM_DEX)
+

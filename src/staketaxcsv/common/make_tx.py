@@ -19,8 +19,10 @@ from staketaxcsv.common.ExporterTypes import (
     TX_TYPE_UNKNOWN,
     TX_TYPE_UNSTAKE,
     TX_TYPE_WITHDRAW_COLLATERAL,
+    TX_TYPE_PERP_PNL,
 )
 from staketaxcsv.settings_csv import DONATION_WALLETS
+CUR_USD = "USD"
 
 
 def make_swap_tx(txinfo, sent_amount, sent_currency, received_amount, received_currency,
@@ -183,6 +185,17 @@ def make_excluded_tx_with_transfer(txinfo, sent_amount, sent_currency, received_
         txinfo, sent_amount, sent_currency, received_amount, received_currency, TX_TYPE_EXCLUDED,
         empty_fee=empty_fee, z_index=z_index
     )
+
+
+# perps realized profit and loss tx (result from selling a position in perpetuals)
+def make_perp_pnl_tx(txinfo, net_gain_or_loss, empty_fee=False, z_index=0):
+    if net_gain_or_loss >= 0:
+        return _make_tx_exchange(
+            txinfo, "", "", net_gain_or_loss, CUR_USD, TX_TYPE_PERP_PNL, empty_fee=empty_fee, z_index=z_index)
+
+    elif net_gain_or_loss < 0:
+        return _make_tx_exchange(
+            txinfo, -net_gain_or_loss, CUR_USD, TX_TYPE_PERP_PNL, empty_fee=empty_fee, z_index=z_index)
 
 
 def _make_tx_received(txinfo, received_amount, received_currency, tx_type, txid=None, empty_fee=False, z_index=0):

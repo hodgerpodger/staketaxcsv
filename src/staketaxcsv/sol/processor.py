@@ -21,6 +21,7 @@ from staketaxcsv.sol.handle_jupiter_airdrop import handle_wen_airdrop
 from staketaxcsv.sol.handle_jupiter_dca import handle_jupiter_dca
 from staketaxcsv.sol.handle_jupiter_limit import handle_jupiter_limit
 from staketaxcsv.sol.handle_jupiter_limit_v2 import handle_jupiter_limit_v2
+from staketaxcsv.sol.handle_jupiter_perp import handle_jupiter_perp
 from staketaxcsv.sol.handle_marinade import (
     handle_marinade, is_marinade_native_staking_create_tx, handle_marinade_native_staking_create_tx)
 from staketaxcsv.sol.handle_metaplex import handle_metaplex, handle_nft_mint, is_nft_mint
@@ -113,6 +114,8 @@ def process_tx(wallet_info, exporter, txid, data):
             handle_jupiter_limit_v2(exporter, txinfo)
         elif co.PROGRAMID_JUPITER_DCA_V6 in program_ids:
             handle_jupiter_dca(exporter, txinfo)
+        elif co.PROGRAMID_JUPITER_PERPERTUAL in program_ids:
+            handle_jupiter_perp(exporter, txinfo)
 
         elif co.PROGRAMID_JUPITER_AGGREGATOR_V1 in program_ids:
             handle_jupiter_aggregator_v1(exporter, txinfo)
