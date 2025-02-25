@@ -179,38 +179,46 @@ class Exporter:
             # custom behavior: exports rows with tx_type=_* (.i.e _UNKNOWN)
             rows = self.rows
         else:
-            rows = filter(lambda row: row.tx_type in et.TX_TYPES_CSVEXPORT, self.rows)
+            allowed_types = list(et.TX_TYPES_CSVEXPORT)
+
+            # List of csv formats that support REALIZED_PNL
+            if csv_format in [et.FORMAT_KOINLY, et.FORMAT_COINTRACKING]:
+                allowed_types.append(et.TX_TYPE_REALIZED_PNL)
+
+            # Filter rows based on the allowed tx types.
+            rows = filter(lambda row: row.tx_type in allowed_types, self.rows)
 
         if csv_format in [et.FORMAT_COINTRACKING, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI,
                           et.FORMAT_DIVLY, et.FORMAT_CRYPTOBOOKS, et.FORMAT_KOINLY]:
+            # CSV formats that support LP_DEPOSIT/LP_WITHDRAW
             return rows
-
-        # For non-koinly CSVs, convert LP_DEPOSIT/LP_WITHDRAW into transfers/omit/trades
-        # (due to lack of native csv import support)
-        out = []
-        for row in rows:
-            if row.tx_type == et.TX_TYPE_LP_DEPOSIT:
-                if self.lp_treatment == et.LP_TREATMENT_OMIT:
-                    continue
-                elif self.lp_treatment == et.LP_TREATMENT_TRANSFERS:
-                    out.append(self._row_as_transfer_out(row))
-                elif self.lp_treatment == et.LP_TREATMENT_TRADES:
-                    out.append(self._row_as_trade(row))
+        else:
+            # CSV formats that do not support LP_DEPOSIT/LP_WITHDRAW:
+            # Convert LP_DEPOSIT/LP_WITHDRAW into transfers/omit/trades
+            out = []
+            for row in rows:
+                if row.tx_type == et.TX_TYPE_LP_DEPOSIT:
+                    if self.lp_treatment == et.LP_TREATMENT_OMIT:
+                        continue
+                    elif self.lp_treatment == et.LP_TREATMENT_TRANSFERS:
+                        out.append(self._row_as_transfer_out(row))
+                    elif self.lp_treatment == et.LP_TREATMENT_TRADES:
+                        out.append(self._row_as_trade(row))
+                    else:
+                        raise Exception("Bad condition in _rows_export().  lp_treatment=%s".format(self.lp_treatment))
+                elif row.tx_type == et.TX_TYPE_LP_WITHDRAW:
+                    if self.lp_treatment == et.LP_TREATMENT_OMIT:
+                        continue
+                    elif self.lp_treatment == et.LP_TREATMENT_TRANSFERS:
+                        out.append(self._row_as_transfer_in(row))
+                    elif self.lp_treatment == et.LP_TREATMENT_TRADES:
+                        out.append(self._row_as_trade(row))
+                    else:
+                        raise Exception("Bad condition in _rows_export().  lp_treatment=%s".format(self.lp_treatment))
                 else:
-                    raise Exception("Bad condition in _rows_export().  lp_treatment=%s".format(self.lp_treatment))
-            elif row.tx_type == et.TX_TYPE_LP_WITHDRAW:
-                if self.lp_treatment == et.LP_TREATMENT_OMIT:
-                    continue
-                elif self.lp_treatment == et.LP_TREATMENT_TRANSFERS:
-                    out.append(self._row_as_transfer_in(row))
-                elif self.lp_treatment == et.LP_TREATMENT_TRADES:
-                    out.append(self._row_as_trade(row))
-                else:
-                    raise Exception("Bad condition in _rows_export().  lp_treatment=%s".format(self.lp_treatment))
-            else:
-                out.append(row)
+                    out.append(row)
 
-        return out
+            return out
 
     def _row_as_transfer_out(self, row):
         return Row(
@@ -428,6 +436,19 @@ class Exporter:
         }
 
         # Determine type
+        ct_type = ""
+
+        if row.tx_type == et.TX_TYPE_REALIZED_PNL:
+            if row.received_amount and float(row.received_amount) > 0:
+                ct_type = "Derivatives / Futures Profit"
+            elif row.sent_amount and float(row.sent_amount) > 0:
+                ct_type = "Derivatives / Futures Loss"
+            else:
+                ct_type = "Derivatives / Futures Profit"
+                logging.error("Bad condition in export_cointracking_csv(): {}, {}, {}".format(
+                    row.received_amount, row.sent_amount, row.as_array()))
+            return ct_type
+
         ct_type = cointracking_types[row.tx_type]
         if ct_type == et.TX_TYPE_TRANSFER:
             if row.received_amount and not row.sent_amount:
@@ -921,6 +942,8 @@ class Exporter:
                     label = "Liquidity In"
                 elif row.tx_type == et.TX_TYPE_LP_WITHDRAW:
                     label = "Liquidity Out"
+                elif row.tx_type == et.TX_TYPE_REALIZED_PNL:
+                    label = "realized gain"
                 else:
                     logging.error("koinly: unable to handle tx_type=%s", row.tx_type)
 
