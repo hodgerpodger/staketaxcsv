@@ -19,9 +19,16 @@ def handle_jupiter_perp(exporter, txinfo):
     elif _has_decrease_position(log_instructions):
         txinfo.comment += ".decrease_pos"
         _handle_decrease_pos(exporter, txinfo)
+
+    # important that "close position" is after increase/decrease
+    elif _has_close_position(log_instructions):
+        txinfo.comment += ".close_pos"
+        _handle_close_pos(exporter, txinfo)
+
     else:
         logging.error("Unknown log_instructions")
         handle_unknown_detect_transfers(exporter, txinfo)
+
 
 def _has_increase_position(log_instructions):
     for instruction in log_instructions:
@@ -33,6 +40,13 @@ def _has_increase_position(log_instructions):
 def _has_decrease_position(log_instructions):
     for instruction in log_instructions:
         if "DecreasePosition" in instruction:
+            return True
+    return False
+
+
+def _has_close_position(log_instructions):
+    for instruction in log_instructions:
+        if "ClosePosition" in instruction:
             return True
     return False
 
@@ -60,6 +74,12 @@ def _process_transfers(exporter, txinfo, transfers_in, transfers_out):
 def _handle_increase_pos(exporter, txinfo):
     transfers_in, transfers_out, _ = txinfo.transfers
     _verify_transfers_range(transfers_in, transfers_out, "increase")
+    _process_transfers(exporter, txinfo, transfers_in, transfers_out)
+
+
+def _handle_close_pos(exporter, txinfo):
+    transfers_in, transfers_out, _ = txinfo.transfers
+    _verify_transfers_range(transfers_in, transfers_out, "close")
     _process_transfers(exporter, txinfo, transfers_in, transfers_out)
 
 
