@@ -6,10 +6,6 @@ from staketaxcsv.common.make_tx import (
     make_transfer_in_tx,
 )
 
-CREATE_INCREASE_POSITION_MARKET_REQUEST = "CreateIncreasePositionMarketRequest"
-CREATE_DECREASE_POSITION_MARKET_REQUEST = "CreateDecreasePositionMarketRequest"
-DECREASE_POSITION_4 = "DecreasePosition4"
-INCREASE_POSITION_4 = "IncreasePosition4"
 CUR_USD = "USD"
 
 
@@ -17,15 +13,28 @@ def handle_jupiter_perp(exporter, txinfo):
     txinfo.comment = "jupiter_perp"
     log_instructions = txinfo.log_instructions
 
-    if CREATE_INCREASE_POSITION_MARKET_REQUEST in log_instructions or INCREASE_POSITION_4 in log_instructions:
+    if _has_increase_position(log_instructions):
         txinfo.comment += ".increase_pos"
         _handle_increase_pos(exporter, txinfo)
-    elif CREATE_DECREASE_POSITION_MARKET_REQUEST in log_instructions or DECREASE_POSITION_4 in log_instructions:
+    elif _has_decrease_position(log_instructions):
         txinfo.comment += ".decrease_pos"
         _handle_decrease_pos(exporter, txinfo)
     else:
         logging.error("Unknown log_instructions")
         handle_unknown_detect_transfers(exporter, txinfo)
+
+def _has_increase_position(log_instructions):
+    for instruction in log_instructions:
+        if "IncreasePosition" in instruction:
+            return True
+    return False
+
+
+def _has_decrease_position(log_instructions):
+    for instruction in log_instructions:
+        if "DecreasePosition" in instruction:
+            return True
+    return False
 
 
 def _verify_transfers_range(transfers_in, transfers_out, pos_type):
