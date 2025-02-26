@@ -182,7 +182,7 @@ class Exporter:
             allowed_types = list(et.TX_TYPES_CSVEXPORT)
 
             # List of csv formats that support REALIZED_PNL
-            if csv_format in [et.FORMAT_KOINLY, et.FORMAT_COINTRACKING]:
+            if csv_format in [et.FORMAT_KOINLY, et.FORMAT_COINTRACKING, et.FORMAT_COINTRACKER]:
                 allowed_types.append(et.TX_TYPE_REALIZED_PNL)
 
             # Filter rows based on the allowed tx types.
@@ -615,7 +615,14 @@ class Exporter:
 
             # data rows
             for row in rows:
-                tag = tags[row.tx_type]
+
+                if row.tx_type == et.TX_TYPE_REALIZED_PNL:
+                    if row.received_amount and float(row.received_amount) > 0:
+                        tag = "margin gain"
+                    elif row.sent_amount and float(row.sent_amount) > 0:
+                        tag = "margin loss"
+                else:
+                    tag = tags[row.tx_type]
 
                 line = [
                     self._cointracker_timestamp(row.timestamp),          # Date
