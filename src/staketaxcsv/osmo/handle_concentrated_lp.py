@@ -89,7 +89,7 @@ def handle_add_to_position(exporter, txinfo, msginfo):
     transfers_in, transfers_out = msginfo.transfers_net_exact
     events_by_type = msginfo.events_by_type
 
-    if len(transfers_in) <= 1 and len(transfers_out) == 2:
+    if len(transfers_in) <= 1 and (len(transfers_out) == 1 or len(transfers_out) == 2):
         withdraw_position_id = events_by_type["withdraw_position"]["position_id"]
         withdraw_pool_id = events_by_type["withdraw_position"]["pool_id"]
 
@@ -104,29 +104,42 @@ def handle_add_to_position(exporter, txinfo, msginfo):
         lp_amount = liquidity_added
         lp_currency = _lp_currency(create_pool_id)
 
-        sent_amount1, sent_currency1 = transfers_out[0]
-        sent_amount2, sent_currency2 = transfers_out[1]
-
         comment = f"concentrated_lp.add_to_position [pool_id={create_pool_id}]" + \
                   f"[old position_id={withdraw_position_id}][new position_id={create_position_id}] "
 
-        rows = [
-            make_osmo_lp_deposit_tx(txinfo, msginfo, sent_amount1, sent_currency1, lp_amount / 2, lp_currency),
-            make_osmo_lp_deposit_tx(txinfo, msginfo, sent_amount2, sent_currency2, lp_amount / 2, lp_currency),
-        ]
-        util_osmo._ingest_rows(exporter, rows, comment)
 
-        # Handle extra reward if exists
+        if len(transfers_out) == 2:
+            sent_amount1, sent_currency1 = transfers_out[0]
+            sent_amount2, sent_currency2 = transfers_out[1]
+            rows = [
+                make_osmo_lp_deposit_tx(txinfo, msginfo, sent_amount1, sent_currency1, lp_amount / 2, lp_currency),
+                make_osmo_lp_deposit_tx(txinfo, msginfo, sent_amount2, sent_currency2, lp_amount / 2, lp_currency),
+            ]
+            util_osmo._ingest_rows(exporter, rows, comment)
+        elif len(transfers_out) == 1:
+            sent_amount, sent_currency = transfers_out[0]
+            rows = [
+                make_osmo_lp_deposit_tx(txinfo, msginfo, sent_amount, sent_currency, lp_amount, lp_currency)
+            ]
+            util_osmo._ingest_rows(exporter, rows, comment)
+
+        # Handle extra rewards if they exist
         if len(transfers_in) == 1:
-            tokens_out = events_by_type.get("collect_incentives", {}).get("tokens_out", None)
-            # i.e. 1268498uosmo
-            amt, cur = msginfo.amount_currency(tokens_out)[0]
-            row = make_osmo_reward_tx(txinfo, msginfo, amt, cur)
-            util_osmo._ingest_rows(exporter, [row], comment)
+            for event_key in ["collect_incentives", "collect_spread_rewards"]:
+                _handle_extra_rewards(exporter, txinfo, msginfo, events_by_type, comment, event_key)
 
-        return
+    return
 
     raise Exception("Unable to handle tx in handle_add_to_position()")
+
+
+def _handle_extra_rewards(exporter, txinfo, msginfo, events_by_type, comment, event_key):
+    tokens_out = events_by_type.get(event_key, {}).get("tokens_out")
+    if tokens_out:
+        rewards = msginfo.amount_currency(tokens_out)
+        for amt, cur in rewards:
+            row = make_osmo_reward_tx(txinfo, msginfo, amt, cur)
+            util_osmo._ingest_rows(exporter, [row], comment)
 
 
 def handle_collect_incentives(exporter, txinfo, msginfo):
