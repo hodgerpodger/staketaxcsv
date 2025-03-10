@@ -251,20 +251,24 @@ def handle_withdraw_position(exporter, txinfo, msginfo):
 def handle_migrate_to_concentrated(exporter, txinfo, msginfo):
     wallet_address = txinfo.wallet_address
     transfers_in, transfers_out = msginfo.transfers
-    events_by_type = msginfo.events_by_type
 
-    # Find lp token/amount
+    # Find lp token/amount from transfers_in (GAMM-* token)
     lp_amount, lp_currency = _find_lp_token_amount(transfers_in)
     if lp_currency is None:
         logging.error("Unable to find lp token/amount")
         handle_unknown_detect_transfers(exporter, txinfo, msginfo)
         return
 
-    # Save leaving old pool info
+    # Filter out the GAMM token from transfers_in and transfers_out.
+    withdraws = [t for t in transfers_in if not t[1].startswith("GAMM")]
+    deposits = [t for t in transfers_out if not t[1].startswith("GAMM")]
+
+    # Save leaving old pool info.
     lock_id = msginfo.message["lock_id"]
     LockedTokens.remove_stake(wallet_address, lock_id)
 
-    # Save entering new pool info
+    # Save entering new pool info.
+    events_by_type = msginfo.events_by_type
     create_position = events_by_type["create_position"]
     pool_id = create_position["pool_id"]
     position_id = create_position["position_id"]
@@ -272,11 +276,37 @@ def handle_migrate_to_concentrated(exporter, txinfo, msginfo):
 
     PositionLiquidity.create_position(position_id, liquidity)
 
-    row = make_osmo_simple_tx(txinfo, msginfo)
-    row.comment += "concentrated_lp.migrate"
-    row.comment += f"[exit lock_id={lock_id}]"
-    row.comment += f"[enter pool_id={pool_id} position_id={position_id}]"
-    exporter.ingest_row(row)
+    comment = f"concentrated_lp.migrate [exit lock_id={lock_id}][enter pool_id={pool_id} position_id={position_id}]"
+
+    # Create LP Withdraw row(s)
+    num_withdraw = len(withdraws)
+    if num_withdraw == 0:
+        raise Exception("len(withdraws)=0.  unable to handle in handle_migrate_to_concentrated()")
+    elif num_withdraw == 1:
+        receive_amount, receive_currency = withdraws[0]
+        row = make_osmo_lp_withdraw_tx(txinfo, msginfo, lp_amount, lp_currency, receive_amount, receive_currency)
+        util_osmo._ingest_rows(exporter, [row], comment)
+    elif len(withdraws) == 2:
+        rows = []
+        for receive_amount, receive_currency in withdraws:
+            row = make_osmo_lp_withdraw_tx(txinfo, msginfo, lp_amount / num_withdraw, lp_currency, receive_amount, receive_currency)
+            rows.append(row)
+        util_osmo._ingest_rows(exporter, rows, comment)
+
+    # Create LP Deposit row(s)
+    num_deposit = len(deposits)
+    if num_deposit == 0:
+        raise Exception("len(deposits)=0.  unable to handle in handle_migrate_to_concentrated()")
+    elif num_deposit == 1:
+        sent_amount, sent_currency = deposits[0]
+        row = make_osmo_lp_deposit_tx(txinfo, msginfo, sent_amount, sent_currency, lp_amount, lp_currency)
+        util_osmo._ingest_rows(exporter, [row], comment)
+    else:
+        rows = []
+        for sent_amount, sent_currency in deposits:
+            row = make_osmo_lp_deposit_tx(txinfo, msginfo, sent_amount, sent_currency, lp_amount / num_deposit, lp_currency)
+            rows.append(row)
+        util_osmo._ingest_rows(exporter, rows, comment)
     return
 
 
