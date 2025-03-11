@@ -95,6 +95,9 @@ def _handle_message(exporter, txinfo, msginfo):
             staketaxcsv.osmo.handle_superfluid.handle_lp_stake(exporter, txinfo, msginfo)
         elif msg_type in [co.MSG_TYPE_SUPERFLUID_UNDELEGATE, co.MSG_TYPE_SUPERFLUID_UNBOND_LOCK]:
             staketaxcsv.osmo.handle_superfluid.handle_undelegate_or_unbond(exporter, txinfo, msginfo)
+        elif msg_type == co.MSG_TYPE_CREATE_FULL_RANGE_POSITION_AND_SUPERFLUID_DELEGATE:
+            staketaxcsv.osmo.handle_superfluid.handle_create_full_range_position_and_superfluid_delegate(
+                exporter, txinfo, msginfo)
 
         # concentrated liquidity
         elif msg_type == co.MSG_TYPE_CREATE_POSITION:
