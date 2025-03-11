@@ -1,10 +1,11 @@
 import logging
 from collections import defaultdict
-from staketaxcsv.osmo import util_osmo
+from staketaxcsv.osmo import util_osmo, denoms
 from staketaxcsv.osmo.handle_lp import LockedTokens
 from staketaxcsv.osmo.handle_unknown import handle_unknown_detect_transfers
 from staketaxcsv.osmo.make_tx import (
-    make_osmo_lp_deposit_tx, make_osmo_lp_withdraw_tx, make_osmo_reward_tx, make_osmo_simple_tx)
+    make_osmo_lp_deposit_tx, make_osmo_lp_withdraw_tx, make_osmo_reward_tx)
+from staketaxcsv.settings_csv import OSMO_NODE
 
 
 class PositionLiquidity:
@@ -251,9 +252,10 @@ def handle_withdraw_position(exporter, txinfo, msginfo):
 def handle_migrate_to_concentrated(exporter, txinfo, msginfo):
     wallet_address = txinfo.wallet_address
     transfers_in, transfers_out = msginfo.transfers
+    message = msginfo.message
 
     # Find lp token/amount from transfers_in (GAMM-* token)
-    lp_amount, lp_currency = _find_lp_token_amount(transfers_in)
+    lp_amount, lp_currency = _find_lp_token_amount(transfers_in, message)
     if lp_currency is None:
         logging.error("Unable to find lp token/amount")
         handle_unknown_detect_transfers(exporter, txinfo, msginfo)
@@ -310,9 +312,17 @@ def handle_migrate_to_concentrated(exporter, txinfo, msginfo):
     return
 
 
-def _find_lp_token_amount(transfers):
+def _find_lp_token_amount(transfers, message):
+    # Find lp amount/currency from transfers_in if exists
     for amount, currency in transfers:
         if currency.startswith("GAMM-"):
             return amount, currency
+
+    # Secondarily, find from message
+    lp_amount_raw = message.get("shares_to_migrate", {}).get("amount", None)
+    lp_denom = message.get("shares_to_migrate", {}).get("denom", None)
+    if lp_denom:
+        amt, cur = denoms.amount_currency_from_raw(lp_amount_raw, lp_denom, OSMO_NODE)
+        return amt, cur
 
     return None, None
