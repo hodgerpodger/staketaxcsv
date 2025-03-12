@@ -1,0 +1,3 @@
+MINTSCAN_LABEL_SEI = "sei"
+CURRENCY_SEI = "SEI"
+EXCHANGE_SEI = "sei_blockchain"
