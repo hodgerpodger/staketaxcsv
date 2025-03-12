@@ -108,7 +108,6 @@ def handle_add_to_position(exporter, txinfo, msginfo):
         comment = f"concentrated_lp.add_to_position [pool_id={create_pool_id}]" + \
                   f"[old position_id={withdraw_position_id}][new position_id={create_position_id}] "
 
-
         if len(transfers_out) == 2:
             sent_amount1, sent_currency1 = transfers_out[0]
             sent_amount2, sent_currency2 = transfers_out[1]

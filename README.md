@@ -5,7 +5,7 @@
   Agoric (BLD), Bitsong (BTSG), Sentinel (DVPN), dYdX (DYDX), Dymension (DYM), Evmos (EVMOS), Fetch.ai (FET),
   Gravity Bridge (GRAV), Chihuahua (HUAHUA), IoTex (IOTX), Injective (INJ), Juno (JUNO), Kujira (KUJI), 
   KYVE Network (KYVE), Terra Classic (LUNC), Terra 2.0 (LUNA), Neutron (NTRN), Nolus Protocol (NLS), Osmosis (OSMO),
-  Saga (SAGA), Solana (SOL), Stargaze (STARS), Stride (STRD), and Celestia (TIA). 
+  Saga (SAGA), Sei (SEI), Solana (SOL), Stargaze (STARS), Stride (STRD), and Celestia (TIA). 
 * CSV codebase for <https://stake.tax>
 * Contributions/PRs highly encouraged, such as support for new txs, blockchains, or CSV formats.  Examples:
   * Add cosmo-based-blockchain CSV: https://docs.stake.tax/devs/adding-csv-in-cosmos-based-ecosystem

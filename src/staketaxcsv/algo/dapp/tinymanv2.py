@@ -183,7 +183,7 @@ class TinymanV2(Dapp):
         i = 0
         if is_asset_optin(group[i]):
             i += 1
-        
+
         for j in range(2):
             transaction = group[i + j]
             if not is_transfer(transaction):
@@ -260,7 +260,7 @@ class TinymanV2(Dapp):
     def _is_tinymanv2_staking_commit(self, group):
         if len(group) != 1:
             return False
-        
+
         return is_app_call(group[0], APPLICATION_ID_TINYMANV2_STAKING, TINYMANV2_TRANSACTION_STAKING_COMMIT)
 
     def _is_tinymanv2_governance_create_lock(self, group):
@@ -273,13 +273,13 @@ class TinymanV2(Dapp):
 
         if not is_app_call(group[-2], APPLICATION_ID_TINYMANV2_GOVERNANCE_VAULT, TINYMANV2_TRANSACTION_GOVERNANCE_CREATE_LOCK):
             return False
-        
+
         return is_asa_transfer(group[-3])
 
     def _is_tinymanv2_governance_withdraw(self, group):
         if len(group) != 1:
             return False
-        
+
         return is_app_call(group[0], APPLICATION_ID_TINYMANV2_GOVERNANCE_VAULT, TINYMANV2_TRANSACTION_GOVERNANCE_WITHDRAW)
 
     def _is_tinymanv2_governance_claim_rewards(self, group):
@@ -357,14 +357,14 @@ class TinymanV2(Dapp):
         if asset.is_algo():
             fee_amount += asset.uint_amount
             asset = get_transfer_asset(group[1])
-        
+
         export_stake_tx(self.exporter, txinfo, asset, fee_amount, self.name)
 
     def _handle_tinymanv2_governance_withdraw(self, group, txinfo):
         fee_amount = get_fee_amount(self.user_address, group)
 
         asset = get_inner_transfer_asset(group[0])
-        
+
         export_unstake_tx(self.exporter, txinfo, asset, fee_amount, self.name)
 
     def _handle_tinymanv2_governance_claim_rewards(self, group, txinfo):
@@ -375,5 +375,5 @@ class TinymanV2(Dapp):
             fee_amount += asset.uint_amount
 
         asset = get_inner_transfer_asset(group[-1])
-        
+
         export_reward_tx(self.exporter, txinfo, asset, fee_amount, self.name)
