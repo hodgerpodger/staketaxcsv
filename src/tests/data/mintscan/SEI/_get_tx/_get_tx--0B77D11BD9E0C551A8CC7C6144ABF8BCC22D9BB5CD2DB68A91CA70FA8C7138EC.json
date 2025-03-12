@@ -1,0 +1,141 @@
+[
+    {
+        "height": "131877855",
+        "txhash": "0B77D11BD9E0C551A8CC7C6144ABF8BCC22D9BB5CD2DB68A91CA70FA8C7138EC",
+        "codespace": "",
+        "code": 0,
+        "data": "0A1E0A1C2F636F736D6F732E62616E6B2E763162657461312E4D736753656E64",
+        "info": "",
+        "gas_wanted": "118824",
+        "gas_used": "72962",
+        "tx": {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            "/cosmos-tx-v1beta1-Tx": {
+                "body": {
+                    "messages": [
+                        {
+                            "@type": "/cosmos.bank.v1beta1.MsgSend",
+                            "/cosmos-bank-v1beta1-MsgSend": {
+                                "from_address": "sei1e22msazh4pmdzvpckzfsth37ys4c4yh85dcg8q",
+                                "to_address": "sei1re40yc426rq9ptzmxx20ckqmlq4yrcm7yfld7m",
+                                "amount": [
+                                    {
+                                        "denom": "usei",
+                                        "amount": "209056000000"
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "memo": "3139622228",
+                    "timeout_height": "0",
+                    "extension_options": [],
+                    "non_critical_extension_options": []
+                },
+                "auth_info": {
+                    "signer_infos": [
+                        {
+                            "public_key": {
+                                "@type": "/cosmos.crypto.secp256k1.PubKey",
+                                "/cosmos-crypto-secp256k1-PubKey": {
+                                    "key": "A8S5lH7zXNdJe8Qqgiibf6vBX28MeRiPMj3HqO9W+lb8"
+                                }
+                            },
+                            "mode_info": {
+                                "single": {
+                                    "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                                }
+                            },
+                            "sequence": "42"
+                        }
+                    ],
+                    "fee": {
+                        "amount": [
+                            {
+                                "denom": "usei",
+                                "amount": "80208"
+                            }
+                        ],
+                        "gas_limit": "118824",
+                        "payer": "",
+                        "granter": ""
+                    }
+                },
+                "signatures": [
+                    "kqamcq8XaBVxirohaJwwFS0jiMc9J8o1XaE58tHdlS0fyy7TTLNK/C2TdRXshvGyD0uHysXt5cwtZEeC9n4MwQ=="
+                ]
+            }
+        },
+        "timestamp": "2025-02-15T23:24:19Z",
+        "timestamp__@@date": 1739661859000,
+        "logs": [
+            {
+                "msg_index": 0,
+                "log": "",
+                "events": [
+                    {
+                        "type": "coin_received",
+                        "attributes": [
+                            {
+                                "key": "receiver",
+                                "value": "sei1re40yc426rq9ptzmxx20ckqmlq4yrcm7yfld7m"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "209056000000usei"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "coin_spent",
+                        "attributes": [
+                            {
+                                "key": "spender",
+                                "value": "sei1e22msazh4pmdzvpckzfsth37ys4c4yh85dcg8q"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "209056000000usei"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "action",
+                                "value": "/cosmos.bank.v1beta1.MsgSend"
+                            },
+                            {
+                                "key": "sender",
+                                "value": "sei1e22msazh4pmdzvpckzfsth37ys4c4yh85dcg8q"
+                            },
+                            {
+                                "key": "module",
+                                "value": "bank"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "transfer",
+                        "attributes": [
+                            {
+                                "key": "recipient",
+                                "value": "sei1re40yc426rq9ptzmxx20ckqmlq4yrcm7yfld7m"
+                            },
+                            {
+                                "key": "sender",
+                                "value": "sei1e22msazh4pmdzvpckzfsth37ys4c4yh85dcg8q"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "209056000000usei"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "chain_id": "pacific-1"
+    }
+]

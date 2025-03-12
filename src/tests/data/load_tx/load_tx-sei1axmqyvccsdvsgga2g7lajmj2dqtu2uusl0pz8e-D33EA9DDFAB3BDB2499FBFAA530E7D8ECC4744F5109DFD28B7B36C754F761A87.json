@@ -1,0 +1,181 @@
+{
+    "height": "118723983",
+    "txhash": "D33EA9DDFAB3BDB2499FBFAA530E7D8ECC4744F5109DFD28B7B36C754F761A87",
+    "codespace": "",
+    "code": 0,
+    "data": "0A250A232F636F736D6F732E7374616B696E672E763162657461312E4D736744656C6567617465",
+    "info": "",
+    "gas_wanted": "237998",
+    "gas_used": "172800",
+    "tx": {
+        "@type": "/cosmos.tx.v1beta1.Tx",
+        "body": {
+            "messages": [
+                {
+                    "@type": "/cosmos.staking.v1beta1.MsgDelegate",
+                    "delegator_address": "sei1axmqyvccsdvsgga2g7lajmj2dqtu2uusl0pz8e",
+                    "validator_address": "seivaloper17ga9jha45gu0x04yrmfpjpksmqe48wupzk5jex",
+                    "amount": {
+                        "denom": "usei",
+                        "amount": "1475000000"
+                    }
+                }
+            ],
+            "memo": "",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+        },
+        "auth_info": {
+            "signer_infos": [
+                {
+                    "public_key": {
+                        "@type": "/cosmos.crypto.secp256k1.PubKey",
+                        "key": "Awg93OBq4y9NKDYR8mYoOYBl3/NC/zfkxFOoPycz+EO2"
+                    },
+                    "mode_info": {
+                        "single": {
+                            "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                        }
+                    },
+                    "sequence": "17"
+                }
+            ],
+            "fee": {
+                "amount": [
+                    {
+                        "denom": "usei",
+                        "amount": "4760"
+                    }
+                ],
+                "gas_limit": "237998",
+                "payer": "",
+                "granter": ""
+            }
+        },
+        "signatures": [
+            "SM4oU+nL+LwIhgqcdhCZHaHdmKT3vTX8roBdlOHTj5Q6pou1+nwLNk8LvmB9GDb+1c6fcg1XoFmPhOOyEa3I5A=="
+        ]
+    },
+    "timestamp": "2024-12-04T20:32:34Z",
+    "timestamp__@@date": 1733344354000,
+    "logs": [
+        {
+            "msg_index": 0,
+            "log": "",
+            "events": [
+                {
+                    "type": "coin_received",
+                    "attributes": [
+                        {
+                            "key": "receiver",
+                            "value": "sei1axmqyvccsdvsgga2g7lajmj2dqtu2uusl0pz8e"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "6651usei"
+                        },
+                        {
+                            "key": "receiver",
+                            "value": "sei1fl48vsnmsdzcv85q5d2q4z5ajdha8yu3chcelk"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "1475000000usei"
+                        }
+                    ]
+                },
+                {
+                    "type": "coin_spent",
+                    "attributes": [
+                        {
+                            "key": "spender",
+                            "value": "sei1jv65s3grqf6v6jl3dp4t6c9t9rk99cd82n4207"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "6651usei"
+                        },
+                        {
+                            "key": "spender",
+                            "value": "sei1axmqyvccsdvsgga2g7lajmj2dqtu2uusl0pz8e"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "1475000000usei"
+                        }
+                    ]
+                },
+                {
+                    "type": "delegate",
+                    "attributes": [
+                        {
+                            "key": "validator",
+                            "value": "seivaloper17ga9jha45gu0x04yrmfpjpksmqe48wupzk5jex"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "1475000000usei"
+                        },
+                        {
+                            "key": "new_shares",
+                            "value": "1475000000.000000000000000000"
+                        }
+                    ]
+                },
+                {
+                    "type": "message",
+                    "attributes": [
+                        {
+                            "key": "action",
+                            "value": "/cosmos.staking.v1beta1.MsgDelegate"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "sei1jv65s3grqf6v6jl3dp4t6c9t9rk99cd82n4207"
+                        },
+                        {
+                            "key": "module",
+                            "value": "staking"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "sei1axmqyvccsdvsgga2g7lajmj2dqtu2uusl0pz8e"
+                        }
+                    ]
+                },
+                {
+                    "type": "transfer",
+                    "attributes": [
+                        {
+                            "key": "recipient",
+                            "value": "sei1axmqyvccsdvsgga2g7lajmj2dqtu2uusl0pz8e"
+                        },
+                        {
+                            "key": "sender",
+                            "value": "sei1jv65s3grqf6v6jl3dp4t6c9t9rk99cd82n4207"
+                        },
+                        {
+                            "key": "amount",
+                            "value": "6651usei"
+                        }
+                    ]
+                },
+                {
+                    "type": "withdraw_rewards",
+                    "attributes": [
+                        {
+                            "key": "amount",
+                            "value": "6651usei"
+                        },
+                        {
+                            "key": "validator",
+                            "value": "seivaloper17ga9jha45gu0x04yrmfpjpksmqe48wupzk5jex"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "chain_id": "pacific-1"
+}

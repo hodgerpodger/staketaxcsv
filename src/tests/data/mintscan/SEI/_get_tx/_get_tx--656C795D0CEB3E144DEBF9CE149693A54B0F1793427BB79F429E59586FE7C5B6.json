@@ -1,0 +1,152 @@
+[
+    {
+        "height": "128461400",
+        "txhash": "656C795D0CEB3E144DEBF9CE149693A54B0F1793427BB79F429E59586FE7C5B6",
+        "codespace": "",
+        "code": 0,
+        "data": "0A250A232F636F736D6F732E7374616B696E672E763162657461312E4D736744656C6567617465",
+        "info": "",
+        "gas_wanted": "217644",
+        "gas_used": "159174",
+        "tx": {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            "/cosmos-tx-v1beta1-Tx": {
+                "body": {
+                    "messages": [
+                        {
+                            "@type": "/cosmos.staking.v1beta1.MsgDelegate",
+                            "/cosmos-staking-v1beta1-MsgDelegate": {
+                                "delegator_address": "sei1axmqyvccsdvsgga2g7lajmj2dqtu2uusl0pz8e",
+                                "validator_address": "seivaloper17ga9jha45gu0x04yrmfpjpksmqe48wupzk5jex",
+                                "amount": {
+                                    "denom": "usei",
+                                    "amount": "98000000"
+                                }
+                            }
+                        }
+                    ],
+                    "memo": "",
+                    "timeout_height": "0",
+                    "extension_options": [],
+                    "non_critical_extension_options": []
+                },
+                "auth_info": {
+                    "signer_infos": [
+                        {
+                            "public_key": {
+                                "@type": "/cosmos.crypto.secp256k1.PubKey",
+                                "/cosmos-crypto-secp256k1-PubKey": {
+                                    "key": "Awg93OBq4y9NKDYR8mYoOYBl3/NC/zfkxFOoPycz+EO2"
+                                }
+                            },
+                            "mode_info": {
+                                "single": {
+                                    "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                                }
+                            },
+                            "sequence": "24"
+                        }
+                    ],
+                    "fee": {
+                        "amount": [
+                            {
+                                "denom": "usei",
+                                "amount": "4353"
+                            }
+                        ],
+                        "gas_limit": "217644",
+                        "payer": "",
+                        "granter": ""
+                    }
+                },
+                "signatures": [
+                    "xAWroMH/OJhoYPlnnc1G93/fx5P+rGO6L+dnJwyWvy1IPcyoT0kknG4rwOLAOed64ndrcrG9/CwJ5HNObk0+3w=="
+                ]
+            }
+        },
+        "timestamp": "2025-01-27T14:39:44Z",
+        "timestamp__@@date": 1737988784000,
+        "logs": [
+            {
+                "msg_index": 0,
+                "log": "",
+                "events": [
+                    {
+                        "type": "coin_received",
+                        "attributes": [
+                            {
+                                "key": "receiver",
+                                "value": "sei1fl48vsnmsdzcv85q5d2q4z5ajdha8yu3chcelk"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "98000000usei"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "coin_spent",
+                        "attributes": [
+                            {
+                                "key": "spender",
+                                "value": "sei1axmqyvccsdvsgga2g7lajmj2dqtu2uusl0pz8e"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "98000000usei"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "delegate",
+                        "attributes": [
+                            {
+                                "key": "validator",
+                                "value": "seivaloper17ga9jha45gu0x04yrmfpjpksmqe48wupzk5jex"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "98000000usei"
+                            },
+                            {
+                                "key": "new_shares",
+                                "value": "98000000.000000000000000000"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "action",
+                                "value": "/cosmos.staking.v1beta1.MsgDelegate"
+                            },
+                            {
+                                "key": "module",
+                                "value": "staking"
+                            },
+                            {
+                                "key": "sender",
+                                "value": "sei1axmqyvccsdvsgga2g7lajmj2dqtu2uusl0pz8e"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "withdraw_rewards",
+                        "attributes": [
+                            {
+                                "key": "amount",
+                                "value": "0usei"
+                            },
+                            {
+                                "key": "validator",
+                                "value": "seivaloper17ga9jha45gu0x04yrmfpjpksmqe48wupzk5jex"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "chain_id": "pacific-1"
+    }
+]

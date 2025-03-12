@@ -1,0 +1,139 @@
+[
+    {
+        "height": "22137960",
+        "txhash": "3101A6D21C2D0579580C14E65DD9FBBC4B76C14E6C48E520C975D196575334FB",
+        "codespace": "",
+        "code": 0,
+        "data": "0A250A232F636F736D6F732E7374616B696E672E763162657461312E4D736744656C6567617465",
+        "info": "",
+        "gas_wanted": "214498",
+        "gas_used": "156171",
+        "tx": {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            "/cosmos-tx-v1beta1-Tx": {
+                "body": {
+                    "messages": [
+                        {
+                            "@type": "/cosmos.staking.v1beta1.MsgDelegate",
+                            "/cosmos-staking-v1beta1-MsgDelegate": {
+                                "delegator_address": "sei1e22msazh4pmdzvpckzfsth37ys4c4yh85dcg8q",
+                                "validator_address": "seivaloper146m089lq8mkqw6w0mmlhxz6247g2taha89at74",
+                                "amount": {
+                                    "denom": "usei",
+                                    "amount": "61099999550000"
+                                }
+                            }
+                        }
+                    ],
+                    "memo": "",
+                    "timeout_height": "0",
+                    "extension_options": [],
+                    "non_critical_extension_options": []
+                },
+                "auth_info": {
+                    "signer_infos": [
+                        {
+                            "public_key": {
+                                "@type": "/cosmos.crypto.secp256k1.PubKey",
+                                "/cosmos-crypto-secp256k1-PubKey": {
+                                    "key": "A8S5lH7zXNdJe8Qqgiibf6vBX28MeRiPMj3HqO9W+lb8"
+                                }
+                            },
+                            "mode_info": {
+                                "single": {
+                                    "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                                }
+                            },
+                            "sequence": "0"
+                        }
+                    ],
+                    "fee": {
+                        "amount": [
+                            {
+                                "denom": "usei",
+                                "amount": "42900"
+                            }
+                        ],
+                        "gas_limit": "214498",
+                        "payer": "",
+                        "granter": ""
+                    }
+                },
+                "signatures": [
+                    "236kU4yjWeOEcCgx2PvqKMcXX33GRsiEYkt6r0MmlbBgq4XJRoRKbI/2AZqSJqRwflMyFDsVXscdHsPw1UBXwA=="
+                ]
+            }
+        },
+        "timestamp": "2023-08-30T21:22:16Z",
+        "timestamp__@@date": 1693430536000,
+        "logs": [
+            {
+                "msg_index": 0,
+                "log": "",
+                "events": [
+                    {
+                        "type": "coin_received",
+                        "attributes": [
+                            {
+                                "key": "receiver",
+                                "value": "sei1fl48vsnmsdzcv85q5d2q4z5ajdha8yu3chcelk"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "61099999550000usei"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "coin_spent",
+                        "attributes": [
+                            {
+                                "key": "spender",
+                                "value": "sei1e22msazh4pmdzvpckzfsth37ys4c4yh85dcg8q"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "61099999550000usei"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "delegate",
+                        "attributes": [
+                            {
+                                "key": "validator",
+                                "value": "seivaloper146m089lq8mkqw6w0mmlhxz6247g2taha89at74"
+                            },
+                            {
+                                "key": "amount",
+                                "value": "61099999550000usei"
+                            },
+                            {
+                                "key": "new_shares",
+                                "value": "61099999550000.000000000000000000"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "message",
+                        "attributes": [
+                            {
+                                "key": "action",
+                                "value": "/cosmos.staking.v1beta1.MsgDelegate"
+                            },
+                            {
+                                "key": "module",
+                                "value": "staking"
+                            },
+                            {
+                                "key": "sender",
+                                "value": "sei1e22msazh4pmdzvpckzfsth37ys4c4yh85dcg8q"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "chain_id": "pacific-1"
+    }
+]
