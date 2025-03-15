@@ -32,13 +32,11 @@ def lp_rewards(wallet_address, exporter, progress):
         rewards = api.get_rewards(wallet_address, denom)
         for reward in rewards:
             day = reward.get("timestamp")
-            cl_amount_raw = reward.get("cl_amount")
-            gamm_amount_raw = reward.get("gamm_amount")
-            staking_amount_raw = reward.get("staking_amount")
+            cl_amount = float(reward.get("cl_amount"))
+            gamm_amount = float(reward.get("gamm_amount"))
+            staking_amount = float(reward.get("staking_amount"))
 
-            cl_amount, reward_currency = denoms.amount_currency_from_raw(cl_amount_raw, denom, OSMO_NODE)
-            gamm_amount, _ = denoms.amount_currency_from_raw(gamm_amount_raw, denom, OSMO_NODE)
-            staking_amount, _ = denoms.amount_currency_from_raw(staking_amount_raw, denom, OSMO_NODE)
+            _, reward_currency = denoms.amount_currency_from_raw(1, denom, OSMO_NODE)
 
             # Create rows only for non-zero rewards
             if cl_amount > 0:
@@ -47,6 +45,5 @@ def lp_rewards(wallet_address, exporter, progress):
             if gamm_amount > 0:
                 row = make_lp_reward_tx(wallet_address, day, gamm_amount, reward_currency, row_comment="gamm rewards")
                 exporter.ingest_row(row)
-            if staking_amount > 0:
-                row = make_lp_reward_tx(wallet_address, day, staking_amount, reward_currency, row_comment="staking rewards")
-                exporter.ingest_row(row)
+
+            # omit staking_amount reward because it is already counted in common code.
