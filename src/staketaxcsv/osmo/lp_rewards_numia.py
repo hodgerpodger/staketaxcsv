@@ -39,11 +39,8 @@ def lp_rewards(wallet_address, exporter, progress):
             _, reward_currency = denoms.amount_currency_from_raw(1, denom, OSMO_NODE)
 
             # Create rows only for non-zero rewards
-            if cl_amount > 0:
-                row = make_lp_reward_tx(wallet_address, day, cl_amount, reward_currency, row_comment="cl rewards")
-                exporter.ingest_row(row)
             if gamm_amount > 0:
                 row = make_lp_reward_tx(wallet_address, day, gamm_amount, reward_currency, row_comment="gamm rewards")
                 exporter.ingest_row(row)
 
-            # omit staking_amount reward because it is already counted in common code.
+            # omit cl_amount and staking_amount reward because they are already counted in common code.
