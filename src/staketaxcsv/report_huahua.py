@@ -16,7 +16,7 @@ from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.huahua.config_huahua import localconfig
 from staketaxcsv.huahua.progress_huahua import SECONDS_PER_PAGE, ProgressHuahua
 from staketaxcsv.settings_csv import HUAHUA_NODE, TICKER_HUAHUA
-from staketaxcsv.common.ibc.tx_data import TxDataLcd
+from staketaxcsv.common.ibc.tx_data import TxDataLcd, TxDataMintscan
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
 LIMIT_PER_QUERY = 10
 
@@ -33,7 +33,7 @@ def read_options(options):
 
 def _txdata():
     max_txs = localconfig.limit
-    return TxDataLcd(HUAHUA_NODE, max_txs, limit_per_query=LIMIT_PER_QUERY)
+    return TxDataMintscan(TICKER_HUAHUA, max_txs)
 
 
 def wallet_exists(wallet_address):
