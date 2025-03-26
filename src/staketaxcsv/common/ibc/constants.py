@@ -82,6 +82,7 @@ MINTSCAN_LABELS = {
     "DESMOS": "desmos",
     "DVPN": "sentinel",
     "DYDX": "dydx",
+    "DYM": "dymension",
     "EVMOS": "evmos",
     "FET": "fetchai",
     "FIS": "stafi",

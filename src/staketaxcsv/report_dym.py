@@ -13,7 +13,7 @@ import staketaxcsv.dym.processor
 from staketaxcsv.common.address import dym_addrs
 from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
-from staketaxcsv.common.ibc.tx_data import TxDataLcd
+from staketaxcsv.common.ibc.tx_data import TxDataLcd, TxDataMintscan
 from staketaxcsv.common import report_util
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.dym.genesis_airdrop import genesis_airdrop
@@ -39,7 +39,7 @@ def read_options(options):
 
 def _txdata():
     max_txs = localconfig.limit
-    return TxDataLcd(DYM_NODE, max_txs)
+    return TxDataMintscan(TICKER_DYM, max_txs)
 
 
 def wallet_exists(wallet_address):
