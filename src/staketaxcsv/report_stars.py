@@ -19,7 +19,7 @@ from staketaxcsv.settings_csv import STARS_NODE, TICKER_STARS, STARS_NODE_RPC
 from staketaxcsv.stars.config_stars import localconfig
 from staketaxcsv.stars.progress_stars import SECONDS_PER_PAGE, ProgressStars, SECONDS_PER_TX
 from staketaxcsv.common.ibc import api_lcd
-from staketaxcsv.common.ibc.tx_data import TxDataLcd, TxDataRpc
+from staketaxcsv.common.ibc.tx_data import TxDataMintscan
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
 STARS_NODES_RPC = [STARS_NODE_RPC]
 
@@ -36,7 +36,7 @@ def read_options(options):
 
 def _txdata():
     max_txs = localconfig.limit
-    return TxDataRpc(STARS_NODES_RPC, max_txs)
+    return TxDataMintscan(TICKER_STARS, max_txs)
 
 
 def wallet_exists(wallet_address):
