@@ -16,7 +16,7 @@ from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import SAGA_NODE, TICKER_SAGA
 from staketaxcsv.common.ibc import api_lcd
-from staketaxcsv.common.ibc.tx_data import TxDataLcd
+from staketaxcsv.common.ibc.tx_data import TxDataLcd, TxDataMintscan
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
 
 
@@ -31,7 +31,7 @@ def read_options(options):
 
 def _txdata():
     max_txs = localconfig.limit
-    return TxDataLcd(SAGA_NODE, max_txs, limit_per_query=20)
+    return TxDataMintscan(TICKER_SAGA, max_txs)
 
 
 def wallet_exists(wallet_address):
