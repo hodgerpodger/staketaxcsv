@@ -17,7 +17,7 @@ from staketaxcsv.common.Cache import Cache
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.settings_csv import STARS_NODE, TICKER_STARS, STARS_NODE_RPC
 from staketaxcsv.stars.config_stars import localconfig
-from staketaxcsv.stars.progress_stars import SECONDS_PER_PAGE, ProgressStars, SECONDS_PER_TX
+from staketaxcsv.common.ibc.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 from staketaxcsv.common.ibc import api_lcd
 from staketaxcsv.common.ibc.tx_data import TxDataMintscan
 from staketaxcsv.common.ibc.decorators import set_ibc_cache
@@ -53,18 +53,20 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address):
-    num_pages, num_txs = _txdata().get_txs_pages_count(wallet_address)
-    return SECONDS_PER_PAGE * num_pages + SECONDS_PER_TX * num_txs
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+    return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address, start_date, end_date)
 
 
 @set_ibc_cache()
 def txhistory(wallet_address):
-    progress = ProgressStars()
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+    progress = ProgressMintScan(localconfig)
     exporter = Exporter(wallet_address, localconfig, TICKER_STARS)
     txdata = _txdata()
 
     # Fetch count of transactions to estimate progress beforehand
-    txdata.get_txs_pages_count(wallet_address, progress_rpc=progress)
+    count_pages = txdata.get_txs_pages_count(wallet_address)
+    progress.set_estimate(count_pages)
 
     # Fetch transactions
     elems = txdata.get_txs_all(wallet_address, progress)
