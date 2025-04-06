@@ -28,6 +28,8 @@ def main():
 def read_options(options):
     """ Configure localconfig based on options dictionary. """
     report_util.read_common_options(localconfig, options)
+    localconfig.start_date = options.get("start_date", None)
+    localconfig.end_date = options.get("end_date", None)
     logging.info("localconfig: %s", localconfig.__dict__)
 
 
@@ -50,21 +52,23 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address):
-    return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address)
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+    return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address, start_date, end_date)
 
 
 @set_ibc_cache()
 def txhistory(wallet_address):
+    start_date, end_date = localconfig.start_date, localconfig.end_date
     progress = ProgressHuahua()
     exporter = Exporter(wallet_address, localconfig, TICKER_HUAHUA)
     txdata = _txdata()
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = txdata.get_txs_pages_count(wallet_address)
+    count_pages = txdata.get_txs_pages_count(wallet_address, start_date, end_date)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = txdata.get_txs_all(wallet_address, progress)
+    elems = txdata.get_txs_all(wallet_address, progress, start_date, end_date)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.huahua.processor.process_txs(wallet_address, elems, exporter)

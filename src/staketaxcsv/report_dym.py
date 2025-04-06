@@ -18,7 +18,7 @@ from staketaxcsv.common import report_util
 from staketaxcsv.common.Exporter import Exporter
 from staketaxcsv.dym.genesis_airdrop import genesis_airdrop
 from staketaxcsv.dym.config_dym import localconfig
-from staketaxcsv.dym.progress_dym import SECONDS_PER_PAGE, ProgressDym
+from staketaxcsv.common.ibc.progress_mintscan import ProgressMintScan, SECONDS_PER_PAGE
 from staketaxcsv.settings_csv import DYM_NODE, TICKER_DYM
 
 
@@ -34,6 +34,8 @@ def main():
 
 def read_options(options):
     report_util.read_common_options(localconfig, options)
+    localconfig.start_date = options.get("start_date", None)
+    localconfig.end_date = options.get("end_date", None)
     logging.info("localconfig: %s", localconfig.__dict__)
 
 
@@ -60,13 +62,15 @@ def txone(wallet_address, txid):
 
 
 def estimate_duration(wallet_address):
-    return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address)
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+    return SECONDS_PER_PAGE * _txdata().get_txs_pages_count(wallet_address, start_date, end_date)
 
 
 @set_ibc_cache()
 def txhistory(wallet_address):
     """ Configure localconfig based on options dictionary. """
-    progress = ProgressDym()
+    start_date, end_date = localconfig.start_date, localconfig.end_date
+    progress = ProgressMintScan(localconfig)
     exporter = Exporter(wallet_address, localconfig, TICKER_DYM)
     txdata = _txdata()
 
@@ -75,11 +79,11 @@ def txhistory(wallet_address):
     genesis_airdrop(wallet_address, exporter)
 
     # Fetch count of transactions to estimate progress more accurately
-    count_pages = txdata.get_txs_pages_count(wallet_address)
+    count_pages = txdata.get_txs_pages_count(wallet_address, start_date, end_date)
     progress.set_estimate(count_pages)
 
     # Fetch transactions
-    elems = txdata.get_txs_all(wallet_address, progress)
+    elems = txdata.get_txs_all(wallet_address, progress, start_date, end_date)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
     staketaxcsv.dym.processor.process_txs(wallet_address, elems, exporter)
