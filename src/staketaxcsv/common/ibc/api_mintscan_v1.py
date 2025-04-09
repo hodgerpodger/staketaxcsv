@@ -36,6 +36,10 @@ class MintscanAPI:
             'Accept': 'application/json, text/plain, */*'
         }
 
+    @classmethod
+    def add_network(cls, ticker, network):
+        MINTSCAN_LABELS[ticker] = network
+
     def _query(self, uri_path, query_params, sleep_seconds=0):
         if not MINTSCAN_KEY:
             raise Exception("Missing STAKETAX_MINTSCAN_KEY environment variable")

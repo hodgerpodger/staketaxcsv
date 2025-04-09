@@ -9,7 +9,8 @@ from staketaxcsv.common.ExporterTypes import (
 from staketaxcsv.common.BalExporter import BALANCES_HISTORICAL
 from staketaxcsv.settings_csv import (
     REPORTS_DIR, TICKER_AKT, TICKER_ALGO, TICKER_ARCH, TICKER_ATOM, TICKER_COSMOSPLUS,
-    TICKER_EVMOS, TICKER_JUNO, TICKER_LUNA1, TICKER_LUNA2, TICKER_OSMO, TICKER_SAGA, TICKER_SOL, TICKER_STRD, TICKER_TIA)
+    TICKER_COSMOSPLUS2, TICKER_EVMOS, TICKER_JUNO, TICKER_LUNA1, TICKER_LUNA2, TICKER_OSMO,
+    TICKER_SAGA, TICKER_SOL, TICKER_STRD, TICKER_TIA)
 from staketaxcsv import settings_csv
 
 ALL = "all"
@@ -130,12 +131,25 @@ def parse_args(ticker):
         parser.add_argument(
             "--cosmosplus_node",
             type=str,
-            help="Full URL of LCD/RPC node (only used in report_cosmoplus.py)"
+            help="Full URL of LCD node (only used in report_cosmoplus.py)"
         )
         parser.add_argument(
             "--cosmosplus_ticker",
             type=str,
             help="Symbol of token (only used in report_cosmosplus.py)"
+        )
+
+    if ticker in [TICKER_COSMOSPLUS2]:
+        parser.add_argument(
+            "--v2_ticker",
+            type=str,
+            help="Symbol of token (only used in report_cosmo_v2.py)"
+        )
+        parser.add_argument(
+            "--v2_mintscan_label",
+            type=str,
+            help="network name used in mintscan api (i.e. use 'stargaze' if mintscan "
+                 "explorer address is https://www.mintscan.io/stargaze/)"
         )
     if ticker == TICKER_LUNA1:
         parser.add_argument(
@@ -200,6 +214,10 @@ def parse_args(ticker):
         options["cosmosplus_node"] = args.cosmosplus_node
     if "cosmosplus_ticker" in args:
         options["cosmosplus_ticker"] = args.cosmosplus_ticker
+    if "v2_ticker" in args:
+        options["v2_ticker"] = args.v2_ticker
+    if "v2_mintscan_label" in args:
+        options["v2_mintscan_label"] = args.v2_mintscan_label
     if "exclude_failed" in args:
         options["exclude_failed"] = args.exclude_failed
     if "exclude_associated" in args:

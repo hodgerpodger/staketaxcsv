@@ -5,10 +5,12 @@ Prints transactions and writes CSV(s) to _reports/<token_symbol>*.csv.
 
 Notes:
 
-* Meant to create CSV with only knowledge of LCD node and ticker (for just labeling).
 * Example usage:
    python3 staketaxcsv/report_cosmosplus.py akash19yy53sz8ed88me79neeksqra06kcs5ly24758d --cosmosplus_node https://rest-akash.ecostake.com --cosmosplus_ticker AKT
+
 * See https://github.com/cosmos/chain-registry to find LCD nodes (search "rest" in chain.json)
+
+* Uses lcd endpoint for transaction data source
 
 """
 

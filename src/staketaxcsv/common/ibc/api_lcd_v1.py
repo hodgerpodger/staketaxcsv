@@ -11,6 +11,7 @@ from staketaxcsv.common.ibc.constants import (
 from staketaxcsv.common.ibc.util_ibc import remove_duplicates
 from staketaxcsv.settings_csv import REPORTS_DIR
 from staketaxcsv.common.query import get_with_retries
+from staketaxcsv.settings_csv import MINTSCAN_KEY
 TXS_LIMIT_PER_QUERY = 50
 
 
@@ -22,11 +23,20 @@ class LcdAPI_v1:
     def __init__(self, node):
         self.node = node
         self.version = None
+        self.use_mintscan_headers = node.startswith("https://apis.mintscan.io")
 
     def _query(self, uri_path, query_params, sleep_seconds=0):
         url = f"{self.node}{uri_path}"
         logging.info("Requesting url %s?%s ...", url, urlencode(query_params))
-        data = get_with_retries(self.session, url, query_params, {})
+
+        headers = {}
+        if self.use_mintscan_headers:
+            headers = {
+                'Authorization': f'Bearer {MINTSCAN_KEY}',
+                'Accept': 'application/json, text/plain, */*'
+            }
+
+        data = get_with_retries(self.session, url, query_params, headers)
 
         if sleep_seconds:
             time.sleep(sleep_seconds)
