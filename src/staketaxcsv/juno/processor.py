@@ -19,6 +19,8 @@ def process_tx(wallet_address, elem, exporter):
     txinfo = staketaxcsv.common.ibc.processor.txinfo(
         wallet_address, elem, co.MINTSCAN_LABEL_JUNO, JUNO_NODE)
 
+    txinfo.url = f"https://explorer.chainroot.io/juno/transactions/{txinfo.txid}"
+
     if txinfo.is_failed:
         staketaxcsv.common.ibc.processor.handle_failed_transaction(exporter, txinfo)
         return txinfo
