@@ -42,7 +42,7 @@ def txone(wallet_address, txid):
     elem = _txdata().get_tx(txid)
 
     exporter = Exporter(wallet_address, localconfig, TICKER_SEI)
-    txinfo = staketaxcsv.tia.processor.process_tx(wallet_address, elem, exporter)
+    txinfo = staketaxcsv.sei.processor.process_tx(wallet_address, elem, exporter)
 
     return exporter
 
@@ -68,7 +68,7 @@ def txhistory(wallet_address):
     elems = txdata.get_txs_all(wallet_address, progress, start_date, end_date)
 
     progress.report_message(f"Processing {len(elems)} transactions... ")
-    staketaxcsv.tia.processor.process_txs(wallet_address, elems, exporter)
+    staketaxcsv.sei.processor.process_txs(wallet_address, elems, exporter)
 
     return exporter
 
