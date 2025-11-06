@@ -145,7 +145,7 @@ def process_tx(wallet_info, exporter, txid, data):
             handle_nft_mint(exporter, txinfo)
 
         # staking account claim transaction
-        elif co.PROGRAMID_CLAIM_STAKING_TIP in program_ids:
+        elif (co.PROGRAMID_CLAIM_STAKING_TIP in program_ids or co.PROGRAMID_CLAIM_STAKING_TIP_2 in program_ids):
             handle_claim_staking_tip(exporter, txinfo)
 
         # Other
