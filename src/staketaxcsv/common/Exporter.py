@@ -182,14 +182,14 @@ class Exporter:
             allowed_types = list(et.TX_TYPES_CSVEXPORT)
 
             # List of csv formats that support REALIZED_PNL
-            if csv_format in [et.FORMAT_KOINLY, et.FORMAT_COINTRACKING, et.FORMAT_COINTRACKER]:
+            if csv_format in [et.FORMAT_KOINLY, et.FORMAT_COINTRACKING, et.FORMAT_COINTRACKER, et.FORMAT_KRYPTOS]:
                 allowed_types.append(et.TX_TYPE_REALIZED_PNL)
 
             # Filter rows based on the allowed tx types.
             rows = filter(lambda row: row.tx_type in allowed_types, self.rows)
 
         if csv_format in [et.FORMAT_COINTRACKING, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI,
-                          et.FORMAT_DIVLY, et.FORMAT_CRYPTOBOOKS, et.FORMAT_KOINLY]:
+                          et.FORMAT_DIVLY, et.FORMAT_CRYPTOBOOKS, et.FORMAT_KOINLY, et.FORMAT_KRYPTOS]:
             # CSV formats that support LP_DEPOSIT/LP_WITHDRAW
             return rows
         else:
@@ -342,6 +342,8 @@ class Exporter:
             self.export_tokentax_csv(csvpath)
         elif csvformat == et.FORMAT_ZENLEDGER:
             self.export_zenledger_csv(csvpath)
+        elif csvformat == et.FORMAT_KRYPTOS:
+            self.export_kryptos_csv(csvpath)
         else:
             raise Exception("export_format(): Unknown csvformat={}".format(csvformat))
 
@@ -1285,6 +1287,89 @@ class Exporter:
                 ]
                 mywriter.writerow(line)
         logging.info("Wrote to %s", csvpath)
+
+    def export_kryptos_csv(self, csvpath):
+        """ Writes CSV, suitable for import into Kryptos """
+        kryptos_tx_types = {
+            et.TX_TYPE_AIRDROP: "deposit",
+            et.TX_TYPE_STAKING: "deposit",
+            et.TX_TYPE_TRADE: "trade",
+            et.TX_TYPE_TRANSFER: "transfer",
+            et.TX_TYPE_INCOME: "deposit",
+            et.TX_TYPE_SPEND: "withdrawal",
+            et.TX_TYPE_BORROW: "transfer",
+            et.TX_TYPE_REPAY: "transfer",
+            et.TX_TYPE_LP_DEPOSIT: "trade",
+            et.TX_TYPE_LP_WITHDRAW: "trade",
+            et.TX_TYPE_REALIZED_PNL: "trade",
+            et.TX_TYPE_MARGIN_TRADE_FEE: "withdrawal"
+        }
+        rows = self._rows_export(et.FORMAT_KRYPTOS)
+
+        with open(csvpath, 'w', newline='', encoding='utf-8') as f:
+            mywriter = csv.writer(f)
+
+            # header row
+            mywriter.writerow(et.KRYPTOS_FIELDS)
+
+            # data rows
+            for row in rows:
+                # Determine transaction type
+                tx_type = kryptos_tx_types.get(row.tx_type, "transfer")
+                
+                # Handle special cases for transfer types
+                if tx_type == "transfer":
+                    if row.received_amount and not row.sent_amount:
+                        tx_type = "deposit"
+                    elif row.sent_amount and not row.received_amount:
+                        tx_type = "withdrawal"
+                    else:
+                        tx_type = "transfer"
+
+                # Convert timestamp to ISO format
+                iso_timestamp = self._kryptos_timestamp(row.timestamp)
+
+                # Determine base currency (use fee currency if available, otherwise use received/sent currency)
+                base_currency = ""
+                if row.fee_currency:
+                    base_currency = row.fee_currency
+                elif row.received_currency:
+                    base_currency = row.received_currency
+                elif row.sent_currency:
+                    base_currency = row.sent_currency
+
+                # Calculate net worth (simplified - in practice this would need price data)
+                net_worth = ""
+                fee_net_worth = ""
+
+                # Build description
+                description = row.comment if row.comment else f"{tx_type} transaction"
+                if row.txid:
+                    description += f" (TxID: {row.txid})"
+
+                line = [
+                    iso_timestamp,                    # Date-Time
+                    tx_type,                          # Type
+                    row.received_currency or "",      # Received Asset
+                    row.received_amount or "",        # Received Amount
+                    row.sent_currency or "",          # Sent Asset
+                    row.sent_amount or "",            # Sent Amount
+                    net_worth,                        # Net Worth
+                    base_currency,                    # Base Currency
+                    row.fee_currency or "",           # Fee
+                    row.fee or "",                    # Fee Amount
+                    fee_net_worth,                    # Fee Net Worth
+                    description                       # Description
+                ]
+                mywriter.writerow(line)
+
+        logging.info("Wrote to %s", csvpath)
+
+    def _kryptos_timestamp(self, ts):
+        """ Convert timestamp to ISO format for Kryptos """
+        # Convert "2021-08-04 15:25:43" to "2021-08-04T15:25:43.000Z"
+        dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
+        return dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
     def export_bitcointax_csv(self, csvpath):
         """ Writes CSV, suitable for import into bitcoin.tax """
