@@ -344,6 +344,9 @@ class Exporter:
             self.export_zenledger_csv(csvpath)
         elif csvformat == et.FORMAT_KRYPTOS:
             self.export_kryptos_csv(csvpath)
+            xlsxpath = csvpath.replace(".csv", ".xlsx")
+            self.convert_csv_to_xlsx(csvpath, xlsxpath)
+            return xlsxpath
         else:
             raise Exception("export_format(): Unknown csvformat={}".format(csvformat))
 
