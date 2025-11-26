@@ -1347,8 +1347,13 @@ class Exporter:
 
                 # Build description
                 description = row.comment if row.comment else f"{tx_type} transaction"
-                if row.txid:
-                    description += f" (TxID: {row.txid})"
+
+                # Determine From Address and To Address based on transaction direction
+                # From Address: wallet_address when wallet is sending assets
+                # To Address: wallet_address when wallet is receiving assets
+                # Counterparty addresses are not available in Row object, so they remain empty
+                from_address = row.wallet_address if row.sent_amount else ""
+                to_address = row.wallet_address if row.received_amount else ""
 
                 line = [
                     iso_timestamp,                    # Date-Time
@@ -1359,10 +1364,16 @@ class Exporter:
                     row.sent_amount or "",            # Sent Amount
                     net_worth,                        # Net Worth
                     base_currency,                    # Base Currency
-                    row.fee_currency or "",           # Fee
+                    row.fee_currency or "",           # Fee Asset
                     row.fee or "",                    # Fee Amount
                     fee_net_worth,                    # Fee Net Worth
-                    description                       # Description
+                    description,                      # Description
+                    row.txid or "",                   # Tx Hash
+                    "",                               # Sent Asset Contract Address
+                    "",                               # Received Asset Contract Address
+                    from_address,                     # From Address
+                    to_address,                       # To Address
+                    row.comment or ""                 # Comment
                 ]
                 mywriter.writerow(line)
 
