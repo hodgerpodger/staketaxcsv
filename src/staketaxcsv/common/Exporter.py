@@ -1,14 +1,17 @@
 import csv
 import io
+import os
 import logging
 import time
 import json
 from datetime import datetime
 import copy
 
+
 import pandas as pd
 import pytz
 from pytz import timezone
+from staketaxcsv.common.exporter_waltio import ExporterWaltio
 from staketaxcsv.common import ExporterTypes as et
 from staketaxcsv.common.exporter_koinly import NullMap
 from staketaxcsv.settings_csv import TICKER_ALGO, TICKER_LUNA1, TICKER_LUNA2, TICKER_OSMO
@@ -189,7 +192,8 @@ class Exporter:
             rows = filter(lambda row: row.tx_type in allowed_types, self.rows)
 
         if csv_format in [et.FORMAT_COINTRACKING, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI,
-                          et.FORMAT_DIVLY, et.FORMAT_CRYPTOBOOKS, et.FORMAT_KOINLY, et.FORMAT_KRYPTOS]:
+                          et.FORMAT_DIVLY, et.FORMAT_CRYPTOBOOKS, et.FORMAT_KOINLY, et.FORMAT_KRYPTOS,
+                          et.FORMAT_WALTIO]:
             # CSV formats that support LP_DEPOSIT/LP_WITHDRAW
             return rows
         else:
@@ -347,6 +351,8 @@ class Exporter:
             xlsxpath = csvpath.replace(".csv", ".xlsx")
             self.convert_csv_to_xlsx(csvpath, xlsxpath)
             return xlsxpath
+        elif csvformat == et.FORMAT_WALTIO:
+            self.export_waltio_csv(csvpath)
         else:
             raise Exception("export_format(): Unknown csvformat={}".format(csvformat))
 
@@ -2021,3 +2027,40 @@ class Exporter:
                     new_cur = old_cur[3:]  # Strip off "all"
                     row.comment += f" [{old_cur} converted to {new_cur}]"  # e.g. " [allBTC]"
                     setattr(row, attr, new_cur)
+
+    def export_waltio_csv(self, csvpath):
+        """ Write CSV, suitable for import into Waltio """
+        rows = self._rows_export(et.FORMAT_WALTIO)
+
+        # Convert internal Row objects to dicts expected by ExporterWaltio.export().
+        # We intentionally pass the raw `tx_type` as `label` and `comment` as `memo` so
+        # ExporterWaltio can apply its own label/type rules.
+        waltio_rows = []
+        for row in rows:
+            r_dict = {
+                "date": row.timestamp,
+                "amount_received": row.received_amount,
+                "token_received": row.received_currency,
+                "amount_sent": row.sent_amount,
+                "token_sent": row.sent_currency,
+                "fee": row.fee,
+                "fee_token": row.fee_currency,
+                "platform": row.exchange,
+                "memo": row.comment,
+                "hash": row.txid,
+                "label": row.tx_type,
+            }
+            waltio_rows.append(r_dict)
+
+        exporter = ExporterWaltio(self.wallet_address, self.ticker, os.path.dirname(csvpath))
+
+        # ExporterWaltio writes a timestamped filename in the target directory and returns its path.
+        # To keep stake.tax conventions consistent across formats, rename the generated file to `csvpath`.
+        actual_path = exporter.export(waltio_rows)
+
+        try:
+            if actual_path != csvpath:
+                os.rename(actual_path, csvpath)
+                logging.info("Renamed %s to %s", actual_path, csvpath)
+        except OSError as e:
+            logging.warning("Could not rename Waltio output: %s", e)
