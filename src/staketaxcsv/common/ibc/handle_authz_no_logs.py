@@ -1,4 +1,4 @@
-import logging
+from staketaxcsv.common.ibc import util_ibc
 from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 
 
@@ -27,7 +27,7 @@ def handle_authz_no_logs_tx(wallet_address, elem, lcd_node):
     logging.warning(f"Missing 'logs' for transaction {txid}. Falling back to 'events'.")
 
     # Group events by their 'msg_index' for efficient processing
-    events_by_msg_index = _group_events_by_msg_index(elem.get("events", []))
+    events_by_msg_index = util_ibc.group_events_by_msg_index(elem.get("events", []))
 
     msgs = []
 
@@ -45,24 +45,6 @@ def handle_authz_no_logs_tx(wallet_address, elem, lcd_node):
     return msgs
 
 
-def _group_events_by_msg_index(events):
-    """
-    Groups events by their 'msg_index' field.
-    """
-    grouped_events = {}
-    for event in events:
-        for attribute in event.get("attributes", []):
-            if attribute["key"] == "msg_index":
-                try:
-                    msg_index = int(attribute["value"])
-                    if msg_index not in grouped_events:
-                        grouped_events[msg_index] = []
-                    grouped_events[msg_index].append(event)
-                except ValueError:
-                    logging.error(f"Invalid msg_index value in event: {attribute}")
-    return grouped_events
-
-
 def _process_msgexec(wallet_address, message, lcd_node, parent_events):
     """
     Handles MsgExec messages by extracting sub-messages and returning them as MsgInfoIBC objects.
@@ -71,7 +53,7 @@ def _process_msgexec(wallet_address, message, lcd_node, parent_events):
     sub_msgs = []
 
     # Group parent events by 'authz_msg_index' for sub-message association
-    events_by_authz_index = _group_events_by_authz_msg_index(parent_events)
+    events_by_authz_index = util_ibc.group_events_by_authz_msg_index(parent_events)
 
     sub_messages = message.get("msgs", [])
     for sub_msg_index, sub_message in enumerate(sub_messages):
@@ -84,24 +66,6 @@ def _process_msgexec(wallet_address, message, lcd_node, parent_events):
         sub_msgs.append(sub_msginfo)
 
     return sub_msgs
-
-
-def _group_events_by_authz_msg_index(events):
-    """
-    Groups events by their 'authz_msg_index' field for MsgExec sub-messages.
-    """
-    grouped_events = {}
-    for event in events:
-        for attribute in event.get("attributes", []):
-            if attribute["key"] == "authz_msg_index":
-                try:
-                    authz_msg_index = int(attribute["value"])
-                    if authz_msg_index not in grouped_events:
-                        grouped_events[authz_msg_index] = []
-                    grouped_events[authz_msg_index].append(event)
-                except ValueError:
-                    logging.error(f"Invalid authz_msg_index value in event: {attribute}")
-    return grouped_events
 
 
 def _is_relevant_to_wallet(wallet_address, events):
