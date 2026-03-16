@@ -1,4 +1,5 @@
 from collections import defaultdict
+
 TINY_AMOUNT = 0.00000000001
 
 
@@ -69,3 +70,39 @@ def aggregate_transfers_net(transfers_in, transfers_out, tiny_amount_filter=True
             net_transfers_out.append((-amount, currency))
 
     return net_transfers_in, net_transfers_out
+
+
+def group_events_by_msg_index(events):
+    """
+    Groups events by their 'msg_index' field.
+    """
+    return _group_events_by_key(events, "msg_index")
+
+
+def group_events_by_authz_msg_index(events):
+    """
+    Groups events by their 'authz_msg_index' field for MsgExec sub-messages.
+    """
+    return _group_events_by_key(events, "authz_msg_index")
+
+
+def _group_events_by_key(events, target_key):
+    """
+    Groups events by a specific key in their attributes.
+    """
+    import logging
+    grouped_events = {}
+    for event in events:
+        index = None
+        for attribute in event.get("attributes", []):
+            if attribute["key"] == target_key:
+                try:
+                    index = int(attribute["value"])
+                    break
+                except ValueError:
+                    logging.error(f"Invalid {target_key} value in event: {attribute}")
+        if index is not None:
+            if index not in grouped_events:
+                grouped_events[index] = []
+            grouped_events[index].append(event)
+    return grouped_events

@@ -39,7 +39,7 @@ def _mock_query(func, args, dirname=""):
 
     if not os.path.exists(json_path):
         if not os.path.exists(json_dir):
-            os.makedirs(json_dir)
+            os.makedirs(json_dir, exist_ok=True)
 
         # Run the function
         data = func(*args)

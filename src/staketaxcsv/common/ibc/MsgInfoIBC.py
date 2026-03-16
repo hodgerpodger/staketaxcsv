@@ -1,10 +1,10 @@
+import base64
 import logging
 import pprint
 import re
-import base64
 
 import staketaxcsv.common.ibc.constants as co
-from staketaxcsv.common.ibc import util_ibc, denoms
+from staketaxcsv.common.ibc import denoms, util_ibc
 
 COIN_RECEIVED = "coin_received"
 COIN_SPENT = "coin_spent"
@@ -42,7 +42,7 @@ class MsgInfoIBC:
             self.transfers[0], self.transfers[1], tiny_amount_filter=False
         )
         self.transfers_event = self._transfers_from_transfer_event(show_addrs=True)
-        self.wasm = MsgInfoIBC._wasm(log) if log else []
+        self.wasm = self._wasm()
         self.contract = self._contract(message)
         self.events_by_type = self._events_by_type()
 
@@ -246,7 +246,7 @@ class MsgInfoIBC:
                 continue
 
             # Split into (amount_raw, currency_raw)
-            m = re.search('^(\d+)(.*)', amt_string)
+            m = re.search(r'^(\d+)(.*)', amt_string)
             if not m:
                 raise Exception("Unexpected amt_string: {}".format(amt_string))
             amount_raw, currency_raw = m.group(1), m.group(2)
@@ -262,11 +262,9 @@ class MsgInfoIBC:
         amount, currency = denoms.amount_currency_from_raw(amount_raw, currency_raw, self.lcd_node)
         return amount, currency
 
-    @classmethod
-    def _wasm(cls, log):
-        """ Parses wasm in log to return list of action dictionaries. """
-        events = log["events"]
-        for event in events:
+    def _wasm(self):
+        """ Parses wasm in events to return list of action dictionaries. """
+        for event in self.events:
             attributes, event_type = event["attributes"], event["type"]
 
             if event_type == "wasm":

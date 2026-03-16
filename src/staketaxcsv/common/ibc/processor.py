@@ -10,25 +10,30 @@ import logging
 from datetime import datetime
 
 import staketaxcsv.common.ibc.handle_authz
+from staketaxcsv.common.ExporterTypes import TX_TYPE_FAILED_NO_FEE
 from staketaxcsv.common.ibc import constants as co
-from staketaxcsv.common.ibc import handle, denoms
+from staketaxcsv.common.ibc import denoms, handle, util_ibc
+from staketaxcsv.common.ibc.handle_authz_no_logs import (
+    handle_authz_no_logs_tx,
+    is_authz_no_logs_tx,
+)
 from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
 from staketaxcsv.common.ibc.TxInfoIBC import TxInfoIBC
-from staketaxcsv.common.make_tx import make_spend_fee_tx, make_simple_tx
-from staketaxcsv.common.ExporterTypes import TX_TYPE_FAILED_NO_FEE
-from staketaxcsv.common.ibc.handle_authz_no_logs import handle_authz_no_logs_tx, is_authz_no_logs_tx
+from staketaxcsv.common.make_tx import make_simple_tx, make_spend_fee_tx
 
 MILLION = 1000000.0
 
 
 def txinfo(wallet_address, elem, mintscan_label, lcd_node, customMsgInfo=None):
-    """ Parses transaction data to return TxInfo object """
+    """Parses transaction data to return TxInfo object"""
     txid = elem["txhash"]
 
-    timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.strptime(elem["timestamp"], "%Y-%m-%dT%H:%M:%SZ").strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
     fee, fee_currency = _get_fee(wallet_address, elem, lcd_node)
     memo = _get_memo(elem)
-    is_failed = ("code" in elem and elem["code"] > 0)
+    is_failed = "code" in elem and elem["code"] > 0
 
     if is_authz_no_logs_tx(elem):
         # special case for msgexec with logs element empty
@@ -40,7 +45,11 @@ def txinfo(wallet_address, elem, mintscan_label, lcd_node, customMsgInfo=None):
             # Standard case using logs
             for i, log in enumerate(elem["logs"]):
                 # Prevent crash in rare cases where msg_index field exists, with null value
-                if "body" in elem["tx"] and "msg_index" in log and log["msg_index"] is None:
+                if (
+                    "body" in elem["tx"]
+                    and "msg_index" in log
+                    and log["msg_index"] is None
+                ):
                     continue
 
                 if "body" in elem["tx"]:
@@ -55,9 +64,56 @@ def txinfo(wallet_address, elem, mintscan_label, lcd_node, customMsgInfo=None):
                 else:
                     msginfo = MsgInfoIBC(wallet_address, i, message, log, lcd_node)
                 msgs.append(msginfo)
+        elif "events" in elem and elem["events"]:
+            # Fallback: use events when logs are not available
+            logging.debug(
+                "Missing 'logs' for transaction %s. Using 'events' instead.", txid
+            )
 
-    txinfo = TxInfoIBC(txid, timestamp, fee, fee_currency, wallet_address, msgs, mintscan_label, memo, is_failed)
-    return txinfo
+            # Group events by their 'msg_index' for efficient processing
+            events_by_msg_index = util_ibc.group_events_by_msg_index(elem.get("events", []))
+
+            if "body" in elem["tx"]:
+                messages = elem["tx"]["body"]["messages"]
+            elif "value" in elem["tx"]:
+                messages = elem["tx"]["value"]["msg"]
+            else:
+                raise Exception("Unable to deduce messages")
+
+            for i, message in enumerate(messages):
+                associated_events = events_by_msg_index.get(i, [])
+                if customMsgInfo:
+                    msginfo = customMsgInfo(
+                        wallet_address,
+                        i,
+                        message,
+                        None,
+                        lcd_node,
+                        events=associated_events,
+                    )
+                else:
+                    msginfo = MsgInfoIBC(
+                        wallet_address,
+                        i,
+                        message,
+                        None,
+                        lcd_node,
+                        events=associated_events,
+                    )
+                msgs.append(msginfo)
+
+    tx_info_obj = TxInfoIBC(
+        txid,
+        timestamp,
+        fee,
+        fee_currency,
+        wallet_address,
+        msgs,
+        mintscan_label,
+        memo,
+        is_failed,
+    )
+    return tx_info_obj
 
 
 def _get_fee(wallet_address, elem, lcd_node):
@@ -95,7 +151,7 @@ def _get_memo(elem):
 
 
 def handle_message(exporter, txinfo, msginfo, debug=False):
-    """ Parses message denoted by msginfo (for common ibc ecosystem types).  Returns True/False if handler found. """
+    """Parses message denoted by msginfo (for common ibc ecosystem types).  Returns True/False if handler found."""
     try:
         msg_type = msginfo.msg_type
 
@@ -107,10 +163,14 @@ def handle_message(exporter, txinfo, msginfo, debug=False):
         # authz
         elif msg_type == co.MSG_TYPE_GRANT:
             # grant message
-            staketaxcsv.common.ibc.handle_authz.handle_authz_grant(exporter, txinfo, msginfo)
+            staketaxcsv.common.ibc.handle_authz.handle_authz_grant(
+                exporter, txinfo, msginfo
+            )
         elif msg_type == co.MSG_TYPE_REVOKE:
             # revoke message
-            staketaxcsv.common.ibc.handle_authz.handle_authz_revoke(exporter, txinfo, msginfo)
+            staketaxcsv.common.ibc.handle_authz.handle_authz_revoke(
+                exporter, txinfo, msginfo
+            )
 
         elif msg_type in [co.MSG_TYPE_VOTE, co.MSG_TYPE_SET_WITHDRAW_ADDRESS]:
             # simple transactions with no transfers
@@ -127,11 +187,17 @@ def handle_message(exporter, txinfo, msginfo, debug=False):
             pass
 
         # staking rewards
-        elif msg_type in [co.MSG_TYPE_DELEGATE, co.MSG_TYPE_DELEGATE_TO_VALIDATOR_SET,
-                          co.MSG_TYPE_REDELEGATE, co.MSG_TYPE_WITHDRAW_DELEGATION_REWARDS,
-                          co.MSG_TYPE_WITHDRAW_REWARD, co.MSG_TYPE_WITHDRAW_COMMISSION,
-                          co.MSG_TYPE_UNDELEGATE, co.MSG_TYPE_UNDELEGATE_FROM_REBALANCED_VALIDATOR_SET,
-                          co.MSG_TYPE_UNDELEGATE_FROM_VALIDATOR_SET]:
+        elif msg_type in [
+            co.MSG_TYPE_DELEGATE,
+            co.MSG_TYPE_DELEGATE_TO_VALIDATOR_SET,
+            co.MSG_TYPE_REDELEGATE,
+            co.MSG_TYPE_WITHDRAW_DELEGATION_REWARDS,
+            co.MSG_TYPE_WITHDRAW_REWARD,
+            co.MSG_TYPE_WITHDRAW_COMMISSION,
+            co.MSG_TYPE_UNDELEGATE,
+            co.MSG_TYPE_UNDELEGATE_FROM_REBALANCED_VALIDATOR_SET,
+            co.MSG_TYPE_UNDELEGATE_FROM_VALIDATOR_SET,
+        ]:
             handle.handle_staking(exporter, txinfo, msginfo)
 
         # transfers
@@ -155,13 +221,14 @@ def handle_message(exporter, txinfo, msginfo, debug=False):
             raise e
 
         logging.error(
-            "Exception when handling txid=%s, exception=%s", txinfo.txid, str(e))
+            "Exception when handling txid=%s, exception=%s", txinfo.txid, str(e)
+        )
         handle.handle_unknown(exporter, txinfo, msginfo)
         return True
 
 
 def handle_failed_transaction(exporter, txinfo):
-    """ Treat failed transaction as spend fee transaction (unless fee is 0). """
+    """Treat failed transaction as spend fee transaction (unless fee is 0)."""
     if txinfo.fee:
         # Make a spend fee csv row
         row = make_spend_fee_tx(txinfo, txinfo.fee, txinfo.fee_currency)
@@ -174,3 +241,5 @@ def handle_failed_transaction(exporter, txinfo):
         row = make_simple_tx(txinfo, TX_TYPE_FAILED_NO_FEE)
         row.comment = "failed transaction"
         exporter.ingest_row(row)
+
+
