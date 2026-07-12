@@ -11,6 +11,7 @@ import copy
 import pandas as pd
 import pytz
 from pytz import timezone
+from staketaxcsv.common.exporter_breezing import ExporterBreezing
 from staketaxcsv.common.exporter_waltio import ExporterWaltio
 from staketaxcsv.common import ExporterTypes as et
 from staketaxcsv.common.exporter_koinly import NullMap
@@ -185,7 +186,8 @@ class Exporter:
             allowed_types = list(et.TX_TYPES_CSVEXPORT)
 
             # List of csv formats that support REALIZED_PNL
-            if csv_format in [et.FORMAT_KOINLY, et.FORMAT_COINTRACKING, et.FORMAT_COINTRACKER, et.FORMAT_KRYPTOS]:
+            if csv_format in [et.FORMAT_KOINLY, et.FORMAT_COINTRACKING, et.FORMAT_COINTRACKER, et.FORMAT_KRYPTOS,
+                              et.FORMAT_BREEZING]:
                 allowed_types.append(et.TX_TYPE_REALIZED_PNL)
 
             # Filter rows based on the allowed tx types.
@@ -193,7 +195,7 @@ class Exporter:
 
         if csv_format in [et.FORMAT_COINTRACKING, et.FORMAT_COINPANDA, et.FORMAT_COINTELLI,
                           et.FORMAT_DIVLY, et.FORMAT_CRYPTOBOOKS, et.FORMAT_KOINLY, et.FORMAT_KRYPTOS,
-                          et.FORMAT_WALTIO]:
+                          et.FORMAT_WALTIO, et.FORMAT_BREEZING]:
             # CSV formats that support LP_DEPOSIT/LP_WITHDRAW
             return rows
         else:
@@ -353,6 +355,8 @@ class Exporter:
             return xlsxpath
         elif csvformat == et.FORMAT_WALTIO:
             self.export_waltio_csv(csvpath)
+        elif csvformat == et.FORMAT_BREEZING:
+            self.export_breezing_csv(csvpath)
         else:
             raise Exception("export_format(): Unknown csvformat={}".format(csvformat))
 
@@ -2064,3 +2068,11 @@ class Exporter:
                 logging.info("Renamed %s to %s", actual_path, csvpath)
         except OSError as e:
             logging.warning("Could not rename Waltio output: %s", e)
+
+    def export_breezing_csv(self, csvpath):
+        """ Writes CSV, suitable for import into Breezing (breezing.io) """
+        # Breezing convention: oldest transactions first.
+        rows = self._rows_export(et.FORMAT_BREEZING, reverse=False)
+
+        exporter = ExporterBreezing(self.wallet_address, self.ticker)
+        exporter.export(rows, csvpath)
