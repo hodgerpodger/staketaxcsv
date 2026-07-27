@@ -10,6 +10,7 @@ import logging
 from datetime import datetime
 
 import staketaxcsv.common.ibc.handle_authz
+from staketaxcsv.common import address
 from staketaxcsv.common.ibc import constants as co
 from staketaxcsv.common.ibc import handle, denoms
 from staketaxcsv.common.ibc.MsgInfoIBC import MsgInfoIBC
@@ -62,6 +63,12 @@ def txinfo(wallet_address, elem, mintscan_label, lcd_node, customMsgInfo=None):
 
 def _get_fee(wallet_address, elem, lcd_node):
     if "auth_info" in elem["tx"]:
+        # Only attribute the fee to this wallet if this wallet actually paid it.
+        # Mintscan returns transactions in which the wallet merely appears (e.g. as
+        # the owner of a limit order settled by a third-party keeper); charging the
+        # signer's fee to a wallet that never signed fabricates a deductible expense.
+        if not _wallet_is_fee_payer(wallet_address, elem["tx"]["auth_info"]):
+            return "", ""
         amount_list = elem["tx"]["auth_info"]["fee"]["amount"]
     elif "value" in elem["tx"]:
         # legacy version (2021-ish)
@@ -84,6 +91,42 @@ def _get_fee(wallet_address, elem, lcd_node):
         return "", ""
     else:
         return fee, fee_currency
+
+
+def _wallet_is_fee_payer(wallet_address, auth_info):
+    """
+    Return True if wallet_address is the fee payer of this transaction.
+
+    Fee-payer precedence follows the cosmos SDK:
+      1. auth_info.fee.payer   -- explicit fee payer, if set
+      2. auth_info.fee.granter -- feegrant: the granter pays, if set
+      3. otherwise the first signer pays
+
+    When the payer cannot be determined with certainty (no signer_infos, or a
+    key type we can't derive an address for -- multisig, ethsecp256k1), this
+    returns True so the prior behavior (attribute the fee to this wallet) is
+    preserved. It only returns False when it can PROVE the wallet did not pay.
+    """
+    fee = auth_info.get("fee", {})
+
+    payer = fee.get("payer")
+    if payer:
+        return payer == wallet_address
+
+    granter = fee.get("granter")
+    if granter:
+        return granter == wallet_address
+
+    signer_infos = auth_info.get("signer_infos", [])
+    if not signer_infos:
+        return True
+
+    hrp = wallet_address.split("1", 1)[0]
+    signer = address.from_pubkey_to_bech32(hrp, signer_infos[0].get("public_key", {}))
+    if signer is None:
+        return True
+
+    return signer == wallet_address
 
 
 def _get_memo(elem):
