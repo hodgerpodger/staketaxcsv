@@ -1,4 +1,6 @@
+import base64
 import bech32
+import hashlib
 import logging
 from Crypto.Hash import keccak
 from typing import List, Optional
@@ -73,6 +75,40 @@ def from_bech32_to_hex(hrp: str, address: str) -> Optional[str]:
         return _checksum_encode(decoded)
     except Exception as e:
         logging.error("Exception converting address %s, exception=%s", address, str(e))
+        return None
+
+
+def from_pubkey_to_bech32(hrp: str, public_key: dict) -> Optional[str]:
+    """
+    Derive the bech32 account address for a tx signer from its protobuf public_key.
+
+    Only handles plain secp256k1 keys (the cosmos default): address =
+    ripemd160(sha256(pubkey_bytes)), bech32-encoded with the given hrp.
+
+    Returns None for anything it cannot derive with certainty -- an empty/missing
+    key, ethsecp256k1 (evmos/injective/dym use keccak, not ripemd160), multisig
+    LegacyAminoPubKey, or malformed data -- so callers can fall back to prior
+    behavior rather than guess.
+
+    :param hrp: Human Readable Prefix of the chain, e.g. "osmo", "cosmos".
+    :param public_key: the signer_infos[i].public_key object from tx auth_info.
+    """
+    if not isinstance(public_key, dict):
+        return None
+    key_type = public_key.get("@type", "")
+    key_b64 = public_key.get("key")
+    # Only secp256k1, and explicitly not ethsecp256k1 (different address scheme).
+    if not key_type.endswith(".secp256k1.PubKey") or not key_b64:
+        return None
+
+    try:
+        raw = base64.b64decode(key_b64)
+        sha = hashlib.sha256(raw).digest()
+        ripe = hashlib.new("ripemd160", sha).digest()
+        data = bech32.convertbits(ripe, 8, 5)
+        return bech32.bech32_encode(hrp, data)
+    except Exception as e:
+        logging.error("Exception deriving address from pubkey, exception=%s", str(e))
         return None
 
 
